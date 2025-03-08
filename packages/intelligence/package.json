@@ -1,0 +1,48 @@
+{
+    "name": "@abyss/intelligence",
+    "version": "1.0.3",
+    "main": "dist/src/index.js",
+    "types": "dist/src/index.d.ts",
+    "scripts": {
+        "lint": "eslint ./src/ --fix",
+        "build": "tsc --outDir dist",
+        "build:watch": "tsc --outDir dist --watch",
+        "test:watch": "jest --watch",
+        "test": "jest --coverage",
+        "typecheck": "tsc --noEmit",
+        "test-manual": "bun ./test/manual.ts",
+        "version:bump": "npx version-bump-prompt patch && git add package.json",
+        "precommit": "npm run build && npm run version:bump"
+    },
+    "devDependencies": {
+        "@types/jest": "^29.5.14",
+        "@types/node": "^12.20.55",
+        "@typescript-eslint/eslint-plugin": "^4.22.0",
+        "@typescript-eslint/parser": "^4.22.0",
+        "eslint": "^7.25.0",
+        "eslint-config-prettier": "^8.3.0",
+        "eslint-plugin-node": "^11.1.0",
+        "eslint-plugin-prettier": "^3.4.0",
+        "lint-staged": "^13.2.1",
+        "prettier": "^2.2.1",
+        "ts-node": "^10.2.1",
+        "typescript": "^4.2.4",
+        "version-bump-prompt": "^6.1.0"
+    },
+    "engines": {
+        "node": ">=18.0.0"
+    },
+    "peerDependencies": {
+        "@aws-sdk/client-bedrock-runtime": "^3.682.0",
+        "@aws-sdk/client-dynamodb": "^3.554.0",
+        "@aws-sdk/client-s3": "^3.685.0",
+        "@aws-sdk/lib-dynamodb": "^3.554.0"
+    },
+    "dependencies": {
+        "@types/dotenv": "^6.1.1",
+        "axios": "^1.7.9",
+        "dotenv": "^16.4.7",
+        "jest": "^29.7.0",
+        "ts-jest": "^29.2.5"
+    }
+}

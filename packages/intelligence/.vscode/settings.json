@@ -1,0 +1,9 @@
+{
+    "prettier.printWidth": 120,
+    "prettier.tabWidth": 4,
+    "prettier.singleQuote": true,
+    "catppuccin-icons.associations.extensions": {
+        "mock.ts": "java-class",
+        "test.ts": "todo"
+    }
+}

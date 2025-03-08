@@ -1,0 +1,122 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    html[data-theme='abyss'] {
+        --color-header: #060f45;
+
+        --color-background-light: #3a3a3d;
+        --color-background-base: #131314;
+        --color-background-slightly-dark: #0f0f10;
+        --color-background-dark: #000000;
+
+        --color-primary-light: #19215e;
+        --color-primary-base: #0e57c3;
+        --color-primary-dark: #080f41;
+
+        --color-text-light: rgb(209, 200, 200);
+        --color-text-base: rgb(190, 193, 201);
+        --color-text-dark: rgb(120, 123, 134);
+    }
+
+    html[data-theme='etherial'] {
+        --color-header: #ffffff;
+
+        --color-background-light: #b9b9b9;
+        --color-background-base: #eeeff4;
+        --color-background-slightly-dark: #f6f7fa;
+        --color-background-dark: #ffffff;
+
+        --color-primary-light: #ffaaaa;
+        --color-primary-base: #e95a5a;
+        --color-primary-dark: #7f1c1c;
+
+        --color-text-light: rgb(48, 48, 48);
+        --color-text-base: rgb(25, 25, 25);
+        --color-text-dark: rgb(0, 0, 0);
+    }
+}
+
+.menuDragSection {
+    -webkit-app-region: drag;
+}
+
+.rubik-glitch-regular {
+    font-family: 'Rubik Glitch', serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+* {
+    @apply appearance-none outline-none;
+}
+*:focus {
+    @apply appearance-none outline-none;
+}
+
+/* Markdown styles */
+.markdown {
+    @apply text-text-base;
+}
+
+.markdown h1 {
+    @apply text-2xl font-bold mb-4 mt-6;
+}
+
+.markdown h2 {
+    @apply text-xl font-bold mb-3 mt-5;
+}
+
+.markdown h3 {
+    @apply text-lg font-bold mb-2 mt-4;
+}
+
+.markdown p {
+    @apply mb-4;
+}
+
+.markdown ul {
+    @apply list-disc ml-6 mb-4;
+}
+
+.markdown ol {
+    @apply list-decimal ml-6 mb-4;
+}
+
+.markdown li {
+    @apply mb-1;
+}
+
+.markdown code {
+    @apply bg-background-dark px-1 py-0.5 rounded-sm text-sm;
+}
+
+.markdown pre {
+    @apply bg-background-dark p-4 rounded-sm mb-4 overflow-x-auto;
+}
+
+.markdown pre code {
+    @apply bg-transparent p-0;
+}
+
+.markdown blockquote {
+    @apply border-l-4 border-background-dark pl-4 italic my-4;
+}
+
+.markdown a {
+    @apply text-primary-base hover:underline;
+}
+
+.markdown table {
+    @apply w-full border-collapse mb-4;
+}
+
+.markdown th,
+.markdown td {
+    @apply border border-background-dark px-4 py-2;
+}
+
+.markdown th {
+    @apply bg-background-dark;
+}

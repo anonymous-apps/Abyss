@@ -1,0 +1,26 @@
+[
+  {
+    "question": "What is the color information for red?",
+    "parsed": {
+      "color": "red",
+      "hex": "#FF0000",
+      "rgb": [
+        255,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "question": "What is the color information for blue?",
+    "parsed": {
+      "color": "blue",
+      "hex": "#0000FF",
+      "rgb": [
+        0,
+        0,
+        255
+      ]
+    }
+  }
+]

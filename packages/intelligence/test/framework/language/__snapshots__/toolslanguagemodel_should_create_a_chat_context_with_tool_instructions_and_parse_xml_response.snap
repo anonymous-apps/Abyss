@@ -1,0 +1,45 @@
+[user]  --------------------------------
+Help me find and analyze files
+
+[bot]  --------------------------------
+continue
+
+[user]  --------------------------------
+You have the following tools available to you:
+
+### tool: search
+Search for files
+```xml
+<search>
+<query>string</query>
+<directory>string</directory>
+
+</search>
+```
+
+
+
+### tool: analyze
+Analyze files
+```xml
+<analyze>
+<files>string[]</files>
+
+</analyze>
+```
+
+[bot]  --------------------------------
+continue
+
+[user]  --------------------------------
+Please respond with a collection of tool calls where each tool call is a XML wrapped in a md code block matching the below format:
+
+```xml
+<TOOLNAME>
+    <parameter1>value1</parameter1>
+    <parameter2>value2</parameter2>
+</TOOLNAME>
+```
+
+You can and should make many tool calls. You can also intersperse your responses with natural language. Write your thoughts, call tools, think some more, call more tools, ect.
+You perform best when you do not hold back and call as many tools as you think are relevant. The xml will be parsed out automatically so don't worry about it.

@@ -1,0 +1,70 @@
+[
+  {
+    "chat": {
+      "messages": [
+        {
+          "text": "Check the status",
+          "from": "user"
+        },
+        {
+          "text": "continue",
+          "from": "bot"
+        },
+        {
+          "text": "You have the following tools available to you:\n\n### tool: status\nCheck status\n```xml\n<status>\n<check>boolean</check>\n\n</status>\n```\n\n\n\n### tool: details\nGet details\n```xml\n<details>\n<id>string</id>\n\n</details>\n```",
+          "from": "user"
+        },
+        {
+          "text": "continue",
+          "from": "bot"
+        },
+        {
+          "text": "Please respond with a collection of tool calls where each tool call is a XML wrapped in a md code block matching the below format:\n\n```xml\n<TOOLNAME>\n    <parameter1>value1</parameter1>\n    <parameter2>value2</parameter2>\n</TOOLNAME>\n```\n\nYou can and should make many tool calls. You can also intersperse your responses with natural language. Write your thoughts, call tools, think some more, call more tools, ect.\nYou perform best when you do not hold back and call as many tools as you think are relevant. The xml will be parsed out automatically so don't worry about it.",
+          "from": "user"
+        }
+      ]
+    },
+    "response": "First let's check the status.\n                ```xml\n                <status>\n                    <check>true</check>\n                </status>\n                ```",
+    "parsed": [
+      {
+        "status": {
+          "check": "true"
+        }
+      }
+    ]
+  },
+  {
+    "chat": {
+      "messages": [
+        {
+          "text": "Get the details",
+          "from": "user"
+        },
+        {
+          "text": "continue",
+          "from": "bot"
+        },
+        {
+          "text": "You have the following tools available to you:\n\n### tool: status\nCheck status\n```xml\n<status>\n<check>boolean</check>\n\n</status>\n```\n\n\n\n### tool: details\nGet details\n```xml\n<details>\n<id>string</id>\n\n</details>\n```",
+          "from": "user"
+        },
+        {
+          "text": "continue",
+          "from": "bot"
+        },
+        {
+          "text": "Please respond with a collection of tool calls where each tool call is a XML wrapped in a md code block matching the below format:\n\n```xml\n<TOOLNAME>\n    <parameter1>value1</parameter1>\n    <parameter2>value2</parameter2>\n</TOOLNAME>\n```\n\nYou can and should make many tool calls. You can also intersperse your responses with natural language. Write your thoughts, call tools, think some more, call more tools, ect.\nYou perform best when you do not hold back and call as many tools as you think are relevant. The xml will be parsed out automatically so don't worry about it.",
+          "from": "user"
+        }
+      ]
+    },
+    "response": "Now let's get the details.\n                ```xml\n                <details>\n                    <id>123</id>\n                </details>\n                ```",
+    "parsed": [
+      {
+        "details": {
+          "id": "123"
+        }
+      }
+    ]
+  }
+]

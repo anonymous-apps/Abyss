@@ -1,0 +1,130 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Represents a connection to a model
+model ModelConnections {
+  // Profile for connecting to a model
+  id            String   @id @default(uuid())
+  name          String
+
+  // Who provides the model
+  provider      String
+  modelId       String
+
+  // Provider specific data
+  data          Json?
+
+  // Time
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+// Settings for the user
+model UserSettings {
+  id            String   @id @default("default")
+  sidebarOpen   Boolean  @default(false)
+  lastPage      String?
+  theme         String? 
+}
+
+// A chat with someone
+model Chat {
+  id            String   @id @default(uuid())
+
+  // Name of the chat
+  name          String
+  description   String?
+
+  // The AI in the chat
+  assistantId   String
+
+  // Message threads in the chat
+  threadId     String
+
+  // Time
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+// The entry point to a message thread
+model MessageThread {
+  id            String   @id @default(uuid())
+  status        String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+// A message in a thread
+model Message {
+  id            String   @id @default(uuid())
+  threadId      String
+  
+  // Role in the thread, like user or model
+  role          String
+
+  // Source of the message, the user or a record id
+  source        String
+  apiCallId     String?
+  renderedId    String?
+
+  // Content of the message
+  content       String
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+// A rendered conversation thread with messages
+model RenderedConversationThread {
+  id            String   @id @default(uuid())
+  
+  // Array of messages with roles
+  messages      Json
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+// A model call to an API captured
+model ApiCall {
+  id            String   @id @default(uuid())
+
+  // Endpoint of the API call
+  endpoint      String
+
+  // Method of the API call
+  method        String
+
+  // Body of the API call
+  body          Json?
+  response      Json?
+
+  // Status of the API call
+  status        String
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+// Actions that are specifically defined in the system that the model can call
+model ActionDefinitions {
+
+  // Identity of this action    
+  id            String   @id @default(uuid())
+  name          String
+  description   String?
+
+  // Actions can take different types
+  type          String
+  data          Json?
+
+  // Time
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}

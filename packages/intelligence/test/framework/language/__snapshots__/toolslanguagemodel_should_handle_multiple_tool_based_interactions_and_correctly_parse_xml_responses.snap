@@ -1,0 +1,33 @@
+[
+  {
+    "question": "Check the system status",
+    "response": "Let me check the system status.\n                ```xml\n                <systemCheck>\n                    <status>healthy</status>\n                    <metrics>\n                        <cpu>45.2</cpu>\n                        <memory>1024</memory>\n                        <uptime>3600</uptime>\n                    </metrics>\n                </systemCheck>\n                ```\n                \n                The system appears to be healthy.",
+    "parsed": [
+      {
+        "systemCheck": {
+          "status": "healthy",
+          "metrics": {
+            "cpu": "45.2",
+            "memory": "1024",
+            "uptime": "3600"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "question": "Get the system logs",
+    "response": "Now I'll fetch the detailed logs.\n                ```xml\n                <logFetch>\n                    <timeRange>\n                        <start>2024-01-01</start>\n                        <end>2024-01-02</end>\n                    </timeRange>\n                    <logEntries>[\"error1\", \"error2\", \"error3\"]</logEntries>\n                </logFetch>\n                ```\n                \n                Found 3 log entries in the specified time range.",
+    "parsed": [
+      {
+        "logFetch": {
+          "timeRange": {
+            "start": "2024-01-01",
+            "end": "2024-01-02"
+          },
+          "logEntries": "[\"error1\", \"error2\", \"error3\"]"
+        }
+      }
+    ]
+  }
+]

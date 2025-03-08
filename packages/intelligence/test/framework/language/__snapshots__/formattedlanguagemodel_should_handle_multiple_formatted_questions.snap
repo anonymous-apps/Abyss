@@ -1,0 +1,48 @@
+[
+  {
+    "chat": {
+      "messages": [
+        {
+          "text": "What is the hex code for red?",
+          "from": "user"
+        },
+        {
+          "text": "continue",
+          "from": "bot"
+        },
+        {
+          "text": "Please respond as a valid JSON string matching this format: \n\n<output-format>\n{\n  \"color\": \"string\",\n  \"hex\": \"string\"\n}\n</output-format>\n\nMatch the structure provided, a valid response string might be look like: \n\n<example-response>\n{ \n            \"color\": . . . \n}\n</example-response>",
+          "from": "user"
+        }
+      ]
+    },
+    "response": "{ \"color\": \"red\", \"hex\": \"#FF0000\" }",
+    "parsed": {
+      "color": "red",
+      "hex": "#FF0000"
+    }
+  },
+  {
+    "chat": {
+      "messages": [
+        {
+          "text": "What is the hex code for blue?",
+          "from": "user"
+        },
+        {
+          "text": "continue",
+          "from": "bot"
+        },
+        {
+          "text": "Please respond as a valid JSON string matching this format: \n\n<output-format>\n{\n  \"color\": \"string\",\n  \"hex\": \"string\"\n}\n</output-format>\n\nMatch the structure provided, a valid response string might be look like: \n\n<example-response>\n{ \n            \"color\": . . . \n}\n</example-response>",
+          "from": "user"
+        }
+      ]
+    },
+    "response": "{ \"color\": \"blue\", \"hex\": \"#0000FF\" }",
+    "parsed": {
+      "color": "blue",
+      "hex": "#0000FF"
+    }
+  }
+]

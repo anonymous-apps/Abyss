@@ -1,0 +1,23 @@
+[user]  --------------------------------
+Who are you?
+
+[bot]  --------------------------------
+continue
+
+[user]  --------------------------------
+Please respond as a valid JSON string matching this format: 
+
+<output-format>
+{
+  "name": "string",
+  "age": 0
+}
+</output-format>
+
+Match the structure provided, a valid response string might be look like: 
+
+<example-response>
+{ 
+            "name": . . . 
+}
+</example-response>
