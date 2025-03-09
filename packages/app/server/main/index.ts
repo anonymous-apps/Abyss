@@ -49,7 +49,7 @@ function runMigrations() {
     }
 }
 
-// runMigrations();
+runMigrations();
 
 // Create the main application window
 let mainWindow: BrowserWindow | null = null;
