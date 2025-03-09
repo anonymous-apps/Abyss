@@ -12,6 +12,7 @@
         "drizzle": "drizzle-kit push:sqlite",
         "build:mac": "vite build && electron-builder build --mac",
         "debug:mac": "npm run build:mac && dist/mac/Abyss.app/Contents/MacOS/Abyss",
+        "debug:asar": "npx asar extract dist/mac/Abyss.app/Contents/Resources/app.asar ./tmp/extracted-app",
         "publish:mac": "vite build && electron-builder build --mac --publish always",
         "bump": "npm version patch",
         "prisma": "npm run prisma:migrate && npm run prisma:generate",
@@ -19,17 +20,18 @@
         "prisma:migrate": "prisma migrate dev"
     },
     "dependencies": {
-        "@abyss/intelligence": "file:../intelligence",
         "@prisma/client": "^6.4.1",
         "date-fns": "^4.1.0",
         "electron-updater": "^6.3.9",
         "lucide-react": "^0.475.0",
+        "prisma": "^6.4.1",
+        "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "react-markdown": "^8.0.6",
         "react-router": "^7.2.0",
         "react-router-dom": "^7.2.0",
-        "zustand": "^5.0.3",
-        "prisma": "^6.4.1"
+        "uuid": "^11.1.0",
+        "zustand": "^5.0.3"
     },
     "devDependencies": {
         "@headlessui/tailwindcss": "^0.2.0",

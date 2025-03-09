@@ -1,8 +1,6 @@
-import { LanguageModel } from '@abyss/intelligence/src/interfaces/language';
 import { ChatController } from '../controllers/chat';
 import { MessageController } from '../controllers/message';
 import { MessageThreadController } from '../controllers/message-thread';
-import { Intelegence, OpenAIChatBasedLLM } from '@abyss/intelligence';
 import { buildChatContext, buildIntelegenceForChat } from './utils';
 import { ModelConnectionController } from '../controllers/model-connections';
 import { ApiCallController } from '../controllers/api-call';

@@ -15,11 +15,9 @@
         "publish": "npm run publish:mac",
         "publish:mac": "node scripts/generate-icons.js && npm run publish:mac --workspace=packages/app",
         "generate-icons": "node scripts/generate-icons.js",
-        "bump": "npm run bump --workspace=packages/app",
-        "prepare": "husky"
+        "bump": "npm run bump --workspace=packages/app"
     },
     "devDependencies": {
-        "husky": "^9.1.7",
         "icon-gen": "^3.0.1",
         "sharp": "^0.33.2"
     },
