@@ -27,19 +27,21 @@ process.env.DATABASE_URL = dbUrl;
 
 // Run Prisma migrations using the locally bundled CLI
 function runMigrations() {
-    // Try to find the Prisma binary relative to the current file
-    let prismaBinPath = join(__dirname, 'node_modules', '.bin', 'prisma');
+    const possibleBinaryPaths = [
+        join(__dirname, 'node_modules', '.bin', 'prisma'),
+        join(process.resourcesPath, 'app.asar.unpacked', 'node_modules', 'prisma', 'build', 'index.js'),
+    ];
 
-    // If not found there, fall back to the workspace root (process.cwd() should be the workspace root)
-    if (!existsSync(prismaBinPath)) {
-        prismaBinPath = join('..', '..', 'node_modules', '.bin', 'prisma');
-    }
+    const possibleSchemaPaths = [join(__dirname, 'prisma', 'schema.prisma'), join(process.resourcesPath, 'prisma', 'schema.prisma')];
+
+    let prismaBinPath = possibleBinaryPaths.find(path => existsSync(path));
+    let prismaSchemaPath = possibleSchemaPaths.find(path => existsSync(path));
+
     console.log('Using Prisma binary at:', prismaBinPath);
-
+    console.log('Using Prisma schema at:', prismaSchemaPath);
     try {
         console.log('Running Prisma migrations...');
-        // Run the migration command using the local binary
-        execSync(`node ${prismaBinPath} migrate deploy`, { stdio: 'inherit' });
+        execSync(`node ${prismaBinPath} migrate deploy --schema ${prismaSchemaPath}`, { stdio: 'inherit' });
         console.log('Prisma migrations completed.');
     } catch (error) {
         console.error('Error running Prisma migrations:', error);
@@ -47,7 +49,7 @@ function runMigrations() {
     }
 }
 
-runMigrations();
+// runMigrations();
 
 // Create the main application window
 let mainWindow: BrowserWindow | null = null;

@@ -11,6 +11,7 @@
         "build": "npm run build:intelligence && npm run build:mac",
         "build:intelligence": "npm run build --workspace=packages/intelligence",
         "build:mac": "node scripts/generate-icons.js && npm run build:mac --workspace=packages/app",
+        "debug:mac": "npm run debug:mac --workspace=packages/app",
         "publish": "npm run publish:mac",
         "publish:mac": "node scripts/generate-icons.js && npm run publish:mac --workspace=packages/app",
         "generate-icons": "node scripts/generate-icons.js",
