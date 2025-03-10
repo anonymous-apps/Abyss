@@ -52,7 +52,7 @@ export const InputArea = ({ value, onChange, label, placeholder, onKeyDown }: In
     return (
         <div className="flex flex-col gap-1">
             {label && <label className="text-sm text-text-300">{label}</label>}
-            <div className="w-[300px]">
+            <div className="">
                 <textarea
                     value={value}
                     onChange={e => onChange(e.target.value)}

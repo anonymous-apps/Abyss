@@ -7,7 +7,7 @@
         --color-header: #060f45;
 
         --color-background-light: #3a3a3d;
-        --color-background-base: #131314;
+        --color-background-base: #0f0f0f;
         --color-background-slightly-dark: #0f0f10;
         --color-background-dark: #000000;
 
@@ -119,4 +119,8 @@
 
 .markdown th {
     @apply bg-background-dark;
+}
+
+* {
+    scrollbar-width: thin;
 }

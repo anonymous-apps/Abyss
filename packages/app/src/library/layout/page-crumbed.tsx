@@ -18,9 +18,11 @@ interface PageCrumbedProps {
 
 export const PageCrumbed = ({ children, title, subtitle, breadcrumbs, fullWidth, hideSidebar }: PageCrumbedProps) => {
     return (
-        <div className="flex flex-row text-text-base max-h-[100vh] overflow-y-auto">
+        <div className={`flex flex-row text-text-base max-h-[100vh] ${hideSidebar ? 'overflow-y-auto' : ''}`}>
             {!hideSidebar && <Sidebar />}
-            <div className={`w-full px-5 pt-[40px] pb-[60px] mx-auto  ${!fullWidth && 'max-w-4xl'}`}>
+            <div
+                className={`w-full px-5 pt-[40px] pb-[60px] mx-auto  ${!fullWidth && 'max-w-4xl'} ${hideSidebar ? '' : 'overflow-y-auto'}`}
+            >
                 <h1 className="text-xl font-bold mb-2">{title}</h1>
                 {subtitle && <h2 className="text-sm text-text-dark mb-4">{subtitle}</h2>}
                 {breadcrumbs && (

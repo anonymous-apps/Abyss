@@ -24,7 +24,7 @@ export const SidebarItem: React.FC<SidebarItemProps> = ({ title, icon: Icon, url
             }`}
         >
             {isActive && <div className="absolute bg-text-base w-[2px] h-full -right-[1px]"></div>}
-            <Icon size={open ? 16 : 18} />
+            <Icon size={open ? 16 : 18} className="min-w-[16px]" />
             {open && <span>{title}</span>}
         </Link>
     );
@@ -55,7 +55,7 @@ export function Sidebar() {
 
     return (
         <div
-            className={`relative left-0 top-0 h-screen bg-background-dark border-r border-background-light flex flex-col pt-5 ${
+            className={`relative left-0 top-0 h-screen bg-background-dark border-r border-background-light flex flex-col pt-5  ${
                 isSidebarOpen ? 'min-w-[150px]' : 'w-[35px]'
             }`}
         >
