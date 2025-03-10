@@ -24,6 +24,9 @@ jobs:
             - name: Prisma Generate
               run: npm run prisma
 
+            - name: Build
+              run: npm run build
+
             - name: Package & Publish
               run: npm run publish:mac
               env:
