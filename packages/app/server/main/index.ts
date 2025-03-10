@@ -1,6 +1,6 @@
 import { app, BrowserWindow, ipcMain, Menu } from 'electron';
 import { autoUpdater } from 'electron-updater';
-import { execSync } from 'node:child_process';
+import { execSync, fork } from 'node:child_process';
 import fs, { existsSync } from 'node:fs';
 import path, { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -9,9 +9,8 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Set distribution paths (your existing setup)
 process.env.DIST_ELECTRON = join(__dirname, '../');
-process.env.DIST = join(process.env.DIST_ELECTRON, '../dist');
+process.env.DIST = join(process.env.DIST_ELECTRON, '../dist-vite');
 process.env.VITE_PUBLIC = process.env.VITE_DEV_SERVER_URL ? join(process.env.DIST_ELECTRON, '../public') : process.env.DIST;
 
 // Compute a safe user data location (e.g. ~/.abyss)
@@ -25,31 +24,42 @@ const dbPath = path.join(userDataPath, 'database.sqlite');
 const dbUrl = pathToFileURL(dbPath).href;
 process.env.DATABASE_URL = dbUrl;
 
-// Run Prisma migrations using the locally bundled CLI
-function runMigrations() {
-    const possibleBinaryPaths = [
-        join(__dirname, 'node_modules', '.bin', 'prisma'),
-        join(process.resourcesPath, 'app.asar.unpacked', 'node_modules', 'prisma', 'build', 'index.js'),
-    ];
+async function runMigrations() {
+    return new Promise((resolve, reject) => {
+        const possibleMigrationScripts = [
+            path.join(process.resourcesPath, 'scripts', 'run-migrations.cjs'),
+            path.join(__dirname, '..', '..', 'scripts', 'run-migrations.cjs'),
+        ];
 
-    const possibleSchemaPaths = [join(__dirname, 'prisma', 'schema.prisma'), join(process.resourcesPath, 'prisma', 'schema.prisma')];
+        const migrationScript = possibleMigrationScripts.find(script => existsSync(script));
+        console.log('Running migrations from:', migrationScript);
 
-    let prismaBinPath = possibleBinaryPaths.find(path => existsSync(path));
-    let prismaSchemaPath = possibleSchemaPaths.find(path => existsSync(path));
+        // Fork the migration script.
+        const child = fork(migrationScript!, [], {
+            stdio: 'inherit',
+            env: {
+                ...process.env,
+                SKIP_MAIN: 'true',
+            },
+        });
 
-    console.log('Using Prisma binary at:', prismaBinPath);
-    console.log('Using Prisma schema at:', prismaSchemaPath);
-    try {
-        console.log('Running Prisma migrations...');
-        execSync(`node ${prismaBinPath} migrate deploy --schema ${prismaSchemaPath}`, { stdio: 'inherit' });
-        console.log('Prisma migrations completed.');
-    } catch (error) {
-        console.error('Error running Prisma migrations:', error);
-        process.exit(1); // Optionally exit if migrations fail.
-    }
+        child.stdout?.on('data', data => {
+            console.log(`Migration stdout: ${data}`);
+        });
+
+        child.stderr?.on('data', data => {
+            console.error(`Migration stderr: ${data}`);
+        });
+
+        child.on('exit', code => {
+            if (code === 0) {
+                resolve(void 0);
+            } else {
+                reject(new Error(`Migration process exited with code ${code}`));
+            }
+        });
+    });
 }
-
-runMigrations();
 
 // Create the main application window
 let mainWindow: BrowserWindow | null = null;
@@ -90,7 +100,14 @@ if (!app.requestSingleInstanceLock()) {
     process.exit(0);
 }
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
+    try {
+        await runMigrations();
+    } catch (error) {
+        console.error('Migrations failed:', error);
+        app.quit();
+        return;
+    }
     createWindow();
 });
 

@@ -46,7 +46,14 @@ export default defineConfig({
         },
     },
     build: {
-        outDir: 'dist',
+        outDir: 'dist-vite',
+        assetsInlineLimit: 0,
         emptyOutDir: true,
+        sourcemap: true,
+        rollupOptions: {
+            output: {
+                format: 'es',
+            },
+        },
     },
 });
