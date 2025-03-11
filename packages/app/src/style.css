@@ -28,14 +28,14 @@
         --color-background-base: #eeeff4;
         --color-background-slightly-dark: #f6f7fa;
         --color-background-dark: #ffffff;
-        --color-background-transparent: #ffffff44;
+        --color-background-transparent: #05050544;
 
-        --color-primary-light: #b1adcd;
+        --color-primary-light: #656565;
         --color-primary-base: #4536ab;
-        --color-primary-dark: #7f1c1c;
+        --color-primary-dark: #3f1c7f;
 
         --color-text-light: rgb(255, 255, 255);
-        --color-text-base: rgb(25, 25, 25);
+        --color-text-base: rgb(79, 79, 79);
         --color-text-dark: rgb(0, 0, 0);
     }
 }

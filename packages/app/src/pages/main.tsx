@@ -1,6 +1,7 @@
 import React, { ReactNode, useState, useEffect } from 'react';
 import { Box, Database, MessageCircle, Play, Settings, LucideIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useSidebarFadeStore } from '../state/sidebar-fade';
 
 interface NavOptionProps {
     title: string;
@@ -29,8 +30,8 @@ const NavOption: React.FC<NavOptionProps> = ({ title, icon: Icon, children, href
         >
             <Icon size={24} className="mr-4 text-primary" />
             <div className="flex-1">
-                <h3 className="font-medium text-lg mb-1">{title}</h3>
-                <div className="text-sm text-gray-600">{children}</div>
+                <h3 className="text-sm xl:text-lg mb-1">{title}</h3>
+                <div className="text-xs xl:text-sm text-gray-600">{children}</div>
             </div>
         </div>
     );
@@ -39,6 +40,11 @@ const NavOption: React.FC<NavOptionProps> = ({ title, icon: Icon, children, href
 export function MainPage() {
     const [sidebarWidth, setSidebarWidth] = useState('40vw');
     const [contentOpacity, setContentOpacity] = useState(1);
+    const { setSidebarFadeable } = useSidebarFadeStore();
+
+    useEffect(() => {
+        setSidebarFadeable(true);
+    }, []);
 
     const handleNavigation = () => {
         setSidebarWidth('150px');
@@ -69,7 +75,7 @@ export function MainPage() {
             {/* Right Side - Options with minimal styling */}
             <div
                 className="bg-white p-8 overflow-auto flex-1 flex items-center justify-center transition-all duration-300"
-                style={{ paddingLeft: `calc(100vw - calc(60vw + ${sidebarWidth}))` }}
+                style={{ paddingLeft: `calc(100vw - calc(60vw + ${sidebarWidth}) + 20px)` }}
             >
                 <div className="max-w-2xl w-full space-y-4 transition-all duration-300" style={{ opacity: contentOpacity }}>
                     <NavOption title="Models" icon={Box} href="/model-connection" onNavigate={handleNavigation}>

@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router';
 import { MainPage } from './pages/main';
-import { AbyssBackground } from './library/layout/background';
 import { HeaderBar } from './library/layout/header-bar';
 import { ModelProfileMainPage } from './pages/model-connections/main';
 import { ModelProfileCreatePage } from './pages/model-connections/create';
@@ -27,7 +26,6 @@ export function App() {
     return (
         <div className={`${userSettings.data?.theme || 'abyss'} text-text-base`}>
             <HeaderBar />
-            <AbyssBackground />
             <BrowserRouter>
                 <Routes>
                     <Route path="/" element={<MainPage />} />

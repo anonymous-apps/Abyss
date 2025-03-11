@@ -2,6 +2,7 @@ import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { Box, DatabaseIcon, MessageSquare, Play, Settings, type LucideIcon } from 'lucide-react';
+import { useSidebarFadeStore } from '../../state/sidebar-fade';
 
 export interface SidebarItemProps {
     title: string;
@@ -17,9 +18,7 @@ export const SidebarItem: React.FC<SidebarItemProps> = ({ title, icon: Icon, url
         <Link
             to={url}
             className={`relative flex items-center gap-2 px-2 py-1 transition-colors text-xs ${
-                isActive
-                    ? 'bg-primary-base text-text-light'
-                    : 'text-text-300 opacity-70 hover:opacity-100 hover:bg-primary-950 hover:text-text-200'
+                isActive ? 'bg-primary-base text-text-light' : 'pacity-70 hover:opacity-100 hover:bg-primary-950 hover:text-text-200'
             }`}
         >
             <Icon size={16} className="min-w-[16px]" />
@@ -35,14 +34,29 @@ interface SidebarSectionProps {
 const SidebarSection: React.FC<SidebarSectionProps> = ({ title }) => {
     return (
         <div className="flex flex-col gap-1">
-            <div className="text-text-500 text-xs rounded-sm py-1 mt-5 mb-1 px-2">{title}</div>
+            <div className="text-text-500 text-xs rounded-sm py-1 mt-5 mb-1 px-2 opacity-50">{title}</div>
         </div>
     );
 };
 
 export function Sidebar() {
+    const { sidebarFadeable, setSidebarFadeable } = useSidebarFadeStore();
+    const [opacity, setOpacity] = React.useState(sidebarFadeable ? 0 : 1);
+
+    React.useEffect(() => {
+        const timer = setTimeout(() => {
+            setOpacity(1);
+            setSidebarFadeable(false);
+        }, 100);
+
+        return () => clearTimeout(timer);
+    }, []);
+
     return (
-        <div className="relative left-0 top-0 h-screen border-r border-background-light flex flex-col pt-5 min-w-[150px]">
+        <div
+            className="relative left-0 top-0 h-screen border-r border-background-light flex flex-col pt-5 min-w-[150px] bg-background-transparent transition-opacity duration-300 text-text-light"
+            style={{ opacity }}
+        >
             <SidebarSection title="Activity" />
             <SidebarItem title="Chats" icon={MessageSquare} url="/chats" />
             <SidebarSection title="Configuration" />
