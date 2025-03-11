@@ -21,6 +21,17 @@ export function ViewTableRecordPage() {
         record.refetch();
     }, [path.pathname]);
 
+    const breadcrumbs = [
+        { name: 'Home', url: '/' },
+        { name: 'Database', url: '/database' },
+        { name: id!, url: `/database/id/${id}` },
+        { name: recordId!, url: `/database/id/${id}/record/${recordId}` },
+    ];
+
+    if (!record.data) {
+        return <PageCrumbed title={`Record: ${recordId}`} breadcrumbs={breadcrumbs} />;
+    }
+
     const newDataObject: Record<string, any> = {};
     for (const key of Object.keys(record.data || {})) {
         if (key !== 'data') {
@@ -29,7 +40,6 @@ export function ViewTableRecordPage() {
     }
 
     // Some custom renderers
-
     let content = <LabelValue data={newDataObject} />;
     if (id === 'renderedConversationThread') {
         delete newDataObject['messages'];
@@ -42,18 +52,8 @@ export function ViewTableRecordPage() {
     }
 
     return (
-        <PageCrumbed
-            title={`Record: ${recordId}`}
-            breadcrumbs={[
-                { name: 'Home', url: '/' },
-                { name: 'Database', url: '/database' },
-                { name: id!, url: `/database/id/${id}` },
-                { name: recordId!, url: `/database/id/${id}/record/${recordId}` },
-            ]}
-            fullWidth
-        >
-            {!record.data && <div>Loading...</div>}
-            {record.data && content}
+        <PageCrumbed title={`Record: ${recordId}`} breadcrumbs={breadcrumbs}>
+            {content}
         </PageCrumbed>
     );
 }

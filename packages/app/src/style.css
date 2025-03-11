@@ -6,10 +6,11 @@
     html[data-theme='abyss'] {
         --color-header: #060f45;
 
-        --color-background-light: #3a3a3d;
+        --color-background-light: #000000;
         --color-background-base: #0f0f0f;
         --color-background-slightly-dark: #0f0f10;
         --color-background-dark: #000000;
+        --color-background-transparent: #00000000;
 
         --color-primary-light: #19215e;
         --color-primary-base: #0e57c3;
@@ -27,12 +28,13 @@
         --color-background-base: #eeeff4;
         --color-background-slightly-dark: #f6f7fa;
         --color-background-dark: #ffffff;
+        --color-background-transparent: #ffffff44;
 
-        --color-primary-light: #ffaaaa;
-        --color-primary-base: #e95a5a;
+        --color-primary-light: #b1adcd;
+        --color-primary-base: #4536ab;
         --color-primary-dark: #7f1c1c;
 
-        --color-text-light: rgb(48, 48, 48);
+        --color-text-light: rgb(255, 255, 255);
         --color-text-base: rgb(25, 25, 25);
         --color-text-dark: rgb(0, 0, 0);
     }
@@ -40,12 +42,6 @@
 
 .menuDragSection {
     -webkit-app-region: drag;
-}
-
-.rubik-glitch-regular {
-    font-family: 'Rubik Glitch', serif;
-    font-weight: 400;
-    font-style: normal;
 }
 
 * {

@@ -47,7 +47,7 @@ export function ChatViewPage() {
     };
 
     return (
-        <PageCrumbed title={`${chat.model.name}: ${chat.chat.name}`} subtitle={chat.chat.description || undefined} hideSidebar>
+        <PageCrumbed title={`${chat.model.name}: ${chat.chat.name}`} subtitle={chat.chat.description || undefined}>
             {chat.messages.map(m => (
                 <ChatMessageSection message={m} key={m.id} />
             ))}

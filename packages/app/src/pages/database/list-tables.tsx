@@ -7,24 +7,28 @@ import { useNavigate } from 'react-router-dom';
 import { useDatabaseQuery } from '../../state/database-connection';
 import { GhostIconButton } from '../../library/input/button';
 
+const pageTitle = 'Local Database Explorer';
+const pageBreadcrumbs = [
+    { name: 'Home', url: '/' },
+    { name: 'Database', url: '/database' },
+];
+
 export function ListTablesPage() {
     const navigate = useNavigate();
     const allTables = useDatabaseQuery(async database => database.describeTables());
 
     if (allTables.loading || !allTables.data) {
-        return <></>;
+        return (
+            <PageCrumbed title={pageTitle} breadcrumbs={pageBreadcrumbs}>
+                {/* Empty content while loading */}
+            </PageCrumbed>
+        );
     }
 
     const sorted = allTables.data.sort((a, b) => a.name.localeCompare(b.name));
 
     return (
-        <PageCrumbed
-            title="Local Database Explorer"
-            breadcrumbs={[
-                { name: 'Home', url: '/' },
-                { name: 'Database', url: '/database' },
-            ]}
-        >
+        <PageCrumbed title={pageTitle} breadcrumbs={pageBreadcrumbs}>
             <IconSection
                 title="Database Tables"
                 icon={Table}

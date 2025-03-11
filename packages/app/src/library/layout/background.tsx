@@ -32,7 +32,7 @@ export const AbyssBackground: React.FC = () => {
     }, []);
 
     return (
-        <div className="-z-50 fixed inset-0 overflow-hidden pointer-events-none bg-background-base overflow-y-hidden">
+        <div className="-z-50 fixed inset-0 overflow-hidden pointer-events-none overflow-y-hidden">
             {/* Inline keyframes for the upward floating animation */}
             <style>{`
         @keyframes floatUp {

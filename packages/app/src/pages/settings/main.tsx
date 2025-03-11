@@ -1,8 +1,6 @@
-import { ModelConnections } from '@prisma/client';
 import { Box, Download, Link, PaintBucket, Plus, RefreshCcw } from 'lucide-react';
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Button, GhostButton, GhostIconButton, IconButton } from '../../library/input/button';
+import { GhostIconButton } from '../../library/input/button';
 import { IconSection } from '../../library/layout/icon-section';
 import { PageCrumbed } from '../../library/layout/page-crumbed';
 import { useDatabaseTableSubscription } from '../../state/database-connection';
@@ -10,26 +8,31 @@ import { Select } from '../../library/input/select';
 import { Database } from '../../main';
 import { AppUpdaterStatus, useAppUpdator } from '../../state/app-updater';
 
+const pageTitle = 'Abyss Settings';
+const pageBreadcrumbs = [
+    { name: 'Home', url: '/' },
+    { name: 'Settings', url: '/settings' },
+];
+
+const updateerMessage = (status: AppUpdaterStatus) => {
+    switch (status) {
+        case AppUpdaterStatus.IDLE:
+            return 'No updates available';
+        case AppUpdaterStatus.DOWNLOADING:
+            return 'Downloading updates...';
+        case AppUpdaterStatus.READY_TO_INSTALL:
+            return 'Updates downloaded';
+        case AppUpdaterStatus.ERROR:
+            return 'Error downloading updates';
+    }
+};
+
 export function SettingsPage() {
     const updater = useAppUpdator();
     const settings = useDatabaseTableSubscription('UserSettings', database => database.table.userSettings.get());
 
-    const updateerMessage = () => {
-        switch (updater.status) {
-            case AppUpdaterStatus.IDLE:
-                return 'No updates available';
-            case AppUpdaterStatus.DOWNLOADING:
-                return 'Downloading updates...';
-            case AppUpdaterStatus.READY_TO_INSTALL:
-                return 'Updates downloaded';
-            case AppUpdaterStatus.ERROR:
-                return 'Error downloading updates';
-        }
-    };
-    const navigate = useNavigate();
-
     if (!settings.data) {
-        return <></>;
+        return <PageCrumbed title={pageTitle} breadcrumbs={pageBreadcrumbs} />;
     }
 
     const onChangeAppTheme = (theme: string) => {
@@ -37,13 +40,7 @@ export function SettingsPage() {
     };
 
     return (
-        <PageCrumbed
-            title="Abyss Settings"
-            breadcrumbs={[
-                { name: 'Home', url: '/' },
-                { name: 'Settings', url: '/settings' },
-            ]}
-        >
+        <PageCrumbed title={pageTitle} breadcrumbs={pageBreadcrumbs}>
             <IconSection icon={PaintBucket} title="App Theme">
                 <Select
                     value={settings.data.theme || 'abyss'}
@@ -70,7 +67,7 @@ export function SettingsPage() {
                         Tracking updates from GitHub <Link className="inline-block" size={16} />
                     </a>
                     <div className="flex flex-row gap-2">
-                        <div className="text-text-base">{updateerMessage()}</div>
+                        <div className="text-text-base">{updateerMessage(updater.status)}</div>
                     </div>
                 </div>
             </IconSection>

@@ -48,7 +48,6 @@ export function ChatCreatePage() {
                 { name: 'Chats', url: '/chats' },
                 { name: 'New Conversation', url: '/chats/create' },
             ]}
-            hideSidebar
         >
             <div className="text-xl font-bold">Start new chat</div>
             <Select

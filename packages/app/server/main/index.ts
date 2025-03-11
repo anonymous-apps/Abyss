@@ -80,12 +80,16 @@ async function createWindow() {
         width: 1200,
         height: 800,
         frame: false,
+        transparent: true,
+        backgroundColor: '#00000000',
         titleBarStyle: 'hidden',
+        vibrancy: 'fullscreen-ui',
+        movable: true,
+        center: true,
+        kiosk: false,
+        fullscreen: false,
+        visualEffectState: 'active', // Ensures the effect is always active
     });
-
-    if (process.env.VITE_DEV_SERVER_URL) {
-        mainWindow.webContents.openDevTools();
-    }
 
     if (url) {
         mainWindow.loadURL(url);

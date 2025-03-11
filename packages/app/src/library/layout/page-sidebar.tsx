@@ -17,7 +17,7 @@ export function PageSidebar({ items, children, header }: PageSidebarProps) {
             <div className="left-0 top-0 w-[250px] h-screen border-r border-background-light flex flex-col gap-1 bg-background-dark">
                 {header}
                 {items.map((item, index) => (
-                    <SidebarItem key={index} {...item} open />
+                    <SidebarItem key={index} {...item} />
                 ))}
                 {items.length === 0 && (
                     <div className="flex flex-col gap-1">
@@ -25,7 +25,7 @@ export function PageSidebar({ items, children, header }: PageSidebarProps) {
                     </div>
                 )}
             </div>
-            <div className="w-full h-full overflow-y-auto">{children}</div>
+            <div className="w-full h-full overflow-y-auto bg-background-dark">{children}</div>
         </div>
     );
 }
