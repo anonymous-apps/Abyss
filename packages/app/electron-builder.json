@@ -1,7 +1,8 @@
 {
-    "asar": false,
+    "asar": true,
     "asarUnpack": ["**/node_modules/@prisma/client/**", "**/node_modules/.prisma/client/**"],
     "afterPack": "scripts/duplicate-prisma.cjs",
+    "afterSign": "scripts/notarize.cjs",
     "appId": "com.abyssal.abyss",
     "productName": "Abyss",
     "directories": {
@@ -32,7 +33,10 @@
         "artifactName": "${productName}-${version}-${arch}-mac.zip",
         "icon": "../../build/icon.icns",
         "gatekeeperAssess": false,
-        "identity": null
+        "entitlements": "mac/entitlements.mac.plist",
+        "entitlementsInherit": "mac/entitlements.mac.plist",
+        "identity": "Eric Robertson",
+        "hardenedRuntime": true
     },
     "publish": {
         "provider": "github",
