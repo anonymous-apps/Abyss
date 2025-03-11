@@ -1,0 +1,42 @@
+{
+    "asar": false,
+    "asarUnpack": ["**/node_modules/@prisma/client/**", "**/node_modules/.prisma/client/**"],
+    "afterPack": "scripts/duplicate-prisma.cjs",
+    "appId": "com.abyssal.abyss",
+    "productName": "Abyss",
+    "directories": {
+        "output": "dist"
+    },
+    "electronVersion": "34.2.0",
+    "files": ["dist-electron/**/*", "dist-vite/**/*", "node_modules/.prisma/**/*"],
+    "extraResources": [
+        {
+            "from": "prisma",
+            "to": "prisma"
+        },
+        {
+            "from": "scripts",
+            "to": "scripts"
+        },
+        "node_modules/.prisma/**/*",
+        "node_modules/@prisma/**/*"
+    ],
+    "mac": {
+        "target": [
+            {
+                "target": "zip",
+                "arch": ["arm64", "x64"]
+            },
+            "dmg"
+        ],
+        "artifactName": "${productName}-${version}-${arch}-mac.zip",
+        "icon": "../../build/icon.icns",
+        "gatekeeperAssess": false,
+        "identity": null
+    },
+    "publish": {
+        "provider": "github",
+        "owner": "abyss-mcp",
+        "repo": "Abyss"
+    }
+}

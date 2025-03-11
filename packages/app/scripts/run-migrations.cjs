@@ -6,7 +6,7 @@ console.log('Running migrations from dir:', __dirname);
 
 const possibleBinaryPaths = [
     path.join(__dirname, '..', '..', '..', 'node_modules', 'prisma', 'build', 'index.js'),
-    path.join(process.resourcesPath, 'app', 'node_modules', 'prisma', 'build', 'index.js'),
+    path.join(process.resourcesPath, 'app.asar.unpacked', 'node_modules', 'prisma', 'build', 'index.js'),
 ];
 const prismaBinPath = possibleBinaryPaths.find(path => fs.existsSync(path));
 

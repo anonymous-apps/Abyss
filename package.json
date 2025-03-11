@@ -23,6 +23,8 @@
         "sharp": "^0.33.2"
     },
     "dependencies": {
+        "@electron/notarize": "^2.5.0",
+        "electron-notarize": "^1.2.2",
         "react-markdown": "^8.0.6"
     }
 }

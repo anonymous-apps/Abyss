@@ -10,14 +10,15 @@
     "scripts": {
         "dev": "vite",
         "drizzle": "drizzle-kit push:sqlite",
-        "build:mac": "vite build && electron-builder build --mac",
+        "build:mac": "vite build && npm run prisma && electron-builder build --mac",
         "debug:mac": "npm run build:mac && dist/mac/Abyss.app/Contents/MacOS/Abyss",
         "debug:asar": "npx asar extract dist/mac/Abyss.app/Contents/Resources/app.asar ./tmp/extracted-app",
         "publish:mac": "vite build && electron-builder build --mac --publish always",
         "bump": "npm version patch",
-        "prisma": "DATABASE_URL=file:./dev.db npm run prisma:migrate && npm run prisma:generate",
+        "prisma": "DATABASE_URL=file:./dev.db npm run prisma:migrate && npm run prisma:generate && npm run prisma:copy",
         "prisma:generate": "prisma generate",
-        "prisma:migrate": "prisma migrate dev"
+        "prisma:migrate": "prisma migrate dev",
+        "prisma:copy": "node scripts/copy-prisma-client.cjs"
     },
     "dependencies": {
         "@prisma/client": "^6.4.1",
@@ -46,52 +47,5 @@
         "electron-builder": "^23.6.0",
         "vite-plugin-electron": "^0.28.0",
         "vite-plugin-electron-renderer": "^0.14.5"
-    },
-    "build": {
-        "asar": false,
-        "asarUnpack": [
-            "**/node_modules/@prisma/client/**",
-            "**/node_modules/.prisma/client/**"
-        ],
-        "afterPack": "scripts/duplicate-prisma.cjs",
-        "appId": "com.abyssal.abyss",
-        "productName": "Abyss",
-        "directories": {
-            "output": "dist"
-        },
-        "electronVersion": "34.2.0",
-        "files": [
-            "dist-electron/**/*",
-            "dist-vite/**/*"
-        ],
-        "extraResources": [
-            {
-                "from": "prisma",
-                "to": "prisma"
-            },
-            {
-                "from": "scripts",
-                "to": "scripts"
-            }
-        ],
-        "mac": {
-            "target": [
-                {
-                    "target": "zip",
-                    "arch": [
-                        "arm64",
-                        "x64"
-                    ]
-                },
-                "dmg"
-            ],
-            "artifactName": "${productName}-${version}-${arch}-mac.zip",
-            "icon": "../../build/icon.icns"
-        },
-        "publish": {
-            "provider": "github",
-            "owner": "abyss-mcp",
-            "repo": "Abyss"
-        }
     }
 }

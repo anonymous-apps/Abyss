@@ -4,3 +4,4 @@ dist
 prisma/dev.*
 dist-vite
 *.db
+.env
