@@ -2,6 +2,10 @@ import { Prisma } from '@prisma/client';
 import { notifyTableChanged, prisma } from '../database-connection';
 
 export const RenderedThreadController = {
+    removeAll: async () => {
+        await prisma.renderedConversationThread.deleteMany();
+        await notifyTableChanged('renderedThread', '*');
+    },
     scanTable: async () => {
         return await prisma.renderedConversationThread.findMany();
     },

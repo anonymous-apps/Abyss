@@ -2,6 +2,10 @@ import { Prisma } from '@prisma/client';
 import { notifyTableChanged, prisma } from '../database-connection';
 
 export const ActionDefinitionsController = {
+    removeAll: async () => {
+        await prisma.actionDefinitions.deleteMany();
+        await notifyTableChanged('ActionDefinitions', '*');
+    },
     scanTable: async () => {
         return await prisma.actionDefinitions.findMany({ orderBy: { createdAt: 'desc' } });
     },

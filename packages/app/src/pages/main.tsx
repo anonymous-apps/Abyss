@@ -1,14 +1,24 @@
 import React, { ReactNode, useState, useEffect } from 'react';
-import { Box, Database, MessageCircle, Play, Settings, LucideIcon } from 'lucide-react';
+import { Box, MessageCircle, Play, Settings, LucideIcon, DatabaseIcon } from 'lucide-react';
 import { useSidebarFadeStore } from '../state/sidebar-fade';
 import { ClickableIconOption } from '../library/layout/nav-options';
 import { useNavigate } from 'react-router';
-
+import { useDatabaseTableSubscription } from '../state/database-connection';
+import { Database } from '../main';
 export function MainPage() {
     const navigate = useNavigate();
     const [sidebarWidth, setSidebarWidth] = useState('40vw');
     const [contentOpacity, setContentOpacity] = useState(1);
     const { setSidebarFadeable } = useSidebarFadeStore();
+    const userSettings = useDatabaseTableSubscription('UserSettings', async database => database.table.userSettings.get());
+    const [bootstrapped, setBootstrapped] = useState(false);
+
+    useEffect(() => {
+        if (!userSettings.loading && userSettings.data && !userSettings.data.bootstrapped && !bootstrapped) {
+            Database.bootstrap.bootstrapping.bootstrapDB();
+            setBootstrapped(true);
+        }
+    }, [bootstrapped, userSettings.loading]);
 
     useEffect(() => {
         setSidebarFadeable(true);
@@ -58,7 +68,7 @@ export function MainPage() {
                         Connect to MCP servers and leverage their actions to automate your workflows, or build your own actions.
                     </ClickableIconOption>
 
-                    <ClickableIconOption title="Database" icon={Database} onClick={() => handleNavigation('/database')}>
+                    <ClickableIconOption title="Database" icon={DatabaseIcon} onClick={() => handleNavigation('/database')}>
                         View saved data stored on your machine. All data is stored locally in sqlite and can be accessed by you at any time.
                     </ClickableIconOption>
 

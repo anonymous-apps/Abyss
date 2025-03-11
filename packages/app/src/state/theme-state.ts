@@ -10,6 +10,6 @@ export async function applyTheme() {
 export async function useTheme() {
     const userSettings = useDatabaseTableSubscription('UserSettings', db => db.table.userSettings.get());
     useEffect(() => {
-        document.documentElement.setAttribute('data-theme', userSettings.data?.theme || 'abyss');
+        document.documentElement.setAttribute('data-theme', userSettings.data?.theme || 'etherial');
     }, [userSettings.data?.theme]);
 }

@@ -31,7 +31,8 @@ model UserSettings {
   id            String   @id @default("default")
   sidebarOpen   Boolean  @default(false)
   lastPage      String?
-  theme         String? 
+  theme         String?
+  bootstrapped  Boolean  @default(false)
 }
 
 // A chat with someone
@@ -122,7 +123,8 @@ model ActionDefinitions {
   description   String?
 
   // Actions can take different types
-  type          String
+  owner         String  // SYSTEM | USER
+  type          String  // NODEJS | SYSTEM
   data          Json?
 
   // Time

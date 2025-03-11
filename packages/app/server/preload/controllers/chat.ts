@@ -2,6 +2,10 @@ import { Prisma } from '@prisma/client';
 import { notifyTableChanged, prisma } from '../database-connection';
 
 export const ChatController = {
+    removeAll: async () => {
+        await prisma.chat.deleteMany();
+        await notifyTableChanged('Chat', '*');
+    },
     scanTable: async () => {
         return await prisma.chat.findMany({ orderBy: { createdAt: 'desc' } });
     },

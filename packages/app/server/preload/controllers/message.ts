@@ -2,6 +2,10 @@ import { Prisma } from '@prisma/client';
 import { notifyTableChanged, prisma } from '../database-connection';
 
 export const MessageController = {
+    removeAll: async () => {
+        await prisma.message.deleteMany();
+        await notifyTableChanged('Message', '*');
+    },
     scanTable: async () => {
         return await prisma.message.findMany();
     },

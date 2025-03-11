@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router';
 interface DatabaseTableProps {
     table: string;
     records: Record<string, any>[];
+    onPurgeTable;
 }
 
 export function TableKeyValue({ table, column, value }: { table: string; column: string; value: string }) {

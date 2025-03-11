@@ -1,10 +1,10 @@
-import { Box, Folder, GhostIcon, Table, TableIcon } from 'lucide-react';
+import { Box, Folder, GhostIcon, Play, Table, TableIcon, Workflow } from 'lucide-react';
 import React from 'react';
 import { IconSection } from '../../library/layout/icon-section';
 import { PageCrumbed } from '../../library/layout/page-crumbed';
 import { Database } from '../../main';
 import { useNavigate } from 'react-router-dom';
-import { useDatabaseQuery } from '../../state/database-connection';
+import { useDatabaseQuery, useDatabaseTableSubscription } from '../../state/database-connection';
 import { GhostIconButton } from '../../library/input/button';
 import { WithSidebar } from '../../library/layout/sidebar';
 
@@ -16,12 +16,11 @@ const pageBreadcrumbs = [
 
 export function ListTablesPage() {
     const navigate = useNavigate();
+    const userSettings = useDatabaseTableSubscription('UserSettings', async database => database.table.userSettings.get());
     const allTables = useDatabaseQuery(async database => database.describeTables());
 
-    const content =
-        allTables.loading || !allTables.data ? (
-            <div className="text-text-base">Loading database tables...</div>
-        ) : (
+    const content = allTables.data && (
+        <>
             <IconSection
                 title="Database Tables"
                 icon={Table}
@@ -47,7 +46,17 @@ export function ListTablesPage() {
                         </div>
                     ))}
             </IconSection>
-        );
+
+            <IconSection
+                title="Database Bootstapping"
+                icon={Workflow}
+                subtitle="Bootstrapping the database will create the a handful of records that are useful or otherwise required to use Abyss. This is done automatically when you first open the application, but you can re-run this process at any time. Doing so will re-create these records, possibly leading to duplicate data."
+                action={<GhostIconButton icon={Play} onClick={() => Database.bootstrap.bootstrapping.bootstrapDB()} />}
+            >
+                Bootstrap Status: {userSettings.data?.bootstrapped ? 'Completed' : 'Not Completed'}
+            </IconSection>
+        </>
+    );
 
     return (
         <WithSidebar>

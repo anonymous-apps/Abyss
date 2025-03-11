@@ -1,8 +1,7 @@
 import { ActionDefinitions } from '@prisma/client';
-import { Box, Plus } from 'lucide-react';
+import { Box, Hammer, Plus } from 'lucide-react';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { GhostIconButton } from '../../library/input/button';
 import { IconSection } from '../../library/layout/icon-section';
 import { PageCrumbed } from '../../library/layout/page-crumbed';
 import { useDatabaseTableSubscription } from '../../state/database-connection';
@@ -25,12 +24,26 @@ export function ActionsPage() {
     // Subscribe to the actions table and get the data whenever it changes
     const Actions = useDatabaseTableSubscription('ActionDefinitions', async database => database.table.actionDefinitions.scanTable());
 
-    // Navigate to the action creation page
-    const navigate = useNavigate();
+    const systemActions = Actions.data?.filter(action => action.owner === 'SYSTEM');
+    const localActions = Actions.data?.filter(action => action.owner === 'USER');
 
-    const createActionElement = () => {
-        return <GhostIconButton icon={Plus} onClick={() => navigate('/actions/create')} />;
-    };
+    const content = !Actions.loading && Actions.data && (
+        <>
+            <IconSection title="Defined Local Actions" icon={Box}>
+                {localActions?.map(action => (
+                    <ActionCard key={action.id} action={action} />
+                ))}
+                {localActions?.length === 0 && <div className="text-text-500 text-sm">No defined actions</div>}
+            </IconSection>
+
+            <IconSection title="Defined System Actions" icon={Hammer}>
+                {systemActions?.map(action => (
+                    <ActionCard key={action.id} action={action} />
+                ))}
+                {systemActions?.length === 0 && <div className="text-text-500 text-sm">No defined actions</div>}
+            </IconSection>
+        </>
+    );
 
     return (
         <WithSidebar>
@@ -41,12 +54,7 @@ export function ActionsPage() {
                     { name: 'Actions', url: '/actions' },
                 ]}
             >
-                <IconSection title="Defined Local Actions" icon={Box} action={createActionElement()}>
-                    {Actions.data?.map(action => (
-                        <ActionCard key={action.id} action={action} />
-                    ))}
-                    {Actions.data?.length === 0 && <div className="text-text-500 text-sm">No defined actions</div>}
-                </IconSection>
+                {content}
             </PageCrumbed>
         </WithSidebar>
     );

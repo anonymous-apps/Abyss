@@ -11,7 +11,8 @@ import { ChatController } from './controllers/chat';
 import { RenderedThreadController } from './controllers/rendered-thread';
 import { AskAiToRespondToChat } from './workflows/ask-ai-respond-thread';
 import { AskAiToTitleConversation } from './workflows/ask-ai-to-title-conversation';
-
+import { ActionDefinitionsController } from './controllers/action-definitions';
+import { PrismaBoostrapper } from './bootstrap/bootstrapData';
 // Setup prisma to support sqlite
 const require = createRequire(import.meta.url);
 const prismaModule = require('@prisma/client') as {
@@ -29,41 +30,45 @@ const subscriberRegistry = new Map<string, (data: any) => void>();
 
 export function addTableSubscriber(table: string, handler: (data: any) => void) {
     const subscriberId = uuidv4();
-    if (!subscribersById.has(table)) {
-        subscribersById.set(table, { subscribers: [], byRecord: {} });
+    const tableKey = table.toLowerCase();
+    if (!subscribersById.has(tableKey)) {
+        subscribersById.set(tableKey, { subscribers: [], byRecord: {} });
     }
-    subscribersById.get(table)!.subscribers.push(subscriberId);
+    subscribersById.get(tableKey)!.subscribers.push(subscriberId);
     subscriberRegistry.set(subscriberId, handler);
     return subscriberId;
 }
 
 export function addRecordSubscriber(table: string, recordId: string, handler: (data: any) => void) {
     const subscriberId = uuidv4();
-    if (!subscribersById.has(table)) {
-        subscribersById.set(table, { subscribers: [], byRecord: {} });
+    const tableKey = table.toLowerCase();
+    if (!subscribersById.has(tableKey)) {
+        subscribersById.set(tableKey, { subscribers: [], byRecord: {} });
     }
-    if (!subscribersById.get(table)!.byRecord[recordId]) {
-        subscribersById.get(table)!.byRecord[recordId] = [];
+    if (!subscribersById.get(tableKey)!.byRecord[recordId]) {
+        subscribersById.get(tableKey)!.byRecord[recordId] = [];
     }
-    subscribersById.get(table)!.byRecord[recordId].push(subscriberId);
+    subscribersById.get(tableKey)!.byRecord[recordId].push(subscriberId);
     subscriberRegistry.set(subscriberId, handler);
     return subscriberId;
 }
 
 export function removeTableSubscriber(table: string, subscriberId: string) {
-    if (!subscribersById.has(table)) {
+    const tableKey = table.toLowerCase();
+    if (!subscribersById.has(tableKey)) {
         return;
     }
-    subscribersById.get(table)!.subscribers = subscribersById.get(table)!.subscribers.filter(s => s !== subscriberId);
+    subscribersById.get(tableKey)!.subscribers = subscribersById.get(tableKey)!.subscribers.filter(s => s !== subscriberId);
     subscriberRegistry.delete(subscriberId);
 }
 
 export function removeRecordSubscriber(table: string, recordId: string, subscriberId: string) {
-    if (!subscribersById.has(table)) {
+    const tableKey = table.toLowerCase();
+    if (!subscribersById.has(tableKey)) {
         return;
     }
 
-    const tableSubscriber = subscribersById.get(table)!;
+    const tableSubscriber = subscribersById.get(tableKey)!;
     const recordSubscribers = tableSubscriber.byRecord[recordId];
     if (!recordSubscribers) {
         return;
@@ -75,10 +80,11 @@ export function removeRecordSubscriber(table: string, recordId: string, subscrib
 }
 
 export function notifyTableChanged(table: string, recordId?: string) {
-    if (!subscribersById.has(table)) {
+    const tableKey = table.toLowerCase();
+    if (!subscribersById.has(tableKey)) {
         return;
     }
-    const tableSubscriber = subscribersById.get(table)!;
+    const tableSubscriber = subscribersById.get(tableKey)!;
     const subscribers = tableSubscriber.subscribers;
 
     for (const subscriberId of subscribers) {
@@ -113,6 +119,7 @@ const tableControllers = {
     apiCall: ApiCallController,
     renderedConversationThread: RenderedThreadController,
     chat: ChatController,
+    actionDefinitions: ActionDefinitionsController,
 };
 
 const PrismaAPI = {
@@ -152,6 +159,10 @@ const PrismaAPI = {
     workflows: {
         askAIToRespondToChat: AskAiToRespondToChat,
         titleConversation: AskAiToTitleConversation,
+    },
+
+    bootstrap: {
+        bootstrapping: PrismaBoostrapper,
     },
 };
 

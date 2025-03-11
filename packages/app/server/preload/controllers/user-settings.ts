@@ -2,6 +2,10 @@ import { Prisma } from '@prisma/client';
 import { notifyTableChanged, prisma } from '../database-connection';
 
 export const UserSettingsController = {
+    removeAll: async () => {
+        await prisma.userSettings.deleteMany();
+        await notifyTableChanged('UserSettings', '*');
+    },
     scanTable: async () => {
         return await prisma.userSettings.findMany();
     },
