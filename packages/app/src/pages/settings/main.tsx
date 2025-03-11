@@ -39,14 +39,7 @@ export function SettingsPage() {
     const content = settings.data && (
         <>
             <IconSection icon={PaintBucket} title="App Theme">
-                <Select
-                    value={settings.data.theme || 'abyss'}
-                    onChange={onChangeAppTheme}
-                    options={[
-                        { value: 'abyss', label: 'Abyss' },
-                        { value: 'etherial', label: 'Etherial' },
-                    ]}
-                />
+                <Select value={settings.data.theme || 'abyss'} onChange={onChangeAppTheme} options={[{ value: 'abyss', label: 'Abyss' }]} />
             </IconSection>
 
             <IconSection
