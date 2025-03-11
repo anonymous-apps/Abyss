@@ -6,6 +6,7 @@ import { GhostIconButton } from '../../library/input/button';
 import { IconSection } from '../../library/layout/icon-section';
 import { PageCrumbed } from '../../library/layout/page-crumbed';
 import { useDatabaseTableSubscription } from '../../state/database-connection';
+import { WithSidebar } from '../../library/layout/sidebar';
 
 function ActionCard({ action }: { action: ActionDefinitions }) {
     const navigate = useNavigate();
@@ -32,19 +33,21 @@ export function ActionsPage() {
     };
 
     return (
-        <PageCrumbed
-            title="Integrated Actions"
-            breadcrumbs={[
-                { name: 'Home', url: '/' },
-                { name: 'Actions', url: '/actions' },
-            ]}
-        >
-            <IconSection title="Defined Local Actions" icon={Box} action={createActionElement()}>
-                {Actions.data?.map(action => (
-                    <ActionCard key={action.id} action={action} />
-                ))}
-                {Actions.data?.length === 0 && <div className="text-text-500 text-sm">No defined actions</div>}
-            </IconSection>
-        </PageCrumbed>
+        <WithSidebar>
+            <PageCrumbed
+                title="Integrated Actions"
+                breadcrumbs={[
+                    { name: 'Home', url: '/' },
+                    { name: 'Actions', url: '/actions' },
+                ]}
+            >
+                <IconSection title="Defined Local Actions" icon={Box} action={createActionElement()}>
+                    {Actions.data?.map(action => (
+                        <ActionCard key={action.id} action={action} />
+                    ))}
+                    {Actions.data?.length === 0 && <div className="text-text-500 text-sm">No defined actions</div>}
+                </IconSection>
+            </PageCrumbed>
+        </WithSidebar>
     );
 }

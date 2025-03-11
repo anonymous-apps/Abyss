@@ -9,6 +9,7 @@ import { DatabaseTable, TableKeyValue } from '../../library/content/database-tab
 import { LabelValue } from '../../library/layout/label-value';
 import { CustomRendererForConversationThread } from './custom/rendered-conversation-thread';
 import { RenderedConversationThread } from '@prisma/client';
+import { WithSidebar } from '../../library/layout/sidebar';
 
 export function ViewTableRecordPage() {
     const { id, recordId } = useParams();
@@ -52,8 +53,10 @@ export function ViewTableRecordPage() {
     }
 
     return (
-        <PageCrumbed title={`Record: ${recordId}`} breadcrumbs={breadcrumbs}>
-            {content}
-        </PageCrumbed>
+        <WithSidebar>
+            <PageCrumbed title={`Record: ${recordId}`} breadcrumbs={breadcrumbs}>
+                {content}
+            </PageCrumbed>
+        </WithSidebar>
     );
 }

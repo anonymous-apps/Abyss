@@ -6,6 +6,7 @@ import { Database } from '../../main';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useDatabaseQuery } from '../../state/database-connection';
 import { DatabaseTable } from '../../library/content/database-table';
+import { WithSidebar } from '../../library/layout/sidebar';
 
 export function ViewTablePage() {
     const { id } = useParams();
@@ -23,8 +24,10 @@ export function ViewTablePage() {
     }
 
     return (
-        <PageCrumbed title={`SQLite Table: ${id}`} breadcrumbs={breadcrumbs}>
-            <DatabaseTable table={id as string} records={scanTable.data as Record<string, any>[]} />
-        </PageCrumbed>
+        <WithSidebar>
+            <PageCrumbed title={`SQLite Table: ${id}`} breadcrumbs={breadcrumbs}>
+                <DatabaseTable table={id as string} records={scanTable.data as Record<string, any>[]} />
+            </PageCrumbed>
+        </WithSidebar>
     );
 }

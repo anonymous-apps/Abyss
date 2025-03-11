@@ -17,7 +17,7 @@ export function Select({ value, onChange, options, placeholder, className = '', 
                 <select
                     value={value}
                     onChange={e => onChange(e.target.value)}
-                    className={`w-full bg-background-dark text-text-200 border border-background-light rounded px-2 py-1 text-sm focus:outline-none focus:border-primary-700 appearance-none pr-8 ${className}`}
+                    className={`w-full bg-background-transparent text-text-200 border border-background-light rounded px-2 py-1 text-sm focus:outline-none focus:border-primary-700 appearance-none pr-8 ${className}`}
                 >
                     {placeholder && (
                         <option value="" disabled>

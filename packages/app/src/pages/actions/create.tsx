@@ -7,6 +7,7 @@ import { Database } from '../../main';
 import { useNavigate } from 'react-router';
 import { Input } from '../../library/input/input';
 import { Select } from '../../library/input/select';
+import { WithSidebar } from '../../library/layout/sidebar';
 
 const ActionTypes = [
     {
@@ -32,47 +33,49 @@ export function ActionCreatePage() {
     };
 
     return (
-        <PageCrumbed
-            title="Create Action"
-            breadcrumbs={[
-                { name: 'Home', url: '/' },
-                { name: 'Actions', url: '/actions' },
-                { name: 'Create', url: '/actions/create' },
-            ]}
-        >
-            <IconSection title="Name" subtitle="The name for your action" icon={Box}>
-                <Input label="Name" value={name} onChange={setName} />
-                <Select
-                    value={type}
-                    label="Action Type"
-                    onChange={setType}
-                    options={ActionTypes.map(t => ({ value: t.value, label: t.name }))}
-                    placeholder="Select action type"
-                />
-            </IconSection>
-
-            <IconSection
-                title="Action Configuration"
-                subtitle={
-                    type
-                        ? `Configure the ${type} action. Configuration data is stored locally on your machine.`
-                        : 'Select a type to continue'
-                }
-                icon={Settings}
+        <WithSidebar>
+            <PageCrumbed
+                title="Create Action"
+                breadcrumbs={[
+                    { name: 'Home', url: '/' },
+                    { name: 'Actions', url: '/actions' },
+                    { name: 'Create', url: '/actions/create' },
+                ]}
             >
-                <div className={type ? 'flex flex-col gap-4' : 'hidden'}>
-                    {type && (
-                        <Input
-                            label="Script Path"
-                            value={metadata.scriptPath || ''}
-                            onChange={value => setMetadata({ ...metadata, scriptPath: value })}
-                        />
-                    )}
-                    <Button className="max-w-[300px]" onClick={handleCreateAction}>
-                        Create Action
-                    </Button>
-                </div>
-            </IconSection>
-        </PageCrumbed>
+                <IconSection title="Name" subtitle="The name for your action" icon={Box}>
+                    <Input label="Name" value={name} onChange={setName} />
+                    <Select
+                        value={type}
+                        label="Action Type"
+                        onChange={setType}
+                        options={ActionTypes.map(t => ({ value: t.value, label: t.name }))}
+                        placeholder="Select action type"
+                    />
+                </IconSection>
+
+                <IconSection
+                    title="Action Configuration"
+                    subtitle={
+                        type
+                            ? `Configure the ${type} action. Configuration data is stored locally on your machine.`
+                            : 'Select a type to continue'
+                    }
+                    icon={Settings}
+                >
+                    <div className={type ? 'flex flex-col gap-4' : 'hidden'}>
+                        {type && (
+                            <Input
+                                label="Script Path"
+                                value={metadata.scriptPath || ''}
+                                onChange={value => setMetadata({ ...metadata, scriptPath: value })}
+                            />
+                        )}
+                        <Button className="max-w-[300px]" onClick={handleCreateAction}>
+                            Create Action
+                        </Button>
+                    </div>
+                </IconSection>
+            </PageCrumbed>
+        </WithSidebar>
     );
 }

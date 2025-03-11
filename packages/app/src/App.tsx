@@ -12,99 +12,33 @@ import { ListTablesPage } from './pages/database/list-tables';
 import { ViewTablePage } from './pages/database/view-table';
 import { ViewTableRecordPage } from './pages/database/view-table-record';
 import { SettingsPage } from './pages/settings/main';
-import { useDatabaseRecordSubscription, useDatabaseTableSubscription } from './state/database-connection';
 import { ActionsPage } from './pages/actions/main';
 import { ActionCreatePage } from './pages/actions/create';
-import { WithSidebar } from './library/layout/sidebar';
+import { useTheme } from './state/theme-state';
+
 export function App() {
-    // Apply app theming
-    const userSettings = useDatabaseTableSubscription('UserSettings', db => db.table.userSettings.get());
-    useEffect(() => {
-        document.documentElement.setAttribute('data-theme', userSettings.data?.theme || 'abyss');
-    }, [userSettings.data?.theme]);
+    // Listen and apply the theme if it changes
+    useTheme();
 
     return (
-        <div className={`${userSettings.data?.theme || 'abyss'} text-text-base`}>
+        <div>
             <HeaderBar />
             <BrowserRouter>
                 <Routes>
                     <Route path="/" element={<MainPage />} />
-                    <Route
-                        path="/settings"
-                        element={
-                            <WithSidebar>
-                                <SettingsPage />
-                            </WithSidebar>
-                        }
-                    />
-                    <Route
-                        path="/model-connection"
-                        element={
-                            <WithSidebar>
-                                <ModelProfileMainPage />
-                            </WithSidebar>
-                        }
-                    />
-                    <Route
-                        path="/model-connection/create"
-                        element={
-                            <WithSidebar>
-                                <ModelProfileCreatePage />
-                            </WithSidebar>
-                        }
-                    />
-                    <Route
-                        path="/model-connection/id/:id"
-                        element={
-                            <WithSidebar>
-                                <ModelProfileViewPage />
-                            </WithSidebar>
-                        }
-                    />
+                    <Route path="/settings" element={<SettingsPage />} />
+                    <Route path="/model-connection" element={<ModelProfileMainPage />} />
+                    <Route path="/model-connection/create" element={<ModelProfileCreatePage />} />
+                    <Route path="/model-connection/id/:id" element={<ModelProfileViewPage />} />
                     <Route path="/chats" element={<ChatMainPage />}>
                         <Route path="/chats/create" element={<ChatCreatePage />} />
                         <Route path="/chats/id/:id" element={<ChatViewPage />} />
                     </Route>
-                    <Route
-                        path="/database"
-                        element={
-                            <WithSidebar>
-                                <ListTablesPage />
-                            </WithSidebar>
-                        }
-                    />
-                    <Route
-                        path="/database/id/:id"
-                        element={
-                            <WithSidebar>
-                                <ViewTablePage />
-                            </WithSidebar>
-                        }
-                    />
-                    <Route
-                        path="/database/id/:id/record/:recordId"
-                        element={
-                            <WithSidebar>
-                                <ViewTableRecordPage />
-                            </WithSidebar>
-                        }
-                    />
-                    <Route
-                        path="/actions"
-                        element={
-                            <WithSidebar>
-                                <ActionsPage />
-                            </WithSidebar>
-                        }
-                    />
-                    <Route
-                        path="/actions/create"
-                        element={
-                            <WithSidebar>
-                                <ActionCreatePage />
-                            </WithSidebar>
-                        }
-                    />
+                    <Route path="/database" element={<ListTablesPage />} />
+                    <Route path="/database/id/:id" element={<ViewTablePage />} />
+                    <Route path="/database/id/:id/record/:recordId" element={<ViewTableRecordPage />} />
+                    <Route path="/actions" element={<ActionsPage />} />
+                    <Route path="/actions/create" element={<ActionCreatePage />} />
                     <Route path="*" element={<MainPage />} />
                 </Routes>
             </BrowserRouter>

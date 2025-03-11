@@ -15,7 +15,7 @@ interface PageCrumbedProps {
 }
 export const PageCrumbed = ({ children, title, subtitle, breadcrumbs }: PageCrumbedProps) => {
     return (
-        <div className="flex flex-row text-text-base h-full w-full bg-background-dark overflow-y-auto">
+        <div className="flex flex-row text-text-base h-full w-full bg-background-transparent overflow-y-auto">
             <div className={`w-full px-5 pt-[40px] pb-[60px] mx-auto max-w-5xl `}>
                 <h1 className="text-xl font-bold mb-2">{title}</h1>
                 {subtitle && <h2 className="text-sm text-text-dark mb-4">{subtitle}</h2>}

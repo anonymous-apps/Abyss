@@ -64,7 +64,7 @@ export function DatabaseTable({ table, records }: DatabaseTableProps) {
         <div className="overflow-x-auto border border-background-light rounded-sm text-text-dark">
             <table className="w-full border-collapse text-xs overflow-hidden rounded-sm border">
                 <thead>
-                    <tr className="capitalize bg-background-dark">
+                    <tr className="capitalize bg-background-transparent">
                         {columns.map((column, colIndex) => (
                             <th key={column} className="p-1.5 text-left text-text-200 font-medium border-b border-background-light">
                                 {column}

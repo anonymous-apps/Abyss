@@ -6,6 +6,7 @@ import { GhostIconButton, IconButton } from '../../library/input/button';
 import { IconSection } from '../../library/layout/icon-section';
 import { PageCrumbed } from '../../library/layout/page-crumbed';
 import { useDatabaseTableSubscription } from '../../state/database-connection';
+import { WithSidebar } from '../../library/layout/sidebar';
 
 function ModelProfileCard({ model }: { model: ModelConnections }) {
     const navigate = useNavigate();
@@ -32,19 +33,21 @@ export function ModelProfileMainPage() {
     };
 
     return (
-        <PageCrumbed
-            title="Connected Models"
-            breadcrumbs={[
-                { name: 'Home', url: '/' },
-                { name: 'Models', url: '/model-connection' },
-            ]}
-        >
-            <IconSection title="Connected Models" icon={Box} action={createModelProfileElement()}>
-                {ModelProfiles.data?.map(model => (
-                    <ModelProfileCard key={model.id} model={model} />
-                ))}
-                {ModelProfiles.data?.length === 0 && <div className="text-text-500">No model profiles found</div>}
-            </IconSection>
-        </PageCrumbed>
+        <WithSidebar>
+            <PageCrumbed
+                title="Connected Models"
+                breadcrumbs={[
+                    { name: 'Home', url: '/' },
+                    { name: 'Models', url: '/model-connection' },
+                ]}
+            >
+                <IconSection title="Connected Models" icon={Box} action={createModelProfileElement()}>
+                    {ModelProfiles.data?.map(model => (
+                        <ModelProfileCard key={model.id} model={model} />
+                    ))}
+                    {ModelProfiles.data?.length === 0 && <div className="text-text-500">No model profiles found</div>}
+                </IconSection>
+            </PageCrumbed>
+        </WithSidebar>
     );
 }

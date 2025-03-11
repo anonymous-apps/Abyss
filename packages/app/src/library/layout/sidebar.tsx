@@ -54,7 +54,7 @@ export function Sidebar() {
 
     return (
         <div
-            className="relative left-0 top-0 h-screen border-r border-background-light flex flex-col pt-5 min-w-[150px] bg-background-transparent transition-opacity duration-300 text-text-light"
+            className="relative left-0 top-0 h-screen flex flex-col pt-5 min-w-[150px] bg-background-dark transition-opacity duration-300 text-text-light"
             style={{ opacity }}
         >
             <SidebarSection title="Activity" />

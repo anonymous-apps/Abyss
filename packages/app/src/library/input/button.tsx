@@ -22,7 +22,7 @@ export const IconButton: React.FC<IconButtonProps> = ({
         <button
             onClick={onClick}
             disabled={disabled}
-            className={`p-1 px-3 border border-primary-light rounded transition-colors flex gap-3 items-center bg-background-dark ${
+            className={`p-1 px-3 border border-primary-light rounded transition-colors flex gap-3 items-center bg-background-transparent ${
                 disabled ? 'opacity-50 cursor-not-allowed' : 'hover:border-primary-base hover:text-primary-base'
             } ${className} ${borderless ? 'border-none' : ''}`}
         >
@@ -45,11 +45,11 @@ export const Button: React.FC<ButtonProps> = ({ onClick, className = '', childre
         <button
             onClick={onClick}
             disabled={disabled}
-            className={` text-sm px-3 py-1 border border-primary-light rounded transition-colors bg-background-dark ${
+            className={` text-sm px-3 py-1 border border-primary-light rounded transition-colors bg-background-transparent ${
                 disabled
                     ? 'opacity-50 cursor-not-allowed'
                     : selected
-                    ? 'border-primary-base text-text-light bg-background-dark'
+                    ? 'border-primary-base text-text-light bg-background-transparent'
                     : 'hover:text-text-light hover:border-primary-base'
             } ${className}`}
         >
@@ -91,7 +91,7 @@ export const DestructiveButton: React.FC<DestructiveButtonProps> = ({ onClick, c
         <button
             onClick={onClick}
             disabled={disabled}
-            className={`w-fit px-3 py-1 text-sm text-white bg-red-500 bg-opacity-20 border border-red-900 rounded-sm transition-colors bg-background-dark ${
+            className={`w-fit px-3 py-1 text-sm text-white bg-red-500 bg-opacity-20 border border-red-900 rounded-sm transition-colors bg-background-transparent ${
                 disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-red-600 hover:border-red-600'
             } ${className}`}
         >
