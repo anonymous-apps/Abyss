@@ -24,40 +24,43 @@ export function ModelProfileViewPage() {
         navigate('/model-connection');
     };
 
-    if (!modelProfile.data) {
-        return null;
-    }
+    const breadcrumbs = [
+        { name: 'Home', url: '/' },
+        { name: 'Models', url: '/model-connection' },
+        { name: id || '', url: `/model-connection/id/${id}` },
+    ];
+
+    const content = !modelProfile.data ? (
+        <div className="text-text-base">Loading model profile data...</div>
+    ) : (
+        <>
+            <IconSection title="Profile Information" icon={Box}>
+                <LabelValue
+                    data={{
+                        Name: modelProfile.data.name,
+                        Provider: modelProfile.data.provider,
+                        Model: modelProfile.data.modelId,
+                        'Record Id': modelProfile.data.id,
+                    }}
+                />
+            </IconSection>
+
+            {modelProfile.data.data && Object.keys(modelProfile.data.data).length > 0 && (
+                <IconSection title="Configuration" icon={Settings}>
+                    <LabelValue data={modelProfile.data.data as Record<string, any>} />
+                </IconSection>
+            )}
+
+            <IconSection title="Danger Zone" icon={Trash2}>
+                <DestructiveButton onClick={handleDelete}>Delete Model Profile</DestructiveButton>
+            </IconSection>
+        </>
+    );
 
     return (
         <WithSidebar>
-            <PageCrumbed
-                title={`Model Profile: ${modelProfile.data.name}`}
-                breadcrumbs={[
-                    { name: 'Home', url: '/' },
-                    { name: 'Models', url: '/model-connection' },
-                    { name: modelProfile.data.id, url: `/model-connection/id/${id}` },
-                ]}
-            >
-                <IconSection title="Profile Information" icon={Box}>
-                    <LabelValue
-                        data={{
-                            Name: modelProfile.data.name,
-                            Provider: modelProfile.data.provider,
-                            Model: modelProfile.data.modelId,
-                            'Record Id': modelProfile.data.id,
-                        }}
-                    />
-                </IconSection>
-
-                {modelProfile.data.data && Object.keys(modelProfile.data.data).length > 0 && (
-                    <IconSection title="Configuration" icon={Settings}>
-                        <LabelValue data={modelProfile.data.data as Record<string, any>} />
-                    </IconSection>
-                )}
-
-                <IconSection title="Danger Zone" icon={Trash2}>
-                    <DestructiveButton onClick={handleDelete}>Delete Model Profile</DestructiveButton>
-                </IconSection>
+            <PageCrumbed title={`Model Profile: ${modelProfile.data?.name || 'Loading...'}`} breadcrumbs={breadcrumbs}>
+                {content}
             </PageCrumbed>
         </WithSidebar>
     );

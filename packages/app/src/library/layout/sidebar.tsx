@@ -18,7 +18,9 @@ export const SidebarItem: React.FC<SidebarItemProps> = ({ title, icon: Icon, url
         <Link
             to={url}
             className={`relative flex items-center gap-2 px-2 py-1 transition-colors text-xs ${
-                isActive ? 'bg-primary-base text-text-light' : 'pacity-70 hover:opacity-100 hover:bg-primary-950 hover:text-text-200'
+                isActive
+                    ? 'bg-primary-base text-text-light'
+                    : 'pacity-70 hover:opacity-100 hover:bg-primary-950 hover:text-text-200 hover:bg-background-dark '
             }`}
         >
             <Icon size={16} className="min-w-[16px]" />

@@ -32,51 +32,49 @@ export function SettingsPage() {
     const updater = useAppUpdator();
     const settings = useDatabaseTableSubscription('UserSettings', database => database.table.userSettings.get());
 
-    if (!settings.data) {
-        return (
-            <WithSidebar>
-                <PageCrumbed title={pageTitle} breadcrumbs={pageBreadcrumbs} />
-            </WithSidebar>
-        );
-    }
-
     const onChangeAppTheme = (theme: string) => {
         Database.table.userSettings.update({ theme });
     };
 
+    const content = settings.data && (
+        <>
+            <IconSection icon={PaintBucket} title="App Theme">
+                <Select
+                    value={settings.data.theme || 'abyss'}
+                    onChange={onChangeAppTheme}
+                    options={[
+                        { value: 'abyss', label: 'Abyss' },
+                        { value: 'etherial', label: 'Etherial' },
+                    ]}
+                />
+            </IconSection>
+
+            <IconSection
+                icon={Download}
+                title="App Updates"
+                action={<GhostIconButton icon={RefreshCcw} onClick={() => updater.checkForUpdate()} />}
+            >
+                <div className="flex flex-col gap-2">
+                    <a
+                        href="https://github.com/eric-aerrober/Abyss/releases"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-block gap-2 flex flex-row items-center hover:underline"
+                    >
+                        Tracking updates from GitHub <Link className="inline-block" size={16} />
+                    </a>
+                    <div className="flex flex-row gap-2">
+                        <div className="text-text-base">{updateerMessage(updater.status)}</div>
+                    </div>
+                </div>
+            </IconSection>
+        </>
+    );
+
     return (
         <WithSidebar>
             <PageCrumbed title={pageTitle} breadcrumbs={pageBreadcrumbs}>
-                <IconSection icon={PaintBucket} title="App Theme">
-                    <Select
-                        value={settings.data.theme || 'abyss'}
-                        onChange={onChangeAppTheme}
-                        options={[
-                            { value: 'abyss', label: 'Abyss' },
-                            { value: 'etherial', label: 'Etherial' },
-                        ]}
-                    />
-                </IconSection>
-
-                <IconSection
-                    icon={Download}
-                    title="App Updates"
-                    action={<GhostIconButton icon={RefreshCcw} onClick={() => updater.checkForUpdate()} />}
-                >
-                    <div className="flex flex-col gap-2">
-                        <a
-                            href="https://github.com/eric-aerrober/Abyss/releases"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-block gap-2 flex flex-row items-center hover:underline"
-                        >
-                            Tracking updates from GitHub <Link className="inline-block" size={16} />
-                        </a>
-                        <div className="flex flex-row gap-2">
-                            <div className="text-text-base">{updateerMessage(updater.status)}</div>
-                        </div>
-                    </div>
-                </IconSection>
+                {content}
             </PageCrumbed>
         </WithSidebar>
     );

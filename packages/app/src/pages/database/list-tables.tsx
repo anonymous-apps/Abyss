@@ -18,32 +18,25 @@ export function ListTablesPage() {
     const navigate = useNavigate();
     const allTables = useDatabaseQuery(async database => database.describeTables());
 
-    if (allTables.loading || !allTables.data) {
-        return (
-            <PageCrumbed title={pageTitle} breadcrumbs={pageBreadcrumbs}>
-                {/* Empty content while loading */}
-            </PageCrumbed>
-        );
-    }
-
-    const sorted = allTables.data.sort((a, b) => a.name.localeCompare(b.name));
-
-    return (
-        <WithSidebar>
-            <PageCrumbed title={pageTitle} breadcrumbs={pageBreadcrumbs}>
-                <IconSection
-                    title="Database Tables"
-                    icon={Table}
-                    subtitle="Abyss uses a local sqlite database to store all data. Explore the tables below."
-                    action={
-                        <GhostIconButton
-                            icon={Folder}
-                            //@ts-ignore
-                            onClick={() => window.fs.openDbFolder()}
-                        />
-                    }
-                >
-                    {sorted.map(table => (
+    const content =
+        allTables.loading || !allTables.data ? (
+            <div className="text-text-base">Loading database tables...</div>
+        ) : (
+            <IconSection
+                title="Database Tables"
+                icon={Table}
+                subtitle="Abyss uses a local sqlite database to store all data. Explore the tables below."
+                action={
+                    <GhostIconButton
+                        icon={Folder}
+                        //@ts-ignore
+                        onClick={() => window.fs.openDbFolder()}
+                    />
+                }
+            >
+                {allTables.data
+                    .sort((a, b) => a.name.localeCompare(b.name))
+                    .map(table => (
                         <div
                             key={table.name}
                             className="text-text-base hover:text-primary-base cursor-pointer flex flex-row gap-3 items-center justify-between max-w-md capitalize"
@@ -53,7 +46,13 @@ export function ListTablesPage() {
                             <div className="opacity-50 text-xs">table with {table.recordCount} records</div>
                         </div>
                     ))}
-                </IconSection>
+            </IconSection>
+        );
+
+    return (
+        <WithSidebar>
+            <PageCrumbed title={pageTitle} breadcrumbs={pageBreadcrumbs}>
+                {content}
             </PageCrumbed>
         </WithSidebar>
     );

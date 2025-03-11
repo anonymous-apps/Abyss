@@ -50,7 +50,7 @@ export const Button: React.FC<ButtonProps> = ({ onClick, className = '', childre
                     ? 'opacity-50 cursor-not-allowed'
                     : selected
                     ? 'border-primary-base text-text-light bg-background-transparent'
-                    : 'hover:text-text-light hover:border-primary-base'
+                    : 'hover:bg-primary-base hover:text-text-light'
             } ${className}`}
         >
             {children}

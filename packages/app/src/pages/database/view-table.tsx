@@ -19,14 +19,16 @@ export function ViewTablePage() {
         { name: id!, url: `/database/id/${id}` },
     ];
 
-    if (!scanTable.data) {
-        return <PageCrumbed title={`SQLite Table: ${id}`} breadcrumbs={breadcrumbs} />;
-    }
+    const content = !scanTable.data ? (
+        <div className="text-text-base">Loading table data...</div>
+    ) : (
+        <DatabaseTable table={id as string} records={scanTable.data as Record<string, any>[]} />
+    );
 
     return (
         <WithSidebar>
             <PageCrumbed title={`SQLite Table: ${id}`} breadcrumbs={breadcrumbs}>
-                <DatabaseTable table={id as string} records={scanTable.data as Record<string, any>[]} />
+                {content}
             </PageCrumbed>
         </WithSidebar>
     );

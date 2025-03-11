@@ -12,7 +12,7 @@ function ModelProfileCard({ model }: { model: ModelConnections }) {
     const navigate = useNavigate();
     return (
         <div
-            className="flex flex-row gap-3 mb-2 p-2 rounded border border-background-light hover:border-primary-base transition-colors cursor-pointer items-center"
+            className="flex flex-row gap-3 mb-2 p-2 rounded border border-transparent hover:border-primary-base transition-colors cursor-pointer items-center"
             onClick={() => navigate(`/model-connection/id/${model.id}`)}
         >
             <div className=" capitalize">{model.name || 'Untitled'}</div>

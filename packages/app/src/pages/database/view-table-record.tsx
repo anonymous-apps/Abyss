@@ -29,28 +29,31 @@ export function ViewTableRecordPage() {
         { name: recordId!, url: `/database/id/${id}/record/${recordId}` },
     ];
 
-    if (!record.data) {
-        return <PageCrumbed title={`Record: ${recordId}`} breadcrumbs={breadcrumbs} />;
-    }
+    const content = !record.data ? (
+        <div className="text-text-base">Loading record data...</div>
+    ) : (
+        (() => {
+            const newDataObject: Record<string, any> = {};
+            for (const key of Object.keys(record.data || {})) {
+                if (key !== 'data') {
+                    newDataObject[key] = <TableKeyValue table={id!} value={record.data![key]} column={key} />;
+                }
+            }
 
-    const newDataObject: Record<string, any> = {};
-    for (const key of Object.keys(record.data || {})) {
-        if (key !== 'data') {
-            newDataObject[key] = <TableKeyValue table={id!} value={record.data![key]} column={key} />;
-        }
-    }
+            // Some custom renderers
+            if (id === 'renderedConversationThread') {
+                delete newDataObject['messages'];
+                return (
+                    <>
+                        <LabelValue data={newDataObject} />
+                        <CustomRendererForConversationThread thread={record.data as RenderedConversationThread} />
+                    </>
+                );
+            }
 
-    // Some custom renderers
-    let content = <LabelValue data={newDataObject} />;
-    if (id === 'renderedConversationThread') {
-        delete newDataObject['messages'];
-        content = (
-            <>
-                <LabelValue data={newDataObject} />
-                <CustomRendererForConversationThread thread={record.data as RenderedConversationThread} />
-            </>
-        );
-    }
+            return <LabelValue data={newDataObject} />;
+        })()
+    );
 
     return (
         <WithSidebar>

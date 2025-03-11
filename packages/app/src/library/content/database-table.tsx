@@ -61,7 +61,7 @@ export function DatabaseTable({ table, records }: DatabaseTableProps) {
     const columns = Object.keys(records[0]);
 
     return (
-        <div className="overflow-x-auto border border-background-light rounded-sm text-text-dark">
+        <div className="overflow-x-auto rounded-sm text-text-dark">
             <table className="w-full border-collapse text-xs overflow-hidden rounded-sm border">
                 <thead>
                     <tr className="capitalize bg-background-transparent">

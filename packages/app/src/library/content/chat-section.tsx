@@ -24,7 +24,7 @@ export function ChatMessageSection({ message }: { message: Message }) {
     const navigate = useNavigate();
 
     return (
-        <div className="mb-10">
+        <div className="mb-6 hover:bg-background-transparent transition-all duration-300 rounded-sm p-2">
             <div className="flex items-center text-xs mb-1 gap-2">
                 {isUserMessage && <User size={14} className="" />}
                 {isAiMessage && <MessageCircle size={14} className="" />}
