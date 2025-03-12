@@ -65,7 +65,7 @@ jobs:
                   cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
 
             - name: Install Dependencies
-              run: pnpm install --shamefully-hoist
+              run: npm install
 
             - name: Build for macOS
               run: npm run build:mac
