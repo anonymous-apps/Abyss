@@ -33,10 +33,27 @@ module.exports = async function duplicatePrisma(context) {
     console.log('Copying Prisma Client from', prismaClientSrc, 'to', prismaClientDest);
     console.log('Copying Prisma Package from', prismaPkgSrc, 'to', prismaPkgDest);
     try {
-        await fs.copy(prismaSrc, prismaDest1);
-        await fs.copy(prismaSrc, prismaDest2);
-        await fs.copy(prismaClientSrc, prismaClientDest);
-        await fs.copy(prismaPkgSrc, prismaPkgDest);
+        // Check if source and destination are the same before copying
+        if (prismaSrc !== prismaDest1) {
+            await fs.copy(prismaSrc, prismaDest1);
+        } else {
+            console.log('Prisma source and destination are the same. Skipping copy.', { prismaSrc, prismaDest1 });
+        }
+        if (prismaSrc !== prismaDest2) {
+            await fs.copy(prismaSrc, prismaDest2);
+        } else {
+            console.log('Prisma source and destination are the same. Skipping copy.', { prismaSrc, prismaDest2 });
+        }
+        if (prismaClientSrc !== prismaClientDest) {
+            await fs.copy(prismaClientSrc, prismaClientDest);
+        } else {
+            console.log('Prisma Client source and destination are the same. Skipping copy.', { prismaClientSrc, prismaClientDest });
+        }
+        if (prismaPkgSrc !== prismaPkgDest) {
+            await fs.copy(prismaPkgSrc, prismaPkgDest);
+        } else {
+            console.log('Prisma Package source and destination are the same. Skipping copy.', { prismaPkgSrc, prismaPkgDest });
+        }
         console.log('Prisma duplication complete.');
     } catch (err) {
         console.error('Error copying Prisma:', err);
