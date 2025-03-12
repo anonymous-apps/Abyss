@@ -1,0 +1,84 @@
+# Choose the name you prefer for the action
+name: My app - build, sign, release
+
+# Adjust this part to your requirements
+on:
+    push:
+        branches:
+            - main
+
+jobs:
+    release:
+        runs-on: macos-latest
+
+        env:
+            APPLE_ID: ${{ secrets.APPLE_ID }}
+            APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
+            APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+
+        steps:
+            - name: Check out Git repository
+              uses: actions/checkout@v4
+
+            - name: Install Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+                  cache: 'npm'
+
+            - name: Setup Python
+              uses: actions/setup-python@v5
+              with:
+                  python-version: '3.11'
+
+            - name: Install Python dependencies
+              run: python3 -m pip install setuptools --break-system-packages
+
+            - name: Install the Apple certificate and provisioning profile
+              env:
+                  BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
+                  BUILD_CERTIFICATE_PASSWORD: ${{ secrets.BUILD_CERTIFICATE_PASSWORD }}
+                  BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.BUILD_PROVISION_PROFILE_BASE64 }}
+                  KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+              run: |
+                  # Create variables
+                  CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
+                  PP_PATH=$RUNNER_TEMP/build_pp.provisionprofile
+                  KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+
+                  # Import certificate and provisioning profile from secrets
+                  echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
+                  echo -n "$BUILD_PROVISION_PROFILE_BASE64" | base64 --decode -o $PP_PATH
+
+                  # Create temporary keychain
+                  security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+                  security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+                  security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+
+                  # Import certificate to keychain
+                  security import $CERTIFICATE_PATH -P "$BUILD_CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+                  security set-key-partition-list -S apple-tool:,apple: -k "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+                  security list-keychain -d user -s $KEYCHAIN_PATH
+
+                  # Apply provisioning profile
+                  mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+                  cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+
+            - name: Install Dependencies
+              run: pnpm install --shamefully-hoist
+
+            - name: Build for macOS
+              run: npm run build:mac
+
+            - name: Release
+              uses: softprops/action-gh-release@v2
+              with:
+                  draft: true
+                  files: |
+                      dist/mac/Abyss.app
+                      dist/*.zip
+
+            - name: Clean up keychain and provisioning profile
+              run: |
+                  security delete-keychain $RUNNER_TEMP/app-signing.keychain-db
+                  rm ~/Library/MobileDevice/Provisioning\ Profiles/build_pp.provisionprofile
