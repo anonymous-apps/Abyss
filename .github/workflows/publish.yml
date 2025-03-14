@@ -1,15 +1,44 @@
 # Choose the name you prefer for the action
 name: My app - build, sign, release
 
-# Adjust this part to your requirements
+# Run on push to main or nightly if there was a push to main in the last day
 on:
     push:
         branches:
             - main
+    schedule:
+        - cron: '0 0 * * *' # Run at midnight UTC every day
 
 jobs:
+    check_recent_commits:
+        runs-on: ubuntu-latest
+        if: github.event_name == 'schedule'
+        outputs:
+            should_run: ${{ steps.check_commits.outputs.should_run }}
+        steps:
+            - name: Check out Git repository
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Check for recent commits
+              id: check_commits
+              run: |
+                  # Check if there were any commits in the last 24 hours on main branch
+                  LAST_COMMIT_TIME=$(git log -1 --format=%ct main)
+                  CURRENT_TIME=$(date +%s)
+                  TIME_DIFF=$((CURRENT_TIME - LAST_COMMIT_TIME))
+                  # 86400 seconds = 24 hours
+                  if [ $TIME_DIFF -le 86400 ]; then
+                    echo "should_run=true" >> $GITHUB_OUTPUT
+                  else
+                    echo "should_run=false" >> $GITHUB_OUTPUT
+                  fi
+
     release:
         runs-on: macos-latest
+        needs: check_recent_commits
+        if: github.event_name == 'push' || (github.event_name == 'schedule' && needs.check_recent_commits.outputs.should_run == 'true')
 
         env:
             APPLE_ID: ${{ secrets.APPLE_ID }}
