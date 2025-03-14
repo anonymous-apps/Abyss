@@ -21,6 +21,7 @@
         "prisma:copy": "node scripts/copy-prisma-client.cjs"
     },
     "dependencies": {
+        "@abyss/intelligence": "^1.0.3",
         "@prisma/client": "^6.4.1",
         "date-fns": "^4.1.0",
         "electron-updater": "^6.3.9",
