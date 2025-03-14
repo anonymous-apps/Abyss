@@ -67,20 +67,10 @@ jobs:
             - name: Install Dependencies
               run: npm install
 
-            - name: Build for macOS
+            - name: Build for macOS and publish to GitHub
               env:
                   GH_TOKEN: ${{ secrets.GH_TOKEN }}
-              run: npm run build:mac
-
-            - name: Release
-              uses: softprops/action-gh-release@v2
-              env:
-                  GH_TOKEN: ${{ secrets.GH_TOKEN }}
-              with:
-                  draft: true
-                  files: |
-                      dist/mac/Abyss.app
-                      dist/*.zip
+              run: npm run publish:mac
 
             - name: Clean up keychain and provisioning profile
               run: |
