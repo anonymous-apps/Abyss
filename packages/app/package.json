@@ -1,6 +1,6 @@
 {
     "name": "@abyss/app",
-    "version": "0.0.30",
+    "version": "0.0.31",
     "description": "Abyss AI Desktop Application",
     "author": {
         "name": "A Developer!"
@@ -38,7 +38,7 @@
         "react-router-dom": "^7.2.0",
         "uuid": "^11.1.0",
         "zustand": "^5.0.3"
-    }, 
+    },
     "devDependencies": {
         "@headlessui/tailwindcss": "^0.2.0",
         "@vitejs/plugin-react": "^4.2.1",
