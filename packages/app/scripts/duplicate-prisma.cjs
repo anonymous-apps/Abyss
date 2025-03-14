@@ -72,6 +72,50 @@ module.exports = async function duplicatePrisma(context) {
     // Copy Prisma Package
     try {
         if (prismaPkgSrc !== prismaPkgDest) {
+            // Check if paths might be the same due to symbolic links
+            console.log('Checking if paths are symbolically linked:');
+
+            // Print the raw paths
+            console.log('Raw paths:');
+            console.log('- Source:', prismaPkgSrc);
+            console.log('- Destination:', prismaPkgDest);
+
+            // Resolve any symbolic links in the paths
+            try {
+                const realSrcPath = fs.realpathSync(prismaPkgSrc);
+                const realDestPath = fs.realpathSync(prismaPkgDest);
+                console.log('Resolved paths (after following symbolic links):');
+                console.log('- Source:', realSrcPath);
+                console.log('- Destination:', realDestPath);
+
+                // Check if the resolved paths are the same
+                if (realSrcPath === realDestPath) {
+                    console.log('WARNING: Source and destination resolve to the same location after following symbolic links!');
+                }
+            } catch (err) {
+                console.log('Error resolving real paths:', err.message);
+            }
+
+            // List directory contents to compare
+            try {
+                console.log('\nListing source directory contents:');
+                console.log(`pwd: ${process.cwd()}`);
+                console.log(`ls ${prismaPkgSrc}:`);
+                const srcFiles = fs.readdirSync(prismaPkgSrc);
+                srcFiles.forEach(file => console.log(`- ${file}`));
+
+                // Check if destination exists before trying to list
+                if (fs.existsSync(prismaPkgDest)) {
+                    console.log('\nListing destination directory contents:');
+                    console.log(`ls ${prismaPkgDest}:`);
+                    const destFiles = fs.readdirSync(prismaPkgDest);
+                    destFiles.forEach(file => console.log(`- ${file}`));
+                } else {
+                    console.log(`\nDestination directory doesn't exist yet: ${prismaPkgDest}`);
+                }
+            } catch (err) {
+                console.log('Error listing directory contents:', err.message);
+            }
             await fs.copy(prismaPkgSrc, prismaPkgDest);
         } else {
             console.log('Prisma Package source and destination are the same. Skipping copy.', { prismaPkgSrc, prismaPkgDest });
