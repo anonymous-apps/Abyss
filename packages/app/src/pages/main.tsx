@@ -5,6 +5,7 @@ import { ClickableIconOption } from '../library/layout/nav-options';
 import { useNavigate } from 'react-router';
 import { useDatabaseTableSubscription } from '../state/database-connection';
 import { Database } from '../main';
+
 export function MainPage() {
     const navigate = useNavigate();
     const [sidebarWidth, setSidebarWidth] = useState('40vw');
@@ -32,18 +33,17 @@ export function MainPage() {
         }, 300);
     };
 
+    //@ts-ignore
+    const logoPath = window.fs.assetPath('logo.png');
+    console.log(logoPath);
+
     return (
         <div className="flex h-screen">
             <div
                 className="flex flex-col items-center justify-center bg-transparent transition-all duration-300"
                 style={{ width: sidebarWidth }}
             >
-                <img
-                    src="/logo.png"
-                    alt="logo"
-                    className="w-[150px] mb-4 transition-all duration-300"
-                    style={{ opacity: contentOpacity }}
-                />
+                <img src={logoPath} alt="logo" className="w-[150px] mb-4 transition-all duration-300" style={{ opacity: contentOpacity }} />
                 <div className="text-4xl font-bold text-center transition-all duration-300" style={{ opacity: contentOpacity }}>
                     Abyss
                 </div>

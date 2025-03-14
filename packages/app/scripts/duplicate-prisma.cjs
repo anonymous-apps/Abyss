@@ -6,6 +6,21 @@ module.exports = async function duplicatePrisma(context) {
     const prismaDest1 = path.join(context.appOutDir, 'Abyss.app', 'Contents', 'Resources', 'prisma', 'source');
     const prismaDest2 = path.join(context.appOutDir, 'Abyss.app', 'Contents', 'Resources', 'app.asar.unpacked', 'node_modules', 'prisma');
 
+    const assetsSrc = path.join(context.outDir, '..', '..', '..', 'assets');
+    const assetsDest = path.join(context.appOutDir, 'Abyss.app', 'Contents', 'Resources', 'app.asar.unpacked', 'assets');
+
+    console.log('Copying assets from', assetsSrc, 'to', assetsDest);
+    try {
+        if (assetsSrc !== assetsDest) {
+            await fs.copy(assetsSrc, assetsDest);
+        } else {
+            console.log('Assets source and destination are the same. Skipping copy.', { assetsSrc, assetsDest });
+        }
+    } catch (err) {
+        console.error('[duplicate-prisma] Error copying assets:', err);
+        throw err;
+    }
+
     const prismaPkgSrc = path.join(context.outDir, '..', '..', '..', 'node_modules', '@prisma');
     const prismaPkgDest = path.join(
         context.appOutDir,

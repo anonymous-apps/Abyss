@@ -5,6 +5,7 @@ import renderer from 'vite-plugin-electron-renderer';
 import { join } from 'path';
 
 export default defineConfig({
+    base: './',
     plugins: [
         react(),
         electron([
