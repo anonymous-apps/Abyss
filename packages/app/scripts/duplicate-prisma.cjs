@@ -56,7 +56,7 @@ module.exports = async function duplicatePrisma(context) {
         }
         console.log('Prisma duplication complete.');
     } catch (err) {
-        console.error('Error copying Prisma:', err);
+        console.error('[duplicate-prisma] Error copying Prisma:', err);
         throw err;
     }
 };

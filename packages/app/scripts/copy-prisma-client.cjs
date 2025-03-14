@@ -15,7 +15,7 @@ const copyPrismaClient = async () => {
         await fs.copy(prismaPkgSrc, prismaPkgDest);
         console.log('Prisma client copy complete.');
     } catch (err) {
-        console.error('Error copying Prisma client:', err);
+        console.error('[copy-prisma-client] Error copying Prisma client:', err);
         throw err;
     }
 };
