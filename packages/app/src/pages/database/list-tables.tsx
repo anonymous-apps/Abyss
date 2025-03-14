@@ -7,12 +7,24 @@ import { useNavigate } from 'react-router-dom';
 import { useDatabaseQuery, useDatabaseTableSubscription } from '../../state/database-connection';
 import { GhostIconButton } from '../../library/input/button';
 import { WithSidebar } from '../../library/layout/sidebar';
+import { TileGrid, Tile } from '../../library/layout/tile-grid';
 
 const pageTitle = 'Local Database Explorer';
 const pageBreadcrumbs = [
     { name: 'Home', url: '/' },
     { name: 'Database', url: '/database' },
 ];
+
+const desctiptionsByDatabaseTable = {
+    userSettings: 'A single record that contains the user settings for the application that you have configured.',
+    modelConnections: 'Stores connections to AI models, including API keys and configuration settings.',
+    messageThread: 'A thread owns a set of messages.',
+    message: 'A single message sent by a user or an AI model as part of a thread.',
+    apiCall: 'Records of API calls made to external services, including request and response data for you to inspect.',
+    renderedConversationThread: 'A snapshot of a conversation thread at a point in time as it was sent to an AI model.',
+    chat: 'A chat the user has with an AI model, references a thread and a model connection.',
+    actionDefinitions: 'Definitions for custom actions that can be performed by the model.',
+};
 
 export function ListTablesPage() {
     const navigate = useNavigate();
@@ -33,18 +45,21 @@ export function ListTablesPage() {
                     />
                 }
             >
-                {allTables.data
-                    .sort((a, b) => a.name.localeCompare(b.name))
-                    .map(table => (
-                        <div
-                            key={table.name}
-                            className="text-text-base hover:text-primary-base cursor-pointer flex flex-row gap-3 items-center justify-between max-w-md capitalize"
-                            onClick={() => navigate(`/database/id/${table.name}`)}
-                        >
-                            {table.name}
-                            <div className="opacity-50 text-xs">table with {table.recordCount} records</div>
-                        </div>
-                    ))}
+                <TileGrid>
+                    {allTables.data
+                        .sort((a, b) => a.name.localeCompare(b.name))
+                        .map(table => (
+                            <Tile
+                                key={table.name}
+                                title={table.name}
+                                href={`/database/id/${table.name}`}
+                                icon={<TableIcon className="w-4 h-4" />}
+                                footer={`${table.recordCount} records`}
+                            >
+                                {desctiptionsByDatabaseTable[table.name as keyof typeof desctiptionsByDatabaseTable]}
+                            </Tile>
+                        ))}
+                </TileGrid>
             </IconSection>
 
             <IconSection

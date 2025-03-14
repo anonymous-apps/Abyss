@@ -44,8 +44,11 @@ export function MainPage() {
                 style={{ width: sidebarWidth }}
             >
                 <img src={logoPath} alt="logo" className="w-[150px] mb-4 transition-all duration-300" style={{ opacity: contentOpacity }} />
-                <div className="text-4xl font-bold text-center transition-all duration-300" style={{ opacity: contentOpacity }}>
-                    Abyss (old)
+                <div
+                    className="text-4xl font-bold text-center transition-all duration-300 text-[#a4b4c6]"
+                    style={{ opacity: contentOpacity }}
+                >
+                    Abyss
                 </div>
             </div>
 

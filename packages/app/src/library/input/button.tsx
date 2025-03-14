@@ -49,7 +49,7 @@ export const Button: React.FC<ButtonProps> = ({ onClick, className = '', childre
                 disabled
                     ? 'opacity-50 cursor-not-allowed'
                     : selected
-                    ? 'border-primary-base text-text-light bg-background-transparent'
+                    ? 'border-primary-base text-text-light bg-primary-base bg-background-transparent'
                     : 'hover:bg-primary-base hover:text-text-light'
             } ${className}`}
         >
