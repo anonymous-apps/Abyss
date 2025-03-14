@@ -70,7 +70,7 @@ jobs:
             - name: Build for macOS and publish to GitHub
               env:
                   GH_TOKEN: ${{ secrets.GH_TOKEN }}
-              run: npm run publish:mac
+              run: npm run publish
 
             - name: Clean up keychain and provisioning profile
               run: |
