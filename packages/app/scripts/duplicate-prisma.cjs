@@ -116,6 +116,13 @@ module.exports = async function duplicatePrisma(context) {
             } catch (err) {
                 console.log('Error listing directory contents:', err.message);
             }
+
+            // Delete destination directory if it exists before copying
+            if (fs.existsSync(prismaPkgDest)) {
+                console.log(`Removing existing destination directory: ${prismaPkgDest}`);
+                await fs.remove(prismaPkgDest);
+                console.log(`Destination directory removed successfully.`);
+            }
             await fs.copy(prismaPkgSrc, prismaPkgDest);
         } else {
             console.log('Prisma Package source and destination are the same. Skipping copy.', { prismaPkgSrc, prismaPkgDest });
