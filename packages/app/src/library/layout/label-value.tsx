@@ -13,7 +13,9 @@ export const LabelValue: React.FC<LabelValueProps> = ({ data, className = '' }) 
                     <div className="rounded-sm font-sm text-text-400 min-w-[100px] max-w-[200px] bg-background-transparent capitalize h-full p-1 border-r border-background-light border-b text-center break-words overflow-hidden text-ellipsis">
                         {key}
                     </div>
-                    <div className="text-text-300 capitalize break-words whitespace-pre-wrap w-full overflow-hidden">{value}</div>
+                    <div className="text-text-300 capitalize break-words whitespace-pre-wrap w-full overflow-hidden">
+                        {React.isValidElement(value) ? value : typeof value === 'object' ? JSON.stringify(value) : value}
+                    </div>
                 </React.Fragment>
             ))}
         </div>

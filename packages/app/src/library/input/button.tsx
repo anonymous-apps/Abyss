@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { LucideIcon } from 'lucide-react';
 
 interface IconButtonProps {
@@ -105,20 +105,40 @@ interface GhostIconButtonProps {
     className?: string;
     icon: LucideIcon;
     label?: string;
+    tooltip?: string;
     disabled?: boolean;
 }
 
-export const GhostIconButton: React.FC<GhostIconButtonProps> = ({ onClick, className = '', icon: Icon, label, disabled = false }) => {
+export const GhostIconButton: React.FC<GhostIconButtonProps> = ({
+    onClick,
+    className = '',
+    icon: Icon,
+    label,
+    tooltip,
+    disabled = false,
+}) => {
+    const [showTooltip, setShowTooltip] = useState(false);
+
     return (
-        <button
-            onClick={onClick}
-            disabled={disabled}
-            className={`flex items-center gap-2 text-sm px-1 py-1 border border-transparent rounded transition-colors bg-transparent ${
-                disabled ? 'opacity-50 cursor-not-allowed' : 'hover:border-primary-light hover:text-primary-base'
-            } ${className}`}
-        >
-            <Icon className="w-4 h-4" />
-            {label && <span>{label}</span>}
-        </button>
+        <div className="relative inline-block">
+            <button
+                onClick={onClick}
+                disabled={disabled}
+                onMouseEnter={() => tooltip && setShowTooltip(true)}
+                onMouseLeave={() => tooltip && setShowTooltip(false)}
+                className={`flex items-center gap-2 text-sm px-1 py-1 border border-transparent rounded transition-colors bg-transparent ${
+                    disabled ? 'opacity-50 cursor-not-allowed' : 'hover:border-primary-light hover:text-primary-base'
+                } ${className}`}
+            >
+                <Icon className="w-4 h-4" />
+                {label && <span>{label}</span>}
+            </button>
+            {tooltip && showTooltip && (
+                <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-2 py-1 bg-primary-base text-text-light text-xs rounded shadow-lg whitespace-nowrap z-10">
+                    {tooltip}
+                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-b-primary-base"></div>
+                </div>
+            )}
+        </div>
     );
 };

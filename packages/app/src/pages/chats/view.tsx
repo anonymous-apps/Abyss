@@ -3,22 +3,18 @@ import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { PageCrumbed } from '../../library/layout/page-crumbed';
 import { useChatWithModel } from '../../state/hooks/useChat';
 import { ChatMessageSection } from '../../library/content/chat-section';
-import { Button } from '../../library/input/button';
+import { Button, GhostIconButton } from '../../library/input/button';
 import { Database } from '../../main';
-import { BotIcon } from 'lucide-react';
+import { BotIcon, Box, MessageSquare } from 'lucide-react';
 import { InputArea } from '../../library/input/input';
 import { WithSidebar } from '../../library/layout/sidebar';
+import { PageHeader } from '../../library/layout/page-header';
 
 export function ChatViewPage() {
     const { id } = useParams();
+    const navigate = useNavigate();
     const chat = useChatWithModel(id || '');
     const [message, setMessage] = useState('');
-
-    const breadcrumbs = [
-        { name: 'Home', url: '/' },
-        { name: 'Chats', url: '/chats' },
-        { name: id || '', url: `/chats/id/${id}` },
-    ];
 
     const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         if (e.key === 'Enter' && !e.shiftKey) {
@@ -57,6 +53,7 @@ export function ChatViewPage() {
                 {chat.messages.map(m => (
                     <ChatMessageSection message={m} key={m.id} />
                 ))}
+
                 {chat.thread.status === 'responding' && (
                     <div className="flex justify-center my-4">
                         <div className="animate-bounce text-text-dark">
@@ -64,6 +61,7 @@ export function ChatViewPage() {
                         </div>
                     </div>
                 )}
+
                 {chat.thread.status !== 'responding' && (
                     <>
                         <br />
@@ -84,9 +82,23 @@ export function ChatViewPage() {
             </>
         );
 
+    const headerReference = (
+        <GhostIconButton
+            icon={Box}
+            onClick={() => navigate(`/model-connection/id/${chat.model?.id}`)}
+            tooltip="View model profile"
+            className="bg-background-dark"
+        />
+    );
+
     return (
-        <PageCrumbed title={chat.chat?.name || 'Loading...'} subtitle={chat.chat?.description || undefined} breadcrumbs={breadcrumbs}>
+        <PageHeader
+            title={chat.chat?.name || 'Loading...'}
+            subtitle={chat.chat?.description || undefined}
+            icon={MessageSquare}
+            action={headerReference}
+        >
             {content}
-        </PageCrumbed>
+        </PageHeader>
     );
 }

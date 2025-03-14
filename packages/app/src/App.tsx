@@ -13,6 +13,7 @@ import { ViewTablePage } from './pages/database/view-table';
 import { ViewTableRecordPage } from './pages/database/view-table-record';
 import { SettingsPage } from './pages/settings/main';
 import { ActionsPage } from './pages/actions/main';
+import { ActionViewPage } from './pages/actions/view';
 import { useTheme } from './state/theme-state';
 
 export function App() {
@@ -37,6 +38,7 @@ export function App() {
                     <Route path="/database/id/:id" element={<ViewTablePage />} />
                     <Route path="/database/id/:id/record/:recordId" element={<ViewTableRecordPage />} />
                     <Route path="/actions" element={<ActionsPage />} />
+                    <Route path="/actions/id/:id" element={<ActionViewPage />} />
                     <Route path="*" element={<MainPage />} />
                 </Routes>
             </BrowserRouter>
