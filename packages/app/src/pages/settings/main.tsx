@@ -15,12 +15,12 @@ const pageBreadcrumbs = [
     { name: 'Settings', url: '/settings' },
 ];
 
-const updateerMessage = (status: AppUpdaterStatus) => {
+const updateerMessage = (status: AppUpdaterStatus, progress: number) => {
     switch (status) {
         case AppUpdaterStatus.IDLE:
             return 'No updates available';
         case AppUpdaterStatus.DOWNLOADING:
-            return 'Downloading updates...';
+            return `Downloading updates... ${Math.round(progress)}%`;
         case AppUpdaterStatus.READY_TO_INSTALL:
             return 'Updates downloaded';
         case AppUpdaterStatus.ERROR:
@@ -49,7 +49,7 @@ export function SettingsPage() {
             >
                 <div className="flex flex-col gap-2">
                     <a
-                        href="https://github.com/eric-aerrober/Abyss/releases"
+                        href="https://github.com/abyss-mcp/Abyss"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-block gap-2 flex flex-row items-center hover:underline"
@@ -57,7 +57,7 @@ export function SettingsPage() {
                         Tracking updates from GitHub <Link className="inline-block" size={16} />
                     </a>
                     <div className="flex flex-row gap-2">
-                        <div className="text-text-base">{updateerMessage(updater.status)}</div>
+                        <div className="text-text-base">{updateerMessage(updater.status, updater.progress)}</div>
                     </div>
                 </div>
             </IconSection>

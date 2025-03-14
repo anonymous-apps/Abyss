@@ -154,7 +154,7 @@ ipcMain.handle('open-win', (_, arg) => {
 
 autoUpdater.setFeedURL({
     provider: 'github',
-    owner: 'eric-aerrober',
+    owner: 'abyss-mcp',
     repo: 'Abyss',
     private: false,
 });
