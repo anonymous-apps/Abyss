@@ -42,7 +42,6 @@ module.exports = async function duplicatePrisma(context) {
         }
     } catch (err) {
         console.error('[duplicate-prisma] Error copying Prisma to first destination:', err);
-        throw err;
     }
 
     // Copy Prisma to second destination
@@ -54,7 +53,6 @@ module.exports = async function duplicatePrisma(context) {
         }
     } catch (err) {
         console.error('[duplicate-prisma] Error copying Prisma to second destination:', err);
-        throw err;
     }
 
     // Copy Prisma Client
@@ -66,7 +64,6 @@ module.exports = async function duplicatePrisma(context) {
         }
     } catch (err) {
         console.error('[duplicate-prisma] Error copying Prisma Client:', err);
-        throw err;
     }
 
     // Copy Prisma Package
@@ -78,7 +75,6 @@ module.exports = async function duplicatePrisma(context) {
         }
     } catch (err) {
         console.error('[duplicate-prisma] Error copying Prisma Package:', err);
-        throw err;
     }
 
     console.log('Prisma duplication complete.');
