@@ -1,6 +1,6 @@
 import { Box, Download, Link, PaintBucket, Plus, RefreshCcw } from 'lucide-react';
 import React from 'react';
-import { GhostIconButton } from '../../library/input/button';
+import { Button, GhostIconButton } from '../../library/input/button';
 import { IconSection } from '../../library/layout/icon-section';
 import { PageCrumbed } from '../../library/layout/page-crumbed';
 import { useDatabaseTableSubscription } from '../../state/database-connection';
@@ -22,7 +22,7 @@ const updateerMessage = (status: AppUpdaterStatus, progress: number) => {
         case AppUpdaterStatus.DOWNLOADING:
             return `Downloading updates... ${Math.round(progress)}%`;
         case AppUpdaterStatus.READY_TO_INSTALL:
-            return 'Updates downloaded';
+            return 'Updates downloaded. Click below to restart to update. App will close and reopen automatically.';
         case AppUpdaterStatus.ERROR:
             return 'Error downloading updates';
     }
@@ -58,6 +58,9 @@ export function SettingsPage() {
                     </a>
                     <div className="flex flex-row gap-2">
                         <div className="text-text-base">{updateerMessage(updater.status, updater.progress)}</div>
+                        {updater.status === AppUpdaterStatus.READY_TO_INSTALL && (
+                            <Button onClick={() => updater.restartToUpdate()}>Restart to update</Button>
+                        )}
                     </div>
                 </div>
             </IconSection>
