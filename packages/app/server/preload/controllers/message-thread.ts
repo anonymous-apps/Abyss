@@ -1,43 +1,23 @@
-import { Prisma } from '@prisma/client';
-import { notifyTableChanged, prisma } from '../database-connection';
+import { BaseDatabaseConnection, BaseRecord } from './_base';
+import { MessageRecord, MessageController } from './message';
 
-export const MessageThreadController = {
-    removeAll: async () => {
-        await prisma.messageThread.deleteMany();
-        await notifyTableChanged('MessageThread', '*');
-    },
-    scanTable: async () => {
-        return await prisma.messageThread.findMany();
-    },
-    getByRecordId: async (recordId: string) => {
-        return await prisma.messageThread.findFirst({ where: { id: recordId } });
-    },
-    create: async (thread: Prisma.MessageThreadCreateInput) => {
-        const result = await prisma.messageThread.create({ data: thread });
-        await notifyTableChanged('MessageThread', result.id);
-        return result;
-    },
-    update: async (id: string, thread: Prisma.MessageThreadUpdateInput) => {
-        const result = await prisma.messageThread.update({ where: { id }, data: thread });
-        await notifyTableChanged('MessageThread', id);
-        return result;
-    },
-    delete: async (id: string) => {
-        await prisma.messageThread.delete({ where: { id } });
-        await notifyTableChanged('MessageThread', id);
-    },
-    findUnique: async (id: string) => {
-        return await prisma.messageThread.findUnique({ where: { id } });
-    },
-    addMessage: async (threadId: string, message: Omit<Prisma.MessageCreateInput, 'threadId'>) => {
-        const result = await prisma.message.create({
-            data: {
-                ...message,
-                threadId,
-            },
-        });
-        await notifyTableChanged('Message', result.id);
-        await notifyTableChanged('MessageThread', threadId);
-        return result;
-    },
-};
+export interface MessageThreadRecord extends BaseRecord {
+    lockingJobId?: string;
+}
+
+class _MessageThreadController extends BaseDatabaseConnection<MessageThreadRecord> {
+    constructor() {
+        super('messageThread', 'A collection representing a list of messages between a user and a model');
+    }
+
+    async addMessage(
+        threadId: string,
+        message: Omit<MessageRecord, 'id' | 'createdAt' | 'updatedAt' | 'threadId'>
+    ): Promise<MessageRecord> {
+        const result = await MessageController.create({ ...message, threadId });
+        await this.notifyChange({ id: threadId });
+        return result as MessageRecord;
+    }
+}
+
+export const MessageThreadController = new _MessageThreadController();

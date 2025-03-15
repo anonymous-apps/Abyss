@@ -8,126 +8,168 @@ generator client {
   binaryTargets = ["native", "darwin"]
 }
 
-// Represents a connection to a model
-model ModelConnections {
-  // Profile for connecting to a model
-  id            String   @id @default(uuid())
-  name          String
-
-  // Who provides the model
-  provider      String
-  modelId       String
-
-  // Provider specific data
-  data          Json?
-
-  // Time
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-}
-
-// Settings for the user
 model UserSettings {
-  id            String   @id @default("default")
-  sidebarOpen   Boolean  @default(false)
-  lastPage      String?
-  theme         String?
-  bootstrapped  Boolean  @default(false)
+  id         String   @id @default(uuid())
+  references Json?    
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  sidebarOpen  Boolean @default(true)
+  lastPage     String  @default("/")
+  theme        String  @default("abyss")
+  bootstrapped Boolean @default(false)
 }
 
-// A chat with someone
-model Chat {
-  id            String   @id @default(uuid())
+model Metric {
+  id         String   @id @default(uuid())
+  references Json?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  // Name of the chat
+  name       String
+  dimensions Json?    
+  value      Float
+}
+
+model TextLog {
+  id         String   @id @default(uuid())
+  references Json?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  text String
+}
+
+model NetworkCall {
+  id         String   @id @default(uuid())
+  references Json?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  endpoint String
+  method   String
+  body     String
+  response String
+  status   String
+}
+
+model Jobs {
+  id         String   @id @default(uuid())
+  references Json?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
   name          String
-  description   String?
-
-  // The AI in the chat
-  assistantId   String
-
-  // Message threads in the chat
-  threadId     String
-
-  // Time
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  type          String
+  status        String
+  textLogId     String?
 }
 
-// The entry point to a message thread
+model ModelConnections {
+  id          String   @id @default(uuid())
+  references  Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  name        String
+  description String
+  
+  provider    String
+  modelId     String
+  type        String
+  data        Json?    
+}
+
 model MessageThread {
-  id            String   @id @default(uuid())
-  status        String
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id         String   @id @default(uuid())
+  references Json?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  lockingJobId String?
 }
 
-// A message in a thread
 model Message {
-  id            String   @id @default(uuid())
-  threadId      String
-  
-  // Role in the thread, like user or model
-  role          String
+  id         String   @id @default(uuid())
+  references Json?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  // Source of the message, the user or a record id
-  source        String
-  apiCallId     String?
-  renderedId    String?
-
-  // Content of the message
-  content       String
-
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  threadId   String
+  type       String
+  sourceId   String
+  content    String
 }
 
-// A rendered conversation thread with messages
 model RenderedConversationThread {
-  id            String   @id @default(uuid())
+  id         String   @id @default(uuid())
+  references Json?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  messages   Json 
+}
+
+model Chat {
+  id          String   @id @default(uuid())
+  references  Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   
-  // Array of messages with roles
-  messages      Json
-
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  name        String
+  description String
+  
+  type        String
+  sourceId    String
+  modelConnectionId String?
 }
 
-// A model call to an API captured
-model ApiCall {
-  id            String   @id @default(uuid())
-
-  // Endpoint of the API call
-  endpoint      String
-
-  // Method of the API call
-  method        String
-
-  // Body of the API call
-  body          Json?
-  response      Json?
-
-  // Status of the API call
-  status        String
-
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+model Agent {
+  id          String   @id @default(uuid())
+  references  Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  name        String
+  description String
+  
+  chatModelId String
 }
 
-// Actions that are specifically defined in the system that the model can call
-model ActionDefinitions {
+model AgentToolConnection {
+  id         String   @id @default(uuid())
+  references Json?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  // Identity of this action    
-  id            String   @id @default(uuid())
-  name          String
-  description   String?
+  agentId    String
+  toolId     String
+  permission String
+}
 
-  // Actions can take different types
-  owner         String  // SYSTEM | USER
-  type          String  // NODEJS | SYSTEM
-  data          Json?
+model Tool {
+  id          String   @id @default(uuid())
+  references  Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  name        String
+  description String
+  
+  type        String
+  schema      Json     
+  data        Json?    
+}
 
-  // Time
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+model ToolInvocation {
+  id         String   @id @default(uuid())
+  references Json?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  toolId     String
+  parameters Json    
+  result     Json?   
+  textLogId  String?
+  status     String
 }

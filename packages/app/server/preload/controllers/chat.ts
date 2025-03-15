@@ -1,54 +1,30 @@
-import { Prisma } from '@prisma/client';
-import { notifyTableChanged, prisma } from '../database-connection';
+import { BaseDatabaseConnection, BaseRecord } from './_base';
+import { prisma } from '../database-connection';
+import { MessageThreadController } from './message-thread';
+export interface ChatRecord extends BaseRecord {
+    name: string;
+    description: string;
+    type: string;
+    sourceId: string;
+    modelConnectionId?: string;
+}
 
-export const ChatController = {
-    removeAll: async () => {
-        await prisma.chat.deleteMany();
-        await notifyTableChanged('Chat', '*');
-    },
-    scanTable: async () => {
-        return await prisma.chat.findMany({ orderBy: { createdAt: 'desc' } });
-    },
-    getByRecordId: async (recordId: string) => {
-        return await prisma.chat.findFirst({ where: { id: recordId } });
-    },
-    create: async (chat: Prisma.ChatCreateInput) => {
-        const result = await prisma.chat.create({ data: chat });
-        await notifyTableChanged('Chat', result.id);
-        return result;
-    },
-    update: async (id: string, chat: Prisma.ChatUpdateInput) => {
-        const result = await prisma.chat.update({ where: { id }, data: chat });
-        await notifyTableChanged('Chat', id);
-        return result;
-    },
-    delete: async (id: string) => {
-        const chat = await prisma.chat.findUnique({ where: { id } });
-        if (chat) {
-            // Delete the associated message thread
-            await prisma.messageThread.delete({ where: { id: chat.threadId } });
-        }
-        await prisma.chat.delete({ where: { id } });
-        await notifyTableChanged('Chat', id);
-    },
-    findUnique: async (id: string) => {
-        return await prisma.chat.findUnique({ where: { id } });
-    },
-    createWithThread: async (chat: Omit<Prisma.ChatCreateInput, 'threadId'>) => {
-        const thread = await prisma.messageThread.create({
-            data: {
-                status: 'active',
-            },
-        });
-        const result = await prisma.chat.create({
-            data: {
-                ...chat,
-                threadId: thread.id,
-            },
+class _ChatController extends BaseDatabaseConnection<ChatRecord> {
+    constructor() {
+        super('chat', 'A user-interactable construct which allows you to have a conversation with a target');
+    }
+
+    async createWithThread(chatData: Omit<ChatRecord, 'id' | 'createdAt' | 'updatedAt'>): Promise<ChatRecord> {
+        const thread = await MessageThreadController.create({});
+
+        const chat = await this.create({
+            ...chatData,
+            references: { ...chatData.references, threadId: thread.id },
         });
 
-        await notifyTableChanged('MessageThread', thread.id);
-        await notifyTableChanged('Chat', result.id);
-        return result;
-    },
-};
+        await this.notifyChange({ id: thread.id });
+        return chat;
+    }
+}
+
+export const ChatController = new _ChatController();

@@ -18,7 +18,7 @@ export function Tile({ title, href, icon, children, footer }: TileProps) {
 
     return (
         <div
-            className="relative w-[300px] h-[150px] rounded p-2 flex flex-col cursor-pointer transition-all duration-200 border border-background-dark hover:border-primary-base"
+            className="relative w-[300px] h-[150px] rounded p-2 flex flex-col cursor-pointer transition-all duration-200 border border-background-dark hover:border-primary-base bg-background-transparent"
             onClick={handleClick}
         >
             <div className="flex items-center mb-2 capitalize overflow-hidden">

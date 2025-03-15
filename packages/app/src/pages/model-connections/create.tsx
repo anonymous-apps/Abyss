@@ -28,8 +28,10 @@ export function ModelProfileCreatePage() {
     const handleCreateConnection = () => {
         Database.table.modelConnections.create({
             name: name,
+            description: 'A model connection for ' + selectedProvider + ' ' + selectedModel,
             provider: selectedProvider,
             modelId: selectedModel,
+            type: 'chat',
             data: data,
         });
         navigate('/model-connection');
@@ -57,7 +59,7 @@ export function ModelProfileCreatePage() {
                                 onClick={() => setSelectedProvider(provider.name)}
                                 selected={selectedProvider === provider.name}
                             >
-                                {provider.name}
+                                {provider.description}
                             </Button>
                         ))}
                     </div>

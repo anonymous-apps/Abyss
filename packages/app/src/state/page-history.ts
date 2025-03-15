@@ -7,7 +7,7 @@ let lastPage = window.location.pathname;
 if (typeof window !== 'undefined') {
     const logPageChange = () => {
         if (lastPage !== window.location.pathname) {
-            Database.table.userSettings.update({
+            Database.table.userSettings.updateFirst({
                 lastPage: window.location.pathname,
             });
             lastPage = window.location.pathname;

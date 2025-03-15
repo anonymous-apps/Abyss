@@ -24,13 +24,13 @@ export function buildChatContext(messages: Message[]) {
     let context = ChatContext.fromStrings();
 
     for (const message of messages) {
-        if (message.role === 'USER') {
+        if (message.type === 'USER') {
             context = context.addUserMessage(message.content);
         }
-        if (message.role === 'AI') {
+        if (message.type === 'AI') {
             context = context.addBotMessage(message.content);
         }
-        if (message.role === 'INTERNAL') {
+        if (message.type === 'INTERNAL') {
             context = context.addUserMessage(message.content);
         }
     }

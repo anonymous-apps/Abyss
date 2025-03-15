@@ -15,17 +15,6 @@ const pageBreadcrumbs = [
     { name: 'Database', url: '/database' },
 ];
 
-const desctiptionsByDatabaseTable = {
-    userSettings: 'A single record that contains the user settings for the application that you have configured.',
-    modelConnections: 'Stores connections to AI models, including API keys and configuration settings.',
-    messageThread: 'A thread owns a set of messages.',
-    message: 'A single message sent by a user or an AI model as part of a thread.',
-    apiCall: 'Records of API calls made to external services, including request and response data for you to inspect.',
-    renderedConversationThread: 'A snapshot of a conversation thread at a point in time as it was sent to an AI model.',
-    chat: 'A chat the user has with an AI model, references a thread and a model connection.',
-    actionDefinitions: 'Definitions for custom actions that can be performed by the model.',
-};
-
 export function ListTablesPage() {
     const navigate = useNavigate();
     const userSettings = useDatabaseTableSubscription('UserSettings', async database => database.table.userSettings.get());
@@ -40,6 +29,7 @@ export function ListTablesPage() {
                 action={
                     <GhostIconButton
                         icon={Folder}
+                        tooltip="Show on disk"
                         //@ts-ignore
                         onClick={() => window.fs.openDbFolder()}
                     />
@@ -56,7 +46,7 @@ export function ListTablesPage() {
                                 icon={<TableIcon className="w-4 h-4" />}
                                 footer={`${table.recordCount} records`}
                             >
-                                {desctiptionsByDatabaseTable[table.name as keyof typeof desctiptionsByDatabaseTable]}
+                                {table.description}
                             </Tile>
                         ))}
                 </TileGrid>

@@ -5,20 +5,13 @@ import { useNavigate } from 'react-router-dom';
 import { GhostIconButton } from '../../library/input/button';
 import { IconSection } from '../../library/layout/icon-section';
 import { PageCrumbed } from '../../library/layout/page-crumbed';
-import { useDatabaseTableSubscription } from '../../state/database-connection';
+import { useDatabaseTableSubscription, useScanTableModelConnections } from '../../state/database-connection';
 import { WithSidebar } from '../../library/layout/sidebar';
 import { TileGrid, Tile } from '../../library/layout/tile-grid';
 
 export function ModelProfileMainPage() {
-    // Subscribe to the model profiles table and get the data whenever it changes
-    const ModelProfiles = useDatabaseTableSubscription('ModelConnections', async database => database.table.modelConnections.scanTable());
-
-    // Navigate to the model profile page
+    const ModelProfiles = useScanTableModelConnections();
     const navigate = useNavigate();
-
-    const createModelProfileElement = () => {
-        return <GhostIconButton icon={Plus} onClick={() => navigate('/model-connection/create')} />;
-    };
 
     return (
         <WithSidebar>
@@ -29,7 +22,11 @@ export function ModelProfileMainPage() {
                     { name: 'Models', url: '/model-connection' },
                 ]}
             >
-                <IconSection title="Connected Models" icon={Box} action={createModelProfileElement()}>
+                <IconSection
+                    title="Connected Models"
+                    icon={Box}
+                    action={<GhostIconButton icon={Plus} onClick={() => navigate('/model-connection/create')} tooltip="New Connection" />}
+                >
                     {ModelProfiles.data && ModelProfiles.data.length > 0 ? (
                         <TileGrid>
                             {ModelProfiles.data.map(model => (

@@ -3,15 +3,16 @@ import { Box, MessageCircle, Play, Settings, LucideIcon, DatabaseIcon } from 'lu
 import { useSidebarFadeStore } from '../state/sidebar-fade';
 import { ClickableIconOption } from '../library/layout/nav-options';
 import { useNavigate } from 'react-router';
-import { useDatabaseTableSubscription } from '../state/database-connection';
+import { useDatabaseTableSubscription, useTableRecordUserSettings } from '../state/database-connection';
 import { Database } from '../main';
 
 export function MainPage() {
     const navigate = useNavigate();
+
     const [sidebarWidth, setSidebarWidth] = useState('40vw');
     const [contentOpacity, setContentOpacity] = useState(1);
     const { setSidebarFadeable } = useSidebarFadeStore();
-    const userSettings = useDatabaseTableSubscription('UserSettings', async database => database.table.userSettings.get());
+    const userSettings = useTableRecordUserSettings();
     const [bootstrapped, setBootstrapped] = useState(false);
 
     useEffect(() => {
@@ -35,7 +36,6 @@ export function MainPage() {
 
     //@ts-ignore
     const logoPath = window.fs.assetPath('logo.png');
-    console.log(logoPath);
 
     return (
         <div className="flex h-screen">

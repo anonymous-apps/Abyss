@@ -52,8 +52,6 @@ export function TableKeyValue({ table, column, value }: { table: string; column:
 }
 
 export function DatabaseTable({ table, records }: DatabaseTableProps) {
-    const navigate = useNavigate();
-
     if (!records || records.length === 0) {
         return <div className="text-text-500">No records found</div>;
     }
@@ -66,21 +64,25 @@ export function DatabaseTable({ table, records }: DatabaseTableProps) {
             <table className="w-full border-collapse text-xs overflow-hidden rounded-sm border">
                 <thead>
                     <tr className="capitalize bg-background-transparent">
-                        {columns.map((column, colIndex) => (
-                            <th key={column} className="p-1.5 text-left text-text-200 font-medium border-b border-background-light">
-                                {column}
-                            </th>
-                        ))}
+                        {columns
+                            .filter(column => column !== 'createdAt' && column !== 'updatedAt')
+                            .map((column, colIndex) => (
+                                <th key={column} className="p-1.5 text-left text-text-200 font-medium border-b border-background-light">
+                                    {column}
+                                </th>
+                            ))}
                     </tr>
                 </thead>
                 <tbody>
                     {records.map((record, rowIndex) => (
                         <tr key={rowIndex} className="truncate">
-                            {columns.map((column, colIndex) => (
-                                <td key={column} className="p-1.5 text-text-300 max-w-[100px] truncate">
-                                    <TableKeyValue table={table} column={column} value={record[column]} />
-                                </td>
-                            ))}
+                            {columns
+                                .filter(column => column !== 'createdAt' && column !== 'updatedAt')
+                                .map((column, colIndex) => (
+                                    <td key={column} className="p-1.5 text-text-300 max-w-[100px] truncate">
+                                        <TableKeyValue table={table} column={column} value={record[column]} />
+                                    </td>
+                                ))}
                         </tr>
                     ))}
                 </tbody>

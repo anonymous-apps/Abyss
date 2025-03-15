@@ -2,17 +2,22 @@ import { contextBridge } from 'electron';
 import type { PrismaClient } from '@prisma/client';
 import { createRequire } from 'module';
 import { v4 as uuidv4 } from 'uuid';
-import { ModelConnectionController } from './controllers/model-connections';
+import { ModelConnectionsController } from './controllers/model-connections';
 import { UserSettingsController } from './controllers/user-settings';
 import { MessageThreadController } from './controllers/message-thread';
 import { MessageController } from './controllers/message';
-import { ApiCallController } from './controllers/api-call';
+import { NetworkCallController } from './controllers/network-call';
 import { ChatController } from './controllers/chat';
-import { RenderedThreadController } from './controllers/rendered-thread';
-import { AskAiToRespondToChat } from './workflows/ask-ai-respond-thread';
-import { AskAiToTitleConversation } from './workflows/ask-ai-to-title-conversation';
-import { ActionDefinitionsController } from './controllers/action-definitions';
+import { RenderedConversationThreadController } from './controllers/rendered-conversation-thread';
+import { AgentController } from './controllers/agent';
+import { AgentToolConnectionController } from './controllers/agent-tool-connection';
+import { ToolController } from './controllers/tool';
+import { ToolInvocationController } from './controllers/tool-invocation';
+import { JobsController } from './controllers/jobs';
+import { MetricController } from './controllers/metric';
+import { TextLogController } from './controllers/text-log';
 import { PrismaBoostrapper } from './bootstrap/bootstrapData';
+
 // Setup prisma to support sqlite
 const require = createRequire(import.meta.url);
 const prismaModule = require('@prisma/client') as {
@@ -112,14 +117,20 @@ export function notifyTableChanged(table: string, recordId?: string) {
 }
 
 const tableControllers = {
-    modelConnections: ModelConnectionController,
-    userSettings: UserSettingsController,
-    messageThread: MessageThreadController,
-    message: MessageController,
-    apiCall: ApiCallController,
-    renderedConversationThread: RenderedThreadController,
-    chat: ChatController,
-    actionDefinitions: ActionDefinitionsController,
+    modelConnections: ModelConnectionsController.export(),
+    userSettings: UserSettingsController.export(),
+    messageThread: MessageThreadController.export(),
+    message: MessageController.export(),
+    networkCall: NetworkCallController.export(),
+    renderedConversationThread: RenderedConversationThreadController.export(),
+    chat: ChatController.export(),
+    agent: AgentController.export(),
+    agentToolConnection: AgentToolConnectionController.export(),
+    tool: ToolController.export(),
+    toolInvocation: ToolInvocationController.export(),
+    jobs: JobsController.export(),
+    metric: MetricController.export(),
+    textLog: TextLogController.export(),
 };
 
 const PrismaAPI = {
@@ -139,15 +150,17 @@ const PrismaAPI = {
 
     describeTables: async () => {
         const tableKeys = Object.keys(tableControllers);
-        const tableStats: { name: string; recordCount: number }[] = [];
+        const tableStats: { name: string; recordCount: number; description: string }[] = [];
 
         for (const tableName of tableKeys) {
             const table = prisma[tableName];
+            const controller = tableControllers[tableName];
             const count = await table.count();
 
             tableStats.push({
                 name: tableName,
                 recordCount: count,
+                description: controller.description,
             });
         }
         return tableStats;
@@ -156,10 +169,7 @@ const PrismaAPI = {
     // Access to database tables
     table: tableControllers,
 
-    workflows: {
-        askAIToRespondToChat: AskAiToRespondToChat,
-        titleConversation: AskAiToTitleConversation,
-    },
+    workflows: {},
 
     bootstrap: {
         bootstrapping: PrismaBoostrapper,
