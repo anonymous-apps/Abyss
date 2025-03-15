@@ -7,9 +7,10 @@ interface SelectProps {
     placeholder?: string;
     className?: string;
     label?: string;
+    disabled?: boolean;
 }
 
-export function Select({ value, onChange, options, placeholder, className = '', label }: SelectProps) {
+export function Select({ value, onChange, options, placeholder, className = '', label, disabled = false }: SelectProps) {
     return (
         <div className="flex flex-col gap-1">
             {label && <label className="text-sm text-text-300">{label}</label>}
@@ -17,7 +18,10 @@ export function Select({ value, onChange, options, placeholder, className = '', 
                 <select
                     value={value}
                     onChange={e => onChange(e.target.value)}
-                    className={`w-full bg-background-transparent text-text-200 border border-background-light rounded px-2 py-1 text-sm focus:outline-none focus:border-primary-700 appearance-none pr-8 ${className}`}
+                    disabled={disabled}
+                    className={`w-full bg-background-transparent text-text-200 border border-background-light rounded px-2 py-1 text-sm focus:outline-none focus:border-primary-700 appearance-none pr-8 ${
+                        disabled ? 'opacity-60 cursor-not-allowed' : ''
+                    } ${className}`}
                 >
                     {placeholder && (
                         <option value="" disabled>

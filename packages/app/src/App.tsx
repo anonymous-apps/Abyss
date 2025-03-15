@@ -1,6 +1,10 @@
 import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router';
 import { HeaderBar } from './library/layout/header-bar';
+import { AgentCreatePage } from './pages/agents/create';
+import { AgentMainPage } from './pages/agents/main';
+import { AgentViewPage } from './pages/agents/view';
+
 import { ChatCreatePage } from './pages/chats/create';
 import { ChatMainPage } from './pages/chats/main';
 import { ChatViewPage } from './pages/chats/view';
@@ -39,6 +43,9 @@ export function App() {
                     <Route path="/database/id/:id/record/:recordId" element={<ViewTableRecordPage />} />
                     <Route path="/tools" element={<ToolsPage />} />
                     <Route path="/tools/id/:id" element={<ToolViewPage />} />
+                    <Route path="/agents" element={<AgentMainPage />} />
+                    <Route path="/agents/create" element={<AgentCreatePage />} />
+                    <Route path="/agents/id/:id" element={<AgentViewPage />} />
                     <Route path="*" element={<MainPage />} />
                 </Routes>
             </BrowserRouter>
