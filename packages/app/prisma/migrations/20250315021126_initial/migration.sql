@@ -109,7 +109,7 @@ CREATE TABLE "Chat" (
     "description" TEXT NOT NULL,
     "type" TEXT NOT NULL,
     "sourceId" TEXT NOT NULL,
-    "modelConnectionId" TEXT
+    "threadId" TEXT
 );
 
 -- CreateTable

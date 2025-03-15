@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { PrismaAPI } from '../../server/preload/database-connection';
 import { Database } from '../main';
 
@@ -64,7 +64,7 @@ export function useScanTableModelConnections() {
 }
 
 export function useTableRecordModelConnections(id: string) {
-    return useDatabaseRecordSubscription('ModelConnections', id, async database => database.table.modelConnections.findUnique(id));
+    return useDatabaseRecordSubscription('ModelConnections', id, async database => database.table.modelConnections.findById(id));
 }
 
 export function useTableRecordUserSettings() {
@@ -76,7 +76,7 @@ export function useScanTableMessageThread() {
 }
 
 export function useTableRecordMessageThread(id: string) {
-    return useDatabaseRecordSubscription('MessageThread', id, async database => database.table.messageThread.findUnique(id));
+    return useDatabaseRecordSubscription('MessageThread', id, async database => database.table.messageThread.findById(id));
 }
 
 export function useScanTableMessage() {
@@ -84,7 +84,7 @@ export function useScanTableMessage() {
 }
 
 export function useTableRecordMessage(id: string) {
-    return useDatabaseRecordSubscription('Message', id, async database => database.table.message.findUnique(id));
+    return useDatabaseRecordSubscription('Message', id, async database => database.table.message.findById(id));
 }
 
 export function useScanTableNetworkCall() {
@@ -92,7 +92,7 @@ export function useScanTableNetworkCall() {
 }
 
 export function useTableRecordNetworkCall(id: string) {
-    return useDatabaseRecordSubscription('NetworkCall', id, async database => database.table.networkCall.findUnique(id));
+    return useDatabaseRecordSubscription('NetworkCall', id, async database => database.table.networkCall.findById(id));
 }
 
 export function useScanTableRenderedConversationThread() {
@@ -103,7 +103,7 @@ export function useScanTableRenderedConversationThread() {
 
 export function useTableRecordRenderedConversationThread(id: string) {
     return useDatabaseRecordSubscription('RenderedConversationThread', id, async database =>
-        database.table.renderedConversationThread.findUnique(id)
+        database.table.renderedConversationThread.findById(id)
     );
 }
 
@@ -112,7 +112,7 @@ export function useScanTableChat() {
 }
 
 export function useTableRecordChat(id: string) {
-    return useDatabaseRecordSubscription('Chat', id, async database => database.table.chat.findUnique(id));
+    return useDatabaseRecordSubscription('Chat', id, async database => database.table.chat.findById(id));
 }
 
 export function useScanTableAgent() {
@@ -120,7 +120,7 @@ export function useScanTableAgent() {
 }
 
 export function useTableRecordAgent(id: string) {
-    return useDatabaseRecordSubscription('Agent', id, async database => database.table.agent.findUnique(id));
+    return useDatabaseRecordSubscription('Agent', id, async database => database.table.agent.findById(id));
 }
 
 export function useScanTableAgentToolConnection() {
@@ -128,7 +128,7 @@ export function useScanTableAgentToolConnection() {
 }
 
 export function useTableRecordAgentToolConnection(id: string) {
-    return useDatabaseRecordSubscription('AgentToolConnection', id, async database => database.table.agentToolConnection.findUnique(id));
+    return useDatabaseRecordSubscription('AgentToolConnection', id, async database => database.table.agentToolConnection.findById(id));
 }
 
 export function useScanTableTool() {
@@ -136,7 +136,7 @@ export function useScanTableTool() {
 }
 
 export function useTableRecordTool(id: string) {
-    return useDatabaseRecordSubscription('Tool', id, async database => database.table.tool.findUnique(id));
+    return useDatabaseRecordSubscription('Tool', id, async database => database.table.tool.findById(id));
 }
 
 export function useScanTableToolInvocation() {
@@ -144,7 +144,7 @@ export function useScanTableToolInvocation() {
 }
 
 export function useTableRecordToolInvocation(id: string) {
-    return useDatabaseRecordSubscription('ToolInvocation', id, async database => database.table.toolInvocation.findUnique(id));
+    return useDatabaseRecordSubscription('ToolInvocation', id, async database => database.table.toolInvocation.findById(id));
 }
 
 export function useScanTableJobs() {
@@ -152,7 +152,7 @@ export function useScanTableJobs() {
 }
 
 export function useTableRecordJobs(id: string) {
-    return useDatabaseRecordSubscription('Jobs', id, async database => database.table.jobs.findUnique(id));
+    return useDatabaseRecordSubscription('Jobs', id, async database => database.table.jobs.findById(id));
 }
 
 export function useScanTableMetric() {
@@ -160,7 +160,7 @@ export function useScanTableMetric() {
 }
 
 export function useTableRecordMetric(id: string) {
-    return useDatabaseRecordSubscription('Metric', id, async database => database.table.metric.findUnique(id));
+    return useDatabaseRecordSubscription('Metric', id, async database => database.table.metric.findById(id));
 }
 
 export function useScanTableTextLog() {
@@ -168,5 +168,5 @@ export function useScanTableTextLog() {
 }
 
 export function useTableRecordTextLog(id: string) {
-    return useDatabaseRecordSubscription('TextLog', id, async database => database.table.textLog.findUnique(id));
+    return useDatabaseRecordSubscription('TextLog', id, async database => database.table.textLog.findById(id));
 }

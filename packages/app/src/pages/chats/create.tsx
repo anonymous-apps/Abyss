@@ -1,19 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { PageCenter } from '../../library/layout/page-center';
-import { useDatabaseQuery, useDatabaseTableSubscription } from '../../state/database-connection';
-import { Select } from '../../library/input/select';
-import { Database } from '../../main';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../library/input/button';
+import { Select } from '../../library/input/select';
 import { PageCrumbed } from '../../library/layout/page-crumbed';
-import { WithSidebar } from '../../library/layout/sidebar';
+import { Database } from '../../main';
+import { useScanTableModelConnections } from '../../state/database-connection';
 
 export function ChatCreatePage() {
-    const allModels = useDatabaseTableSubscription('ModelConnections', async database => database.table.modelConnections.findMany());
+    const navigate = useNavigate();
+    const allModels = useScanTableModelConnections();
     const [selectedModel, setSelectedModel] = useState<string>('');
     const [message, setMessage] = useState<string>('');
-
-    const navigate = useNavigate();
 
     useEffect(() => {
         if (allModels.data) {
@@ -27,16 +24,18 @@ export function ChatCreatePage() {
         if (selectedModel && message) {
             const chatRecord = await Database.table.chat.createWithThread({
                 name: 'New Chat',
-                assistantId: selectedModel,
+                type: 'chatModel',
+                sourceId: selectedModel,
+                description: 'New chat with ' + allModels.data?.find(model => model.id === selectedModel)?.name,
             });
             await Database.table.messageThread.addMessage(chatRecord.threadId, {
-                role: 'USER',
-                source: 'USER',
+                type: 'USER',
+                sourceId: 'USER',
                 content: message,
             });
 
-            Database.workflows.titleConversation(chatRecord.id);
-            Database.workflows.askAIToRespondToChat(chatRecord.id);
+            Database.workflows.AskAiToTitleConversation(chatRecord.id);
+            Database.workflows.AskAiToRespondToChat(chatRecord.id);
             navigate(`/chats/id/${chatRecord.id}`);
         }
     };

@@ -1,13 +1,12 @@
-import { ModelConnections } from '@prisma/client';
 import { Box, Plus } from 'lucide-react';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GhostIconButton } from '../../library/input/button';
 import { IconSection } from '../../library/layout/icon-section';
 import { PageCrumbed } from '../../library/layout/page-crumbed';
-import { useDatabaseTableSubscription, useScanTableModelConnections } from '../../state/database-connection';
 import { WithSidebar } from '../../library/layout/sidebar';
-import { TileGrid, Tile } from '../../library/layout/tile-grid';
+import { Tile, TileGrid } from '../../library/layout/tile-grid';
+import { useScanTableModelConnections } from '../../state/database-connection';
 
 export function ModelProfileMainPage() {
     const ModelProfiles = useScanTableModelConnections();

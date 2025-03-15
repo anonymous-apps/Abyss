@@ -91,7 +91,7 @@ export const DestructiveButton: React.FC<DestructiveButtonProps> = ({ onClick, c
         <button
             onClick={onClick}
             disabled={disabled}
-            className={`w-fit px-3 py-1 text-sm text-white bg-red-500 bg-opacity-20 border border-red-900 rounded-sm transition-colors bg-background-transparent ${
+            className={`w-fit px-3 py-1 text-sm text-white bg-red-500 bg-opacity-80 border border-red-900 rounded-sm transition-colors bg-background-transparent ${
                 disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-red-600 hover:border-red-600'
             } ${className}`}
         >

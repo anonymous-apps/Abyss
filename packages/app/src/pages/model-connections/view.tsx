@@ -1,23 +1,19 @@
+import { Box, Settings, Trash2 } from 'lucide-react';
 import React from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { PageCrumbed } from '../../library/layout/page-crumbed';
+import { useNavigate, useParams } from 'react-router-dom';
+import { DestructiveButton } from '../../library/input/button';
+import { EditableLabelValue } from '../../library/input/label-value';
 import { IconSection } from '../../library/layout/icon-section';
-import { Box, Globe, Settings, Trash2 } from 'lucide-react';
-import { Button, DestructiveButton } from '../../library/input/button';
-import { Database } from '../../main';
-import { useDatabaseTableSubscription } from '../../state/database-connection';
-import { LabelValue } from '../../library/layout/label-value';
+import { PageCrumbed } from '../../library/layout/page-crumbed';
 import { WithSidebar } from '../../library/layout/sidebar';
+import { Database } from '../../main';
+import { useTableRecordModelConnections } from '../../state/database-connection';
 
 export function ModelProfileViewPage() {
     const { id } = useParams();
     const navigate = useNavigate();
 
-    const modelProfile = useDatabaseTableSubscription('ModelProfiles', async database => {
-        if (!id) return null;
-        return database.table.modelConnections.findUnique(id);
-    });
-
+    const modelProfile = useTableRecordModelConnections(id || '');
     const handleDelete = async () => {
         if (!id) return;
         await Database.table.modelConnections.delete(id);
@@ -35,19 +31,31 @@ export function ModelProfileViewPage() {
     ) : (
         <>
             <IconSection title="Profile Information" icon={Box}>
-                <LabelValue
+                <EditableLabelValue
                     data={{
-                        Name: modelProfile.data.name,
-                        Provider: modelProfile.data.provider,
-                        Model: modelProfile.data.modelId,
-                        'Record Id': modelProfile.data.id,
+                        name: modelProfile.data.name,
+                        description: modelProfile.data.description,
+                        provider: modelProfile.data.provider,
+                        modelId: modelProfile.data.modelId,
+                    }}
+                    editableKeys={['description', 'name', 'provider', 'modelId']}
+                    onChange={data => {
+                        const newData = { ...modelProfile.data, ...data };
+                        Database.table.modelConnections.update(id || '', newData);
                     }}
                 />
             </IconSection>
 
             {modelProfile.data.data && Object.keys(modelProfile.data.data).length > 0 && (
                 <IconSection title="Configuration" icon={Settings}>
-                    <LabelValue data={modelProfile.data.data as Record<string, any>} />
+                    <EditableLabelValue
+                        data={modelProfile.data.data as Record<string, any>}
+                        editableKeys={Object.keys(modelProfile.data.data)}
+                        onChange={data => {
+                            const newData = { ...modelProfile.data, data };
+                            Database.table.modelConnections.update(id || '', newData);
+                        }}
+                    />
                 </IconSection>
             )}
 

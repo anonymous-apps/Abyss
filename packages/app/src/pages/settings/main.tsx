@@ -1,13 +1,13 @@
-import { Box, Download, Link, PaintBucket, Plus, RefreshCcw } from 'lucide-react';
+import { Download, Link, PaintBucket, RefreshCcw } from 'lucide-react';
 import React from 'react';
 import { Button, GhostIconButton } from '../../library/input/button';
+import { Select } from '../../library/input/select';
 import { IconSection } from '../../library/layout/icon-section';
 import { PageCrumbed } from '../../library/layout/page-crumbed';
-import { useDatabaseTableSubscription, useTableRecordUserSettings } from '../../state/database-connection';
-import { Select } from '../../library/input/select';
+import { WithSidebar } from '../../library/layout/sidebar';
 import { Database } from '../../main';
 import { AppUpdaterStatus, useAppUpdator } from '../../state/app-updater';
-import { WithSidebar } from '../../library/layout/sidebar';
+import { useTableRecordUserSettings } from '../../state/database-connection';
 
 const pageTitle = 'Abyss Settings';
 const pageBreadcrumbs = [

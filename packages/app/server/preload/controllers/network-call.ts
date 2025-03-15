@@ -14,4 +14,4 @@ class _NetworkCallController extends BaseDatabaseConnection<NetworkCallRecord> {
     }
 }
 
-export const NetworkCallController = new _NetworkCallController(); 
+export const NetworkCallController = new _NetworkCallController();

@@ -1,7 +1,6 @@
-import React from 'react';
-import { useLocation } from 'react-router-dom';
-import { Link } from 'react-router-dom';
 import { Box, DatabaseIcon, MessageSquare, Play, Settings, type LucideIcon } from 'lucide-react';
+import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { useSidebarFadeStore } from '../../state/sidebar-fade';
 
 export interface SidebarItemProps {
@@ -63,7 +62,7 @@ export function Sidebar() {
             <SidebarItem title="Chats" icon={MessageSquare} url="/chats" />
             <SidebarSection title="Configuration" />
             <SidebarItem title="Models" icon={Box} url="/model-connection" />
-            <SidebarItem title="Actions" icon={Play} url="/actions" />
+            <SidebarItem title="Tools" icon={Play} url="/tools" />
             <SidebarItem title="Storage" icon={DatabaseIcon} url="/database" />
             <SidebarItem title="Settings" icon={Settings} url="/settings" />
         </div>

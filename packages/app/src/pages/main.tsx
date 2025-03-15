@@ -1,10 +1,10 @@
-import React, { ReactNode, useState, useEffect } from 'react';
-import { Box, MessageCircle, Play, Settings, LucideIcon, DatabaseIcon } from 'lucide-react';
-import { useSidebarFadeStore } from '../state/sidebar-fade';
-import { ClickableIconOption } from '../library/layout/nav-options';
+import { Box, DatabaseIcon, MessageCircle, Play, Settings } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { useDatabaseTableSubscription, useTableRecordUserSettings } from '../state/database-connection';
+import { ClickableIconOption } from '../library/layout/nav-options';
 import { Database } from '../main';
+import { useTableRecordUserSettings } from '../state/database-connection';
+import { useSidebarFadeStore } from '../state/sidebar-fade';
 
 export function MainPage() {
     const navigate = useNavigate();
@@ -67,8 +67,8 @@ export function MainPage() {
                         Chat with AI models directly or with custom agents you build
                     </ClickableIconOption>
 
-                    <ClickableIconOption title="Actions" icon={Play} onClick={() => handleNavigation('/actions')}>
-                        Connect to MCP servers and leverage their actions to automate your workflows, or build your own actions.
+                    <ClickableIconOption title="Tools" icon={Play} onClick={() => handleNavigation('/tools')}>
+                        Connect to MCP servers and leverage their tools to automate your workflows, or build your own tools.
                     </ClickableIconOption>
 
                     <ClickableIconOption title="Database" icon={DatabaseIcon} onClick={() => handleNavigation('/database')}>

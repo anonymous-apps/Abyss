@@ -1,19 +1,20 @@
+import { BotIcon, Box, MessageSquare } from 'lucide-react';
 import React, { useState } from 'react';
-import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import { PageCrumbed } from '../../library/layout/page-crumbed';
-import { useChatWithModel } from '../../state/hooks/useChat';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ChatMessageSection } from '../../library/content/chat-section';
 import { Button, GhostIconButton } from '../../library/input/button';
-import { Database } from '../../main';
-import { BotIcon, Box, MessageSquare } from 'lucide-react';
 import { InputArea } from '../../library/input/input';
-import { WithSidebar } from '../../library/layout/sidebar';
 import { PageHeader } from '../../library/layout/page-header';
+import { Database } from '../../main';
+import { useChatWithModel } from '../../state/hooks/useChat';
 
 export function ChatViewPage() {
     const { id } = useParams();
     const navigate = useNavigate();
     const chat = useChatWithModel(id || '');
+
+    console.log({ chat });
+
     const [message, setMessage] = useState('');
 
     const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -26,7 +27,7 @@ export function ChatViewPage() {
     const onAskAiToRespond = async () => {
         try {
             if (chat.chat && chat.chat.id) {
-                Database.workflows.askAIToRespondToChat(chat.chat.id);
+                Database.workflows.AskAiToRespondToChat(chat.chat.id);
             }
         } catch (error) {}
     };
@@ -35,12 +36,12 @@ export function ChatViewPage() {
         try {
             if (chat.chat && chat.chat.id && chat.thread && chat.thread.id && message.trim()) {
                 await Database.table.messageThread.addMessage(chat.thread.id, {
-                    role: 'USER',
-                    source: 'USER',
+                    type: 'USER',
+                    sourceId: 'USER',
                     content: message,
                 });
                 setMessage('');
-                await Database.workflows.askAIToRespondToChat(chat.chat.id);
+                await Database.workflows.AskAiToRespondToChat(chat.chat.id);
             }
         } catch (error) {}
     };
@@ -54,15 +55,19 @@ export function ChatViewPage() {
                     <ChatMessageSection message={m} key={m.id} />
                 ))}
 
-                {chat.thread.status === 'responding' && (
+                {chat.thread.lockingJobId?.length ? (
                     <div className="flex justify-center my-4">
                         <div className="animate-bounce text-text-dark">
                             <BotIcon />
                         </div>
                     </div>
+                ) : (
+                    false
                 )}
 
-                {chat.thread.status !== 'responding' && (
+                {chat.thread.lockingJobId?.length ? (
+                    false
+                ) : (
                     <>
                         <br />
                         <br />

@@ -1,22 +1,24 @@
-import { contextBridge } from 'electron';
 import type { PrismaClient } from '@prisma/client';
+import { contextBridge } from 'electron';
 import { createRequire } from 'module';
 import { v4 as uuidv4 } from 'uuid';
-import { ModelConnectionsController } from './controllers/model-connections';
-import { UserSettingsController } from './controllers/user-settings';
-import { MessageThreadController } from './controllers/message-thread';
-import { MessageController } from './controllers/message';
-import { NetworkCallController } from './controllers/network-call';
-import { ChatController } from './controllers/chat';
-import { RenderedConversationThreadController } from './controllers/rendered-conversation-thread';
+import { PrismaBoostrapper } from './bootstrap/bootstrapData';
 import { AgentController } from './controllers/agent';
 import { AgentToolConnectionController } from './controllers/agent-tool-connection';
+import { ChatController } from './controllers/chat';
+import { JobsController } from './controllers/jobs';
+import { MessageController } from './controllers/message';
+import { MessageThreadController } from './controllers/message-thread';
+import { MetricController } from './controllers/metric';
+import { ModelConnectionsController } from './controllers/model-connections';
+import { NetworkCallController } from './controllers/network-call';
+import { RenderedConversationThreadController } from './controllers/rendered-conversation-thread';
+import { TextLogController } from './controllers/text-log';
 import { ToolController } from './controllers/tool';
 import { ToolInvocationController } from './controllers/tool-invocation';
-import { JobsController } from './controllers/jobs';
-import { MetricController } from './controllers/metric';
-import { TextLogController } from './controllers/text-log';
-import { PrismaBoostrapper } from './bootstrap/bootstrapData';
+import { UserSettingsController } from './controllers/user-settings';
+import { AskAiToRespondToChat } from './workflows/ask-ai-respond-thread';
+import { AskAiToTitleConversation } from './workflows/ask-ai-to-title-conversation';
 
 // Setup prisma to support sqlite
 const require = createRequire(import.meta.url);
@@ -169,7 +171,10 @@ const PrismaAPI = {
     // Access to database tables
     table: tableControllers,
 
-    workflows: {},
+    workflows: {
+        AskAiToTitleConversation,
+        AskAiToRespondToChat,
+    },
 
     bootstrap: {
         bootstrapping: PrismaBoostrapper,

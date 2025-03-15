@@ -1,7 +1,8 @@
 import { ChatContext, Intelegence, LanguageModel, OpenAIChatBasedLLM } from '@abyss/intelligence';
-import { Chat, Message, ModelConnections } from '@prisma/client';
+import { MessageRecord } from '../controllers/message';
+import { ModelConnectionsRecord } from '../controllers/model-connections';
 
-export function buildIntelegenceForChat(chat: Chat, aiConnection: ModelConnections) {
+export function buildIntelegence(aiConnection: ModelConnectionsRecord) {
     let languageModel: LanguageModel | undefined;
 
     if (aiConnection.provider === 'OpenAI') {
@@ -20,7 +21,7 @@ export function buildIntelegenceForChat(chat: Chat, aiConnection: ModelConnectio
     });
 }
 
-export function buildChatContext(messages: Message[]) {
+export function buildChatContext(messages: MessageRecord[]) {
     let context = ChatContext.fromStrings();
 
     for (const message of messages) {

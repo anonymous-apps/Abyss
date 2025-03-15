@@ -1,12 +1,12 @@
-import { Box, MessageSquare, Plus } from 'lucide-react';
+import { MessageSquare, Plus } from 'lucide-react';
 import React from 'react';
-import { PageSidebar } from '../../library/layout/page-sidebar';
-import { Outlet, redirect, useLocation, useNavigate } from 'react-router-dom';
-import { useDatabaseRecordSubscription, useDatabaseTableSubscription } from '../../state/database-connection';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { GhostIconButton } from '../../library/input/button';
+import { PageSidebar } from '../../library/layout/page-sidebar';
+import { useScanTableChat } from '../../state/database-connection';
 
 export function ChatMainPage() {
-    const chats = useDatabaseTableSubscription('Chat', database => database.table.chat.scanTable());
+    const chats = useScanTableChat();
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -33,5 +33,3 @@ export function ChatMainPage() {
         </PageSidebar>
     );
 }
-
-export default ChatMainPage;

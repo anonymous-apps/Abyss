@@ -121,7 +121,7 @@ model Chat {
   
   type        String
   sourceId    String
-  modelConnectionId String?
+  threadId    String?
 }
 
 model Agent {

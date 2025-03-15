@@ -1,4 +1,3 @@
-import { Prisma } from '@prisma/client';
 import { notifyTableChanged, prisma } from '../database-connection';
 
 export interface BaseRecord {
@@ -40,7 +39,9 @@ export class BaseDatabaseConnection<T extends BaseRecord> {
     }
 
     async update(id: string, data: Partial<Omit<T, 'id' | 'createdAt' | 'updatedAt'>>): Promise<T> {
-        const result: T = await this.getTable().update({ where: { id }, data });
+        const initial = await this.getByRecordId(id);
+        const newData = { ...initial, ...data, references: { ...initial?.references, ...data.references } };
+        const result: T = await this.getTable().update({ where: { id }, data: newData });
         await this.notifyChange(result);
         return result;
     }
@@ -50,7 +51,7 @@ export class BaseDatabaseConnection<T extends BaseRecord> {
         await this.notifyChange({ id });
     }
 
-    async findUnique(id: string): Promise<T | null> {
+    async findById(id: string): Promise<T | null> {
         return (await this.getTable().findUnique({ where: { id } })) as T | null;
     }
 
@@ -98,7 +99,6 @@ export class BaseDatabaseConnection<T extends BaseRecord> {
             proto = Object.getPrototypeOf(proto);
         }
 
-        console.log('exportedMethods', exportedMethods);
         return exportedMethods as unknown as this;
     }
 }
