@@ -37,7 +37,7 @@ export function ModelProfileMainPage() {
                                     icon={<Box className="w-4 h-4" />}
                                     footer={model.provider}
                                 >
-                                    {model.modelId || 'No model ID specified'}
+                                    {model.description}
                                 </Tile>
                             ))}
                         </TileGrid>

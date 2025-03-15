@@ -59,7 +59,7 @@ export function ModelProfileCreatePage() {
                                 onClick={() => setSelectedProvider(provider.name)}
                                 selected={selectedProvider === provider.name}
                             >
-                                {provider.description}
+                                {provider.name}
                             </Button>
                         ))}
                     </div>
