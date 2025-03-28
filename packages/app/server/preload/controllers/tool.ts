@@ -12,6 +12,8 @@ class _ToolController extends BaseDatabaseConnection<ToolRecord> {
     constructor() {
         super('tool', 'Building blocks for agents that represent possible actions with parameters');
     }
+
+    
 }
 
 export const ToolController = new _ToolController();

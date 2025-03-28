@@ -3,10 +3,17 @@ import React, { useEffect } from 'react';
 interface EditableLabelValueProps {
     data: Record<string, any>;
     editableKeys?: string[];
+    editableArea?: string[];
     onChange?: (updatedData: Record<string, any>) => void;
     className?: string;
 }
-export const EditableLabelValue: React.FC<EditableLabelValueProps> = ({ data, editableKeys = [], onChange, className = '' }) => {
+export const EditableLabelValue: React.FC<EditableLabelValueProps> = ({
+    data,
+    editableKeys = [],
+    editableArea = [],
+    onChange,
+    className = '',
+}) => {
     const [localData, setLocalData] = React.useState<Record<string, any>>(data);
 
     useEffect(() => {
@@ -18,6 +25,7 @@ export const EditableLabelValue: React.FC<EditableLabelValueProps> = ({ data, ed
     };
 
     const handleBlur = (key: string) => {
+        console.log({ key, localData, data });
         if (onChange && localData[key] !== data[key]) {
             const updatedData = { ...data, [key]: localData[key] };
             onChange(updatedData);
@@ -31,7 +39,15 @@ export const EditableLabelValue: React.FC<EditableLabelValueProps> = ({ data, ed
                     <div className="rounded-sm font-sm text-text-400 min-w-[100px] max-w-[200px] bg-background-transparent capitalize h-full p-1 border-r border-background-light border-b text-center break-words overflow-hidden text-ellipsis">
                         {key}
                     </div>
-                    {editableKeys.includes(key) ? (
+                    {editableArea.includes(key) ? (
+                        <textarea
+                            value={typeof localData[key] === 'object' ? JSON.stringify(localData[key]) : String(localData[key])}
+                            onChange={e => handleLocalChange(key, e.target.value)}
+                            onBlur={() => handleBlur(key)}
+                            className="bg-background-transparent border border-background-light rounded px-2 py-1 w-full"
+                            rows={15}
+                        />
+                    ) : editableKeys.includes(key) ? (
                         <input
                             type="text"
                             value={typeof localData[key] === 'object' ? JSON.stringify(localData[key]) : String(localData[key])}

@@ -52,7 +52,7 @@ export function ToolsPage() {
                                 icon={<Hammer className="w-4 h-4" />}
                                 footer={tool.type}
                             >
-                                {tool.description || 'No description'}
+                                {tool.description.substring(0, 100) || 'No description'}
                             </Tile>
                         ))}
                     </TileGrid>

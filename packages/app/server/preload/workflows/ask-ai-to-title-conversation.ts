@@ -1,3 +1,4 @@
+import { AgentController } from '../controllers/agent';
 import { ChatController } from '../controllers/chat';
 import { MessageController } from '../controllers/message';
 import { MessageThreadController } from '../controllers/message-thread';
@@ -22,7 +23,8 @@ export async function AskAiToTitleConversation(chatId: string) {
         throw new Error('No messages in thread');
     }
 
-    const connection = await ModelConnectionsController.getByRecordId(chat.sourceId);
+    const sourceId = chat.type === 'agent' ? (await AgentController.getByRecordId(chat.sourceId))?.chatModelId : chat.sourceId;
+    const connection = await ModelConnectionsController.getByRecordId(sourceId || chat.sourceId);
     if (!connection) {
         throw new Error('Connection unknown');
     }

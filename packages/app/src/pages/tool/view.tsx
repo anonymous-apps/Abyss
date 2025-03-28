@@ -34,13 +34,18 @@ export function ToolViewPage() {
             <IconSection title="Tool Information" icon={Hammer}>
                 <EditableLabelValue
                     data={{
-                        Name: tool.data.name,
-                        Description: tool.data.description,
-                        Type: tool.data.type,
+                        name: tool.data.name,
+                        description: tool.data.description,
+                        type: tool.data.type,
+                        schema: JSON.stringify(tool.data.schema, null, 2),
                     }}
-                    editableKeys={['Name', 'Description']}
+                    editableKeys={['name']}
+                    editableArea={['description', 'schema']}
                     onChange={data => {
                         const newData = { ...tool.data, ...data };
+                        if (data.schema && typeof data.schema === 'string') {
+                            newData.schema = JSON.parse(data.schema);
+                        }
                         Database.table.tool.update(id || '', newData);
                     }}
                 />

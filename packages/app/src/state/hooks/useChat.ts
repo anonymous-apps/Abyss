@@ -35,14 +35,26 @@ export function useChatWithModel(chatId: string) {
         [thread.data?.id]
     );
 
+    const agentId = useDatabaseTableSubscription(
+        'Agent',
+        async database => {
+            if (chat.data?.type === 'agent') {
+                const agent = await database.table.agent.findById(chat.data?.sourceId || '');
+                return agent;
+            }
+        },
+        [chat.data?.sourceId]
+    );
+
     // The model for the chat
     const model = useDatabaseTableSubscription(
         'ModelConnections',
         async database => {
-            const model = await database.table.modelConnections.findById(chat.data?.sourceId || '');
+            const id = chat.data?.type === 'chatModel' ? chat.data?.sourceId : agentId.data?.chatModelId;
+            const model = await database.table.modelConnections.findById(id || '');
             return model;
         },
-        [chat.data?.sourceId]
+        [chat.data?.sourceId, agentId.data?.chatModelId]
     );
 
     if (chat.loading || thread.loading || messages.loading || model.loading) {

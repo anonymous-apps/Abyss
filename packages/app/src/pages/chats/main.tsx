@@ -1,6 +1,7 @@
-import { MessageSquare, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import React from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { getIconForSourceType } from '../../library/icons';
 import { GhostIconButton } from '../../library/input/button';
 import { PageSidebar } from '../../library/layout/page-sidebar';
 import { useScanTableChat } from '../../state/database-connection';
@@ -23,7 +24,7 @@ export function ChatMainPage() {
 
     const builtSidebar = (chats.data || []).map(entry => ({
         title: entry.name,
-        icon: MessageSquare,
+        icon: getIconForSourceType(entry.type || ''),
         url: `/chats/id/${entry.id}`,
     }));
 

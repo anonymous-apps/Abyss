@@ -1,5 +1,5 @@
 import { BaseDatabaseConnection, BaseRecord } from './_base';
-import { prisma } from '../database-connection';
+import { ToolController, ToolRecord } from './tool';
 
 export interface AgentToolConnectionRecord extends BaseRecord {
     agentId: string;
@@ -12,11 +12,21 @@ class _AgentToolConnectionController extends BaseDatabaseConnection<AgentToolCon
         super('agentToolConnection', 'Associated which tools are available to which agents');
     }
 
-    async findByAgentId(agentId: string): Promise<AgentToolConnectionRecord[]> {
+    async findByAgentId(agentId: string) {
+        const results: { tool: ToolRecord; permission: string }[] = [];
+
         const result = await this.getTable().findMany({
             where: { agentId },
         });
-        return result as AgentToolConnectionRecord[];
+
+        for (const record of result) {
+            const tool = await ToolController.getByRecordId(record.toolId);
+            if (tool) {
+                results.push({ tool, permission: record.permission });
+            }
+        }
+
+        return results;
     }
 
     async findByToolId(toolId: string): Promise<AgentToolConnectionRecord[]> {

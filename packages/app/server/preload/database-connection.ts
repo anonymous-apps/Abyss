@@ -17,6 +17,7 @@ import { TextLogController } from './controllers/text-log';
 import { ToolController } from './controllers/tool';
 import { ToolInvocationController } from './controllers/tool-invocation';
 import { UserSettingsController } from './controllers/user-settings';
+import { AskAgentToRespondToChat } from './workflows/ask-agent-respond-thread';
 import { AskAiToRespondToChat } from './workflows/ask-ai-respond-thread';
 import { AskAiToTitleConversation } from './workflows/ask-ai-to-title-conversation';
 
@@ -174,6 +175,7 @@ const PrismaAPI = {
     workflows: {
         AskAiToTitleConversation,
         AskAiToRespondToChat,
+        AskAgentToRespondToChat,
     },
 
     bootstrap: {

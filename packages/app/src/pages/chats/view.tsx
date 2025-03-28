@@ -1,7 +1,8 @@
-import { BotIcon, Box, MessageSquare } from 'lucide-react';
+import { BotIcon, Box } from 'lucide-react';
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ChatMessageSection } from '../../library/content/chat-section';
+import { getIconForSourceType } from '../../library/icons';
 import { Button, GhostIconButton } from '../../library/input/button';
 import { InputArea } from '../../library/input/input';
 import { PageHeader } from '../../library/layout/page-header';
@@ -12,8 +13,6 @@ export function ChatViewPage() {
     const { id } = useParams();
     const navigate = useNavigate();
     const chat = useChatWithModel(id || '');
-
-    console.log({ chat });
 
     const [message, setMessage] = useState('');
 
@@ -27,7 +26,11 @@ export function ChatViewPage() {
     const onAskAiToRespond = async () => {
         try {
             if (chat.chat && chat.chat.id) {
-                Database.workflows.AskAiToRespondToChat(chat.chat.id);
+                if (chat.chat.type === 'chatModel') {
+                    Database.workflows.AskAiToRespondToChat(chat.chat.id);
+                } else {
+                    Database.workflows.AskAgentToRespondToChat(chat.chat.id);
+                }
             }
         } catch (error) {}
     };
@@ -100,7 +103,7 @@ export function ChatViewPage() {
         <PageHeader
             title={chat.chat?.name || 'Loading...'}
             subtitle={chat.chat?.description || undefined}
-            icon={MessageSquare}
+            icon={getIconForSourceType(chat.chat?.type || '')}
             action={headerReference}
         >
             {content}
