@@ -1,32 +1,26 @@
-export type LogLevel = 'off' | 'default' | 'verbose';
+// ANSI color codes
+const colors = {
+    gray: "\x1b[90m",
+    blue: "\x1b[34m",
+    red: "\x1b[31m",
+    yellow: "\x1b[33m",
+    reset: "\x1b[0m",
+};
 
-let logLevel: LogLevel = 'default';
-
-export function setLogLevel(level: LogLevel) {
-    logLevel = level;
-}
-
-export function getLogLevel(): LogLevel {
-    return logLevel;
-}
 export const Log = {
-    log(message: string) {
-        if (logLevel === 'off') return;
-        console.log(message);
+    log(prefix: string, message: string) {
+        console.log(`${colors.gray}${prefix.padEnd(30)}${colors.reset} ${colors.blue}INFO${colors.reset} ${message}`);
     },
 
-    debug(message: string) {
-        if (logLevel !== 'verbose') return;
-        console.debug(message);
+    debug(prefix: string, message: string) {
+        console.debug(`${colors.gray}${prefix.padEnd(30)}${colors.reset} ${colors.gray}DEBG${colors.gray} ${message} ${colors.reset}`);
     },
 
-    error(message: string) {
-        if (logLevel === 'off') return;
-        console.error(message);
+    error(prefix: string, message: string) {
+        console.error(`${colors.gray}${prefix.padEnd(30)}${colors.reset} ${colors.red}ERRR${colors.reset} ${message}`);
     },
 
-    warn(message: string) {
-        if (logLevel === 'off') return;
-        console.warn(message);
+    warn(prefix: string, message: string) {
+        console.warn(`${colors.gray}${prefix.padEnd(30)}${colors.reset} ${colors.yellow}WARN${colors.reset} ${message}`);
     },
 };

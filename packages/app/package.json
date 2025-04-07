@@ -21,7 +21,7 @@
         "prisma:copy": "node scripts/copy-prisma-client.cjs"
     },
     "dependencies": {
-        "@abyss/intelligence": "^1.0.3",
+        "@abyss/intelligence": "^2.0.0",
         "@aws-sdk/client-bedrock-runtime": "^3.758.0",
         "@aws-sdk/client-dynamodb": "^3.767.0",
         "@aws-sdk/client-s3": "^3.758.0",
