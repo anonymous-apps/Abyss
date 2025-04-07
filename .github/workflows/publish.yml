@@ -3,52 +3,13 @@ name: My app - build, sign, release
 
 # Run on push to main or nightly if there was a push to main in the last day
 on:
-    schedule:
-        - cron: '0 0 * * *' # Run at midnight UTC every day
-    workflow_dispatch: # Allow manual triggering
-
+    push:
+        branches:
+            - main
 jobs:
-    check_recent_commits:
-        runs-on: ubuntu-latest
-        if: github.event_name == 'schedule'
-        outputs:
-            should_run: ${{ steps.check_commits.outputs.should_run }}
-        steps:
-            - name: Check out Git repository
-              uses: actions/checkout@v4
-              with:
-                  fetch-depth: 0
-
-            - name: Check for commits on the previous day
-              id: check_commits
-              run: |
-                  # Get yesterday's date using a cross-platform approach
-                  # Ubuntu uses GNU date, macOS uses BSD date
-                  if date --version >/dev/null 2>&1; then
-                    # GNU date (Ubuntu)
-                    YESTERDAY=$(date -u -d "yesterday" +%Y-%m-%d)
-                  else
-                    # BSD date (macOS)
-                    YESTERDAY=$(date -u -v-1d +%Y-%m-%d)
-                  fi
-
-                  echo "Checking for commits on $YESTERDAY"
-
-                  # Check if there were any commits on the previous day
-                  COMMIT_COUNT=$(git log --after="$YESTERDAY 00:00:00" --before="$YESTERDAY 23:59:59" --format="%H" main | wc -l)
-
-                  if [ $COMMIT_COUNT -gt 0 ]; then
-                    echo "Found $COMMIT_COUNT commits on $YESTERDAY"
-                    echo "should_run=true" >> $GITHUB_OUTPUT
-                  else
-                    echo "No commits found on $YESTERDAY"
-                    echo "should_run=false" >> $GITHUB_OUTPUT
-                  fi
-
-    release:
+    release_direct:
         runs-on: macos-latest
-        needs: check_recent_commits
-        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && needs.check_recent_commits.outputs.should_run == 'true')
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
 
         env:
             APPLE_ID: ${{ secrets.APPLE_ID }}
