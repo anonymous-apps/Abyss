@@ -97,6 +97,9 @@ async function askAiToRespondToChat(data: AskAiToRespondToChatData) {
                 type: 'AI',
                 sourceId: data.responseStream.id,
                 content: message.content,
+                references: {
+                    renderedConversationThreadId: data.thread.id,
+                },
             });
         }
         if (message.type === 'toolCall') {
@@ -109,6 +112,9 @@ async function askAiToRespondToChat(data: AskAiToRespondToChatData) {
                     name: message.name,
                     arguments: message.arguments,
                 }),
+                references: {
+                    renderedConversationThreadId: data.thread.id,
+                },
             });
         }
     }
