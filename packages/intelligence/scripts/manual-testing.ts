@@ -59,7 +59,7 @@ const streamExample = async () => {
     writeFileSync('context.input', stream.inputThread.toLogString());
 
     stream.onNewMessage(message => {
-        console.log(message);
+        console.log('message', message);
     });
 
     stream.onComplete(() => {

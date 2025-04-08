@@ -46,27 +46,30 @@ export class StreamParser {
                 break;
 
             case StreamParserState.InsideObject:
-                text = text.trim();
-                if (text.length === 0) {
-                    return undefined;
-                }
-                if (text.startsWith(Keys.CDATAStart)) {
-                    return this.handleCDATABegin(text);
-                }
-                if (Regex.ObjectTagStartFull.test(text)) {
-                    return this.handleEnterObject(text);
-                }
-                if (Regex.ObjectTagEndFull.test(text)) {
-                    return this.handleExitObject(text);
+                const isWhitespace = text.trim() === '';
+                const nonWhitespace = text.trim();
+
+                if (isWhitespace) {
+                    return text;
                 }
 
-                if (Keys.CDATAStart.startsWith(text)) {
+                if (nonWhitespace.startsWith(Keys.CDATAStart)) {
+                    return this.handleCDATABegin(nonWhitespace);
+                }
+                if (Regex.ObjectTagStartFull.test(nonWhitespace)) {
+                    return this.handleEnterObject(nonWhitespace);
+                }
+                if (Regex.ObjectTagEndFull.test(nonWhitespace)) {
+                    return this.handleExitObject(nonWhitespace);
+                }
+
+                if (Keys.CDATAStart.startsWith(nonWhitespace)) {
                     return text;
                 }
-                if (Regex.ObjectTagStartPartial.test(text)) {
+                if (Regex.ObjectTagStartPartial.test(nonWhitespace)) {
                     return text;
                 }
-                if (Regex.ObjectTagEndPartial.test(text)) {
+                if (Regex.ObjectTagEndPartial.test(nonWhitespace)) {
                     return text;
                 }
 
@@ -79,10 +82,17 @@ export class StreamParser {
                 break;
 
             case StreamParserState.InsideData:
-                if (text.startsWith(Keys.CDATAEnd)) {
-                    return this.handleCDATAEnd(text);
+                const isWhitespace2 = text.trim() === '';
+                const nonWhitespace2 = text.trim();
+
+                if (isWhitespace2) {
+                    return text;
                 }
-                if (Keys.CDATAStart.startsWith(text)) {
+
+                if (nonWhitespace2.startsWith(Keys.CDATAEnd)) {
+                    return this.handleCDATAEnd(nonWhitespace2);
+                }
+                if (Keys.CDATAStart.startsWith(nonWhitespace2)) {
                     return text;
                 }
 

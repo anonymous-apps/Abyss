@@ -193,13 +193,16 @@ export class GeminiLanguageModel extends LanguageModel {
                 });
 
                 response.data.on('end', () => {
+                    buffer = buffer.trim();
+
+                    if (buffer.endsWith(']')) {
+                        buffer = buffer.slice(0, -1);
+                    }
+
                     // Process any remaining data in the buffer
-                    if (buffer.trim()) {
+                    if (buffer) {
                         try {
                             // If the buffer ends with a ] then remove it
-                            if (buffer.endsWith(']')) {
-                                buffer = buffer.slice(0, -1);
-                            }
                             // Try to parse the entire buffer as a single JSON object
                             const data = JSON.parse(buffer);
 

@@ -4,25 +4,25 @@ import { createXmlFromZod } from '../../utils/zod-to-xml/zod-to-xml';
 import { ToolDefinition } from './types';
 
 export function buildToolUsePrompt(thread: ChatThread, tools: ToolDefinition[]) {
+    const toolUseDetails = `
+        ## Tool Usage
+        I have setup a custom parser to handle special custom tool calls you can make use of.
+        To use them, you can simply put XML directly into your response and the parser will capture this and run the requested tool call.
+        Below ill details the tools available to you and how to use them.
+        Its very important to follow the syntax exactly as it is written below, the parser is designed to be very strict and will throw an error if it is not followed.
+
+    `;
     const toolCallsString = tools
         .map(
             tool =>
                 dedent(`
-                    ### Tool: ${tool.name}
-                    ${tool.description}
-                    An example of its usage is below. If your response contains the XML representation of the tool call as part of your response, you will have invoked the tool.
+                ### Tool: ${tool.name}
+                ${tool.description}
+                An example of its usage is below. If your response contains the XML representation of the tool call as part of your response, you will have invoked the tool.
 
-                `) + createXmlFromZod(tool.name, tool.parameters)
+            `) + createXmlFromZod(tool.name, tool.parameters)
         )
         .join('\n');
-
-    const toolUseDetails = `
-        ## Tool Usage
-        You can use the following tools to help the user which you can invoke by simply returning the XML representation of the tool call as part of your response.
-        You can return as many tool calls as you want, call tools in any order you want and call a tool as many times as you want.
-        You can put text between tools to help the user understand the context in which the tool is being called and why.
-        Dont wrap your response in any fancy tags and just match exactly the XML format of the tool calls, there is a custom parser that will parse your response into a list of tool calls.
-    `;
 
     const ToolUseExamplePrompt = `
 
