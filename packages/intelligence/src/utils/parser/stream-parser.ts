@@ -1,23 +1,32 @@
-import { AsyncStream } from '../../constructs';
+import { AsyncStream, ChatThread } from '../../constructs';
 import { StreamedChatResponse } from '../../constructs/streamed-chat-response/chat-response';
+import { LanguageModel } from '../../models/language-model';
 import { Keys, Regex, StreamParserState } from './stream-parser.type';
+
+interface Props {
+    stream: AsyncStream<string>;
+    model: LanguageModel;
+    inputThread: ChatThread;
+}
 
 export class StreamParser {
     private stream: AsyncStream<string>;
 
-    public chatResponse: StreamedChatResponse = new StreamedChatResponse();
+    public chatResponse: StreamedChatResponse;
 
     private state: StreamParserState = StreamParserState.Text;
     private unprocessedCharacters: string = '';
     private scope: string[] = [];
 
-    constructor(stream: AsyncStream<string>) {
-        this.stream = stream;
+    constructor(props: Props) {
+        this.stream = props.stream;
+        this.chatResponse = new StreamedChatResponse(props);
     }
 
     public async parse() {
         for await (const chunk of this.stream) {
             for (const character of chunk) {
+                this.chatResponse.addText(character);
                 this.unprocessedCharacters = this._consume(this.unprocessedCharacters + character) || '';
             }
         }

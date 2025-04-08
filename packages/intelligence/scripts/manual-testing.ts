@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import { writeFileSync } from 'fs';
 import { z } from 'zod';
 import * as Intelegence from '../src';
 dotenv.config();
@@ -10,7 +11,7 @@ const primeSum = async () => {
         bucket: '405505053377-us-west-2-llmdatacachebucket',
     });
 
-    const response = await Intelegence.askWithTools({
+    const response = await Intelegence.streamWithTools({
         model: gemini,
         thread,
         cache,
@@ -38,10 +39,32 @@ const imageGeneration = async () => {
 
 const streamExample = async () => {
     const gemini = new Intelegence.GeminiLanguageModel();
-    const thread = new Intelegence.ChatThread().addUserTextMessage('count to 200');
+    const thread = new Intelegence.ChatThread().addUserTextMessage('add 10 and 20 and also add 30 and 40. use the tools to do this');
 
     console.log('Starting stream from Gemini...');
-    const stream = await gemini.stream(thread);
+    const stream = await Intelegence.streamWithTools({
+        model: gemini,
+        thread,
+        toolDefinitions: [
+            {
+                name: 'calculator',
+                description: 'Perform mathematical calculations',
+                parameters: z.object({
+                    expression: z.string().describe('The mathematical expression to evaluate in polish notation'),
+                }),
+            },
+        ],
+    });
+
+    writeFileSync('context.input', stream.inputThread.toLogString());
+
+    stream.onNewMessage(message => {
+        console.log(message);
+    });
+
+    stream.onComplete(() => {
+        writeFileSync('context.output', stream.getRawOutput());
+    });
 };
 
 streamExample();

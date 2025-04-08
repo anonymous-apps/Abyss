@@ -1,4 +1,6 @@
 import { v4 } from 'uuid';
+import { LanguageModel } from '../../models/language-model';
+import { ChatThread } from '../chat-thread/chat-thread';
 import {
     ImageMessage,
     ImageMessageEventCallback,
@@ -10,9 +12,18 @@ import {
     ToolCallMessage,
 } from './chat-response.types';
 
+interface Props {
+    model: LanguageModel;
+    inputThread: ChatThread;
+}
+
 export class StreamedChatResponse {
+    public readonly model: LanguageModel;
+    public readonly inputThread: ChatThread;
+
     private messages: Message[] = [];
     private currentMessage: Message | null = null;
+    private fullTextMessage: string = '';
 
     // Event listeners
     private newMessageListeners: MessageEventCallback[] = [];
@@ -23,7 +34,19 @@ export class StreamedChatResponse {
     private toolCallCompletedListeners: ToolCallEventCallback[] = [];
     private completeListeners: (() => void)[] = [];
 
-    constructor() {}
+    constructor(props: Props) {
+        this.model = props.model;
+        this.inputThread = props.inputThread;
+    }
+
+    // Text management methods
+    public addText(text: string): void {
+        this.fullTextMessage += text;
+    }
+
+    public getRawOutput(): string {
+        return this.fullTextMessage;
+    }
 
     // Message management methods
     public startNewTextMessage(): void {

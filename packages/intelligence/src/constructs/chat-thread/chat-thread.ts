@@ -1,5 +1,5 @@
-import { dedent } from "../../utils/dedent/dedent";
-import { ChatContextProps, ChatTurn, ImageMessagePartial, MessageSender, TextMessagePartial } from "./types";
+import { dedent } from '../../utils/dedent/dedent';
+import { ChatContextProps, ChatTurn, ImageMessagePartial, MessageSender, TextMessagePartial } from './types';
 
 /**
  * @description Manages chat context between a user and bot, handling message turns and formatting
@@ -23,9 +23,9 @@ export class ChatThread {
         const turns: ChatTurn[] = [];
 
         messages.forEach((message, index) => {
-            const sender: MessageSender = index % 2 === 0 ? "user" : "bot";
+            const sender: MessageSender = index % 2 === 0 ? 'user' : 'bot';
             const textPartial: TextMessagePartial = {
-                type: "text",
+                type: 'text',
                 content: dedent(message).trim(),
             };
 
@@ -48,14 +48,14 @@ export class ChatThread {
 
     private _createTextPartial(content: string): TextMessagePartial {
         return {
-            type: "text",
+            type: 'text',
             content: dedent(content).trim(),
         };
     }
 
     private _createImagePartial(base64Data: string): ImageMessagePartial {
         return {
-            type: "image",
+            type: 'image',
             base64Data,
         };
     }
@@ -134,28 +134,28 @@ export class ChatThread {
      * @description Convenience method to add a user text message
      */
     public addUserTextMessage(text: string): ChatThread {
-        return this.addTextMessage(text, "user");
+        return this.addTextMessage(text, 'user');
     }
 
     /**
      * @description Convenience method to add a bot text message
      */
     public addBotTextMessage(text: string): ChatThread {
-        return this.addTextMessage(text, "bot");
+        return this.addTextMessage(text, 'bot');
     }
 
     /**
      * @description Convenience method to add a user image message
      */
     public addUserImageMessage(base64Data: string): ChatThread {
-        return this.addImageMessage(base64Data, "user");
+        return this.addImageMessage(base64Data, 'user');
     }
 
     /**
      * @description Convenience method to add a bot image message
      */
     public addBotImageMessage(base64Data: string): ChatThread {
-        return this.addImageMessage(base64Data, "bot");
+        return this.addImageMessage(base64Data, 'bot');
     }
 
     /**
@@ -170,8 +170,10 @@ export class ChatThread {
      */
     public toString(): string {
         return this.turns
-            .flatMap((turn) => turn.partials.filter((partial) => partial.type === "text").map((partial) => (partial as TextMessagePartial).content))
-            .join("\n");
+            .flatMap(turn =>
+                turn.partials.filter(partial => partial.type === 'text').map(partial => (partial as TextMessagePartial).content)
+            )
+            .join('\n');
     }
 
     /**
@@ -179,20 +181,20 @@ export class ChatThread {
      */
     public toLogString(): string {
         return this.turns
-            .map((turn) => {
+            .map(turn => {
                 const partialLogs = turn.partials
-                    .map((partial) => {
-                        if (partial.type === "text") {
+                    .map(partial => {
+                        if (partial.type === 'text') {
                             return (partial as TextMessagePartial).content;
                         } else {
                             return `[IMAGE: ${(partial as ImageMessagePartial).base64Data.substring(0, 20)}...]`;
                         }
                     })
-                    .join("\n\n");
+                    .join('\n\n');
 
                 return `[${turn.sender}] --------------------------------\n${partialLogs}\n`;
             })
-            .join("\n");
+            .join('\n');
     }
 
     /**
@@ -203,11 +205,11 @@ export class ChatThread {
         // Iterate through turns in reverse to find the last bot turn
         for (let i = this.turns.length - 1; i >= 0; i--) {
             const turn = this.turns[i];
-            if (turn.sender === "bot") {
+            if (turn.sender === 'bot') {
                 // Find the last text partial in this turn
                 for (let j = turn.partials.length - 1; j >= 0; j--) {
                     const partial = turn.partials[j];
-                    if (partial.type === "text") {
+                    if (partial.type === 'text') {
                         return (partial as TextMessagePartial).content;
                     }
                 }
@@ -224,11 +226,11 @@ export class ChatThread {
         // Iterate through turns in reverse to find the last bot turn
         for (let i = this.turns.length - 1; i >= 0; i--) {
             const turn = this.turns[i];
-            if (turn.sender === "bot") {
+            if (turn.sender === 'bot') {
                 // Find the last image partial in this turn
                 for (let j = turn.partials.length - 1; j >= 0; j--) {
                     const partial = turn.partials[j];
-                    if (partial.type === "image") {
+                    if (partial.type === 'image') {
                         return (partial as ImageMessagePartial).base64Data;
                     }
                 }
