@@ -1,10 +1,18 @@
-import { ChatController } from '../controllers/chat';
-import { MessageController } from '../controllers/message';
-import { MessageThreadController } from '../controllers/message-thread';
-import { ModelConnectionsController } from '../controllers/model-connections';
-import { NetworkCallController } from '../controllers/network-call';
-import { RenderedConversationThreadController } from '../controllers/rendered-conversation-thread';
-import { buildChatContext, buildIntelegence } from './utils';
+import { streamWithTools } from '@abyss/intelligence';
+import { ChatController, ChatRecord } from '../controllers/chat';
+import { MessageController, MessageRecord } from '../controllers/message';
+import { MessageThreadController, MessageThreadRecord } from '../controllers/message-thread';
+import { ModelConnectionsController, ModelConnectionsRecord } from '../controllers/model-connections';
+import { ResponseStreamController, ResponseStreamRecord } from '../controllers/response-stream';
+import { buildIntelegence, buildThread } from './utils';
+
+interface AskAiToRespondToChatData {
+    chat: ChatRecord;
+    thread: MessageThreadRecord;
+    messages: MessageRecord[];
+    connection: ModelConnectionsRecord;
+    responseStream: ResponseStreamRecord;
+}
 
 export async function AskAiToRespondToChat(chatId: string) {
     const chat = await ChatController.getByRecordId(chatId);
@@ -27,64 +35,81 @@ export async function AskAiToRespondToChat(chatId: string) {
         throw new Error('Connection unknown');
     }
 
+    // Create the response stream object
+    const responseStream = await ResponseStreamController.create({
+        sourceId: connection.id,
+        resultMessages: [],
+        status: 'streaming',
+        rawOutput: '',
+    });
+
     // Lock the chat
     await MessageThreadController.update(thread.id, {
-        lockingJobId: '-',
+        lockingId: responseStream.id,
     });
 
     try {
-        // Get the AI
-        const ai = await buildIntelegence(connection);
-        const context = buildChatContext(messages);
-        const response = await ai.respond({ context });
-
-        // Save the response into the database
-        const message = await MessageController.create({
-            threadId: thread.id,
-            type: 'AI',
-            sourceId: connection.id,
-            content: response.response,
-        });
-
-        if (response.apiCall) {
-            const apiCallRecord = await NetworkCallController.create({
-                endpoint: response.apiCall.endpoint,
-                method: response.apiCall.method,
-                status: response.apiCall.status,
-                body: JSON.stringify(response.apiCall.body, null, 2),
-                response: JSON.stringify(response.apiCall?.response, null, 2),
-            });
-            await MessageController.update(message.id, {
-                references: {
-                    networkCallId: apiCallRecord.id,
-                },
-            });
-        }
-
-        if (response.chat) {
-            const renderedThread = await RenderedConversationThreadController.create({
-                messages: response.chat.getMessages() as any,
-            });
-            await MessageController.update(message.id, {
-                references: {
-                    renderedConversationThreadId: renderedThread.id,
-                },
-            });
-        }
-
-        // Update the chat to be unlocked
-        await MessageThreadController.update(thread.id, {
-            lockingJobId: '',
-        });
+        return await askAiToRespondToChat({ chat, thread, messages, connection, responseStream });
     } catch (error) {
-        const message = await MessageController.create({
-            threadId: thread.id,
-            type: 'INTERNAL',
-            sourceId: 'SYSTEM',
-            content: `An error occurred while asking the AI to respond to the chat: ${error}`,
+        await ResponseStreamController.update(responseStream.id, {
+            status: 'error',
         });
+        throw error;
+    } finally {
         await MessageThreadController.update(thread.id, {
-            lockingJobId: '',
+            lockingId: '',
         });
+    }
+}
+
+async function askAiToRespondToChat(data: AskAiToRespondToChatData) {
+    // Get the AI
+    const model = await buildIntelegence(data.connection);
+    const thread = buildThread(data.messages);
+
+    const toolDefinitions = [];
+
+    // Start the stream
+    const stream = await streamWithTools({ model, thread, toolDefinitions });
+
+    stream.onNewMessage(message => {
+        ResponseStreamController.addMessage(data.responseStream.id, message);
+        ResponseStreamController.updateRawOutput(data.responseStream.id, stream.getRawOutput());
+    });
+
+    stream.onComplete(() => {
+        ResponseStreamController.update(data.responseStream.id, {
+            resultMessages: stream.getMessages(),
+            status: 'complete',
+            rawOutput: stream.getRawOutput(),
+        });
+    });
+
+    // Wait for the stream to complete
+    await stream.waitForCompletion();
+
+    // Save the response into the database as messages after stream is complete
+    const messages = stream.getMessages();
+    for (const message of messages) {
+        if (message.type === 'text') {
+            await MessageController.create({
+                threadId: data.thread.id,
+                type: 'AI',
+                sourceId: data.responseStream.id,
+                content: message.content,
+            });
+        }
+        if (message.type === 'toolCall') {
+            await MessageController.create({
+                threadId: data.thread.id,
+                type: 'TOOL',
+                sourceId: data.responseStream.id,
+                content: JSON.stringify({
+                    callId: message.callId,
+                    name: message.name,
+                    arguments: message.arguments,
+                }),
+            });
+        }
     }
 }

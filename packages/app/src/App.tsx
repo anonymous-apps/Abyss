@@ -12,9 +12,9 @@ import { ListTablesPage } from './pages/database/list-tables';
 import { ViewTablePage } from './pages/database/view-table';
 import { ViewTableRecordPage } from './pages/database/view-table-record';
 import { MainPage } from './pages/main';
-import { ModelProfileCreatePage } from './pages/model-connections/create';
-import { ModelProfileMainPage } from './pages/model-connections/main';
-import { ModelProfileViewPage } from './pages/model-connections/view';
+import { ModelProfileCreatePage } from './pages/models/create';
+import { ModelProfileMainPage } from './pages/models/main';
+import { ModelProfileViewPage } from './pages/models/view';
 import { SettingsPage } from './pages/settings/main';
 import { ToolsPage } from './pages/tool/main';
 import { ToolViewPage } from './pages/tool/view';
@@ -31,9 +31,9 @@ export function App() {
                 <Routes>
                     <Route path="/" element={<MainPage />} />
                     <Route path="/settings" element={<SettingsPage />} />
-                    <Route path="/model-connection" element={<ModelProfileMainPage />} />
-                    <Route path="/model-connection/create" element={<ModelProfileCreatePage />} />
-                    <Route path="/model-connection/id/:id" element={<ModelProfileViewPage />} />
+                    <Route path="/models" element={<ModelProfileMainPage />} />
+                    <Route path="/models/create" element={<ModelProfileCreatePage />} />
+                    <Route path="/models/id/:id" element={<ModelProfileViewPage />} />
                     <Route path="/chats" element={<ChatMainPage />}>
                         <Route path="/chats/create" element={<ChatCreatePage />} />
                         <Route path="/chats/id/:id" element={<ChatViewPage />} />

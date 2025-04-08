@@ -61,7 +61,7 @@ export function Sidebar() {
             <SidebarSection title="Activity" />
             <SidebarItem title="Chats" icon={MessageSquare} url="/chats" />
             <SidebarSection title="Configuration" />
-            <SidebarItem title="Models" icon={Box} url="/model-connection" />
+            <SidebarItem title="Models" icon={Box} url="/models" />
             <SidebarItem title="Agents" icon={Bot} url="/agents" />
             <SidebarItem title="Tools" icon={Play} url="/tools" />
             <SidebarItem title="Storage" icon={DatabaseIcon} url="/database" />

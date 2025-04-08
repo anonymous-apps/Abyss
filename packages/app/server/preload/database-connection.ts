@@ -6,20 +6,18 @@ import { PrismaBoostrapper } from './bootstrap/bootstrapData';
 import { AgentController } from './controllers/agent';
 import { AgentToolConnectionController } from './controllers/agent-tool-connection';
 import { ChatController } from './controllers/chat';
-import { JobsController } from './controllers/jobs';
 import { MessageController } from './controllers/message';
 import { MessageThreadController } from './controllers/message-thread';
 import { MetricController } from './controllers/metric';
 import { ModelConnectionsController } from './controllers/model-connections';
 import { NetworkCallController } from './controllers/network-call';
 import { RenderedConversationThreadController } from './controllers/rendered-conversation-thread';
+import { ResponseStreamController } from './controllers/response-stream';
 import { TextLogController } from './controllers/text-log';
 import { ToolController } from './controllers/tool';
 import { ToolInvocationController } from './controllers/tool-invocation';
 import { UserSettingsController } from './controllers/user-settings';
-import { AskAgentToRespondToChat } from './workflows/ask-agent-respond-thread';
 import { AskAiToRespondToChat } from './workflows/ask-ai-respond-thread';
-import { AskAiToTitleConversation } from './workflows/ask-ai-to-title-conversation';
 
 // Setup prisma to support sqlite
 const require = createRequire(import.meta.url);
@@ -131,9 +129,9 @@ const tableControllers = {
     agentToolConnection: AgentToolConnectionController.export(),
     tool: ToolController.export(),
     toolInvocation: ToolInvocationController.export(),
-    jobs: JobsController.export(),
     metric: MetricController.export(),
     textLog: TextLogController.export(),
+    responseStream: ResponseStreamController.export(),
 };
 
 const PrismaAPI = {
@@ -173,9 +171,7 @@ const PrismaAPI = {
     table: tableControllers,
 
     workflows: {
-        AskAiToTitleConversation,
         AskAiToRespondToChat,
-        AskAgentToRespondToChat,
     },
 
     bootstrap: {

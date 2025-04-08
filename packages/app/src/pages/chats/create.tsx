@@ -49,7 +49,6 @@ export function ChatCreatePage() {
                 content: message,
             });
 
-            Database.workflows.AskAiToTitleConversation(chatRecord.id);
             Database.workflows.AskAiToRespondToChat(chatRecord.id);
             navigate(`/chats/id/${chatRecord.id}`);
         }

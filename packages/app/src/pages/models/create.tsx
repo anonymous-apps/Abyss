@@ -3,6 +3,7 @@ import { PageCrumbed } from '../../library/layout/page-crumbed';
 import { Button } from '../../library/input/button';
 import { Box, Globe, Settings } from 'lucide-react';
 import { OpenAIConfig } from './connectors/openai';
+import { GeminiConfig } from './connectors/gemini';
 import { IconSection } from '../../library/layout/icon-section';
 import { Database } from '../../main';
 import { useNavigate } from 'react-router';
@@ -13,6 +14,10 @@ const Providers = [
     {
         name: 'OpenAI',
         component: OpenAIConfig,
+    },
+    {
+        name: 'Gemini',
+        component: GeminiConfig,
     },
 ];
 
@@ -34,7 +39,7 @@ export function ModelProfileCreatePage() {
             type: 'chat',
             data: data,
         });
-        navigate('/model-connection');
+        navigate('/models');
     };
 
     return (
@@ -43,8 +48,8 @@ export function ModelProfileCreatePage() {
                 title="Create Model Profile"
                 breadcrumbs={[
                     { name: 'Home', url: '/' },
-                    { name: 'Models', url: '/model-connection' },
-                    { name: 'Create', url: '/model-connection/create' },
+                    { name: 'Models', url: '/models' },
+                    { name: 'Create', url: '/models/create' },
                 ]}
             >
                 <IconSection title="Name" subtitle="The name for your model profile" icon={Box}>

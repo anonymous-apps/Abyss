@@ -1,8 +1,8 @@
 import { BaseDatabaseConnection, BaseRecord } from './_base';
-import { MessageRecord, MessageController } from './message';
+import { MessageController, MessageRecord } from './message';
 
 export interface MessageThreadRecord extends BaseRecord {
-    lockingJobId?: string;
+    lockingId?: string;
 }
 
 class _MessageThreadController extends BaseDatabaseConnection<MessageThreadRecord> {

@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { AsyncStream } from '../../constructs';
 import { ChatThread } from '../../constructs/chat-thread/chat-thread';
 import { ChatTurn } from '../../constructs/chat-thread/types';
@@ -71,21 +70,31 @@ export class GeminiLanguageModel extends LanguageModel {
         const generationConfig = this.enableImageGeneration ? { responseModalities: ['Text', 'Image'] } : { responseModalities: ['Text'] };
 
         try {
-            const response = await axios.post(
+            const response = await fetch(
                 `https://generativelanguage.googleapis.com/v1beta/models/${this.modelId}:generateContent?key=${this.apiKey}`,
                 {
-                    contents,
-                    generationConfig,
-                },
-                {
+                    method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
+                    body: JSON.stringify({
+                        contents,
+                        generationConfig,
+                    }),
                 }
             );
 
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => null);
+                throw new Error(
+                    `Gemini API error: ${response.status} ${response.statusText}${errorData ? ` - ${JSON.stringify(errorData)}` : ''}`
+                );
+            }
+
+            const data = await response.json();
+
             // Handle response that may contain text and/or images
-            const candidates = response.data.candidates || [];
+            const candidates = data.candidates || [];
             if (!candidates.length) {
                 throw new Error('No response generated from Gemini API');
             }
@@ -103,11 +112,7 @@ export class GeminiLanguageModel extends LanguageModel {
 
             return thread_with_response;
         } catch (error) {
-            if (axios.isAxiosError(error)) {
-                console.error('Gemini API error:', error.response?.data || error.message);
-            } else {
-                console.error('Unexpected error:', error);
-            }
+            console.error('Unexpected error:', error);
             throw error;
         }
     }
@@ -121,27 +126,47 @@ export class GeminiLanguageModel extends LanguageModel {
 
         (async () => {
             try {
-                const response = await axios.post(
+                const response = await fetch(
                     `https://generativelanguage.googleapis.com/v1beta/models/${this.modelId}:streamGenerateContent?key=${this.apiKey}`,
                     {
-                        contents,
-                        generationConfig,
-                    },
-                    {
+                        method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                         },
-                        responseType: 'stream',
+                        body: JSON.stringify({
+                            contents,
+                            generationConfig,
+                        }),
                     }
                 );
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => null);
+                    throw new Error(
+                        `Gemini API error: ${response.status} ${response.statusText}${errorData ? ` - ${JSON.stringify(errorData)}` : ''}`
+                    );
+                }
+
+                if (!response.body) {
+                    throw new Error('Response body is null');
+                }
 
                 // Buffer to accumulate the entire JSON response
                 let buffer = '';
 
                 // Process the stream
-                response.data.on('data', (chunk: Buffer) => {
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+
+                while (true) {
+                    const { done, value } = await reader.read();
+
+                    if (done) {
+                        break;
+                    }
+
                     // Add the new chunk to our buffer
-                    buffer += chunk.toString();
+                    buffer += decoder.decode(value, { stream: true });
 
                     // Try to find complete JSON objects in the buffer
                     // The Gemini API seems to send a large JSON object line by line
@@ -190,51 +215,40 @@ export class GeminiLanguageModel extends LanguageModel {
                             }
                         }
                     }
-                });
+                }
 
-                response.data.on('end', () => {
-                    buffer = buffer.trim();
+                // Process any remaining data in the buffer
+                buffer = buffer.trim();
 
-                    if (buffer.endsWith(']')) {
-                        buffer = buffer.slice(0, -1);
-                    }
+                if (buffer.endsWith(']')) {
+                    buffer = buffer.slice(0, -1);
+                }
 
-                    // Process any remaining data in the buffer
-                    if (buffer) {
-                        try {
-                            // If the buffer ends with a ] then remove it
-                            // Try to parse the entire buffer as a single JSON object
-                            const data = JSON.parse(buffer);
+                if (buffer) {
+                    try {
+                        console.log('buffer', buffer);
+                        // Try to parse the entire buffer as a single JSON object
+                        const data = JSON.parse(buffer);
 
-                            if (data.candidates && data.candidates.length > 0) {
-                                const candidate = data.candidates[0];
-                                if (candidate.content && candidate.content.parts) {
-                                    for (const part of candidate.content.parts) {
-                                        if (part.text) {
-                                            Log.debug(this.getName(), `Received final chunk: ${part.text}`);
-                                            stream.push(part.text);
-                                        }
+                        if (data.candidates && data.candidates.length > 0) {
+                            const candidate = data.candidates[0];
+                            if (candidate.content && candidate.content.parts) {
+                                for (const part of candidate.content.parts) {
+                                    if (part.text) {
+                                        Log.debug(this.getName(), `Received final chunk: ${part.text}`);
+                                        stream.push(part.text);
                                     }
                                 }
                             }
-                        } catch (error) {
-                            Log.warn(this.getName(), `Failed to parse final buffer: ${error}`);
                         }
+                    } catch (error) {
+                        Log.warn(this.getName(), `Failed to parse final buffer: ${error}`);
                     }
-
-                    stream.close();
-                });
-
-                response.data.on('error', (error: Error) => {
-                    Log.error(this.getName(), `Stream error: ${error}`);
-                    stream.setError(error);
-                });
-            } catch (error) {
-                if (axios.isAxiosError(error)) {
-                    Log.error(this.getName(), `Gemini API error: ${error.response?.data || error.message}`);
-                } else {
-                    Log.error(this.getName(), `Unexpected error: ${error}`);
                 }
+
+                stream.close();
+            } catch (error) {
+                Log.error(this.getName(), `Unexpected error: ${error}`);
                 stream.setError(error as Error);
             }
         })();

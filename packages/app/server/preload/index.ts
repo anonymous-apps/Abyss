@@ -1,8 +1,8 @@
 // preload.js
 import { contextBridge, ipcRenderer } from 'electron';
 import { execSync } from 'node:child_process';
-import './database-connection';
 import path from 'node:path';
+import './database-connection';
 
 contextBridge.exposeInMainWorld('updater', {
     // Trigger the update check

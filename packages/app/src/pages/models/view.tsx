@@ -17,13 +17,13 @@ export function ModelProfileViewPage() {
     const handleDelete = async () => {
         if (!id) return;
         await Database.table.modelConnections.delete(id);
-        navigate('/model-connection');
+        navigate('/models');
     };
 
     const breadcrumbs = [
         { name: 'Home', url: '/' },
-        { name: 'Models', url: '/model-connection' },
-        { name: id || '', url: `/model-connection/id/${id}` },
+        { name: 'Models', url: '/models' },
+        { name: id || '', url: `/models/id/${id}` },
     ];
 
     const content = !modelProfile.data ? (

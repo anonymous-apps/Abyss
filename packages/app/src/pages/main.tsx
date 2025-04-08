@@ -59,7 +59,7 @@ export function MainPage() {
                 style={{ paddingLeft: `calc(100vw - calc(60vw + ${sidebarWidth}) + 20px)` }}
             >
                 <div className="max-w-2xl w-full space-y-4 transition-all duration-300" style={{ opacity: contentOpacity }}>
-                    <ClickableIconOption title="Models" icon={Box} onClick={() => handleNavigation('/model-connection')}>
+                    <ClickableIconOption title="Models" icon={Box} onClick={() => handleNavigation('/models')}>
                         Connect to AI models locally using Ollama or cloud providers like OpenAI or Aws Bedrock
                     </ClickableIconOption>
 

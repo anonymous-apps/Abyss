@@ -4,6 +4,11 @@ import { createXmlFromZod } from '../../utils/zod-to-xml/zod-to-xml';
 import { ToolDefinition } from './types';
 
 export function buildToolUsePrompt(thread: ChatThread, tools: ToolDefinition[]) {
+    // If there are no tools, return the thread as is and dont add any tool use details
+    if (tools.length === 0) {
+        return thread;
+    }
+
     const toolUseDetails = `
         ## Tool Usage
         I have setup a custom parser to handle special custom tool calls you can make use of.

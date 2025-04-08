@@ -3,15 +3,17 @@
         "target": "ESNext",
         "lib": ["ESNext", "dom"],
         "declaration": true,
-        "outDir": "./lib/",
+        "outDir": "./dist/",
         "strict": true,
         "esModuleInterop": true,
         "skipLibCheck": true,
         "sourceMap": true,
-        "module": "NodeNext",
-        "moduleResolution": "NodeNext",
+        "module": "CommonJS",
+        "moduleResolution": "Node",
         "forceConsistentCasingInFileNames": true,
-        "isolatedModules": true
+        "isolatedModules": true,
+        "rootDir": "./src"
     },
-    "include": ["src/**/*.ts", "test/**/*.ts"]
+    "include": ["src/**/*.ts"],
+    "exclude": ["node_modules", "dist", "test"]
 }

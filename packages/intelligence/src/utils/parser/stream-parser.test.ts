@@ -1,14 +1,24 @@
 import { describe, expect, it } from 'vitest';
-import { AsyncStream } from '../../constructs';
+import { AsyncStream, ChatThread } from '../../constructs';
 import { TextMessage, ToolCallMessage } from '../../constructs/streamed-chat-response/chat-response.types';
+import { MockedLanguageModel } from '../../models/language-model.mocked';
 import { StreamParser } from './stream-parser';
+
+const mockModel = new MockedLanguageModel(
+    async thread => {
+        return thread;
+    },
+    thread => {
+        return new AsyncStream<string>();
+    }
+);
 
 describe('StreamParser', () => {
     describe('Text Parsing', () => {
         it('[Happy] should parse plain text messages', async () => {
             // Create a stream
             const stream = new AsyncStream<string>();
-            const parser = new StreamParser(stream);
+            const parser = new StreamParser({ stream, model: mockModel, inputThread: new ChatThread() });
 
             // Send text to the stream
             stream.push('Hello, world!');
@@ -27,7 +37,7 @@ describe('StreamParser', () => {
         it('[Happy] should handle multiple text chunks', async () => {
             // Create a stream
             const stream = new AsyncStream<string>();
-            const parser = new StreamParser(stream);
+            const parser = new StreamParser({ stream, model: mockModel, inputThread: new ChatThread() });
 
             // Send text to the stream in chunks
             stream.push('Hello, ');
@@ -49,7 +59,7 @@ describe('StreamParser', () => {
         it('[Happy] should parse tool calls', async () => {
             // Create a stream
             const stream = new AsyncStream<string>();
-            const parser = new StreamParser(stream);
+            const parser = new StreamParser({ stream, model: mockModel, inputThread: new ChatThread() });
 
             // Send text to the stream
             stream.push(`
@@ -79,7 +89,7 @@ describe('StreamParser', () => {
         it('[Happy] should parse nested tool calls', async () => {
             // Create a stream
             const stream = new AsyncStream<string>();
-            const parser = new StreamParser(stream);
+            const parser = new StreamParser({ stream, model: mockModel, inputThread: new ChatThread() });
 
             // Send nested tool calls to the stream
             stream.push('<parent>');
@@ -105,7 +115,7 @@ describe('StreamParser', () => {
         it('[Error] should throw error when tool call has no keys', async () => {
             // Create a stream
             const stream = new AsyncStream<string>();
-            const parser = new StreamParser(stream);
+            const parser = new StreamParser({ stream, model: mockModel, inputThread: new ChatThread() });
 
             // Send a tool call without keys to the stream
             stream.push('<tool>');
@@ -122,7 +132,7 @@ describe('StreamParser', () => {
         it('[Happy] should parse CDATA sections', async () => {
             // Create a stream
             const stream = new AsyncStream<string>();
-            const parser = new StreamParser(stream);
+            const parser = new StreamParser({ stream, model: mockModel, inputThread: new ChatThread() });
 
             // Send a tool call with CDATA to the stream
             stream.push('<tool>');
@@ -152,7 +162,7 @@ describe('StreamParser', () => {
         it('[Happy] should parse a complex message with text and tool calls', async () => {
             // Create a stream
             const stream = new AsyncStream<string>();
-            const parser = new StreamParser(stream);
+            const parser = new StreamParser({ stream, model: mockModel, inputThread: new ChatThread() });
 
             // Send a complex message to the stream
             stream.push('Here is a tool call: ');
@@ -192,7 +202,7 @@ describe('StreamParser', () => {
         it('[Edge] should handle empty stream', async () => {
             // Create a stream
             const stream = new AsyncStream<string>();
-            const parser = new StreamParser(stream);
+            const parser = new StreamParser({ stream, model: mockModel, inputThread: new ChatThread() });
 
             // Close the stream without pushing anything
             stream.close();
@@ -208,7 +218,7 @@ describe('StreamParser', () => {
         it('[Edge] should handle partial XML tags', async () => {
             // Create a stream
             const stream = new AsyncStream<string>();
-            const parser = new StreamParser(stream);
+            const parser = new StreamParser({ stream, model: mockModel, inputThread: new ChatThread() });
 
             // Push partial XML tags to the stream
             stream.push('<');
@@ -238,7 +248,7 @@ describe('StreamParser', () => {
         it('[Edge] should handle malformed XML', async () => {
             // Create a stream
             const stream = new AsyncStream<string>();
-            const parser = new StreamParser(stream);
+            const parser = new StreamParser({ stream, model: mockModel, inputThread: new ChatThread() });
 
             // Push malformed XML to the stream
             stream.push('<tool>');

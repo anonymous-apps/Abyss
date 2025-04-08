@@ -246,3 +246,23 @@ interface Table_ToolInvocation extends Record {
     status: string;
 }
 ```
+
+## Streaming
+
+Streams are parsed responses from a language model
+
+```ts
+interface Table_ResponseStream extends Record {
+    // The source id of the model
+    sourceId: string;
+
+    // The result messages
+    resultMessages: Message[];
+
+    // The status of the stream
+    status: string;
+
+    // The raw output of the stream
+    rawOutput: string;
+}
+```

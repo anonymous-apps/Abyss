@@ -86,7 +86,7 @@ model MessageThread {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  lockingJobId String?
+  lockingId String?
 }
 
 model Message {
@@ -172,4 +172,16 @@ model ToolInvocation {
   result     Json?   
   textLogId  String?
   status     String
+}
+
+model ResponseStream {
+  id         String   @id @default(uuid())
+  references Json?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  sourceId    String
+  resultMessages Json
+  status      String
+  rawOutput   String
 }

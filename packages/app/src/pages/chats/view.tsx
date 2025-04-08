@@ -8,13 +8,15 @@ import { InputArea } from '../../library/input/input';
 import { PageHeader } from '../../library/layout/page-header';
 import { Database } from '../../main';
 import { useChatWithModel } from '../../state/hooks/useChat';
-
+import { useStream } from '../../state/hooks/useStream';
 export function ChatViewPage() {
     const { id } = useParams();
     const navigate = useNavigate();
     const chat = useChatWithModel(id || '');
-
+    const { stream } = useStream(chat.thread?.id || '');
     const [message, setMessage] = useState('');
+
+    console.log('chat', chat);
 
     const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         if (e.key === 'Enter' && !e.shiftKey) {
@@ -29,7 +31,7 @@ export function ChatViewPage() {
                 if (chat.chat.type === 'chatModel') {
                     Database.workflows.AskAiToRespondToChat(chat.chat.id);
                 } else {
-                    Database.workflows.AskAgentToRespondToChat(chat.chat.id);
+                    throw new Error('Chat type not supported');
                 }
             }
         } catch (error) {}
@@ -49,6 +51,8 @@ export function ChatViewPage() {
         } catch (error) {}
     };
 
+    console.log('stream', stream);
+
     const content =
         chat.loading || !chat.chat || !chat.messages || !chat.thread || !chat.model ? (
             <div className="text-text-base">Loading chat data...</div>
@@ -58,7 +62,7 @@ export function ChatViewPage() {
                     <ChatMessageSection message={m} key={m.id} />
                 ))}
 
-                {chat.thread.lockingJobId?.length ? (
+                {chat.thread.lockingId?.length ? (
                     <div className="flex justify-center my-4">
                         <div className="animate-bounce text-text-dark">
                             <BotIcon />
@@ -68,7 +72,7 @@ export function ChatViewPage() {
                     false
                 )}
 
-                {chat.thread.lockingJobId?.length ? (
+                {chat.thread.lockingId?.length ? (
                     false
                 ) : (
                     <>
@@ -93,7 +97,7 @@ export function ChatViewPage() {
     const headerReference = (
         <GhostIconButton
             icon={Box}
-            onClick={() => navigate(`/model-connection/id/${chat.model?.id}`)}
+            onClick={() => navigate(`/models/id/${chat.model?.id}`)}
             tooltip="View model profile"
             className="bg-background-dark"
         />

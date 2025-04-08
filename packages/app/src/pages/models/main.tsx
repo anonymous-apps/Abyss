@@ -18,13 +18,13 @@ export function ModelProfileMainPage() {
                 title="Connected Models"
                 breadcrumbs={[
                     { name: 'Home', url: '/' },
-                    { name: 'Models', url: '/model-connection' },
+                    { name: 'Models', url: '/models' },
                 ]}
             >
                 <IconSection
                     title="Connected Models"
                     icon={Box}
-                    action={<GhostIconButton icon={Plus} onClick={() => navigate('/model-connection/create')} tooltip="New Connection" />}
+                    action={<GhostIconButton icon={Plus} onClick={() => navigate('/models/create')} tooltip="New Connection" />}
                 >
                     {ModelProfiles.data && ModelProfiles.data.length > 0 ? (
                         <TileGrid>
@@ -32,7 +32,7 @@ export function ModelProfileMainPage() {
                                 <Tile
                                     key={model.id}
                                     title={model.name || 'Untitled'}
-                                    href={`/model-connection/id/${model.id}`}
+                                    href={`/models/id/${model.id}`}
                                     icon={<Box className="w-4 h-4" />}
                                     footer={model.provider}
                                 >

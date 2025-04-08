@@ -257,4 +257,24 @@ export class StreamedChatResponse {
             this.completeListeners = this.completeListeners.filter(cb => cb !== callback);
         };
     }
+
+    /**
+     * Returns a Promise that resolves when the stream is complete.
+     * This is useful for consumers who want to wait for the entire stream to finish.
+     */
+    public waitForCompletion(): Promise<void> {
+        return new Promise<void>(resolve => {
+            // If the stream is already complete, resolve immediately
+            if (this.currentMessage === null && this.messages.length > 0) {
+                resolve();
+                return;
+            }
+
+            // Otherwise, add a one-time listener that will resolve the promise
+            const unsubscribe = this.onComplete(() => {
+                unsubscribe();
+                resolve();
+            });
+        });
+    }
 }
