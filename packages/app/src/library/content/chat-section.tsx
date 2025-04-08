@@ -25,7 +25,7 @@ export function ChatMessageSection({ message }: { message: MessageRecord }) {
     const Icon = getIconForSourceType(isUserMessage ? 'user' : 'chat');
 
     return (
-        <div className="mb-6 hover:bg-background-transparent border border-transparent hover:border-background-light transition-all duration-300 rounded-sm p-2">
+        <div className="mb-6 hover:bg-background-transparent border border-transparent hover:shadow-sm transition-all duration-300 rounded-sm p-2">
             <div className="flex items-center text-xs mb-1 gap-2">
                 <Icon size={14} className="" />
                 {isUserMessage && <span className="font-medium text-text-dark mr-2">You</span>}
@@ -42,7 +42,7 @@ export function ChatMessageSection({ message }: { message: MessageRecord }) {
             <div className="py-3 rounded text-text-light text-xs font-mono markdown">
                 <ReactMarkdown>{message.content}</ReactMarkdown>
             </div>
-            <div className="flex items-center justify-end text-xs my-1 gap-2">
+            <div className="flex items-center justify-end ml-auto text-xs my-1 gap-2 w-fit rounded-lg">
                 {message.references?.networkCallId && (
                     <GhostIconButton
                         icon={Globe}

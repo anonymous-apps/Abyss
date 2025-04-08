@@ -3,6 +3,7 @@ import { ChatController, ChatRecord } from '../controllers/chat';
 import { MessageController, MessageRecord } from '../controllers/message';
 import { MessageThreadController, MessageThreadRecord } from '../controllers/message-thread';
 import { ModelConnectionsController, ModelConnectionsRecord } from '../controllers/model-connections';
+import { RenderedConversationThreadController } from '../controllers/rendered-conversation-thread';
 import { ResponseStreamController, ResponseStreamRecord } from '../controllers/response-stream';
 import { buildIntelegence, buildThread } from './utils';
 
@@ -66,7 +67,6 @@ async function askAiToRespondToChat(data: AskAiToRespondToChatData) {
     // Get the AI
     const model = await buildIntelegence(data.connection);
     const thread = buildThread(data.messages);
-
     const toolDefinitions = [];
 
     // Start the stream
@@ -88,6 +88,13 @@ async function askAiToRespondToChat(data: AskAiToRespondToChatData) {
     // Wait for the stream to complete
     await stream.waitForCompletion();
 
+    // Capture result thread
+    const resultMessage = stream.getRawOutput();
+    const resultThread = thread.addBotTextMessage(resultMessage);
+    const renderedThread = await RenderedConversationThreadController.create({
+        messages: resultThread.serialize(),
+    });
+
     // Save the response into the database as messages after stream is complete
     const messages = stream.getMessages();
     for (const message of messages) {
@@ -98,7 +105,7 @@ async function askAiToRespondToChat(data: AskAiToRespondToChatData) {
                 sourceId: data.responseStream.id,
                 content: message.content,
                 references: {
-                    renderedConversationThreadId: data.thread.id,
+                    renderedConversationThreadId: renderedThread.id,
                 },
             });
         }
@@ -113,7 +120,7 @@ async function askAiToRespondToChat(data: AskAiToRespondToChatData) {
                     arguments: message.arguments,
                 }),
                 references: {
-                    renderedConversationThreadId: data.thread.id,
+                    renderedConversationThreadId: renderedThread.id,
                 },
             });
         }

@@ -1,4 +1,4 @@
-import { Bot, Box, DatabaseIcon, Loader2, MessageSquare, Play, Settings, type LucideIcon } from 'lucide-react';
+import { Bot, Box, DatabaseIcon, Loader2, MessageSquare, Play, Settings, X, type LucideIcon } from 'lucide-react';
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useSidebarFadeStore } from '../../state/sidebar-fade';
@@ -8,11 +8,13 @@ export interface SidebarItemProps {
     icon: LucideIcon;
     url: string;
     status?: string;
+    onCancel?: () => void;
 }
 
-export const SidebarItem: React.FC<SidebarItemProps> = ({ title, icon: Icon, url, status }) => {
+export const SidebarItem: React.FC<SidebarItemProps> = ({ title, icon: Icon, url, status, onCancel }) => {
     const location = useLocation();
     const isActive = location.pathname.startsWith(url);
+    const [isHovered, setIsHovered] = React.useState(false);
 
     return (
         <Link
@@ -22,12 +24,25 @@ export const SidebarItem: React.FC<SidebarItemProps> = ({ title, icon: Icon, url
                     ? 'bg-primary-base text-text-light'
                     : 'pacity-70 hover:opacity-100 hover:bg-primary-950 hover:text-text-200 hover:bg-background-dark '
             }`}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
         >
             <Icon size={16} className="min-w-[16px]" />
             <span>{title}</span>
-            {status === 'in-progress' && (
+            {status === 'in-progress' && !isHovered && (
                 <div className="ml-auto text-xs ">
                     <Loader2 size={12} className="animate-spin" />
+                </div>
+            )}
+            {isHovered && onCancel && (
+                <div
+                    className="ml-auto text-xs"
+                    onClick={e => {
+                        e.preventDefault();
+                        onCancel();
+                    }}
+                >
+                    <X size={12} />
                 </div>
             )}
         </Link>

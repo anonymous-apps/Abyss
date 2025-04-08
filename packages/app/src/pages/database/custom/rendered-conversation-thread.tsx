@@ -1,27 +1,38 @@
+import { BrainIcon, User } from 'lucide-react';
 import React from 'react';
-import { RenderedConversationThread } from '@prisma/client';
-import { BotIcon, BrainIcon, User } from 'lucide-react';
-import { MessageCircle } from 'lucide-react';
+import { RenderedConversationThreadRecord } from '../../../../server/preload/controllers/rendered-conversation-thread';
 
-export function CustomRendererForConversationThread({ thread }: { thread: RenderedConversationThread }) {
+export function CustomRendererForConversationThread({ thread }: { thread: RenderedConversationThreadRecord }) {
     if (!thread || !thread.messages) {
         return <></>;
     }
 
-    const messages = thread.messages as { from: string; text: string }[];
+    const messages = JSON.parse(typeof thread.messages === 'string' ? thread.messages : JSON.stringify(thread.messages)) as {
+        turns: {
+            sender: string;
+            partials: {
+                type: string;
+                content: string;
+            }[];
+        }[];
+    };
 
     return (
         <>
             <div className="border-t mt-2 border-background-light">
-                {messages.map((message, index) => (
+                {messages.turns.map((message, index) => (
                     <div key={index} className="pt-4">
                         <div className="flex items-center text-xs mb-1 gap-2 capitalize">
-                            {message.from === 'user' && <User size={14} className="" />}
-                            {message.from === 'bot' && <BrainIcon size={14} className="" />}
-                            {message.from}
+                            {message.sender === 'user' && <User size={14} className="" />}
+                            {message.sender === 'bot' && <BrainIcon size={14} className="" />}
+                            {message.sender}
                         </div>
                         <div className="text-sm my-3">
-                            <pre className="whitespace-pre-wrap font-mono border-l-2 pl-2">{message.text}</pre>
+                            {message.partials.map((partial, pIndex) => (
+                                <pre key={pIndex} className="whitespace-pre-wrap font-mono border-l-2 pl-2">
+                                    {partial.content}
+                                </pre>
+                            ))}
                         </div>
                     </div>
                 ))}

@@ -5,7 +5,6 @@ interface PageSidebarProps {
     items: SidebarItemProps[];
     children: React.ReactNode;
     header?: React.ReactNode;
-    status?: string;
 }
 
 export function PageSidebar({ items, children, header }: PageSidebarProps) {
