@@ -1,17 +1,20 @@
 import { streamWithTools } from '@abyss/intelligence';
+import { AgentController, AgentRecord } from '../controllers/agent';
 import { ChatController, ChatRecord } from '../controllers/chat';
 import { MessageController, MessageRecord } from '../controllers/message';
 import { MessageThreadController, MessageThreadRecord } from '../controllers/message-thread';
 import { ModelConnectionsController, ModelConnectionsRecord } from '../controllers/model-connections';
 import { RenderedConversationThreadController } from '../controllers/rendered-conversation-thread';
 import { ResponseStreamController, ResponseStreamRecord } from '../controllers/response-stream';
-import { buildIntelegence, buildThread } from './utils';
+import { ToolInvocationController } from '../controllers/tool-invocation';
+import { buildIntelegence, buildThread, buildToolDefinitionsForAgent } from './utils';
 
 interface AskAiToRespondToChatData {
     chat: ChatRecord;
     thread: MessageThreadRecord;
     messages: MessageRecord[];
     connection: ModelConnectionsRecord;
+    agent: AgentRecord | null;
     responseStream: ResponseStreamRecord;
 }
 
@@ -31,12 +34,18 @@ export async function AskAiToRespondToChat(chatId: string) {
         throw new Error('Thread unknown');
     }
 
-    const connection = await ModelConnectionsController.getByRecordId(chat.sourceId);
+    let agent = await AgentController.getByRecordId(chat.sourceId);
+    let connection = await ModelConnectionsController.getByRecordId(chat.sourceId);
+
+    if (!connection && agent) {
+        connection = await ModelConnectionsController.getByRecordId(agent.chatModelId);
+    }
     if (!connection) {
         throw new Error('Connection unknown');
     }
 
     // Create the response stream object
+    console.log('Model connection', connection);
     const responseStream = await ResponseStreamController.create({
         sourceId: connection.id,
         resultMessages: [],
@@ -50,7 +59,7 @@ export async function AskAiToRespondToChat(chatId: string) {
     });
 
     try {
-        return await askAiToRespondToChat({ chat, thread, messages, connection, responseStream });
+        return await askAiToRespondToChat({ chat, thread, messages, connection, responseStream, agent });
     } catch (error) {
         await ResponseStreamController.update(responseStream.id, {
             status: 'error',
@@ -67,14 +76,76 @@ async function askAiToRespondToChat(data: AskAiToRespondToChatData) {
     // Get the AI
     const model = await buildIntelegence(data.connection);
     const thread = buildThread(data.messages);
-    const toolDefinitions = [];
+    const toolDefinitions = data.agent ? await buildToolDefinitionsForAgent(data.agent) : [];
 
     // Start the stream
     const stream = await streamWithTools({ model, thread, toolDefinitions });
 
-    stream.onNewMessage(message => {
+    // Emit messages as they come in
+    const renderedThread = await RenderedConversationThreadController.create({
+        messages: [],
+    });
+
+    // Save messages we have gotten so far
+    const seenMessages: Record<string, MessageRecord> = {};
+    const seen = new Set<string>();
+
+    stream.onNewTextMessage(async message => {
+        console.log({ message });
+
+        // Check if we have already seen this message, create it if we haven't
+        if (!seen.has(message.uuid)) {
+            seen.add(message.uuid);
+            const targetMessageRecord = await MessageController.create({
+                threadId: data.thread.id,
+                type: 'AI',
+                sourceId: data.responseStream.id,
+                content: message.content,
+                references: {
+                    renderedConversationThreadId: renderedThread.id,
+                },
+            });
+            ResponseStreamController.addMessage(data.responseStream.id, message);
+            seenMessages[message.uuid] = targetMessageRecord;
+            seen.add(message.uuid);
+        }
+
+        const targetMessageRecord = seenMessages[message.uuid];
+        if (!targetMessageRecord) {
+            return;
+        }
+
+        // Update the message record
+        ResponseStreamController.updateRawOutput(data.responseStream.id, stream.getRawOutput());
+        await MessageController.update(targetMessageRecord.id, {
+            content: message.content,
+        });
+    });
+
+    stream.onNewToolCall(async message => {
         ResponseStreamController.addMessage(data.responseStream.id, message);
         ResponseStreamController.updateRawOutput(data.responseStream.id, stream.getRawOutput());
+        const toolController = await ToolInvocationController.create({
+            toolId: message.callId,
+            parameters: message.arguments,
+            status: 'waiting',
+        });
+        const toolMessage = await MessageController.create({
+            threadId: data.thread.id,
+            type: 'TOOL',
+            sourceId: data.responseStream.id,
+            content: '',
+            references: {
+                toolInvocationId: toolController.id,
+            },
+        });
+    });
+
+    stream.onToolCallCompleted(message => {
+        ResponseStreamController.updateRawOutput(data.responseStream.id, stream.getRawOutput());
+        ToolInvocationController.update(message.callId, {
+            parameters: message.arguments,
+        });
     });
 
     stream.onComplete(() => {
@@ -90,39 +161,8 @@ async function askAiToRespondToChat(data: AskAiToRespondToChatData) {
 
     // Capture result thread
     const resultMessage = stream.getRawOutput();
-    const resultThread = thread.addBotTextMessage(resultMessage);
-    const renderedThread = await RenderedConversationThreadController.create({
+    const resultThread = stream.inputThread.addBotTextMessage(resultMessage);
+    await RenderedConversationThreadController.update(renderedThread.id, {
         messages: resultThread.serialize(),
     });
-
-    // Save the response into the database as messages after stream is complete
-    const messages = stream.getMessages();
-    for (const message of messages) {
-        if (message.type === 'text') {
-            await MessageController.create({
-                threadId: data.thread.id,
-                type: 'AI',
-                sourceId: data.responseStream.id,
-                content: message.content,
-                references: {
-                    renderedConversationThreadId: renderedThread.id,
-                },
-            });
-        }
-        if (message.type === 'toolCall') {
-            await MessageController.create({
-                threadId: data.thread.id,
-                type: 'TOOL',
-                sourceId: data.responseStream.id,
-                content: JSON.stringify({
-                    callId: message.callId,
-                    name: message.name,
-                    arguments: message.arguments,
-                }),
-                references: {
-                    renderedConversationThreadId: renderedThread.id,
-                },
-            });
-        }
-    }
 }

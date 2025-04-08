@@ -1,5 +1,4 @@
 import { BaseDatabaseConnection, BaseRecord } from './_base';
-import { prisma } from '../database-connection';
 
 export interface ToolInvocationRecord extends BaseRecord {
     toolId: string;

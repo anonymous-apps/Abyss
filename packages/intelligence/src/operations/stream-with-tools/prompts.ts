@@ -3,6 +3,10 @@ import { dedent } from '../../utils/dedent/dedent';
 import { createXmlFromZod } from '../../utils/zod-to-xml/zod-to-xml';
 import { ToolDefinition } from './types';
 
+export function getIdForTool(tool: ToolDefinition) {
+    return tool.name.toLowerCase().replace(/ /g, '-');
+}
+
 export function buildToolUsePrompt(thread: ChatThread, tools: ToolDefinition[]) {
     // If there are no tools, return the thread as is and dont add any tool use details
     if (tools.length === 0) {
@@ -21,11 +25,11 @@ export function buildToolUsePrompt(thread: ChatThread, tools: ToolDefinition[]) 
         .map(
             tool =>
                 dedent(`
-                ### Tool: ${tool.name}
+                ### Tool: ${getIdForTool(tool)}
                 ${tool.description}
                 An example of its usage is below. If your response contains the XML representation of the tool call as part of your response, you will have invoked the tool.
 
-            `) + createXmlFromZod(tool.name, tool.parameters)
+            `) + createXmlFromZod(getIdForTool(tool), tool.parameters)
         )
         .join('\n');
 
@@ -47,7 +51,7 @@ export function buildToolUsePrompt(thread: ChatThread, tools: ToolDefinition[]) 
 
         ### Reminder
 
-        You only have these tools: [${tools.map(tool => tool.name).join(', ')}], calling other tools will result in an error.
+        You only have these tools: [${tools.map(tool => getIdForTool(tool)).join(', ')}], calling other tools will result in an error.
     `;
 
     return thread.addUserTextMessage(toolUseDetails).addUserTextMessage(toolCallsString).addUserTextMessage(ToolUseExamplePrompt);

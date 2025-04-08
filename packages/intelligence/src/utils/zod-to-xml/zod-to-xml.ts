@@ -1,7 +1,7 @@
 /**
  * Utils for converting Zod schemas to XML-like strings for LLM serialization
  */
-import { ZodArray, ZodBoolean, ZodNullable, ZodNumber, ZodObject, ZodOptional, ZodString, ZodType } from "zod";
+import { ZodArray, ZodBoolean, ZodNullable, ZodNumber, ZodObject, ZodOptional, ZodString, ZodType } from 'zod';
 
 /**
  * @description Converts a Zod schema to an XML-like string representation, starting at the root level
@@ -20,14 +20,14 @@ export function createXmlFromZod(name: string, schema: ZodType): string {
  */
 export function getDescription(zodType: ZodType): string {
     const description = zodType._def.description;
-    return description || "";
+    return description || '';
 }
 
 /**
  * Recursively converts a Zod schema to an XML-like string with proper indentation
  */
 function _zodToXml(name: string, zodSchema: ZodType, indentLevel = 0): string {
-    const indent = "    ".repeat(indentLevel);
+    const indent = '    '.repeat(indentLevel);
 
     // Handle ZodObject
     if (zodSchema instanceof ZodObject) {
@@ -68,11 +68,11 @@ function _handleZodObject(name: string, zodSchema: ZodObject<any>, indent: strin
     }
 
     const children = keys
-        .map((key) => {
+        .map(key => {
             const fieldSchema = shape[key];
             return _zodToXml(key, fieldSchema, indentLevel + 1);
         })
-        .join("\n");
+        .join('\n');
 
     return `${indent}<${name}>\n${children}\n${indent}</${name}>`;
 }

@@ -1,7 +1,8 @@
-import { Bell, Bot, Box, LucideIcon, MessageCircleQuestion, User } from 'lucide-react';
+import { Bell, Bot, Box, Hammer, LucideIcon, MessageCircleQuestion, User } from 'lucide-react';
 
 export function getIconForSourceType(source: string): LucideIcon {
     switch (source.toLowerCase()) {
+        case 'ai':
         case 'chat':
         case 'chatmodel':
             return Box;
@@ -11,6 +12,8 @@ export function getIconForSourceType(source: string): LucideIcon {
             return User;
         case 'internal':
             return Bell;
+        case 'tool':
+            return Hammer;
         default:
             return MessageCircleQuestion;
     }

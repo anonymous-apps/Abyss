@@ -1,48 +1,31 @@
 import { formatDistanceToNow } from 'date-fns';
-import { Globe, NotepadText } from 'lucide-react';
+import { Globe, Hammer, NotepadText } from 'lucide-react';
 import React from 'react';
-import ReactMarkdown from 'react-markdown';
 import { useNavigate } from 'react-router';
 import { MessageRecord } from '../../../server/preload/controllers/message';
-import { useDatabaseRecordSubscription } from '../../state/database-connection';
+import { useDatabaseTableSubscription } from '../../state/database-connection';
 import { getIconForSourceType } from '../icons';
 import { GhostIconButton } from '../input/button';
 
-export function ChatMessageSection({ message }: { message: MessageRecord }) {
-    // Format the timestamp to a human-readable string (e.g., "5 minutes ago")
-    const formattedTime = formatDistanceToNow(new Date(message.createdAt), { addSuffix: true });
+interface ChatMessageSectionProps {
+    message: MessageRecord;
+    chatType: string;
+    joined: boolean;
+}
 
-    // Get the model name
-    const model = useDatabaseRecordSubscription('modelConnections', message.sourceId, db =>
-        db.table.modelConnections.findById(message.sourceId)
-    );
-
-    // Determine if the message is from the user or a model
-    const isUserMessage = message.type === 'USER';
-    const isAiMessage = message.type === 'AI';
+export function ChatMessageSection({ message, chatType, joined }: ChatMessageSectionProps) {
     const navigate = useNavigate();
 
-    const Icon = getIconForSourceType(isUserMessage ? 'user' : 'chat');
-
     return (
-        <div className="mb-6 hover:bg-background-transparent border border-transparent hover:shadow-sm transition-all duration-300 rounded-sm p-2">
-            <div className="flex items-center text-xs mb-1 gap-2">
-                <Icon size={14} className="" />
-                {isUserMessage && <span className="font-medium text-text-dark mr-2">You</span>}
-                {isAiMessage && (
-                    <span
-                        className="font-medium text-text-dark mr-2 cursor-pointer hover:underline capitalize"
-                        onClick={() => navigate(`/database/id/modelConnections/record/${message.sourceId}`)}
-                    >
-                        {model.data?.name}
-                    </span>
-                )}
-                <span className="text-text-dark opacity-70">{formattedTime}</span>
-            </div>
-            <div className="py-3 rounded text-text-light text-xs font-mono markdown">
-                <ReactMarkdown>{message.content}</ReactMarkdown>
-            </div>
-            <div className="flex items-center justify-end ml-auto text-xs my-1 gap-2 w-fit rounded-lg">
+        <div
+            className={`hover:bg-background-transparent border border-transparent hover:shadow-sm transition-all duration-300 rounded-sm p-2 relative text-sm`}
+        >
+            {!joined && <SectionHeader message={message} />}
+            {message.type === 'AI' && <AiMessageSection message={message} />}
+            {message.type === 'TOOL' && <ToolCallSection message={message} />}
+            {message.type === 'USER' && <UserMessageSection message={message} />}
+
+            <div className="flex items-center justify-start flex-col ml-auto text-xs gap-2 h-fit rounded-lg absolute right-0 top-0">
                 {message.references?.networkCallId && (
                     <GhostIconButton
                         icon={Globe}
@@ -60,6 +43,50 @@ export function ChatMessageSection({ message }: { message: MessageRecord }) {
                     />
                 )}
             </div>
+        </div>
+    );
+}
+
+function SectionHeader({ message }: { message: MessageRecord }) {
+    const Icon = getIconForSourceType(message.type);
+    const formattedTime = formatDistanceToNow(new Date(message.createdAt), { addSuffix: true });
+
+    // Get the thread
+    const responseStream = useDatabaseTableSubscription('responseStream', db => db.table.responseStream.findById(message.sourceId));
+    const modelId = responseStream.data?.sourceId || '';
+    const model = useDatabaseTableSubscription('modelConnections', async db => db.table.modelConnections.findById(modelId), [modelId]);
+
+    return (
+        <div className="flex items-center text-xs mb-3 gap-2">
+            <Icon size={14} className="" />
+            {message.type === 'USER' && <span className="text-text-dark opacity-70">You</span>}
+            <span className="text-text-dark opacity-70">{model.data?.name}</span>
+            <span className="text-text-dark opacity-70">{formattedTime}</span>
+        </div>
+    );
+}
+
+function UserMessageSection({ message }: { message: MessageRecord }) {
+    return <div className="rounded overflow-hidden my-2 mr-10">{message.content}</div>;
+}
+
+function AiMessageSection({ message }: { message: MessageRecord }) {
+    return <div className="rounded overflow-hidden my-2 mr-10">{message.content}</div>;
+}
+
+function ToolCallSection({ message }: { message: MessageRecord }) {
+    const toolInvocationId = message.references?.toolInvocationId || '';
+    const toolInvocation = useDatabaseTableSubscription('toolInvocation', async db => db.table.toolInvocation.findById(toolInvocationId), [
+        toolInvocationId,
+    ]);
+
+    return (
+        <div className="border border-primary-light rounded overflow-hidden my-2 mr-10">
+            <div className="bg-background-dark px-2 py-2 font-medium text-text-dark border-b border-primary-light border-b flex items-center gap-2">
+                <Hammer size={16} />
+                {toolInvocation.data?.toolId}
+            </div>
+            <div className="p-2 bg-background-base">{JSON.stringify(toolInvocation.data?.parameters, null, 2)}</div>
         </div>
     );
 }

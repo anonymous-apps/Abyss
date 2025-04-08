@@ -53,6 +53,7 @@ export class StreamedChatResponse {
         this.completeCurrentMessage();
         this.currentMessage = {
             type: 'text',
+            uuid: v4(),
             content: '',
             completed: false,
         };
@@ -74,6 +75,7 @@ export class StreamedChatResponse {
         this.completeCurrentMessage();
         this.currentMessage = {
             type: 'image',
+            uuid: v4(),
             base64Data: '',
             completed: false,
         };
@@ -92,6 +94,7 @@ export class StreamedChatResponse {
         const callId = v4();
         this.currentMessage = {
             type: 'toolCall',
+            uuid: v4(),
             callId,
             name,
             arguments: {},

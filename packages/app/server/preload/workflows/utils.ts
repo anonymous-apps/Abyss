@@ -1,6 +1,16 @@
-import { ChatThread, GeminiLanguageModel, LanguageModel, OpenAILanguageModel } from '@abyss/intelligence';
+import {
+    ChatThread,
+    createZodFromObject,
+    GeminiLanguageModel,
+    LanguageModel,
+    OpenAILanguageModel,
+    ToolDefinition,
+} from '@abyss/intelligence';
+import { AgentRecord } from '../controllers/agent';
+import { AgentToolConnectionController } from '../controllers/agent-tool-connection';
 import { MessageRecord } from '../controllers/message';
 import { ModelConnectionsRecord } from '../controllers/model-connections';
+import { ToolController } from '../controllers/tool';
 
 export function buildIntelegence(aiConnection: ModelConnectionsRecord) {
     let languageModel: LanguageModel | undefined;
@@ -50,4 +60,20 @@ export function buildThread(messages: MessageRecord[]) {
     }
 
     return context;
+}
+
+export async function buildToolDefinitionsForAgent(agent: AgentRecord) {
+    const toolConnections = await AgentToolConnectionController.findByAgentId(agent.id);
+    const toolDefinitions: ToolDefinition[] = [];
+    for (const toolConnection of toolConnections) {
+        const tool = await ToolController.getByRecordId(toolConnection.tool.id);
+        if (tool) {
+            toolDefinitions.push({
+                name: tool.name,
+                description: tool.description,
+                parameters: createZodFromObject(tool.schema),
+            });
+        }
+    }
+    return toolDefinitions;
 }

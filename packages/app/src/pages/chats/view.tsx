@@ -54,8 +54,13 @@ export function ChatViewPage() {
             <div className="text-text-base">Loading chat data...</div>
         ) : (
             <>
-                {chat.messages.map(m => (
-                    <ChatMessageSection message={m} key={m.id} />
+                {chat.messages.map((m, index) => (
+                    <ChatMessageSection
+                        message={m}
+                        key={m.id}
+                        chatType={chat.chat?.type || ''}
+                        joined={index === 0 ? false : chat.messages?.at(index - 1)?.sourceId === m.sourceId}
+                    />
                 ))}
 
                 {chat.thread.lockingId?.length ? (

@@ -18,7 +18,7 @@ export function createXmlFromObject(name: string, obj: any): string {
  * Recursively converts a JavaScript object to an XML-like string with proper indentation
  */
 function _objectToXml(name: string, value: any, indentLevel = 0): string {
-    const indent = "    ".repeat(indentLevel);
+    const indent = '    '.repeat(indentLevel);
 
     // Handle null and undefined
     if (value === null || value === undefined) {
@@ -26,7 +26,7 @@ function _objectToXml(name: string, value: any, indentLevel = 0): string {
     }
 
     // Handle objects (non-arrays)
-    if (typeof value === "object" && !Array.isArray(value)) {
+    if (typeof value === 'object' && !Array.isArray(value)) {
         return _handleObject(name, value, indent, indentLevel);
     }
 
@@ -50,10 +50,10 @@ function _handleObject(name: string, obj: object, indent: string, indentLevel: n
     }
 
     const children = keys
-        .map((key) => {
+        .map(key => {
             return _objectToXml(key, obj[key as keyof typeof obj], indentLevel + 1);
         })
-        .join("\n");
+        .join('\n');
 
     return `${indent}<${name}>\n${children}\n${indent}</${name}>`;
 }
@@ -68,9 +68,9 @@ function _handleArray(name: string, arr: any[], indent: string, indentLevel: num
 
     const children = arr
         .map((item, index) => {
-            return _objectToXml("item", item, indentLevel + 1);
+            return _objectToXml('item', item, indentLevel + 1);
         })
-        .join("\n");
+        .join('\n');
 
     return `${indent}<${name}>\n${children}\n${indent}</${name}>`;
 }

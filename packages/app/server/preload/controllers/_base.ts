@@ -2,7 +2,7 @@ import { notifyTableChanged, prisma } from '../database-connection';
 
 export interface BaseRecord {
     id: string;
-    references?: Record<string, string>;
+    references?: Record<string, string | undefined>;
     createdAt: Date;
     updatedAt: Date;
 }
