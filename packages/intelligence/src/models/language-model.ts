@@ -1,6 +1,7 @@
-import { ChatThread } from "../constructs/chat-thread";
-import { StorageController } from "../storage";
-import { Log } from "../utils/logs";
+import { ChatThread } from '../constructs/chat-thread';
+import { AsyncStream } from '../constructs/stream/stream';
+import { StorageController } from '../storage';
+import { Log } from '../utils/logs';
 /**
  * Abstract base class for language models
  */
@@ -48,7 +49,7 @@ export abstract class LanguageModel {
      * @param thread The chat thread to respond to
      * @returns A Promise resolving to the model's response
      */
-    public async respond(thread: ChatThread, cache?: StorageController): Promise<ChatThread> {
+    public async invoke(thread: ChatThread, cache?: StorageController): Promise<ChatThread> {
         try {
             const invokeKey = {
                 provider: this.provider,
@@ -68,7 +69,7 @@ export abstract class LanguageModel {
             }
 
             Log.debug(this.getName(), `Invoking model`);
-            const response = await this._respond(thread);
+            const response = await this._invoke(thread);
             Log.debug(this.getName(), `Got response from model!`);
 
             if (cache) {
@@ -83,5 +84,23 @@ export abstract class LanguageModel {
         }
     }
 
-    protected abstract _respond(thread: ChatThread): Promise<ChatThread>;
+    protected abstract _invoke(thread: ChatThread): Promise<ChatThread>;
+
+    /**
+     * Stream a response to a chat thread
+     *
+     * @param thread The chat thread to respond to
+     * @returns A Promise resolving to an AsyncStream of string chunks
+     */
+    public async stream(thread: ChatThread): Promise<AsyncStream<string>> {
+        try {
+            Log.debug(this.getName(), `Streaming response from model`);
+            return await this._stream(thread);
+        } catch (error) {
+            Log.error(this.getName(), `Error streaming response from thread: ${error}`);
+            throw error;
+        }
+    }
+
+    protected abstract _stream(thread: ChatThread): Promise<AsyncStream<string>>;
 }

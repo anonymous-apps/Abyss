@@ -16,7 +16,8 @@
         "publish": "npm run build:intelligence && npm run publish:mac",
         "publish:mac": "node scripts/generate-icons.js && npm run publish:mac --workspace=packages/app",
         "generate-icons": "node scripts/generate-icons.js",
-        "bump": "npm run bump --workspace=packages/app"
+        "bump": "npm run bump --workspace=packages/app",
+        "test": "npm run test --workspace=packages/intelligence"
     },
     "devDependencies": {
         "icon-gen": "^3.0.1",

@@ -1,0 +1,6 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+This rule means that for the current execution, i want you to consider the files in the workspace, and the specific file i mentioned, and apply the correct style guides to it. Consider the example files from the code structure document. Make sure the target file follows this guide.

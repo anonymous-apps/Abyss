@@ -1,21 +1,21 @@
-import { dedent } from "../../utils/dedent/dedent";
-import { Log } from "../../utils/logs";
-import { parseXml, XmlNode } from "../../utils/xml-parser/xml-parser";
-import { createXmlFromZod } from "../../utils/zod-to-xml/zod-to-xml";
-import { ToolDefinitionNotFoundError } from "./errors";
-import { AskWithToolCallsOptions, AskWithToolsResult } from "./types";
+import { dedent } from '../../utils/dedent/dedent';
+import { Log } from '../../utils/logs';
+import { parseXml, XmlNode } from '../../utils/xml-parser/xml-parser';
+import { createXmlFromZod } from '../../utils/zod-to-xml/zod-to-xml';
+import { ToolDefinitionNotFoundError } from './errors';
+import { AskWithToolCallsOptions, AskWithToolsResult } from './types';
 
-export * from "./errors";
-export * from "./types";
+export * from './errors';
+export * from './types';
 
 export async function askWithTools(options: AskWithToolCallsOptions): Promise<AskWithToolsResult> {
     const { model, thread, toolDefinitions } = options;
-    Log.log("askWithTools", `Starting ask with tools against model ${model.getName()} with ${options.toolDefinitions.length} tools`);
+    Log.log('askWithTools', `Starting ask with tools against model ${model.getName()} with ${options.toolDefinitions.length} tools`);
 
     // Build the tool calls string
     const toolCallsString = toolDefinitions
         .map(
-            (tool) =>
+            tool =>
                 dedent(`
                     ### Tool: ${tool.name}
                     ${tool.description}
@@ -23,7 +23,7 @@ export async function askWithTools(options: AskWithToolCallsOptions): Promise<As
 
                 `) + createXmlFromZod(tool.name, tool.parameters)
         )
-        .join("\n");
+        .join('\n');
     const prompt = `
         ## Tool Usage
         You can use the following tools to help the user which you can invoke by simply returning the XML representation of the tool call as part of your response.
@@ -49,19 +49,22 @@ export async function askWithTools(options: AskWithToolCallsOptions): Promise<As
 
         ### Reminder
 
-        You only have these tools: [${toolDefinitions.map((tool) => tool.name).join(", ")}], calling other tools will result in an error.
+        You only have these tools: [${toolDefinitions.map(tool => tool.name).join(', ')}], calling other tools will result in an error.
     `;
     const threadWithToolCalls = thread.addUserTextMessage(prompt).addUserTextMessage(toolCallsString).addUserTextMessage(example);
 
     // Get the response
-    const response = await model.respond(threadWithToolCalls, options.cache);
-    Log.log("askWithTools", `Got response from model ${model.getName()} with response |${response.getLastBotTextMessage()?.substring(0, 50)} ...|`);
+    const response = await model.invoke(threadWithToolCalls, options.cache);
+    Log.log(
+        'askWithTools',
+        `Got response from model ${model.getName()} with response |${response.getLastBotTextMessage()?.substring(0, 50)} ...|`
+    );
 
     // Parse the response
-    const toolCalls = parseXml(response.getLastBotTextMessage() ?? "");
+    const toolCalls = parseXml(response.getLastBotTextMessage() ?? '');
     const toolCallsResult = toolCalls.map((toolCall: XmlNode) => {
         const toolName = Object.keys(toolCall)[0];
-        const toolDef = toolDefinitions.find((tool) => tool.name === toolName);
+        const toolDef = toolDefinitions.find(tool => tool.name === toolName);
 
         if (!toolDef) {
             throw new ToolDefinitionNotFoundError(toolName);
@@ -73,7 +76,10 @@ export async function askWithTools(options: AskWithToolCallsOptions): Promise<As
         };
     });
 
-    Log.log(model.getName(), `Parsed ${toolCallsResult.length} tool calls from model: ${toolCallsResult.map((toolCall) => toolCall.name).join(", ")}`);
+    Log.log(
+        model.getName(),
+        `Parsed ${toolCallsResult.length} tool calls from model: ${toolCallsResult.map(toolCall => toolCall.name).join(', ')}`
+    );
 
     return {
         thread: response,

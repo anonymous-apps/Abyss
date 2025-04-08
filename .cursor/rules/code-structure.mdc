@@ -1,0 +1,18 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# Source file structure
+
+When writing source files, use [example-class-file.ts](mdc:.cursor/examples/example-class-file.ts) as a baseline for what proper source file struture is like. Wherever possible, adopt this structure.
+For cases where we have a standalone utility and not a class, use [example-utility-file.ts](mdc:.cursor/examples/example-utility-file.ts) for reference
+
+# Test file structure
+
+When writing test files, use [example-class-file.test.ts](mdc:.cursor/examples/example-class-file.test.ts) as a baseline for what proper test file structure is like. All our classes need testing and to follow prescribed structure.
+
+# Tech stack
+When considering options, use:
+- Use Vitest & Typescript
