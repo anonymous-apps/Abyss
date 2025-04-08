@@ -1,13 +1,11 @@
 import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
-import { LucideIcon } from 'lucide-react';
 import { Sidebar, SidebarItem, SidebarItemProps } from './sidebar';
 
 interface PageSidebarProps {
     items: SidebarItemProps[];
     children: React.ReactNode;
     header?: React.ReactNode;
+    status?: string;
 }
 
 export function PageSidebar({ items, children, header }: PageSidebarProps) {

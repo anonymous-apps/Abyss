@@ -1,4 +1,4 @@
-import { Bot, Box, DatabaseIcon, MessageSquare, Play, Settings, type LucideIcon } from 'lucide-react';
+import { Bot, Box, DatabaseIcon, Loader2, MessageSquare, Play, Settings, type LucideIcon } from 'lucide-react';
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useSidebarFadeStore } from '../../state/sidebar-fade';
@@ -7,9 +7,10 @@ export interface SidebarItemProps {
     title: string;
     icon: LucideIcon;
     url: string;
+    status?: string;
 }
 
-export const SidebarItem: React.FC<SidebarItemProps> = ({ title, icon: Icon, url }) => {
+export const SidebarItem: React.FC<SidebarItemProps> = ({ title, icon: Icon, url, status }) => {
     const location = useLocation();
     const isActive = location.pathname.startsWith(url);
 
@@ -24,6 +25,11 @@ export const SidebarItem: React.FC<SidebarItemProps> = ({ title, icon: Icon, url
         >
             <Icon size={16} className="min-w-[16px]" />
             <span>{title}</span>
+            {status === 'in-progress' && (
+                <div className="ml-auto text-xs ">
+                    <Loader2 size={12} className="animate-spin" />
+                </div>
+            )}
         </Link>
     );
 };

@@ -16,8 +16,6 @@ export function ChatViewPage() {
     const { stream } = useStream(chat.thread?.id || '');
     const [message, setMessage] = useState('');
 
-    console.log('chat', chat);
-
     const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
@@ -50,8 +48,6 @@ export function ChatViewPage() {
             }
         } catch (error) {}
     };
-
-    console.log('stream', stream);
 
     const content =
         chat.loading || !chat.chat || !chat.messages || !chat.thread || !chat.model ? (

@@ -4,10 +4,11 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { getIconForSourceType } from '../../library/icons';
 import { GhostIconButton } from '../../library/input/button';
 import { PageSidebar } from '../../library/layout/page-sidebar';
-import { useScanTableChat } from '../../state/database-connection';
+import { useScanTableChat, useScanTableMessageThread } from '../../state/database-connection';
 
 export function ChatMainPage() {
     const chats = useScanTableChat();
+    const threads = useScanTableMessageThread();
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -22,10 +23,11 @@ export function ChatMainPage() {
         setTimeout(() => navigate('/chats/create'));
     }
 
-    const builtSidebar = (chats.data || []).map(entry => ({
+    const builtSidebar = (chats.data || []).map((entry, index) => ({
         title: entry.name,
         icon: getIconForSourceType(entry.type || ''),
         url: `/chats/id/${entry.id}`,
+        status: threads.data?.find(t => t.id === entry.threadId)?.lockingId?.length ? 'in-progress' : undefined,
     }));
 
     return (
