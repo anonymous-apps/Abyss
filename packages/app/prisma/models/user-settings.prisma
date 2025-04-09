@@ -4,17 +4,14 @@ model UserSettings {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  // Whether the sidebar is open or closed
-  sidebarOpen  Boolean @default(true)
-
-  // JSON array of recently visited pages
+  // JSON array of recently visited pages for back button navigation
   pageHistory  Json?
 
-  // Last visited page path
+  // Last visited page path, to redirect to on app load
   lastPage     String  @default("/")
 
   // Current theme name
-  theme        String  @default("abyss")
+  theme        String  @default("etherial")
 
   // Whether initial setup has been completed
   bootstrapped Boolean @default(false)

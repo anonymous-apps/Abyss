@@ -4,7 +4,6 @@ import { Link } from 'react-router';
 interface DatabaseTableProps {
     table: string;
     records: Record<string, any>[];
-    onPurgeTable;
 }
 
 export function TableKeyValue({ table, column, value }: { table: string; column: string; value: string }) {
@@ -21,14 +20,22 @@ export function TableKeyValue({ table, column, value }: { table: string; column:
         return value.toString();
     }
 
+    if (React.isValidElement(value)) {
+        return value;
+    }
+
     if (typeof value === 'object') {
-        return JSON.stringify(value);
+        try {
+            return JSON.stringify(value);
+        } catch (error) {
+            return 'Error parsing object';
+        }
     }
 
     return value ? value.toString() : '-';
 }
 
-export function DatabaseTable({ table, records }: DatabaseTableProps) {
+export function CustomTable({ table, records }: DatabaseTableProps) {
     if (!records || records.length === 0) {
         return <div className="text-text-500">No records found</div>;
     }

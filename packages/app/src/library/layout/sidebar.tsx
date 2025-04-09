@@ -1,4 +1,4 @@
-import { Bot, Box, DatabaseIcon, Loader2, MessageSquare, Play, Settings, X, type LucideIcon } from 'lucide-react';
+import { Bot, Box, ChartLine, DatabaseIcon, Loader2, MessageSquare, Play, Settings, X, type LucideIcon } from 'lucide-react';
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useSidebarFadeStore } from '../../state/sidebar-fade';
@@ -85,8 +85,10 @@ export function Sidebar() {
             <SidebarItem title="Models" icon={Box} url="/models" />
             <SidebarItem title="Agents" icon={Bot} url="/agents" />
             <SidebarItem title="Tools" icon={Play} url="/tools" />
-            <SidebarItem title="Storage" icon={DatabaseIcon} url="/database" />
             <SidebarItem title="Settings" icon={Settings} url="/settings" />
+            <SidebarSection title="Monitoring" />
+            <SidebarItem title="Storage" icon={DatabaseIcon} url="/database" />
+            <SidebarItem title="Metrics" icon={ChartLine} url="/metrics" />
         </div>
     );
 }

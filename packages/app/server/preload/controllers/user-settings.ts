@@ -1,7 +1,6 @@
 import { BaseDatabaseConnection, BaseRecord } from './_base';
 
 export interface UserSettingsRecord extends BaseRecord {
-    sidebarOpen: boolean;
     lastPage: string;
     theme: string;
     bootstrapped: boolean;
@@ -17,7 +16,6 @@ class _UserSettingsController extends BaseDatabaseConnection<UserSettingsRecord>
         const first = await this.findFirst();
         if (!first) {
             const created = this.create({
-                sidebarOpen: true,
                 lastPage: '/',
                 theme: 'etherial',
                 bootstrapped: false,

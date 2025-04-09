@@ -1,13 +1,13 @@
-import { Box, Table, TableIcon, Trash } from 'lucide-react';
+import { Table, Trash } from 'lucide-react';
 import React from 'react';
+import { useParams } from 'react-router-dom';
+import { CustomTable } from '../../library/content/database-table';
+import { GhostIconButton } from '../../library/input/button';
 import { IconSection } from '../../library/layout/icon-section';
 import { PageCrumbed } from '../../library/layout/page-crumbed';
-import { Database } from '../../main';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import { useDatabaseQuery, useDatabaseRecordSubscription, useDatabaseTableSubscription } from '../../state/database-connection';
-import { DatabaseTable } from '../../library/content/database-table';
 import { WithSidebar } from '../../library/layout/sidebar';
-import { GhostIconButton } from '../../library/input/button';
+import { Database } from '../../main';
+import { useDatabaseTableSubscription } from '../../state/database-connection';
 
 export function ViewTablePage() {
     const { id } = useParams();
@@ -33,7 +33,7 @@ export function ViewTablePage() {
                 icon={Table}
                 action={<GhostIconButton icon={Trash} onClick={onPurgeTable} label="Purge Table" />}
             >
-                <DatabaseTable table={id as string} records={scanTable.data as Record<string, any>[]} onPurgeTable={onPurgeTable} />
+                <CustomTable table={id as string} records={scanTable.data as Record<string, any>[]} />
             </IconSection>
         </>
     );

@@ -12,6 +12,8 @@ import { ListTablesPage } from './pages/database/list-tables';
 import { ViewTablePage } from './pages/database/view-table';
 import { ViewTableRecordPage } from './pages/database/view-table-record';
 import { MainPage } from './pages/main';
+import { MetricChartPage } from './pages/metrics/chart';
+import { MetricsPage } from './pages/metrics/main';
 import { ModelProfileCreatePage } from './pages/models/create';
 import { ModelProfileMainPage } from './pages/models/main';
 import { ModelProfileViewPage } from './pages/models/view';
@@ -19,7 +21,6 @@ import { SettingsPage } from './pages/settings/main';
 import { ToolsPage } from './pages/tool/main';
 import { ToolViewPage } from './pages/tool/view';
 import { useTheme } from './state/theme-state';
-
 export function App() {
     // Listen and apply the theme if it changes
     useTheme();
@@ -34,6 +35,8 @@ export function App() {
                     <Route path="/models" element={<ModelProfileMainPage />} />
                     <Route path="/models/create" element={<ModelProfileCreatePage />} />
                     <Route path="/models/id/:id" element={<ModelProfileViewPage />} />
+                    <Route path="/metrics" element={<MetricsPage />} />
+                    <Route path="/metrics/graph/:metricName" element={<MetricChartPage />} />
                     <Route path="/chats" element={<ChatMainPage />}>
                         <Route path="/chats/create" element={<ChatCreatePage />} />
                         <Route path="/chats/id/:id" element={<ChatViewPage />} />
