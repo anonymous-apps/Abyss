@@ -15,6 +15,7 @@ model UserSettings {
   updatedAt  DateTime @updatedAt
 
   sidebarOpen  Boolean @default(true)
+  pageHistory  Json?
   lastPage     String  @default("/")
   theme        String  @default("abyss")
   bootstrapped Boolean @default(false)

@@ -26,8 +26,8 @@ export function App() {
 
     return (
         <div>
-            <HeaderBar />
             <BrowserRouter>
+                <HeaderBar />
                 <Routes>
                     <Route path="/" element={<MainPage />} />
                     <Route path="/settings" element={<SettingsPage />} />

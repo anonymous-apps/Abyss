@@ -1,4 +1,3 @@
-import React from 'react';
 import { Database } from '../main';
 
 // Listen for URL changes and log them to database
@@ -7,17 +6,19 @@ let lastPage = window.location.pathname;
 if (typeof window !== 'undefined') {
     const logPageChange = () => {
         if (lastPage !== window.location.pathname) {
-            Database.table.userSettings.updateFirst({
-                lastPage: window.location.pathname,
-            });
+            Database.table.userSettings.onPageChange(window.location.pathname);
             lastPage = window.location.pathname;
         }
+        const history = Database.table.userSettings.get().then(settings => console.log('history', settings.pageHistory));
     };
     setInterval(logPageChange, 1000);
 }
 
 // Set initial page and then call the handler
 export function loadFromLastPage(handler: () => void) {
+    Database.table.userSettings.updateFirst({
+        pageHistory: [window.location.pathname],
+    });
     Database.table.userSettings.get().then(settings => {
         if (settings.lastPage) {
             window.history.pushState({}, '', settings.lastPage);

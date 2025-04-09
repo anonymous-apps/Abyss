@@ -1,12 +1,11 @@
-import { Prisma } from '@prisma/client';
 import { BaseDatabaseConnection, BaseRecord } from './_base';
-import { notifyTableChanged } from '../database-connection';
 
 export interface UserSettingsRecord extends BaseRecord {
     sidebarOpen: boolean;
     lastPage: string;
     theme: string;
     bootstrapped: boolean;
+    pageHistory: string[];
 }
 
 class _UserSettingsController extends BaseDatabaseConnection<UserSettingsRecord> {
@@ -22,6 +21,7 @@ class _UserSettingsController extends BaseDatabaseConnection<UserSettingsRecord>
                 lastPage: '/',
                 theme: 'etherial',
                 bootstrapped: false,
+                pageHistory: [],
             });
             return created;
         }
@@ -32,6 +32,31 @@ class _UserSettingsController extends BaseDatabaseConnection<UserSettingsRecord>
         const first = await this.get();
         const id = first.id;
         return this.update(id, data);
+    }
+
+    async onPageChange(page: string) {
+        const first = await this.get();
+        const id = first.id;
+        const history: string[] = first.pageHistory || [];
+        history.push(page);
+        this.update(id, {
+            lastPage: page,
+            pageHistory: history,
+        });
+    }
+
+    async popPageHistory() {
+        const first = await this.get();
+        const id = first.id;
+        const history: string[] = first.pageHistory || [];
+        const lastPage = history.pop();
+
+        this.update(id, {
+            lastPage: history[history.length - 1],
+            pageHistory: history,
+        });
+
+        return lastPage;
     }
 }
 
