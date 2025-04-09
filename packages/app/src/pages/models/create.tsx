@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
-import { PageCrumbed } from '../../library/layout/page-crumbed';
-import { Button } from '../../library/input/button';
 import { Box, Globe, Settings } from 'lucide-react';
-import { OpenAIConfig } from './connectors/openai';
-import { GeminiConfig } from './connectors/gemini';
-import { IconSection } from '../../library/layout/icon-section';
-import { Database } from '../../main';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
+import { Button } from '../../library/input/button';
 import { Input } from '../../library/input/input';
+import { IconSection } from '../../library/layout/icon-section';
+import { PageCrumbed } from '../../library/layout/page-crumbed';
 import { WithSidebar } from '../../library/layout/sidebar';
+import { Database } from '../../main';
+import { AnthropicConfig } from './connectors/anthropic';
+import { GeminiConfig } from './connectors/gemini';
+import { OpenAIConfig } from './connectors/openai';
 
 const Providers = [
     {
@@ -18,6 +19,10 @@ const Providers = [
     {
         name: 'Gemini',
         component: GeminiConfig,
+    },
+    {
+        name: 'Anthropic',
+        component: AnthropicConfig,
     },
 ];
 
