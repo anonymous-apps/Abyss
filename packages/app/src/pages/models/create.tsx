@@ -41,7 +41,6 @@ export function ModelProfileCreatePage() {
             description: 'A model connection for ' + selectedProvider + ' ' + selectedModel,
             provider: selectedProvider,
             modelId: selectedModel,
-            type: 'chat',
             data: data,
         });
         navigate('/models');

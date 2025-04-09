@@ -1,5 +1,3 @@
-import { Prisma } from '@prisma/client';
-import { notifyTableChanged, prisma } from '../database-connection';
 import { BaseDatabaseConnection, BaseRecord } from './_base';
 
 export interface ModelConnectionsRecord extends BaseRecord {
@@ -7,7 +5,6 @@ export interface ModelConnectionsRecord extends BaseRecord {
     description: string;
     provider: string;
     modelId: string;
-    type: string;
     data?: Record<string, any>;
 }
 

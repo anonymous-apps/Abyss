@@ -16,9 +16,6 @@ model ModelConnections {
   // Specific model identifier from the provider
   modelId    String
 
-  // Type of model (e.g., 'chat', 'completion', 'embedding')
-  type       String
-
   // Additional configuration data stored as JSON
   data       Json?    
 } 
