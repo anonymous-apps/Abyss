@@ -9,7 +9,6 @@ export function useDatabaseQuery<T>(callback: (database: PrismaAPI) => Promise<T
 
     const fetchData = async () => {
         try {
-            setLoading(true);
             const result = await callback(Database);
             if (result) {
                 setData(result);
@@ -145,14 +144,6 @@ export function useScanTableToolInvocation() {
 
 export function useTableRecordToolInvocation(id: string) {
     return useDatabaseRecordSubscription('ToolInvocation', id, async database => database.table.toolInvocation.findById(id));
-}
-
-export function useScanTableJobs() {
-    return useDatabaseTableSubscription('Jobs', async database => database.table.jobs.scanTable());
-}
-
-export function useTableRecordJobs(id: string) {
-    return useDatabaseRecordSubscription('Jobs', id, async database => database.table.jobs.findById(id));
 }
 
 export function useScanTableMetric() {

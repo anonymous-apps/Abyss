@@ -57,7 +57,7 @@ function SectionHeader({ message }: { message: MessageRecord }) {
     const model = useDatabaseTableSubscription('modelConnections', async db => db.table.modelConnections.findById(modelId), [modelId]);
 
     return (
-        <div className="flex items-center text-xs mb-3 gap-2">
+        <div className="flex items-center text-xs mb-3 gap-2 bg-background-base rounded-sm p-2 w-fit">
             <Icon size={14} className="" />
             {message.type === 'USER' && <span className="text-text-dark opacity-70">You</span>}
             <span className="text-text-dark opacity-70">{model.data?.name}</span>
@@ -67,11 +67,11 @@ function SectionHeader({ message }: { message: MessageRecord }) {
 }
 
 function UserMessageSection({ message }: { message: MessageRecord }) {
-    return <div className="rounded overflow-hidden my-2 mr-10">{message.content}</div>;
+    return <pre className="rounded overflow-hidden my-2 mr-10">{message.content}</pre>;
 }
 
 function AiMessageSection({ message }: { message: MessageRecord }) {
-    return <div className="rounded overflow-hidden my-2 mr-10">{message.content}</div>;
+    return <pre className="rounded overflow-hidden my-2 mr-10">{message.content}</pre>;
 }
 
 function ToolCallSection({ message }: { message: MessageRecord }) {

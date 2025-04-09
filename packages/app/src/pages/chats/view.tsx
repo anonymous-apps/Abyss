@@ -8,12 +8,10 @@ import { InputArea } from '../../library/input/input';
 import { PageHeader } from '../../library/layout/page-header';
 import { Database } from '../../main';
 import { useChatWithModel } from '../../state/hooks/useChat';
-import { useStream } from '../../state/hooks/useStream';
 export function ChatViewPage() {
     const { id } = useParams();
     const navigate = useNavigate();
     const chat = useChatWithModel(id || '');
-    const { stream } = useStream(chat.thread?.id || '');
     const [message, setMessage] = useState('');
 
     const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
