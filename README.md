@@ -5,6 +5,7 @@
 ```bash
 npm i
 npm run build:intelligence
+npm run prisma
 npm run dev
 ```
 

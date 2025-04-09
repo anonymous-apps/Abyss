@@ -91,6 +91,7 @@ export class AnthropicLanguageModel extends LanguageModel {
                     messages,
                     max_tokens: 4096,
                 }),
+                mode: 'no-cors',
             });
 
             if (!response.ok) {
@@ -217,6 +218,7 @@ export class AnthropicLanguageModel extends LanguageModel {
                         stream: true,
                         tools: toolDefinitions.length > 0 ? toolDefinitions : undefined,
                     }),
+                    mode: 'no-cors',
                 });
 
                 if (!apiResponse.ok) {

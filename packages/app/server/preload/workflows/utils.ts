@@ -1,4 +1,5 @@
 import {
+    AnthropicLanguageModel,
     ChatThread,
     createZodFromObject,
     GeminiLanguageModel,
@@ -24,6 +25,13 @@ export function buildIntelegence(aiConnection: ModelConnectionsRecord) {
 
     if (aiConnection.provider === 'OpenAI') {
         languageModel = new OpenAILanguageModel({
+            modelId: aiConnection.modelId,
+            apiKey: (aiConnection.data as any)['apiKey'],
+        });
+    }
+
+    if (aiConnection.provider === 'Anthropic') {
+        languageModel = new AnthropicLanguageModel({
             modelId: aiConnection.modelId,
             apiKey: (aiConnection.data as any)['apiKey'],
         });

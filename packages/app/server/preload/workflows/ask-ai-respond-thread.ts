@@ -91,8 +91,6 @@ async function askAiToRespondToChat(data: AskAiToRespondToChatData) {
     const seen = new Set<string>();
 
     stream.onNewTextMessage(async message => {
-        console.log({ message });
-
         // Check if we have already seen this message, create it if we haven't
         if (!seen.has(message.uuid)) {
             seen.add(message.uuid);
