@@ -1,0 +1,15 @@
+model Metric {
+  id         String   @id 
+  references Json?    
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Name of the metric
+  name       String
+
+  // Optional JSON field for storing metric dimensions/categories
+  dimensions Json?    
+
+  // Numerical value of the metric
+  value      Float
+} 

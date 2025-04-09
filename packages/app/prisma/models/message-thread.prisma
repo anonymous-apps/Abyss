@@ -1,0 +1,9 @@
+model MessageThread {
+  id         String   @id 
+  references Json?    
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // ID of the entity that has locked this thread (if any)
+  lockingId  String?
+} 

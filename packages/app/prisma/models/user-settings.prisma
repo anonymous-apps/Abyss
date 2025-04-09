@@ -1,0 +1,21 @@
+model UserSettings {
+  id         String   @id 
+  references Json?    
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Whether the sidebar is open or closed
+  sidebarOpen  Boolean @default(true)
+
+  // JSON array of recently visited pages
+  pageHistory  Json?
+
+  // Last visited page path
+  lastPage     String  @default("/")
+
+  // Current theme name
+  theme        String  @default("abyss")
+
+  // Whether initial setup has been completed
+  bootstrapped Boolean @default(false)
+} 

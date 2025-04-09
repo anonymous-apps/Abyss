@@ -1,0 +1,9 @@
+model TextLog {
+  id         String   @id 
+  references Json?    
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // The actual log text content
+  text       String
+} 

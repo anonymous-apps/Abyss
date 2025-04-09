@@ -1,0 +1,15 @@
+model Agent {
+  id         String   @id 
+  references Json?    
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Display name of the agent
+  name       String
+
+  // Detailed description of the agent's capabilities
+  description String
+
+  // ID of the chat model this agent uses
+  chatModelId String
+} 

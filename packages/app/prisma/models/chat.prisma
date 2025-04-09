@@ -1,0 +1,21 @@
+model Chat {
+  id         String   @id 
+  references Json?    
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Display name of the chat
+  name       String
+
+  // Detailed description of the chat's purpose
+  description String
+
+  // Type of chat (e.g., 'direct', 'group', 'agent')
+  type       String
+
+  // ID of the source that created this chat
+  sourceId   String
+
+  // Optional ID of the associated message thread
+  threadId   String?
+} 

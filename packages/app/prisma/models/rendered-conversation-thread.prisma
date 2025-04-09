@@ -1,0 +1,9 @@
+model RenderedConversationThread {
+  id         String   @id 
+  references Json?    
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // JSON array of messages in the conversation
+  messages   Json 
+} 

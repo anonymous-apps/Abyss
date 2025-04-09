@@ -1,0 +1,18 @@
+model ResponseStream {
+  id         String   @id 
+  references Json?    
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // ID of the source that generated this response
+  sourceId    String
+
+  // JSON array of messages in the response stream
+  resultMessages Json
+
+  // Current status of the stream (e.g., 'active', 'completed', 'error')
+  status      String
+
+  // Raw output text from the stream
+  rawOutput   String
+} 

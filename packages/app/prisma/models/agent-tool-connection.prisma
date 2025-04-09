@@ -1,0 +1,15 @@
+model AgentToolConnection {
+  id         String   @id 
+  references Json?    
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // ID of the agent that can use this tool
+  agentId    String
+
+  // ID of the tool that the agent can use
+  toolId     String
+
+  // Permission level for tool usage (e.g., 'read', 'write', 'admin')
+  permission String
+} 

@@ -1,0 +1,18 @@
+model Message {
+  id         String   @id 
+  references Json?    
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // ID of the thread this message belongs to
+  threadId   String
+
+  // Type of message (e.g., 'user', 'assistant', 'system')
+  type       String
+
+  // ID of the source that generated this message
+  sourceId   String
+
+  // Actual content of the message
+  content    String
+} 
