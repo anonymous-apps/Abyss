@@ -55,7 +55,7 @@ export const HeaderBar = () => {
             <div className="absolute top-0 left-0 right-14 h-full flex items-center justify-center menuDragSection"></div>
             <div className="absolute top-7 left-0 w-full h-10 flex items-center justify-center menuDragSection"></div>
 
-            <div className={`absolute top-[1px] right-0 flex gap-1 mt-1 px-2 z-10 ${isHomePage ? 'hidden' : ''}`}>
+            <div className={`absolute text-text-light top-[1px] right-0 flex gap-1 mt-1 px-2 z-10 ${isHomePage ? 'hidden' : ''}`}>
                 <ChevronLeftIcon
                     className={`w-5 h-5 rounded-sm ${hasHistory ? 'opacity-100 hover:bg-primary-light ' : 'opacity-20'}`}
                     onClick={onPopPageHistory}
