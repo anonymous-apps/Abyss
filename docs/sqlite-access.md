@@ -16,5 +16,8 @@ interface Record {
 
     // The timestamp when the record was created
     createdAt: Date;
+
+    // The timestamp when the record was last updated
+    updatedAt: Date;
 }
 ```

@@ -10,6 +10,10 @@ export interface BaseRecord {
 export class BaseDatabaseConnection<T extends BaseRecord> {
     constructor(private tableName: string, public description: string) {}
 
+    private newId(): string {
+        return `${this.tableName}::${crypto.randomUUID()}`;
+    }
+
     protected getTable(): any {
         return prisma[this.tableName as keyof typeof prisma];
     }
@@ -33,7 +37,12 @@ export class BaseDatabaseConnection<T extends BaseRecord> {
     }
 
     async create(data: Omit<T, 'id' | 'createdAt' | 'updatedAt'>): Promise<T> {
-        const result: T = await this.getTable().create({ data });
+        const result: T = await this.getTable().create({
+            data: {
+                ...data,
+                id: this.newId(),
+            },
+        });
         await this.notifyChange(result);
         return result;
     }

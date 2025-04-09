@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router';
+import { Link } from 'react-router';
 
 interface DatabaseTableProps {
     table: string;
@@ -8,33 +8,10 @@ interface DatabaseTableProps {
 }
 
 export function TableKeyValue({ table, column, value }: { table: string; column: string; value: string }) {
-    if (column === 'threadId') {
+    if (value && value.toString().split('::').length === 2) {
+        const [tableName] = value.toString().split('::');
         return (
-            <Link to={`/database/id/messageThread/record/${value}`} className="text-text-base underline hover:text-primary-base">
-                {value}
-            </Link>
-        );
-    }
-
-    if (column === 'id') {
-        return (
-            <Link to={`/database/id/${table}/record/${value}`} className="text-text-base underline hover:text-primary-base">
-                {value}
-            </Link>
-        );
-    }
-
-    if (column === 'assistantId') {
-        return (
-            <Link to={`/database/id/modelConnections/record/${value}`} className="text-text-base underline hover:text-primary-base">
-                {value}
-            </Link>
-        );
-    }
-
-    if (column === 'apiCallId') {
-        return (
-            <Link to={`/database/id/apiCall/record/${value}`} className="text-text-base underline hover:text-primary-base">
+            <Link to={`/database/id/${tableName}/record/${value}`} className="text-text-base underline hover:text-primary-base">
                 {value}
             </Link>
         );

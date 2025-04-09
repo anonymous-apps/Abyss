@@ -1,8 +1,7 @@
+import { RenderedConversationThread } from '@prisma/client';
 import { BrainIcon, User } from 'lucide-react';
 import React from 'react';
-import { RenderedConversationThreadRecord } from '../../../../server/preload/controllers/rendered-conversation-thread';
-
-export function CustomRendererForConversationThread({ thread }: { thread: RenderedConversationThreadRecord }) {
+export function CustomRendererForConversationThread({ thread }: { thread: RenderedConversationThread }) {
     if (!thread || !thread.messages) {
         return <></>;
     }
