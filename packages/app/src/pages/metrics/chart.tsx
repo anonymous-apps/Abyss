@@ -149,6 +149,13 @@ export function MetricChartPage() {
         // Compute aggregated values for each bucket
         const chartData = validBucketKeys.map(key => {
             const datapoints = buckets[key];
+            if (datapoints.length === 0) {
+                return {
+                    time: timeBucketOption.formatTime(timeBucketOption.parseBucketKey(key)),
+                    value: null,
+                };
+            }
+
             // Use the custom parser to correctly parse the bucket key
             const date = timeBucketOption.parseBucketKey(key);
 
