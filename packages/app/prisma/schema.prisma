@@ -9,7 +9,7 @@ generator client {
 }
 
 model UserSettings {
-  id         String   @id @default(uuid())
+  id         String   @id 
   references Json?    
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -21,7 +21,7 @@ model UserSettings {
 }
 
 model Metric {
-  id         String   @id @default(uuid())
+  id         String   @id 
   references Json?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -32,7 +32,7 @@ model Metric {
 }
 
 model TextLog {
-  id         String   @id @default(uuid())
+  id         String   @id 
   references Json?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -41,7 +41,7 @@ model TextLog {
 }
 
 model NetworkCall {
-  id         String   @id @default(uuid())
+  id         String   @id 
   references Json?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -54,7 +54,7 @@ model NetworkCall {
 }
 
 model Jobs {
-  id         String   @id @default(uuid())
+  id         String   @id 
   references Json?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -66,7 +66,7 @@ model Jobs {
 }
 
 model ModelConnections {
-  id          String   @id @default(uuid())
+  id          String   @id 
   references  Json?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -81,7 +81,7 @@ model ModelConnections {
 }
 
 model MessageThread {
-  id         String   @id @default(uuid())
+  id         String   @id 
   references Json?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -90,7 +90,7 @@ model MessageThread {
 }
 
 model Message {
-  id         String   @id @default(uuid())
+  id         String   @id 
   references Json?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -102,7 +102,7 @@ model Message {
 }
 
 model RenderedConversationThread {
-  id         String   @id @default(uuid())
+  id         String   @id 
   references Json?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -111,7 +111,7 @@ model RenderedConversationThread {
 }
 
 model Chat {
-  id          String   @id @default(uuid())
+  id          String   @id 
   references  Json?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -125,7 +125,7 @@ model Chat {
 }
 
 model Agent {
-  id          String   @id @default(uuid())
+  id          String   @id 
   references  Json?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -137,7 +137,7 @@ model Agent {
 }
 
 model AgentToolConnection {
-  id         String   @id @default(uuid())
+  id         String   @id 
   references Json?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -148,7 +148,7 @@ model AgentToolConnection {
 }
 
 model Tool {
-  id          String   @id @default(uuid())
+  id          String   @id 
   references  Json?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -162,7 +162,7 @@ model Tool {
 }
 
 model ToolInvocation {
-  id         String   @id @default(uuid())
+  id         String   @id 
   references Json?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -175,7 +175,7 @@ model ToolInvocation {
 }
 
 model ResponseStream {
-  id         String   @id @default(uuid())
+  id         String   @id 
   references Json?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt

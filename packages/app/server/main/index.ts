@@ -1,15 +1,15 @@
-import { app, BrowserWindow, ipcMain, Menu } from 'electron';
-import { autoUpdater } from 'electron-updater';
-import { execSync, fork } from 'node:child_process';
-import fs, { existsSync } from 'node:fs';
+import { app, BrowserWindow, ipcMain } from 'electron';
+import fs from 'node:fs';
 import path, { dirname, join } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
+import { fileURLToPath } from 'node:url';
+import { AppController } from './app-controller';
+import { runMigrations } from './handlers/prisma';
 
 // Setup __filename and __dirname for ES modules
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+export const electronDataPath = dirname(__filename);
 
-process.env.DIST_ELECTRON = join(__dirname, '../');
+process.env.DIST_ELECTRON = join(electronDataPath, '../');
 process.env.DIST = join(process.env.DIST_ELECTRON, '../dist-vite');
 process.env.VITE_PUBLIC = process.env.VITE_DEV_SERVER_URL ? join(process.env.DIST_ELECTRON, '../public') : process.env.DIST;
 
@@ -19,56 +19,17 @@ if (!fs.existsSync(userDataPath)) {
     fs.mkdirSync(userDataPath, { recursive: true });
 }
 
-// Define the full path to the SQLite file and convert it to a proper file URL
-const dbPath = path.join(userDataPath, 'database.sqlite');
-const dbUrl = pathToFileURL(dbPath).href;
-process.env.DATABASE_URL = dbUrl;
+// create the app controller
+const appController = new AppController();
 
-async function runMigrations() {
-    return new Promise((resolve, reject) => {
-        const possibleMigrationScripts = [
-            path.join(process.resourcesPath, 'scripts', 'run-migrations.cjs'),
-            path.join(__dirname, '..', '..', 'scripts', 'run-migrations.cjs'),
-        ];
-
-        const migrationScript = possibleMigrationScripts.find(script => existsSync(script));
-        console.log('Running migrations from:', migrationScript);
-
-        // Fork the migration script.
-        const child = fork(migrationScript!, [], {
-            stdio: 'inherit',
-            env: {
-                ...process.env,
-                SKIP_MAIN: 'true',
-            },
-        });
-
-        child.stdout?.on('data', data => {
-            console.log(`Migration stdout: ${data}`);
-        });
-
-        child.stderr?.on('data', data => {
-            console.error(`Migration stderr: ${data}`);
-        });
-
-        child.on('exit', code => {
-            if (code === 0) {
-                resolve(void 0);
-            } else {
-                reject(new Error(`Migration process exited with code ${code}`));
-            }
-        });
-    });
-}
+// Env
+const preload = join(electronDataPath, '../preload/index.mjs');
+const url = process.env.VITE_DEV_SERVER_URL;
+const indexHtml = join(process.env.DIST!, 'index.html');
 
 // Create the main application window
-let mainWindow: BrowserWindow | null = null;
-const preload = join(__dirname, '../preload/index.mjs');
-const url = process.env.VITE_DEV_SERVER_URL;
-const indexHtml = join(process.env.DIST, 'index.html');
-
 async function createWindow() {
-    mainWindow = new BrowserWindow({
+    const window = new BrowserWindow({
         title: 'Abyss',
         icon: join(process.env.VITE_PUBLIC!, 'favicon.ico'),
         webPreferences: {
@@ -91,10 +52,13 @@ async function createWindow() {
         visualEffectState: 'active', // Ensures the effect is always active
     });
 
+    appController.setMainWindow(window);
+    appController.setupAutoUpdater();
+
     if (url) {
-        mainWindow.loadURL(url);
+        window.loadURL(url);
     } else {
-        mainWindow.loadFile(indexHtml);
+        window.loadFile(indexHtml);
     }
 }
 
@@ -116,11 +80,12 @@ app.whenReady().then(async () => {
 });
 
 app.on('window-all-closed', () => {
-    mainWindow = null;
+    appController.closeMainWindow();
     app.quit();
 });
 
 app.on('second-instance', () => {
+    const mainWindow = appController.getMainWindow();
     if (mainWindow) {
         if (mainWindow.isMinimized()) mainWindow.restore();
         mainWindow.focus();
@@ -150,60 +115,4 @@ ipcMain.handle('open-win', (_, arg) => {
     } else {
         childWindow.loadFile(indexHtml, { hash: arg });
     }
-});
-
-autoUpdater.setFeedURL({
-    provider: 'github',
-    owner: 'abyss-mcp',
-    repo: 'Abyss',
-    private: false,
-});
-
-// Forward autoUpdater events to the renderer via IPC
-autoUpdater.on('update-available', info => {
-    console.log('Update available:', info);
-    if (mainWindow) {
-        mainWindow.webContents.send('update-available', info);
-    }
-});
-
-autoUpdater.on('download-progress', progress => {
-    console.log('Download progress:', progress);
-    if (mainWindow) {
-        mainWindow.webContents.send('download-progress', progress);
-    }
-});
-
-autoUpdater.on('update-downloaded', info => {
-    console.log('Update downloaded:', info);
-    if (mainWindow) {
-        mainWindow.webContents.send('update-downloaded', info);
-    }
-});
-
-autoUpdater.on('update-not-available', info => {
-    if (mainWindow) {
-        mainWindow.webContents.send('update-not-available', info);
-    }
-});
-
-autoUpdater.on('error', info => {
-    if (mainWindow) {
-        mainWindow.webContents.send('updator-error', info);
-    }
-});
-
-autoUpdater.on('update-cancelled', info => {
-    if (mainWindow) {
-        mainWindow.webContents.send('updator-error', info);
-    }
-});
-
-ipcMain.handle('check-for-updates', async () => {
-    const data = await autoUpdater.checkForUpdates();
-    return data?.updateInfo;
-});
-
-ipcMain.handle('restart-to-update', () => {
-    autoUpdater.quitAndInstall();
 });
