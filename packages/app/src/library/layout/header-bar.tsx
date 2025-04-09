@@ -21,6 +21,7 @@ export const HeaderBar = () => {
             headerRef.current.style.transformOrigin = 'top left';
             // Set width to always be 150px in the scaled space
             headerRef.current.style.width = `${150 * zoomLevel}px`;
+            headerRef.current.style.height = `${55 * zoomLevel}px`;
         }
     };
 
@@ -52,15 +53,15 @@ export const HeaderBar = () => {
             className="fixed z-10 top-0 left-0 w-full text-center border-background-light"
             style={{ height: '55px', fontSize: '30px', lineHeight: '55px' }}
         >
-            <div className="absolute top-0 left-0 right-14 h-full flex items-center justify-center menuDragSection"></div>
-            <div className="absolute top-7 left-0 w-full h-10 flex items-center justify-center menuDragSection"></div>
+            <div className="absolute top-0 left-0 right-[40%] h-full flex items-center justify-center menuDragSection"></div>
+            <div className="absolute bottom-0 left-0 w-full h-[50%] flex items-center justify-center menuDragSection"></div>
 
-            <div className={`absolute text-text-light top-[1px] right-0 flex gap-1 mt-1 px-2 z-10 ${isHomePage ? 'hidden' : ''}`}>
+            <div className={`absolute text-text-light h-[45%] w-[40%] right-0 flex gap-1 mt-1 px-2 z-10 ${isHomePage ? 'hidden' : ''}`}>
                 <ChevronLeftIcon
-                    className={`w-5 h-5 rounded-sm ${hasHistory ? 'opacity-100 hover:bg-primary-light ' : 'opacity-20'}`}
+                    className={`h-full w-full rounded-sm ${hasHistory ? 'opacity-100 hover:bg-primary-light ' : 'opacity-20'}`}
                     onClick={onPopPageHistory}
                 />
-                <ChevronRightIcon className={`w-5 h-5 opacity-20`} />
+                <ChevronRightIcon className={`h-full w-full rounded-sm opacity-20`} />
             </div>
         </div>
     );
