@@ -13,6 +13,7 @@ export const Database = window.prisma as PrismaAPI;
 loadFromLastPage(async () => {
     await applyTheme();
     await CaptureMetric.ApplicationOpened();
+    await CaptureMetric.SqliteSize();
 
     ReactDOM.createRoot(document.getElementById('root')!).render(
         <React.StrictMode>

@@ -7,4 +7,11 @@ export const CaptureMetric = {
             value: 1,
         });
     },
+    async SqliteSize() {
+        const size = await Database.workflows.CalculateSqliteSize();
+        Database.table.metric.create({
+            name: 'sqlite-size',
+            value: size,
+        });
+    },
 };
