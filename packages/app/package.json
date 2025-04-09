@@ -8,7 +8,7 @@
     "main": "dist-electron/main/index.mjs",
     "type": "module",
     "scripts": {
-        "dev": "vite",
+        "dev": "npm run prisma:merge && vite",
         "drizzle": "drizzle-kit push:sqlite",
         "build:mac": "vite build && npm run prisma && electron-builder build --mac",
         "debug:mac": "npm run build:mac && dist/mac/Abyss.app/Contents/MacOS/Abyss",
@@ -16,8 +16,9 @@
         "publish:mac": "vite build && npm run prisma && electron-builder build --mac --publish always",
         "bump": "npm version patch",
         "prisma": "DATABASE_URL=file:./dev.db npm run prisma:migrate && npm run prisma:generate && npm run prisma:copy",
-        "prisma:generate": "prisma generate",
-        "prisma:migrate": "prisma migrate dev",
+        "prisma:generate": "npm run prisma:merge && prisma generate",
+        "prisma:migrate": "npm run prisma:merge && prisma migrate dev",
+        "prisma:merge": "cd ./prisma/models && rm -rf ../schema.prisma && cat *.prisma >> ../schema.prisma && cd .. && prisma format",
         "prisma:copy": "node scripts/copy-prisma-client.cjs"
     },
     "dependencies": {

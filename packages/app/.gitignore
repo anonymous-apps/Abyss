@@ -5,3 +5,4 @@ prisma/dev.*
 dist-vite
 *.db
 .env
+prisma/schema.prisma
