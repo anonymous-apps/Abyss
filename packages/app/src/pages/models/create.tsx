@@ -6,6 +6,7 @@ import { Input } from '../../library/input/input';
 import { IconSection } from '../../library/layout/icon-section';
 import { PageCrumbed } from '../../library/layout/page-crumbed';
 import { WithSidebar } from '../../library/layout/sidebar';
+import { AnthropicLogo, GeminiLogo, OpenAILogo } from '../../library/logos';
 import { Database } from '../../main';
 import { AnthropicConfig } from './connectors/anthropic';
 import { GeminiConfig } from './connectors/gemini';
@@ -14,14 +15,17 @@ import { OpenAIConfig } from './connectors/openai';
 const Providers = [
     {
         name: 'OpenAI',
+        icon: <OpenAILogo className="w-6 h-6" />,
         component: OpenAIConfig,
     },
     {
         name: 'Gemini',
+        icon: <GeminiLogo className="w-6 h-6" />,
         component: GeminiConfig,
     },
     {
         name: 'Anthropic',
+        icon: <AnthropicLogo className="w-6 h-6" />,
         component: AnthropicConfig,
     },
 ];
@@ -68,6 +72,7 @@ export function ModelProfileCreatePage() {
                                 onClick={() => setSelectedProvider(provider.name)}
                                 selected={selectedProvider === provider.name}
                             >
+                                {provider.icon}
                                 {provider.name}
                             </Button>
                         ))}

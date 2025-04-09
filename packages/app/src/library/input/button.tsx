@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
 import type { LucideIcon } from 'lucide-react';
+import React, { useState } from 'react';
 
 interface IconButtonProps {
     icon: LucideIcon;
@@ -45,7 +45,7 @@ export const Button: React.FC<ButtonProps> = ({ onClick, className = '', childre
         <button
             onClick={onClick}
             disabled={disabled}
-            className={` text-sm px-3 py-1 border border-primary-light rounded transition-colors bg-background-transparent ${
+            className={` text-sm px-3 py-1 border border-primary-light rounded transition-colors bg-background-transparent flex gap-2 items-center justify-center ${
                 disabled
                     ? 'opacity-50 cursor-not-allowed'
                     : selected

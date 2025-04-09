@@ -6,6 +6,7 @@ import { IconSection } from '../../library/layout/icon-section';
 import { PageCrumbed } from '../../library/layout/page-crumbed';
 import { WithSidebar } from '../../library/layout/sidebar';
 import { Tile, TileGrid } from '../../library/layout/tile-grid';
+import { ProviderLogo } from '../../library/logos';
 import { useScanTableModelConnections } from '../../state/database-connection';
 
 export function ModelProfileMainPage() {
@@ -34,7 +35,7 @@ export function ModelProfileMainPage() {
                                     title={model.name || 'Untitled'}
                                     href={`/models/id/${model.id}`}
                                     icon={<Box className="w-4 h-4" />}
-                                    footer={model.provider}
+                                    footer={<ProviderLogo provider={model.provider} className="w-6 h-6" />}
                                 >
                                     {model.description}
                                 </Tile>
