@@ -10,7 +10,7 @@ interface GeminiConfigProps {
     onConfigChange: (config: any) => void;
 }
 
-const DEFAULT_MODELS = [{ id: 'gemini-2.0-flash-exp', name: 'Gemini 2.0 Flash Exp' }];
+const DEFAULT_MODELS = [{ id: 'gemini-2.0-flash-exp', name: 'Gemini 2.0 Flash' }];
 
 export function GeminiConfig({ selectedModel, config, onModelChange, onConfigChange }: GeminiConfigProps) {
     return (

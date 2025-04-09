@@ -17,7 +17,7 @@ export const Input = ({ value, onChange, label, placeholder, type = 'text', opti
     return (
         <div className="flex flex-col gap-1 mb-1">
             {label && <label className="text-sm text-text-300">{label}</label>}
-            <div className="w-[300px]">
+            <div className="w-[500px]">
                 <input
                     type={type}
                     value={value}

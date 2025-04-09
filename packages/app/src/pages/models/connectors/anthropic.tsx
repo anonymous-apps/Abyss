@@ -10,7 +10,7 @@ interface AnthropicConfigProps {
     onConfigChange: (config: any) => void;
 }
 
-const DEFAULT_MODELS = [{ id: 'claude-3-7-sonnet-20250219', name: 'Claude 3.7 Sonnet' }];
+const DEFAULT_MODELS = [{ id: 'claude-3-7-sonnet-20250219', name: 'Claude 3.7' }];
 
 export function AnthropicConfig({ selectedModel, config, onModelChange, onConfigChange }: AnthropicConfigProps) {
     return (

@@ -11,8 +11,8 @@ interface OpenAIConfigProps {
 }
 
 const DEFAULT_MODELS = [
-    { id: 'gpt-4o-2024-08-06', name: 'gpt-4o-2024-11-20' },
-    { id: 'o3-mini-2025-01-31', name: 'o3-mini' },
+    { id: 'gpt-4o-2024-08-06', name: 'GPT 4o' },
+    { id: 'o3-mini-2025-01-31', name: 'O3 Mini' },
 ];
 
 export function OpenAIConfig({ selectedModel, config, onModelChange, onConfigChange }: OpenAIConfigProps) {
