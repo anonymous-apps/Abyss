@@ -226,7 +226,6 @@ export class GeminiLanguageModel extends LanguageModel {
 
                 if (buffer) {
                     try {
-                        console.log('buffer', buffer);
                         // Try to parse the entire buffer as a single JSON object
                         const data = JSON.parse(buffer);
 

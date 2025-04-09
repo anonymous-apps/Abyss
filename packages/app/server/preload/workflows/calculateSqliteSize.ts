@@ -12,7 +12,6 @@ const dbPath = path.join(userDataPath, 'database.sqlite');
 const dbUrl = pathToFileURL(dbPath).href;
 
 export async function CalculateSqliteSize() {
-    console.log('Calculating sqlite size', dbPath);
     const size = await fs.promises.stat(dbPath);
     return size.size;
 }

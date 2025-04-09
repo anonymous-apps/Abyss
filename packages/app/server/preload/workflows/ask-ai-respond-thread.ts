@@ -45,7 +45,6 @@ export async function AskAiToRespondToChat(chatId: string) {
     }
 
     // Create the response stream object
-    console.log('Model connection', connection);
     const responseStream = await ResponseStreamController.create({
         sourceId: connection.id,
         resultMessages: [],

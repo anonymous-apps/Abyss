@@ -9,7 +9,6 @@ if (typeof window !== 'undefined') {
             Database.table.userSettings.onPageChange(window.location.pathname);
             lastPage = window.location.pathname;
         }
-        const history = Database.table.userSettings.get().then(settings => console.log('history', settings.pageHistory));
     };
     setInterval(logPageChange, 1000);
 }

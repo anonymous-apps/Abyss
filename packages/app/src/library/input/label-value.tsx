@@ -25,7 +25,6 @@ export const EditableLabelValue: React.FC<EditableLabelValueProps> = ({
     };
 
     const handleBlur = (key: string) => {
-        console.log({ key, localData, data });
         if (onChange && localData[key] !== data[key]) {
             const updatedData = { ...data, [key]: localData[key] };
             onChange(updatedData);

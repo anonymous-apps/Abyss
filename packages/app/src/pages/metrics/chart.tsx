@@ -146,8 +146,6 @@ export function MetricChartPage() {
             }
         });
 
-        console.log(validBucketKeys);
-
         // Compute aggregated values for each bucket
         const chartData = validBucketKeys.map(key => {
             const datapoints = buckets[key];
