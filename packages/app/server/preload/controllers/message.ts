@@ -6,8 +6,11 @@ export type MessageText = {
 
 export type MessageToolCall = {
     tool: {
+        toolId?: string;
         name: string;
         parameters: Record<string, any>;
+        status: 'idle' | 'running' | 'complete' | 'failed';
+        invocationId?: string;
     };
 };
 

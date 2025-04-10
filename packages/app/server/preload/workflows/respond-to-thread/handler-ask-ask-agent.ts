@@ -59,17 +59,24 @@ export async function handlerAskAgentToRespondToThread(input: AskAgentToRespondT
         });
 
         stream.onToolCallUpdate(async toolCall => {
+            const toolConnection = input.toolConnections.find(tool => tool.tool.name.toLowerCase().replaceAll(' ', '-') === toolCall.name.toLowerCase().replaceAll(' ', '-'));
+
             if (!seenMessages[toolCall.uuid]) {
                 const references = Object.keys(seenMessages).length === 0 ? firstMessageReferences : {};
                 seenMessages[toolCall.uuid] = await MessageController.create({
                     threadId: input.thread.id,
                     sourceId: input.agent.id,
                     status: 'streaming',
-                    references,
+                    references: {
+                        ...references,
+                        toolSourceId: toolConnection?.tool.id,
+                    },
                     content: {
                         tool: {
+                            toolId: toolConnection?.tool.id,
                             name: toolCall.name || '',
                             parameters: toolCall.arguments || {},
+                            status: 'idle',
                         },
                     },
                 });
@@ -79,6 +86,7 @@ export async function handlerAskAgentToRespondToThread(input: AskAgentToRespondT
                 await MessageController.update(existing.id, {
                     content: {
                         tool: {
+                            ...existingContent.tool,
                             name: existingContent.tool.name || toolCall.name,
                             parameters: {
                                 ...existingContent.tool.parameters,

@@ -26,6 +26,20 @@ class _ToolInvocationController extends BaseDatabaseConnection<ToolInvocationRec
         });
         return result as ToolInvocationRecord[];
     }
+
+    async complete(id: string, result: Record<string, any>): Promise<ToolInvocationRecord> {
+        return await this.update(id, {
+            result,
+            status: 'success',
+        });
+    }
+
+    async error(id: string, errorMessage: string): Promise<ToolInvocationRecord> {
+        return await this.update(id, {
+            result: { error: errorMessage },
+            status: 'error',
+        });
+    }
 }
 
 export const ToolInvocationController = new _ToolInvocationController();

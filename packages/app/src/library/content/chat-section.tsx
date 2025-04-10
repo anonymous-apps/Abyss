@@ -1,10 +1,12 @@
 import { formatDistanceToNow } from 'date-fns';
-import { BinaryIcon, Globe, NotepadText, TerminalIcon } from 'lucide-react';
+import { BinaryIcon, Check, Globe, Hammer, Loader2, NotepadText, PlayIcon, TerminalIcon, X } from 'lucide-react';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import JsonView from 'react18-json-view';
 import 'react18-json-view/src/style.css';
 import { MessageRecord, MessageText, MessageToolCall } from '../../../server/preload/controllers/message';
+import { Database } from '../../main';
+import { useDatabaseRecordSubscription, useDatabaseTableSubscription } from '../../state/database-connection';
 import { GhostIconButton } from '../input/button';
 import { ReferencedObject } from './record-references';
 
@@ -20,8 +22,6 @@ export function ChatMessageSection({ message, showHeader }: ChatMessageSectionPr
     const isUserTextSender = sender === 'USER' && 'text' in message.content;
     const isAiTextSender = sender !== 'USER' && 'text' in message.content;
     const isAiToolSender = sender !== 'USER' && 'tool' in message.content;
-
-    console.log(message, isAiTextSender);
 
     return (
         <div className="relative flex flex-row gap-2">
@@ -63,6 +63,15 @@ export function ChatMessageSection({ message, showHeader }: ChatMessageSectionPr
                         className="opacity-20 hover:opacity-100 z-10"
                     />
                 )}
+                {message.references?.toolSourceId && (
+                    <GhostIconButton
+                        icon={Hammer}
+                        onClick={() => navigate(`/database/id/tool/record/${message.references?.toolSourceId}`)}
+                        tooltip="View Tool"
+                        className="opacity-20 hover:opacity-100 z-10"
+
+                    />
+                )}
             </div>
         </div>
     );
@@ -98,12 +107,29 @@ function AiMessageTextSection({ message }: { message: MessageRecord<MessageText>
 }
 function AiToolMessageSection({ message }: { message: MessageRecord<MessageToolCall> }) {
     const [viewMode, setViewMode] = useState<'input' | 'output' | null>('input');
+    const invokable = message.content.tool.status === 'idle' || !message.content.tool.status;
+    const onInvokeTool = () => {
+        Database.workflows.InvokeToolFromMessage(message.id);
+    }
+    const invocation = useDatabaseRecordSubscription('toolInvocation', message.content.tool.invocationId || '', db => db.table.toolInvocation.getByRecordId(message.content.tool.invocationId || ''));
+    const invocationData = invocation?.data;
+    const textLogId = invocationData?.textLogId || '';
+    const isIdle = invocationData?.status === 'idle' || !invocationData?.status;
+    const isRunning = invocationData?.status === 'running';
+    const isError = invocationData?.status === 'error';
+    const isComplete = invocationData?.status === 'success';
+    const textOutput = useDatabaseTableSubscription('textLog', db => db.table.textLog.getByRecordId(textLogId), [textLogId]);
+    const textOutputData = textOutput?.data;
 
     return (
-        <div className="rounded overflow-hidden my-2 mr-10 w-full">
+        <div className="rounded overflow-hidden my-2 w-full">
             <div className="flex items-center justify-between border rounded-lg p-2">
                 <div className="flex items-center gap-2 capitalize">
-                    <TerminalIcon className="w-4 h-4" />
+                    
+                    {isRunning && <Loader2 size={18} className="animate-spin" /> }
+                    {isError && <X size={18} className="text-red-500 bg-red-100 rounded-full p-0.5" /> }
+                    {isIdle && <TerminalIcon className="w-4 h-4" /> }
+                    {isComplete && <Check size={18} className="text-green-700 bg-green-200 rounded-full p-0.5" /> }
                     <span>{message.content.tool.name.split('-').join(' ')}</span>
                 </div>
                 <div className="flex items-center gap-1">
@@ -131,9 +157,17 @@ function AiToolMessageSection({ message }: { message: MessageRecord<MessageToolC
                 </pre>
             )}
             {viewMode === 'output' && (
-                <pre className="rounded overflow-hidden mr-10 w-full whitespace-pre-wrap p-2 border rounded-lg border-t-0 rounded-b-none -translate-y-3 pt-4">
-                    <code>{JSON.stringify(message.content, null, 2)}</code>
+                <pre className="rounded overflow-hidden mr-10 w-full whitespace-pre-wrap p-2 border rounded-lg border-t-0 rounded-b-none -translate-y-3 pt-4 max-h-[400px] overflow-y-auto">
+                    {textOutputData?.text}
                 </pre>
+            )}
+            {invokable && (
+                <div className="flex items-center justify-end">
+                    <button className="px-2 py-1 text-xs rounded font-bold border border-primary-base  hover:bg-primary-base hover:text-text-light flex items-center gap-2" onClick={onInvokeTool}>
+                        <PlayIcon className="w-4 h-4" />
+                        Invoke Tool
+                    </button>
+                </div>
             )}
         </div>
     );

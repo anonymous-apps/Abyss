@@ -98,11 +98,9 @@ export class StreamedChatResponse {
 
     public startNewToolCall(name: string): void {
         this.completeCurrentMessage();
-        const callId = v4();
         this.currentMessage = {
             type: 'toolCall',
             uuid: v4(),
-            callId,
             name,
             arguments: {},
             completed: false,
@@ -171,11 +169,6 @@ export class StreamedChatResponse {
     // Get all messages
     public getMessages(): Message[] {
         return [...this.messages];
-    }
-
-    // Get tool call by ID
-    public getToolCallById(callId: string): ToolCallMessage | undefined {
-        return this.messages.filter((msg): msg is ToolCallMessage => msg.type === 'toolCall').find(toolCall => toolCall.callId === callId);
     }
 
     // Batching mechanism methods

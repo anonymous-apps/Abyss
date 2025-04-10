@@ -15,7 +15,6 @@ export type ImageMessage = {
 export type ToolCallMessage = {
     type: 'toolCall';
     uuid: string;
-    callId: string;
     name: string;
     arguments: Record<string, any>;
     completed: boolean;
