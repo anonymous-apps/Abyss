@@ -11,11 +11,11 @@ export type MessageToolCall = {
     };
 };
 
-export interface MessageRecord extends BaseRecord {
+export interface MessageRecord<T = MessageText | MessageToolCall> extends BaseRecord {
     threadId: string;
     sourceId: string;
     status: 'streaming' | 'complete';
-    content: MessageText | MessageToolCall;
+    content: T;
 }
 
 class _MessageController extends BaseDatabaseConnection<MessageRecord> {
