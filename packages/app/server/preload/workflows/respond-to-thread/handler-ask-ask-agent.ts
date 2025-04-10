@@ -42,7 +42,7 @@ export async function handlerAskAgentToRespondToThread(input: AskAgentToRespondT
                 const references = Object.keys(seenMessages).length === 0 ? firstMessageReferences : {};
                 seenMessages[message.uuid] = await MessageController.create({
                     threadId: input.thread.id,
-                    sourceId: input.connection.id,
+                    sourceId: input.agent.id,
                     status: 'streaming',
                     references,
                     content: {
@@ -58,18 +58,18 @@ export async function handlerAskAgentToRespondToThread(input: AskAgentToRespondT
             }
         });
 
-        stream.onToolCall(async toolCall => {
+        stream.onToolCallUpdate(async toolCall => {
             if (!seenMessages[toolCall.uuid]) {
                 const references = Object.keys(seenMessages).length === 0 ? firstMessageReferences : {};
                 seenMessages[toolCall.uuid] = await MessageController.create({
                     threadId: input.thread.id,
-                    sourceId: input.connection.id,
+                    sourceId: input.agent.id,
                     status: 'streaming',
                     references,
                     content: {
                         tool: {
                             name: toolCall.name || '',
-                            parameters: toolCall.parameters || {},
+                            parameters: toolCall.arguments || {},
                         },
                     },
                 });
@@ -82,7 +82,7 @@ export async function handlerAskAgentToRespondToThread(input: AskAgentToRespondT
                             name: existingContent.tool.name || toolCall.name,
                             parameters: {
                                 ...existingContent.tool.parameters,
-                                ...toolCall.parameters,
+                                ...toolCall.arguments,
                             },
                         },
                     },
@@ -99,13 +99,13 @@ export async function handlerAskAgentToRespondToThread(input: AskAgentToRespondT
         });
 
         // Save the final rendered thread
-        const newThread = thread.addBotTextMessage(stream.getRawOutput());
+        const newThread = stream.inputThread.addBotTextMessage(stream.getRawOutput());
         await RenderedConversationThreadController.update(renderedThread.id, {
             messages: newThread.serialize(),
         });
 
         // Complete the messages once the stream is done
-        await MessageController.completeMessagesById(Object.keys(seenTextMessages));
+        await MessageController.completeMessagesById(Object.keys(seenMessages));
     } finally {
         await ResponseStreamController.complete(responseStream.id);
         await MessageThreadController.unlockThread(input.thread.id);

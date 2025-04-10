@@ -73,9 +73,8 @@ function SectionHeader({ message }: { message: MessageRecord }) {
         </div>
     );
 }
-
 function UserMessageSection({ message }: { message: MessageRecord }) {
-    if (message.content.text) {
+    if ('text' in message.content) {
         return (
             <pre className="rounded overflow-hidden my-2 mr-10" style={{ fontFamily: 'sans-serif' }}>
                 {message.content.text}

@@ -33,6 +33,10 @@ export function ReferencedObject({ sourceId }: { sourceId: string }) {
         return <ReferencedObjectModel modelConnectionId={sourceId} />;
     }
 
+    if (recordType === 'agent') {
+        return <ReferencedObjectAgent agentId={sourceId} />;
+    }
+
     return <>?</>;
 }
 
@@ -53,6 +57,18 @@ export function ReferencedObjectModel({ modelConnectionId }: { modelConnectionId
     return (
         <div className="flex items-center gap-2">
             <Icon size={14} className="" />
+            <span>{data.data?.name}</span>
+        </div>
+    );
+}
+
+export function ReferencedObjectAgent({ agentId }: { agentId: string }) {
+    const data = useDatabaseTableSubscription('agent', db => db.table.agent.findById(agentId));
+    const Icon = getIconForSourceType('agent');
+
+    return (
+        <div className="flex items-center gap-2">
+            <Icon size={14} />
             <span>{data.data?.name}</span>
         </div>
     );
