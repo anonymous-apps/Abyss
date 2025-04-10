@@ -104,18 +104,18 @@ export class OpenAILanguageModel extends LanguageModel {
             // Create a parser function for OpenAI's streaming format
             const parseOpenAIChunk = (chunk: string): string | null => {
                 const lines = chunk.split('\n').filter(line => line.trim() !== '');
-
+                const results: string[] = [];
                 for (const line of lines) {
                     const sseData = parseSSE(line);
                     if (sseData) {
                         const parsed = parseJSON<OpenAIStreamResponse>(sseData);
                         if (parsed?.choices?.[0]?.delta?.content) {
-                            return parsed.choices[0].delta.content;
+                            results.push(parsed.choices[0].delta.content);
                         }
                     }
                 }
 
-                return null;
+                return results.join('');
             };
 
             // Use the generic stream parser

@@ -12,7 +12,7 @@ const streamExample = async () => {
 
     console.log('Starting stream from Gemini...');
     const stream = await Intelegence.Operations.streamText({
-        model: gemini,
+        model: openai,
         thread,
     });
     writeFileSync('context.input', stream.inputThread.toLogString());

@@ -17,9 +17,11 @@ export async function streamText(options: StreamTextOptions): Promise<StreamedCh
     // Stream to chat response directly
     (async () => {
         for await (const message of stream) {
+            Log.log('streamText', `Received message: ${message}`);
             response.addText(message);
             response.addTextToCurrentTextMessage(message);
         }
+        Log.log('streamText', `Stream complete`);
         response.complete();
     })();
 

@@ -117,18 +117,18 @@ export class AnthropicLanguageModel extends LanguageModel {
             // Create a parser function for Anthropic's streaming format
             const parseAnthropicChunk = (chunk: string): string | null => {
                 const lines = chunk.split('\n').filter(line => line.trim() !== '');
-
+                const results: string[] = [];
                 for (const line of lines) {
                     const sseData = parseSSE(line);
                     if (sseData) {
                         const parsed = parseJSON<AnthropicStreamResponse>(sseData);
                         if (parsed && parsed.type === 'content_block_delta' && parsed.delta?.text) {
-                            return parsed.delta.text;
+                            results.push(parsed.delta.text);
                         }
                     }
                 }
 
-                return null;
+                return results.join('');
             };
 
             // Use the generic stream parser

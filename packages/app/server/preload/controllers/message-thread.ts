@@ -27,7 +27,7 @@ class _MessageThreadController extends BaseDatabaseConnection<MessageThreadRecor
 
     async unlockThread(threadId: string): Promise<MessageThreadRecord> {
         return await this.update(threadId, {
-            lockingId: undefined,
+            lockingId: '',
         });
     }
 }

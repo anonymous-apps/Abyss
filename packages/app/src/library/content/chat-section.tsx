@@ -19,7 +19,7 @@ export function ChatMessageSection({ message, joined }: ChatMessageSectionProps)
 
     return (
         <div
-            className={`hover:bg-background-transparent border border-transparent hover:shadow-sm transition-all duration-300 rounded-sm p-2 relative text-sm`}
+            className={`hover:bg-background-transparent border border-transparent hover:shadow-md transition-all duration-300 rounded-sm p-2 relative text-sm`}
         >
             {!joined && <SectionHeader message={message} />}
             <div className="flex items-center px-2">
@@ -53,8 +53,10 @@ function SectionHeader({ message }: { message: MessageRecord }) {
     const formattedTime = formatDistanceToNow(new Date(message.createdAt), { addSuffix: true });
 
     return (
-        <div className="flex items-center text-xs mb-3 gap-4 rounded-sm p-2 w-fit">
-            <ReferencedObject sourceId={message.sourceId} />
+        <div className="flex items-center text-xs mb-1 gap-4 rounded-sm p-2 w-fit">
+            <div className="bg-primary-base text-text-light rounded-sm px-1 py-1 -translate-x-1">
+                <ReferencedObject sourceId={message.sourceId} />
+            </div>
             <span className="text-text-dark opacity-70 text-xms">{formattedTime}</span>
         </div>
     );
@@ -73,7 +75,7 @@ function UserMessageSection({ message }: { message: MessageRecord }) {
 
 function AiMessageSection({ message }: { message: MessageRecord }) {
     return (
-        <pre className="rounded overflow-hidden my-2 mr-10" style={{ fontFamily: 'sans-serif' }}>
+        <pre className="rounded overflow-hidden my-2 mr-10 w-full whitespace-pre-wrap" style={{ fontFamily: 'sans-serif' }}>
             {message.content.text}
         </pre>
     );
