@@ -10,7 +10,6 @@ import { MessageController } from './controllers/message';
 import { MessageThreadController } from './controllers/message-thread';
 import { MetricController } from './controllers/metric';
 import { ModelConnectionsController } from './controllers/model-connections';
-import { NetworkCallController } from './controllers/network-call';
 import { RenderedConversationThreadController } from './controllers/rendered-conversation-thread';
 import { ResponseStreamController } from './controllers/response-stream';
 import { TextLogController } from './controllers/text-log';
@@ -122,7 +121,6 @@ const tableControllers = {
     userSettings: UserSettingsController.export(),
     messageThread: MessageThreadController.export(),
     message: MessageController.export(),
-    networkCall: NetworkCallController.export(),
     renderedConversationThread: RenderedConversationThreadController.export(),
     chat: ChatController.export(),
     agent: AgentController.export(),

@@ -1,5 +1,6 @@
 import { Message } from '@abyss/intelligence';
 import { BaseDatabaseConnection, BaseRecord } from './_base';
+import { ModelConnectionsRecord } from './model-connections';
 
 export interface ResponseStreamRecord extends BaseRecord {
     sourceId: string;
@@ -13,6 +14,14 @@ class _ResponseStreamController extends BaseDatabaseConnection<ResponseStreamRec
         super('responseStream', 'A stream of messages and possibly tool calls from a single model');
     }
 
+    async createFromModelConnection(connection: ModelConnectionsRecord) {
+        return await this.create({
+            sourceId: connection.id,
+            parsedMessages: [],
+            status: 'streaming',
+            rawOutput: '',
+        });
+    }
     async addMessage(streamId: string, message: Message) {
         const stream = await this.getByRecordId(streamId);
         if (!stream) {

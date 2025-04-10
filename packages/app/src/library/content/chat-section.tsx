@@ -1,5 +1,5 @@
 import { formatDistanceToNow } from 'date-fns';
-import { Globe, NotepadText } from 'lucide-react';
+import { BinaryIcon, Globe, NotepadText } from 'lucide-react';
 import React from 'react';
 import { useNavigate } from 'react-router';
 import { MessageRecord } from '../../../server/preload/controllers/message';
@@ -8,31 +8,34 @@ import { ReferencedObject } from './record-references';
 
 interface ChatMessageSectionProps {
     message: MessageRecord;
-    joined: boolean;
+    showHeader: boolean;
 }
 
-export function ChatMessageSection({ message, joined }: ChatMessageSectionProps) {
+export function ChatMessageSection({ message, showHeader }: ChatMessageSectionProps) {
     const navigate = useNavigate();
 
     const sender = message.sourceId.split('::')[0];
     const isUserSender = sender === 'USER';
 
     return (
-        <div
-            className={`hover:bg-background-transparent border border-transparent hover:shadow-md transition-all duration-300 rounded-sm p-2 relative text-sm`}
-        >
-            {!joined && <SectionHeader message={message} />}
-            <div className="flex items-center px-2">
-                {isUserSender && <UserMessageSection message={message} />}
-                {!isUserSender && <AiMessageSection message={message} />}
+        <div className="relative flex flex-row gap-2">
+            <div
+                className={`hover:bg-background-transparent border border-transparent hover:shadow-md transition-all duration-300 rounded-sm p-1 text-sm flex-1`}
+            >
+                {showHeader && <SectionHeader message={message} />}
+                <div className="flex items-center px-1">
+                    {isUserSender && <UserMessageSection message={message} />}
+                    {!isUserSender && <AiMessageSection message={message} />}
+                </div>
             </div>
 
-            <div className="flex items-center justify-start flex-col ml-auto text-xs gap-2 h-fit rounded-lg absolute right-0 top-0">
+            <div className="flex items-center justify-start flex-col ml-auto text-xs gap-2 h-fit rounded-lg">
                 {message.references?.networkCallId && (
                     <GhostIconButton
                         icon={Globe}
                         onClick={() => navigate(`/database/id/networkCall/record/${message.references?.networkCallId}`)}
                         tooltip="View API call"
+                        className="opacity-20 hover:opacity-100 z-10"
                     />
                 )}
                 {message.references?.renderedConversationThreadId && (
@@ -42,6 +45,15 @@ export function ChatMessageSection({ message, joined }: ChatMessageSectionProps)
                             navigate(`/database/id/renderedConversationThread/record/${message.references?.renderedConversationThreadId}`)
                         }
                         tooltip="View Conversation Snapshot"
+                        className="opacity-20 hover:opacity-100 z-10"
+                    />
+                )}
+                {message.references?.responseStreamId && (
+                    <GhostIconButton
+                        icon={BinaryIcon}
+                        onClick={() => navigate(`/database/id/responseStream/record/${message.references?.responseStreamId}`)}
+                        tooltip="View Response Stream"
+                        className="opacity-20 hover:opacity-100 z-10"
                     />
                 )}
             </div>
@@ -53,7 +65,7 @@ function SectionHeader({ message }: { message: MessageRecord }) {
     const formattedTime = formatDistanceToNow(new Date(message.createdAt), { addSuffix: true });
 
     return (
-        <div className="flex items-center text-xs mb-1 gap-4 rounded-sm p-2 w-fit">
+        <div className="flex items-center text-xs mb-1 gap-4 rounded-sm p-1 w-fit">
             <div className="bg-primary-base text-text-light rounded-sm px-1 pr-2 py-1 -translate-x-1">
                 <ReferencedObject sourceId={message.sourceId} />
             </div>

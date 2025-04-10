@@ -4,6 +4,6 @@ model RenderedConversationThread {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  // JSON array of messages in the conversation
-  messages   Json 
+  // Serialized JSON array of messages in the conversation
+  messages   String 
 } 

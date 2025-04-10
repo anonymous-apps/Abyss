@@ -54,7 +54,7 @@ export function ChatViewPage() {
                     <ChatMessageSection
                         message={m}
                         key={m.id}
-                        joined={index === 0 ? false : chat.messages?.at(index - 1)?.sourceId === m.sourceId}
+                        showHeader={index === 0 || chat.messages?.at(index - 1)?.sourceId !== m.sourceId}
                     />
                 ))}
 
