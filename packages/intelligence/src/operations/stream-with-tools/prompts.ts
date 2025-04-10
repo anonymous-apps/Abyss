@@ -35,7 +35,7 @@ export function buildToolUsePrompt(thread: ChatThread, tools: ToolDefinition[]) 
 
     const ToolUseExamplePrompt = `
 
-        ### Example
+        ## Example of response syntax
         Here is an example of what your response could look like if you did have a <generate_cat_picture> tool. Make sure to include both thoughts for the user and the tool calls.
         The user will read the thoughts and the tool calls so its important to include both so they know what you are doing and why.
 
@@ -51,7 +51,10 @@ export function buildToolUsePrompt(thread: ChatThread, tools: ToolDefinition[]) 
 
         ### Reminder
 
-        You only have these tools: [${tools.map(tool => getIdForTool(tool)).join(', ')}], calling other tools will result in an error.
+        You only have these tools: [${tools
+            .map(tool => getIdForTool(tool))
+            .join(', ')}], calling other tools will result in an error and you must use xml syntax as in the example to call them. 
+        You cannot just ask the user to call the tool, you must include the xml syntax as part of your response.
     `;
 
     return thread.addUserTextMessage(toolUseDetails).addUserTextMessage(toolCallsString).addUserTextMessage(ToolUseExamplePrompt);
