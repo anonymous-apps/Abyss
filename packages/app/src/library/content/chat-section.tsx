@@ -29,7 +29,7 @@ export function ChatMessageSection({ message, showHeader }: ChatMessageSectionPr
                 </div>
             </div>
 
-            <div className="flex items-center justify-start flex-col ml-auto text-xs gap-2 h-fit rounded-lg">
+            <div className="flex items-center justify-start flex-col ml-auto text-xs gap-1 h-fit rounded-lg mb-2">
                 {message.references?.networkCallId && (
                     <GhostIconButton
                         icon={Globe}
