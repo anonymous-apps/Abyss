@@ -20,6 +20,7 @@ export async function streamText(options: StreamTextOptions): Promise<StreamedCh
             response.addText(message);
             response.addTextToCurrentTextMessage(message);
         }
+        response.complete();
     })();
 
     return response;

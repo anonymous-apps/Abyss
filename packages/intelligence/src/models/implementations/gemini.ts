@@ -2,6 +2,8 @@ import { AsyncStream } from '../../constructs';
 import { ChatThread } from '../../constructs/chat-thread/chat-thread';
 import { ChatTurn } from '../../constructs/chat-thread/types';
 import { Log } from '../../utils/logs';
+import { createStreamingFetch } from '../../utils/network/fetch-utils';
+import { createGenericStreamParser, parseJSON } from '../../utils/network/stream-parser';
 import { LanguageModel } from '../language-model';
 
 export interface GeminiLanguageModelOptions {
@@ -20,10 +22,23 @@ interface GeminiContent {
     }[];
 }
 
+interface GeminiStreamResponse {
+    candidates?: Array<{
+        content?: {
+            parts?: Array<{
+                text?: string;
+            }>;
+        };
+    }>;
+}
+
 export class GeminiLanguageModel extends LanguageModel {
     private modelId = 'gemini-2.0-flash-exp';
     private apiKey: string;
     private enableImageGeneration: boolean;
+    private accumulatedData: string = '';
+    private stack: string[] = [];
+    private objectStartIndex: number = -1;
 
     constructor(props: GeminiLanguageModelOptions = {}) {
         // If image generation is enabled, use the appropriate model ID
@@ -63,17 +78,18 @@ export class GeminiLanguageModel extends LanguageModel {
         return contents as GeminiContent[];
     }
 
-    protected override async _invoke(thread: ChatThread): Promise<ChatThread> {
+    protected async _stream(thread: ChatThread): Promise<AsyncStream<string>> {
         const contents = this.buildContents(thread);
+        const modelName = this.getName();
 
         // Set appropriate generation config
         const generationConfig = this.enableImageGeneration ? { responseModalities: ['Text', 'Image'] } : { responseModalities: ['Text'] };
 
         try {
-            const response = await fetch(
-                `https://generativelanguage.googleapis.com/v1beta/models/${this.modelId}:generateContent?key=${this.apiKey}`,
+            // Create the fetch request
+            const response = await createStreamingFetch(
+                `https://generativelanguage.googleapis.com/v1beta/models/${this.modelId}:streamGenerateContent?key=${this.apiKey}`,
                 {
-                    method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
@@ -81,177 +97,74 @@ export class GeminiLanguageModel extends LanguageModel {
                         contents,
                         generationConfig,
                     }),
-                }
+                },
+                modelName
             );
 
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => null);
-                throw new Error(
-                    `Gemini API error: ${response.status} ${response.statusText}${errorData ? ` - ${JSON.stringify(errorData)}` : ''}`
-                );
+            if (!response.body) {
+                throw new Error('Response body is null');
             }
 
-            const data = await response.json();
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
 
-            // Handle response that may contain text and/or images
-            const candidates = data.candidates || [];
-            if (!candidates.length) {
-                throw new Error('No response generated from Gemini API');
-            }
+            // Create a parser function for Gemini's streaming format
+            const parseGeminiChunk = (chunk: string): string | null => {
+                try {
+                    this.accumulatedData += chunk;
+                    let result: string | null = null;
 
-            const responseParts = candidates[0].content.parts || [];
-            let thread_with_response = thread;
+                    // Process each character
+                    for (let i = 0; i < chunk.length; i++) {
+                        const char = chunk[i];
 
-            for (const part of responseParts) {
-                if (part.text) {
-                    thread_with_response = thread_with_response.addBotTextMessage(part.text);
-                } else if (part.inlineData) {
-                    thread_with_response = thread_with_response.addBotImageMessage(part.inlineData.data);
+                        if (char === '[' || char === '{') {
+                            if (char === '{' && this.stack.length === 1) {
+                                // Start of an object inside the array
+                                this.objectStartIndex = this.accumulatedData.length - chunk.length + i;
+                            }
+                            this.stack.push(char);
+                        } else if (char === ']' || char === '}') {
+                            const lastOpen = this.stack.pop();
+                            if (!lastOpen) continue;
+
+                            // If we just closed an object inside the array
+                            if (char === '}' && this.stack.length === 1 && this.stack[0] === '[' && this.objectStartIndex !== -1) {
+                                try {
+                                    const objectStr = this.accumulatedData.substring(
+                                        this.objectStartIndex,
+                                        this.accumulatedData.length - chunk.length + i + 1
+                                    );
+                                    const parsed = parseJSON<GeminiStreamResponse>(objectStr);
+                                    if (parsed?.candidates?.[0]?.content?.parts?.[0]?.text) {
+                                        result = parsed.candidates[0].content.parts[0].text;
+                                    }
+                                } catch (error) {
+                                    Log.debug(modelName, `Failed to parse object: ${error}`);
+                                }
+                                this.objectStartIndex = -1;
+                            }
+
+                            // If we just closed the array, reset everything
+                            if (char === ']' && this.stack.length === 0) {
+                                this.accumulatedData = '';
+                                this.objectStartIndex = -1;
+                            }
+                        }
+                    }
+
+                    return result;
+                } catch (error) {
+                    Log.debug(modelName, `Failed to parse chunk: ${error}`);
+                    return null;
                 }
-            }
+            };
 
-            return thread_with_response;
+            // Use the generic stream parser
+            return createGenericStreamParser(reader, decoder, modelName, parseGeminiChunk);
         } catch (error) {
-            console.error('Unexpected error:', error);
+            Log.error(modelName, `Streaming error: ${error}`);
             throw error;
         }
-    }
-
-    protected override async _stream(thread: ChatThread): Promise<AsyncStream<string>> {
-        const contents = this.buildContents(thread);
-        const stream = new AsyncStream<string>();
-
-        // Set appropriate generation config
-        const generationConfig = this.enableImageGeneration ? { responseModalities: ['Text', 'Image'] } : { responseModalities: ['Text'] };
-
-        (async () => {
-            try {
-                const response = await fetch(
-                    `https://generativelanguage.googleapis.com/v1beta/models/${this.modelId}:streamGenerateContent?key=${this.apiKey}`,
-                    {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            contents,
-                            generationConfig,
-                        }),
-                    }
-                );
-
-                if (!response.ok) {
-                    const errorData = await response.json().catch(() => null);
-                    throw new Error(
-                        `Gemini API error: ${response.status} ${response.statusText}${errorData ? ` - ${JSON.stringify(errorData)}` : ''}`
-                    );
-                }
-
-                if (!response.body) {
-                    throw new Error('Response body is null');
-                }
-
-                // Buffer to accumulate the entire JSON response
-                let buffer = '';
-
-                // Process the stream
-                const reader = response.body.getReader();
-                const decoder = new TextDecoder();
-
-                while (true) {
-                    const { done, value } = await reader.read();
-
-                    if (done) {
-                        break;
-                    }
-
-                    // Add the new chunk to our buffer
-                    buffer += decoder.decode(value, { stream: true });
-
-                    // Try to find complete JSON objects in the buffer
-                    // The Gemini API seems to send a large JSON object line by line
-                    // We need to accumulate until we have a complete JSON object
-
-                    // Look for the end of a complete JSON object
-                    let endBraceIndex = buffer.lastIndexOf('}');
-                    if (endBraceIndex !== -1) {
-                        // Find the matching opening brace
-                        let openBraces = 0;
-                        let startBraceIndex = -1;
-
-                        for (let i = 0; i <= endBraceIndex; i++) {
-                            if (buffer[i] === '{') {
-                                openBraces++;
-                                if (startBraceIndex === -1) {
-                                    startBraceIndex = i;
-                                }
-                            } else if (buffer[i] === '}') {
-                                openBraces--;
-                                if (openBraces === 0 && i === endBraceIndex) {
-                                    // We found a complete JSON object
-                                    const jsonStr = buffer.substring(startBraceIndex, endBraceIndex + 1);
-
-                                    try {
-                                        const data = JSON.parse(jsonStr);
-                                        // Process the parsed data
-                                        if (data.candidates && data.candidates.length > 0) {
-                                            const candidate = data.candidates[0];
-                                            if (candidate.content && candidate.content.parts) {
-                                                for (const part of candidate.content.parts) {
-                                                    if (part.text) {
-                                                        stream.push(part.text);
-                                                    }
-                                                }
-                                            }
-                                        }
-
-                                        // Remove the processed JSON object from the buffer
-                                        buffer = buffer.substring(endBraceIndex + 1);
-                                    } catch (error) {
-                                        // If we can't parse this as JSON, it might not be complete yet
-                                        Log.debug(this.getName(), `Failed to parse JSON: ${error}`);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // Process any remaining data in the buffer
-                buffer = buffer.trim();
-
-                if (buffer.endsWith(']')) {
-                    buffer = buffer.slice(0, -1);
-                }
-
-                if (buffer) {
-                    try {
-                        // Try to parse the entire buffer as a single JSON object
-                        const data = JSON.parse(buffer);
-
-                        if (data.candidates && data.candidates.length > 0) {
-                            const candidate = data.candidates[0];
-                            if (candidate.content && candidate.content.parts) {
-                                for (const part of candidate.content.parts) {
-                                    if (part.text) {
-                                        Log.debug(this.getName(), `Received final chunk: ${part.text}`);
-                                        stream.push(part.text);
-                                    }
-                                }
-                            }
-                        }
-                    } catch (error) {
-                        Log.warn(this.getName(), `Failed to parse final buffer: ${error}`);
-                    }
-                }
-
-                stream.close();
-            } catch (error) {
-                Log.error(this.getName(), `Unexpected error: ${error}`);
-                stream.setError(error as Error);
-            }
-        })();
-
-        return stream;
     }
 }

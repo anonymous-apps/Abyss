@@ -68,8 +68,19 @@ export abstract class LanguageModel {
                 }
             }
 
-            Log.debug(this.getName(), `Invoking model`);
-            const response = await this._invoke(thread);
+            Log.debug(this.getName(), `Invoking model via streaming`);
+
+            // Use streaming to get the response
+            const stream = await this._stream(thread);
+            let responseText = '';
+
+            // Collect all chunks from the stream
+            for await (const chunk of stream) {
+                responseText += chunk;
+            }
+
+            // Create a new thread with the response
+            const response = thread.addBotTextMessage(responseText);
             Log.debug(this.getName(), `Got response from model!`);
 
             if (cache) {
@@ -83,8 +94,6 @@ export abstract class LanguageModel {
             throw error;
         }
     }
-
-    protected abstract _invoke(thread: ChatThread): Promise<ChatThread>;
 
     /**
      * Stream a response to a chat thread
@@ -102,5 +111,10 @@ export abstract class LanguageModel {
         }
     }
 
+    /**
+     * Internal method to implement streaming for a specific model
+     * @param thread The chat thread to respond to
+     * @returns A Promise resolving to an AsyncStream of string chunks
+     */
     protected abstract _stream(thread: ChatThread): Promise<AsyncStream<string>>;
 }
