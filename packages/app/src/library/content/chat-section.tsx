@@ -54,7 +54,7 @@ function SectionHeader({ message }: { message: MessageRecord }) {
 
     return (
         <div className="flex items-center text-xs mb-1 gap-4 rounded-sm p-2 w-fit">
-            <div className="bg-primary-base text-text-light rounded-sm px-1 py-1 -translate-x-1">
+            <div className="bg-primary-base text-text-light rounded-sm px-1 pr-2 py-1 -translate-x-1">
                 <ReferencedObject sourceId={message.sourceId} />
             </div>
             <span className="text-text-dark opacity-70 text-xms">{formattedTime}</span>
