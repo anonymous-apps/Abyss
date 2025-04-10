@@ -17,8 +17,8 @@ import { TextLogController } from './controllers/text-log';
 import { ToolController } from './controllers/tool';
 import { ToolInvocationController } from './controllers/tool-invocation';
 import { UserSettingsController } from './controllers/user-settings';
-import { AskAiToRespondToChat } from './workflows/ask-ai-respond-thread';
 import { CalculateSqliteSize } from './workflows/calculateSqliteSize';
+import { AskAiToRespondToThread } from './workflows/respond-to-thread/ask-ai-respond-thread';
 // Setup prisma to support sqlite
 const require = createRequire(import.meta.url);
 const prismaModule = require('@prisma/client') as {
@@ -171,7 +171,7 @@ const PrismaAPI = {
     table: tableControllers,
 
     workflows: {
-        AskAiToRespondToChat,
+        AskAiToRespondToThread: AskAiToRespondToThread,
         CalculateSqliteSize,
     },
 

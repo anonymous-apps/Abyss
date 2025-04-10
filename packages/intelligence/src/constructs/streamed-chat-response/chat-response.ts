@@ -1,5 +1,6 @@
 import { v4 } from 'uuid';
 import { LanguageModel } from '../../models/language-model';
+import { Log } from '../../utils/logs';
 import { ChatThread } from '../chat-thread/chat-thread';
 import {
     ImageMessage,
@@ -15,28 +16,35 @@ import {
 interface Props {
     model: LanguageModel;
     inputThread: ChatThread;
+    batchingConstant?: number; // Time in ms to wait before flushing events
 }
 
 export class StreamedChatResponse {
     public readonly model: LanguageModel;
     public readonly inputThread: ChatThread;
+    private readonly batchingConstant: number;
 
     private messages: Message[] = [];
     private currentMessage: Message | null = null;
     private fullTextMessage: string = '';
 
     // Event listeners
-    private newMessageListeners: MessageEventCallback[] = [];
-    private newTextMessageListeners: TextMessageEventCallback[] = [];
-    private newImageMessageListeners: ImageMessageEventCallback[] = [];
-    private newToolCallListeners: ToolCallEventCallback[] = [];
+    private messageListeners: MessageEventCallback[] = [];
+    private textMessageListeners: TextMessageEventCallback[] = [];
+    private imageMessageListeners: ImageMessageEventCallback[] = [];
+    private toolCallListeners: ToolCallEventCallback[] = [];
     private toolCallUpdatedListeners: ToolCallEventCallback[] = [];
     private toolCallCompletedListeners: ToolCallEventCallback[] = [];
     private completeListeners: (() => void)[] = [];
 
+    // Batching mechanism
+    private batchingTimeouts: Map<string, NodeJS.Timeout> = new Map();
+    private pendingMessages: Map<string, Message> = new Map();
+
     constructor(props: Props) {
         this.model = props.model;
         this.inputThread = props.inputThread;
+        this.batchingConstant = props.batchingConstant || 100; // Default to 100ms if not specified
     }
 
     // Text management methods
@@ -57,7 +65,7 @@ export class StreamedChatResponse {
             content: '',
             completed: false,
         };
-        this.emitNewTextMessage(this.currentMessage as TextMessage);
+        this.scheduleMessageUpdate(this.currentMessage);
     }
 
     public addTextToCurrentTextMessage(text: string): void {
@@ -67,7 +75,7 @@ export class StreamedChatResponse {
 
         if (this.currentMessage && this.currentMessage.type === 'text') {
             this.currentMessage.content += text;
-            this.emitNewTextMessage(this.currentMessage);
+            this.scheduleMessageUpdate(this.currentMessage);
         }
     }
 
@@ -79,13 +87,13 @@ export class StreamedChatResponse {
             base64Data: '',
             completed: false,
         };
-        this.emitNewImageMessage(this.currentMessage as ImageMessage);
+        this.scheduleMessageUpdate(this.currentMessage);
     }
 
     public setImageData(base64Data: string): void {
         if (this.currentMessage && this.currentMessage.type === 'image') {
             this.currentMessage.base64Data = base64Data;
-            this.emitNewImageMessage(this.currentMessage);
+            this.scheduleMessageUpdate(this.currentMessage);
         }
     }
 
@@ -100,13 +108,13 @@ export class StreamedChatResponse {
             arguments: {},
             completed: false,
         };
-        this.emitNewToolCall(this.currentMessage as ToolCallMessage);
+        this.scheduleMessageUpdate(this.currentMessage);
     }
 
     public setToolCallArguments(args: Record<string, any>): void {
         if (this.currentMessage && this.currentMessage.type === 'toolCall') {
             this.currentMessage.arguments = args;
-            this.emitToolCallUpdated(this.currentMessage as ToolCallMessage);
+            this.scheduleMessageUpdate(this.currentMessage);
         }
     }
 
@@ -132,7 +140,7 @@ export class StreamedChatResponse {
                 current[lastKey] = value;
             }
 
-            this.emitToolCallUpdated(this.currentMessage as ToolCallMessage);
+            this.scheduleMessageUpdate(this.currentMessage);
         }
     }
 
@@ -143,7 +151,9 @@ export class StreamedChatResponse {
 
         this.currentMessage.completed = true;
         this.messages.push(this.currentMessage);
-        this.emitNewMessage(this.currentMessage);
+
+        // Flush the message immediately when it's completed
+        this.flushMessage(this.currentMessage);
 
         if (this.currentMessage.type === 'toolCall') {
             this.emitToolCallCompleted(this.currentMessage as ToolCallMessage);
@@ -154,6 +164,7 @@ export class StreamedChatResponse {
 
     // Finalize the current message and mark the response as complete
     public complete(): void {
+        Log.debug(this.model.getName(), 'Completing stream');
         this.completeCurrentMessage();
         this.emitComplete();
     }
@@ -168,27 +179,69 @@ export class StreamedChatResponse {
         return this.messages.filter((msg): msg is ToolCallMessage => msg.type === 'toolCall').find(toolCall => toolCall.callId === callId);
     }
 
+    // Batching mechanism methods
+    private scheduleMessageUpdate(message: Message): void {
+        // Store the latest version of the message
+        this.pendingMessages.set(message.uuid, message);
+
+        // Clear any existing timeout for this message
+        if (this.batchingTimeouts.has(message.uuid)) {
+            clearTimeout(this.batchingTimeouts.get(message.uuid)!);
+            this.batchingTimeouts.delete(message.uuid);
+        }
+
+        // Set a new timeout to flush this message
+        const timeout = setTimeout(() => {
+            this.flushMessage(message);
+        }, this.batchingConstant);
+
+        this.batchingTimeouts.set(message.uuid, timeout);
+    }
+
+    private flushMessage(message: Message): void {
+        // Remove the timeout if it exists
+        if (this.batchingTimeouts.has(message.uuid)) {
+            clearTimeout(this.batchingTimeouts.get(message.uuid)!);
+            this.batchingTimeouts.delete(message.uuid);
+        }
+
+        // Get the latest version of the message
+        const latestMessage = this.pendingMessages.get(message.uuid) || message;
+
+        // Remove from pending
+        this.pendingMessages.delete(message.uuid);
+
+        // Emit the appropriate event based on message type
+        if (latestMessage.type === 'text') {
+            this.emitTextMessageUpdate(latestMessage as TextMessage);
+        } else if (latestMessage.type === 'image') {
+            this.emitImageMessageUpdate(latestMessage as ImageMessage);
+        } else if (latestMessage.type === 'toolCall') {
+            this.emitToolCallUpdate(latestMessage as ToolCallMessage);
+        }
+    }
+
     // Event emitter methods
-    private emitNewMessage(message: Message): void {
-        for (const listener of this.newMessageListeners) {
+    private emitMessage(message: Message): void {
+        for (const listener of this.messageListeners) {
             listener(message);
         }
     }
 
-    private emitNewTextMessage(message: TextMessage): void {
-        for (const listener of this.newTextMessageListeners) {
+    private emitTextMessageUpdate(message: TextMessage): void {
+        for (const listener of this.textMessageListeners) {
             listener(message);
         }
     }
 
-    private emitNewImageMessage(message: ImageMessage): void {
-        for (const listener of this.newImageMessageListeners) {
+    private emitImageMessageUpdate(message: ImageMessage): void {
+        for (const listener of this.imageMessageListeners) {
             listener(message);
         }
     }
 
-    private emitNewToolCall(toolCall: ToolCallMessage): void {
-        for (const listener of this.newToolCallListeners) {
+    private emitToolCallUpdate(toolCall: ToolCallMessage): void {
+        for (const listener of this.toolCallListeners) {
             listener(toolCall);
         }
     }
@@ -212,31 +265,31 @@ export class StreamedChatResponse {
     }
 
     // Event listener registration methods
-    public onNewMessage(callback: MessageEventCallback): () => void {
-        this.newMessageListeners.push(callback);
+    public onMessage(callback: MessageEventCallback): () => void {
+        this.messageListeners.push(callback);
         return () => {
-            this.newMessageListeners = this.newMessageListeners.filter(cb => cb !== callback);
+            this.messageListeners = this.messageListeners.filter(cb => cb !== callback);
         };
     }
 
-    public onNewTextMessage(callback: TextMessageEventCallback): () => void {
-        this.newTextMessageListeners.push(callback);
+    public onTextMessageUpdate(callback: TextMessageEventCallback): () => void {
+        this.textMessageListeners.push(callback);
         return () => {
-            this.newTextMessageListeners = this.newTextMessageListeners.filter(cb => cb !== callback);
+            this.textMessageListeners = this.textMessageListeners.filter(cb => cb !== callback);
         };
     }
 
-    public onNewImageMessage(callback: ImageMessageEventCallback): () => void {
-        this.newImageMessageListeners.push(callback);
+    public onImageMessageUpdate(callback: ImageMessageEventCallback): () => void {
+        this.imageMessageListeners.push(callback);
         return () => {
-            this.newImageMessageListeners = this.newImageMessageListeners.filter(cb => cb !== callback);
+            this.imageMessageListeners = this.imageMessageListeners.filter(cb => cb !== callback);
         };
     }
 
-    public onNewToolCall(callback: ToolCallEventCallback): () => void {
-        this.newToolCallListeners.push(callback);
+    public onToolCallUpdate(callback: ToolCallEventCallback): () => void {
+        this.toolCallListeners.push(callback);
         return () => {
-            this.newToolCallListeners = this.newToolCallListeners.filter(cb => cb !== callback);
+            this.toolCallListeners = this.toolCallListeners.filter(cb => cb !== callback);
         };
     }
 

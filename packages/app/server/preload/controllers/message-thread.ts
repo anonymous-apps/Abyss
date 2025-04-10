@@ -18,6 +18,18 @@ class _MessageThreadController extends BaseDatabaseConnection<MessageThreadRecor
         await this.notifyChange({ id: threadId });
         return result as MessageRecord;
     }
+
+    async lockThread(threadId: string, lockingId: string): Promise<MessageThreadRecord> {
+        return await this.update(threadId, {
+            lockingId,
+        });
+    }
+
+    async unlockThread(threadId: string): Promise<MessageThreadRecord> {
+        return await this.update(threadId, {
+            lockingId: undefined,
+        });
+    }
 }
 
 export const MessageThreadController = new _MessageThreadController();

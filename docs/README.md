@@ -11,7 +11,3 @@ Details on how we access the local SQLite database using Prisma.
 ### Low Level Constructs [here](low-level-constructs.md)
 
 Details the building blocks of the Abyss platform and how we should think about them.
-
-### Monitoring [here](monitoring.md)
-
-Details on the monitoring system and how we can use it to track the performance of the application.

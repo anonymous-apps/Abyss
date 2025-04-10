@@ -3,8 +3,8 @@ import { BaseDatabaseConnection, BaseRecord } from './_base';
 
 export interface ResponseStreamRecord extends BaseRecord {
     sourceId: string;
-    resultMessages: Message[];
-    status: 'streaming' | 'complete' | 'error';
+    parsedMessages: Message[];
+    status: 'streaming' | 'complete';
     rawOutput: string;
 }
 
@@ -18,21 +18,24 @@ class _ResponseStreamController extends BaseDatabaseConnection<ResponseStreamRec
         if (!stream) {
             throw new Error('Stream not found');
         }
-
         await this.update(streamId, {
-            resultMessages: [...stream.resultMessages, message],
+            parsedMessages: [...stream.parsedMessages, message],
+        });
+    }
+
+    async updateMessage(streamId: string, message: Message) {
+        const stream = await this.getByRecordId(streamId);
+        if (!stream) {
+            throw new Error('Stream not found');
+        }
+        await this.update(streamId, {
+            parsedMessages: stream.parsedMessages.map(m => (m.uuid === message.uuid ? message : m)),
         });
     }
 
     async complete(streamId: string) {
         await this.update(streamId, {
             status: 'complete',
-        });
-    }
-
-    async error(streamId: string, error: string) {
-        await this.update(streamId, {
-            status: 'error',
         });
     }
 

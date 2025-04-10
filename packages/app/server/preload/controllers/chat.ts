@@ -2,9 +2,6 @@ import { BaseDatabaseConnection, BaseRecord } from './_base';
 import { MessageThreadController } from './message-thread';
 export interface ChatRecord extends BaseRecord {
     name: string;
-    description: string;
-    type: string;
-    sourceId: string;
     threadId: string;
 }
 

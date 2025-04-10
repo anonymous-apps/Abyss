@@ -7,12 +7,12 @@ model Message {
   // ID of the thread this message belongs to
   threadId   String
 
-  // Type of message (e.g., 'user', 'assistant', 'system')
-  type       String
-
   // ID of the source that generated this message
   sourceId   String
 
-  // Actual content of the message
-  content    String
+  // Metadata about the message content including the type of the message itself
+  content    Json
+
+  // Status of the message
+  status     String
 } 

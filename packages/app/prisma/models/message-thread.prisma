@@ -4,6 +4,6 @@ model MessageThread {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  // ID of the entity that has locked this thread (if any)
+  // ID of the entity that has a granted lock to this thread
   lockingId  String?
 } 

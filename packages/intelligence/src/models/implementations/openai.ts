@@ -277,6 +277,7 @@ export class OpenAILanguageModel extends LanguageModel {
                     }
                 }
 
+                Log.log(this.getName(), 'Completing stream');
                 response.complete();
             } catch (error) {
                 Log.error(this.getName(), `Unexpected error: ${error}`);

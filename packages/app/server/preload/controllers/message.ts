@@ -1,10 +1,14 @@
 import { BaseDatabaseConnection, BaseRecord } from './_base';
 
+export type MessageText = {
+    text: string;
+};
+
 export interface MessageRecord extends BaseRecord {
     threadId: string;
-    type: string;
     sourceId: string;
-    content: string;
+    status: 'streaming' | 'complete';
+    content: MessageText;
 }
 
 class _MessageController extends BaseDatabaseConnection<MessageRecord> {
@@ -12,12 +16,29 @@ class _MessageController extends BaseDatabaseConnection<MessageRecord> {
         super('message', 'Individual messages in a thread with type, source, and content');
     }
 
-    async findByThreadId(threadId: string): Promise<MessageRecord[]> {
+    async listByThreadId(threadId: string): Promise<MessageRecord[]> {
         const result = await this.getTable().findMany({
             where: { threadId },
             orderBy: { createdAt: 'asc' },
         });
         return result as MessageRecord[];
+    }
+
+    async completeMessagesById(messageIds: string[]): Promise<void> {
+        if (messageIds.length === 0) {
+            return;
+        }
+
+        await this.getTable().updateMany({
+            where: {
+                id: {
+                    in: messageIds,
+                },
+            },
+            data: {
+                status: 'complete',
+            },
+        });
     }
 }
 

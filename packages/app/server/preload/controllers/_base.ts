@@ -32,6 +32,14 @@ export class BaseDatabaseConnection<T extends BaseRecord> {
         return (await this.getTable().findMany({ orderBy: { createdAt: 'desc' } })) as T[];
     }
 
+    async getOrThrowByRecordId(recordId: string): Promise<T> {
+        const result = await this.getByRecordId(recordId);
+        if (!result) {
+            throw new Error(`${this.tableName} not found`);
+        }
+        return result;
+    }
+
     async getByRecordId(recordId: string): Promise<T | null> {
         return (await this.getTable().findFirst({ where: { id: recordId } })) as T | null;
     }

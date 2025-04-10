@@ -2,7 +2,7 @@ import { BotIcon, Box } from 'lucide-react';
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ChatMessageSection } from '../../library/content/chat-section';
-import { getIconForSourceType } from '../../library/icons';
+import { getIconForSourceType } from '../../library/content/record-references';
 import { Button, GhostIconButton } from '../../library/input/button';
 import { InputArea } from '../../library/input/input';
 import { PageHeader } from '../../library/layout/page-header';
@@ -22,27 +22,25 @@ export function ChatViewPage() {
     };
 
     const onAskAiToRespond = async () => {
+        const sourceId = chat.chat?.references?.sourceId || '';
         try {
-            if (chat.chat && chat.chat.id) {
-                if (chat.chat.type === 'chatModel') {
-                    Database.workflows.AskAiToRespondToChat(chat.chat.id);
-                } else {
-                    throw new Error('Chat type not supported');
-                }
+            if (chat.chat && chat.chat.id && sourceId) {
+                Database.workflows.AskAiToRespondToThread(chat.chat.id, sourceId);
             }
         } catch (error) {}
     };
 
     const onSendMessage = async () => {
+        const sourceId = chat.chat?.references?.sourceId || '';
         try {
             if (chat.chat && chat.chat.id && chat.thread && chat.thread.id && message.trim()) {
                 await Database.table.messageThread.addMessage(chat.thread.id, {
-                    type: 'USER',
                     sourceId: 'USER',
-                    content: message,
+                    status: 'complete',
+                    content: { text: message },
                 });
                 setMessage('');
-                await Database.workflows.AskAiToRespondToChat(chat.chat.id);
+                await Database.workflows.AskAiToRespondToThread(chat.chat.id, sourceId);
             }
         } catch (error) {}
     };
@@ -56,7 +54,6 @@ export function ChatViewPage() {
                     <ChatMessageSection
                         message={m}
                         key={m.id}
-                        chatType={chat.chat?.type || ''}
                         joined={index === 0 ? false : chat.messages?.at(index - 1)?.sourceId === m.sourceId}
                     />
                 ))}
@@ -105,8 +102,7 @@ export function ChatViewPage() {
     return (
         <PageHeader
             title={chat.chat?.name || 'Loading...'}
-            subtitle={chat.chat?.description || undefined}
-            icon={getIconForSourceType(chat.chat?.type || '')}
+            icon={getIconForSourceType(chat.chat?.references?.sourceId || '')}
             action={headerReference}
         >
             {content}

@@ -2,6 +2,7 @@ import { Bot, Box, MessageCircle } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../library/input/button';
+import { ButtonGroup } from '../../library/input/button-group';
 import { Select } from '../../library/input/select';
 import { IconSection } from '../../library/layout/icon-section';
 import { PageCrumbed } from '../../library/layout/page-crumbed';
@@ -30,28 +31,25 @@ export function ChatCreatePage() {
 
     const handleSubmit = async () => {
         const sourceId = chatType === 'model' ? selectedModel : selectedAgent;
-        const sourceType = chatType === 'model' ? 'chatModel' : 'agent';
-        const sourceName =
-            chatType === 'model'
-                ? allModels.data?.find(model => model.id === selectedModel)?.name
-                : allAgents.data?.find(agent => agent.id === selectedAgent)?.name;
-
-        if (sourceId && message) {
-            const chatRecord = await Database.table.chat.createWithThread({
-                name: 'New Chat',
-                type: sourceType,
-                sourceId: sourceId,
-                description: 'New chat with ' + sourceName,
-            });
-            await Database.table.messageThread.addMessage(chatRecord.threadId, {
-                type: 'USER',
-                sourceId: 'USER',
-                content: message,
-            });
-
-            Database.workflows.AskAiToRespondToChat(chatRecord.id);
-            navigate(`/chats/id/${chatRecord.id}`);
+        if (!sourceId || !message) {
+            return;
         }
+
+        const chatRecord = await Database.table.chat.createWithThread({
+            name: 'New Chat',
+            references: {
+                sourceId,
+            },
+        });
+
+        await Database.table.messageThread.addMessage(chatRecord.threadId, {
+            sourceId: 'USER',
+            status: 'complete',
+            content: { text: message },
+        });
+
+        Database.workflows.AskAiToRespondToThread(chatRecord.id, sourceId);
+        navigate(`/chats/id/${chatRecord.id}`);
     };
 
     const breadcrumbs = [
@@ -63,22 +61,28 @@ export function ChatCreatePage() {
     const content = (
         <IconSection icon={MessageCircle} title="New Conversation">
             <div className="flex gap-4 mb-4">
-                <Button
-                    onClick={() => setChatType('model')}
-                    className={`flex items-center gap-2 ${
-                        chatType === 'model' ? 'bg-primary-base text-text-light' : 'bg-background-light'
-                    }`}
-                >
-                    <Box className="w-4 h-4" /> Chat with Model
-                </Button>
-                <Button
-                    onClick={() => setChatType('agent')}
-                    className={`flex items-center gap-2 ${
-                        chatType === 'agent' ? 'bg-primary-base text-text-light' : 'bg-background-light'
-                    }`}
-                >
-                    <Bot className="w-4 h-4" /> Chat with Agent
-                </Button>
+                <ButtonGroup
+                    options={[
+                        {
+                            label: (
+                                <div className="flex items-center gap-2">
+                                    <Box className="w-4 h-4" /> Chat with Model
+                                </div>
+                            ),
+                            value: 'model',
+                        },
+                        {
+                            label: (
+                                <div className="flex items-center gap-2">
+                                    <Bot className="w-4 h-4" /> Chat with Agent
+                                </div>
+                            ),
+                            value: 'agent',
+                        },
+                    ]}
+                    value={chatType}
+                    onChange={setChatType}
+                />
             </div>
 
             {chatType === 'model' ? (
@@ -106,9 +110,12 @@ export function ChatCreatePage() {
                 onChange={e => setMessage(e.target.value)}
                 placeholder="Enter your message here"
             />
-            <Button disabled={chatType === 'model' ? !selectedModel : !selectedAgent} onClick={handleSubmit}>
-                Start Chat
-            </Button>
+
+            <div className="flex justify-end">
+                <Button disabled={chatType === 'model' ? !selectedModel : !selectedAgent} onClick={handleSubmit}>
+                    Send Message
+                </Button>
+            </div>
         </IconSection>
     );
 

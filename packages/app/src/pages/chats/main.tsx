@@ -1,7 +1,7 @@
 import { Plus } from 'lucide-react';
 import React from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { getIconForSourceType } from '../../library/icons';
+import { getIconForSourceType } from '../../library/content/record-references';
 import { GhostIconButton } from '../../library/input/button';
 import { PageSidebar } from '../../library/layout/page-sidebar';
 import { Database } from '../../main';
@@ -32,7 +32,7 @@ export function ChatMainPage() {
 
         return {
             title: entry.name,
-            icon: getIconForSourceType(entry.type || ''),
+            icon: getIconForSourceType(entry.references?.sourceId || ''),
             url: `/chats/id/${entry.id}`,
             status: activeStream ? 'in-progress' : undefined,
             onCancel: onDelete,
