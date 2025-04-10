@@ -4,11 +4,18 @@ export type MessageText = {
     text: string;
 };
 
+export type MessageToolCall = {
+    tool: {
+        name: string;
+        parameters: Record<string, any>;
+    };
+};
+
 export interface MessageRecord extends BaseRecord {
     threadId: string;
     sourceId: string;
     status: 'streaming' | 'complete';
-    content: MessageText;
+    content: MessageText | MessageToolCall;
 }
 
 class _MessageController extends BaseDatabaseConnection<MessageRecord> {

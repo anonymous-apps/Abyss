@@ -33,7 +33,6 @@ export class StreamedChatResponse {
     private textMessageListeners: TextMessageEventCallback[] = [];
     private imageMessageListeners: ImageMessageEventCallback[] = [];
     private toolCallListeners: ToolCallEventCallback[] = [];
-    private toolCallUpdatedListeners: ToolCallEventCallback[] = [];
     private toolCallCompletedListeners: ToolCallEventCallback[] = [];
     private completeListeners: (() => void)[] = [];
 
@@ -246,12 +245,6 @@ export class StreamedChatResponse {
         }
     }
 
-    private emitToolCallUpdated(toolCall: ToolCallMessage): void {
-        for (const listener of this.toolCallUpdatedListeners) {
-            listener(toolCall);
-        }
-    }
-
     private emitToolCallCompleted(toolCall: ToolCallMessage): void {
         for (const listener of this.toolCallCompletedListeners) {
             listener(toolCall);
@@ -290,13 +283,6 @@ export class StreamedChatResponse {
         this.toolCallListeners.push(callback);
         return () => {
             this.toolCallListeners = this.toolCallListeners.filter(cb => cb !== callback);
-        };
-    }
-
-    public onToolCallUpdated(callback: ToolCallEventCallback): () => void {
-        this.toolCallUpdatedListeners.push(callback);
-        return () => {
-            this.toolCallUpdatedListeners = this.toolCallUpdatedListeners.filter(cb => cb !== callback);
         };
     }
 
