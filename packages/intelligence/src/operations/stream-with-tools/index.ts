@@ -12,6 +12,7 @@ export async function streamWithTools(options: AskWithToolCallsOptions): Promise
     Log.log('askWithTools', `Starting ask with tools against model ${model.getName()} with ${options.toolDefinitions.length} tools`);
 
     // Build the tool calls string
+    console.log(toolDefinitions);
     const threadWithToolCalls = buildToolUsePrompt(thread, toolDefinitions);
 
     // Call stream against model

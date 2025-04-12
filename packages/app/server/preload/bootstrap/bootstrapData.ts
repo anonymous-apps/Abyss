@@ -23,17 +23,15 @@ export default function handler (input_object_matching_your_type) {
 }
 </example>
 `,
-            type: 'SYSTEM',
+            type: 'BUILD-NODE-TOOL',
             schema: {
                 name: '2-3 words describing the tool',
                 description: '1 sentence description of the tool',
                 code: 'Raw Nodejs Source code as common js format as detailed in the example',
-                inputs: [
-                    {
-                        key: 'key for input like "inputKey"',
-                        description: 'what is this input for? All inputs must be strings.',
-                    },
-                ],
+                inputs: {
+                    parameter1:
+                        'description of what this parameter is for, you can have many keys to describe all the inputs needed for the tool. All keys must be strings and the values will be strings.',
+                },
                 dependencies:
                     'a comma separated list of npm dependencies that will be installed automaticallty before the script runs like axios, lodash, ect',
             },

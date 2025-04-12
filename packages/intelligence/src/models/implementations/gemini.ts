@@ -4,6 +4,7 @@ import { ChatTurn } from '../../constructs/chat-thread/types';
 import { Log } from '../../utils/logs';
 import { createStreamingFetch } from '../../utils/network/fetch-utils';
 import { createGenericStreamParser, parseJSON } from '../../utils/network/stream-parser';
+import { createXmlFromObject } from '../../utils/object-to-xml/object-to-xml';
 import { LanguageModel } from '../language-model';
 
 export interface GeminiLanguageModelOptions {
@@ -67,6 +68,21 @@ export class GeminiLanguageModel extends LanguageModel {
                                 data: partial.base64Data,
                             },
                         };
+                    } else if (partial.type === 'toolCall') {
+                        // Convert tool call to XML and add as text content
+                        const toolCallXml = createXmlFromObject('toolCall', {
+                            callId: partial.callId,
+                            name: partial.name,
+                            arguments: partial.arguments,
+                        });
+                        return { text: toolCallXml };
+                    } else if (partial.type === 'toolResult') {
+                        // Convert tool result to XML and add as text content
+                        const toolResultXml = createXmlFromObject('toolResult', {
+                            callId: partial.callId,
+                            result: partial.result,
+                        });
+                        return { text: toolResultXml };
                     }
                     return null;
                 })

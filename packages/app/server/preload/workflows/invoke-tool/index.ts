@@ -1,6 +1,7 @@
 import { MessageController } from '../../controllers/message';
 import { ToolController } from '../../controllers/tool';
-import { handlerInvokeSystemTool } from './handler-system-nodejs-tool-builder';
+import { handleInvokeNodejsTool } from './handle-invoke-nodejs-tool';
+import { handlerInvokeBuildNodejsTool } from './handler-build-nodejs-tool';
 
 export async function InvokeToolFromMessage(messageId: string) {
     const message = await MessageController.getOrThrowByRecordId(messageId);
@@ -13,10 +14,14 @@ export async function InvokeToolFromMessage(messageId: string) {
     }
     const tool = await ToolController.getOrThrowByRecordId(message.references.toolSourceId);
 
-    if (tool.type === 'SYSTEM') {
+    if (tool.type === 'BUILD-NODE-TOOL') {
         if (tool.name === 'Propose NodeJs Tool') {
-            return handlerInvokeSystemTool({ message, tool });
+            return handlerInvokeBuildNodejsTool({ message, tool });
         }
+    }
+
+    if (tool.type === 'NodeJS') {
+        return handleInvokeNodejsTool({ message, tool });
     }
 
     throw new Error('Unsupported tool type: ' + tool.type);

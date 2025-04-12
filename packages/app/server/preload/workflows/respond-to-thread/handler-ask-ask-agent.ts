@@ -17,12 +17,16 @@ export async function handlerAskAgentToRespondToThread(input: AskAgentToRespondT
     await MessageThreadController.lockThread(input.thread.id, responseStream.id);
 
     try {
+        for (const tool of input.toolConnections) {
+            console.log(tool.tool.schema);
+        }
         // Stream the response via tool calls
         const toolDefinitions = input.toolConnections.map(tool => ({
             name: tool.tool.name,
             description: tool.tool.description,
             parameters: createZodFromObject(tool.tool.schema),
         }));
+
         const stream = await Operations.streamWithTools({ model: connection, thread, toolDefinitions });
 
         // Rerender thread
@@ -59,7 +63,9 @@ export async function handlerAskAgentToRespondToThread(input: AskAgentToRespondT
         });
 
         stream.onToolCallUpdate(async toolCall => {
-            const toolConnection = input.toolConnections.find(tool => tool.tool.name.toLowerCase().replaceAll(' ', '-') === toolCall.name.toLowerCase().replaceAll(' ', '-'));
+            const toolConnection = input.toolConnections.find(
+                tool => tool.tool.name.toLowerCase().replaceAll(' ', '-') === toolCall.name.toLowerCase().replaceAll(' ', '-')
+            );
 
             if (!seenMessages[toolCall.uuid]) {
                 const references = Object.keys(seenMessages).length === 0 ? firstMessageReferences : {};

@@ -5,8 +5,8 @@ import {
     GeminiLanguageModel,
     LanguageModel,
     OpenAILanguageModel,
-    ToolDefinition,
 } from '@abyss/intelligence';
+import { ToolDefinition } from '@abyss/intelligence/dist/operations/stream-with-tools';
 import { AgentRecord } from '../controllers/agent';
 import { AgentToolConnectionController } from '../controllers/agent-tool-connection';
 import { MessageRecord } from '../controllers/message';
@@ -49,9 +49,19 @@ export function buildThread(messages: MessageRecord[]) {
 
     for (const message of messages) {
         if (message.sourceId === 'USER') {
-            context = context.addUserTextMessage(message.content.text);
+            if ('text' in message.content) {
+                context = context.addUserTextMessage(message.content.text);
+            } else {
+                throw new Error('Unsupported message content ' + JSON.stringify(message.content));
+            }
         } else {
-            context = context.addBotTextMessage(message.content.text);
+            if ('text' in message.content) {
+                context = context.addBotTextMessage(message.content.text);
+            } else if ('tool' in message.content) {
+                context = context.addBotToolCallMessage(message.id, message.content.tool.name, message.content.tool.parameters);
+            } else {
+                throw new Error('Unsupported message content ' + JSON.stringify(message.content));
+            }
         }
     }
 

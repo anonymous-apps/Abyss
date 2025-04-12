@@ -3,6 +3,7 @@ import { ChatThread } from '../../constructs/chat-thread/chat-thread';
 import { Log } from '../../utils/logs';
 import { createStreamingFetch } from '../../utils/network/fetch-utils';
 import { createGenericStreamParser, parseJSON, parseSSE } from '../../utils/network/stream-parser';
+import { createXmlFromObject } from '../../utils/object-to-xml/object-to-xml';
 import { LanguageModel } from '../language-model';
 
 export interface OpenAILanguageModelOptions {
@@ -58,6 +59,21 @@ export class OpenAILanguageModel extends LanguageModel {
                             url: `data:image/jpeg;base64,${partial.base64Data}`,
                         },
                     });
+                } else if (partial.type === 'toolCall') {
+                    // Convert tool call to XML and add as text content
+                    const toolCallXml = createXmlFromObject('toolCall', {
+                        callId: partial.callId,
+                        name: partial.name,
+                        arguments: partial.arguments,
+                    });
+                    content.push({ type: 'text', text: toolCallXml });
+                } else if (partial.type === 'toolResult') {
+                    // Convert tool result to XML and add as text content
+                    const toolResultXml = createXmlFromObject('toolResult', {
+                        callId: partial.callId,
+                        result: partial.result,
+                    });
+                    content.push({ type: 'text', text: toolResultXml });
                 }
             }
 
