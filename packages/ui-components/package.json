@@ -1,0 +1,46 @@
+{
+    "name": "@abyss/ui-components",
+    "version": "0.0.1",
+    "description": "Abyss UI Component Library",
+    "main": "dist/index.js",
+    "module": "dist/index.esm.js",
+    "types": "dist/index.d.ts",
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "build": "rollup -c",
+        "dev": "rollup -c -w",
+        "storybook": "storybook dev -p 6006",
+        "build-storybook": "storybook build"
+    },
+    "peerDependencies": {
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0"
+    },
+    "devDependencies": {
+        "@rollup/plugin-commonjs": "^25.0.7",
+        "@rollup/plugin-node-resolve": "^15.2.3",
+        "@rollup/plugin-typescript": "^11.1.6",
+        "@storybook/addon-essentials": "^7.6.17",
+        "@storybook/addon-interactions": "^7.6.17",
+        "@storybook/addon-links": "^7.6.17",
+        "@storybook/addon-onboarding": "^1.0.11",
+        "@storybook/blocks": "^7.6.17",
+        "@storybook/react": "^7.6.17",
+        "@storybook/react-vite": "^7.6.17",
+        "@storybook/test": "^7.6.17",
+        "@types/react": "^18.2.0",
+        "@types/react-dom": "^18.2.0",
+        "autoprefixer": "^10.4.20",
+        "postcss": "^8.5.3",
+        "postcss-import": "^16.1.0",
+        "rollup": "^4.12.1",
+        "rollup-plugin-peer-deps-external": "^2.2.4",
+        "rollup-plugin-postcss": "^4.0.2",
+        "storybook": "^7.6.17",
+        "tailwindcss": "^3.4.1",
+        "tslib": "^2.6.2",
+        "typescript": "^5.3.3"
+    }
+}

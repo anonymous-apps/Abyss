@@ -1,0 +1,7 @@
+@import './reset.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* This file will include any additional custom styles for the component library */
