@@ -6,19 +6,73 @@
     html[data-theme='etherial'] {
         --color-header: #ffffff;
 
-        --color-background-light: #b9b9b9;
-        --color-background-base: #eeeff4;
-        --color-background-slightly-dark: #f6f7fa;
+        --color-background-100: #b9b9b9;
+        --color-background-200: #d4d4d4;
+        --color-background-300: #eeeff4;
+        --color-background-400: #f2f3f8;
+        --color-background-500: #f6f7fa;
+        --color-background-600: #f9fafc;
+        --color-background-700: #05050544;
+        --color-background-800: #03030322;
+        --color-background-900: #01010111;
         --color-background-transparent: #ffffffcc;
-        --color-background-dark: #05050544;
 
-        --color-primary-light: #656565;
-        --color-primary-base: #4536ab;
-        --color-primary-dark: #3f1c7f;
+        --color-primary-100: #656565;
+        --color-primary-200: #555588;
+        --color-primary-300: #4536ab;
+        --color-primary-400: #4230a0;
+        --color-primary-500: #3e2a95;
+        --color-primary-600: #3a248a;
+        --color-primary-700: #3f1c7f;
+        --color-primary-800: #351668;
+        --color-primary-900: #2b1052;
 
-        --color-text-light: rgb(255, 255, 255);
-        --color-text-base: rgb(79, 79, 79);
-        --color-text-dark: rgb(0, 0, 0);
+        --color-text-100: rgb(0, 0, 0);
+        --color-text-200: rgb(32, 32, 32);
+        --color-text-300: rgb(64, 64, 64);
+        --color-text-400: rgb(96, 96, 96);
+        --color-text-500: rgb(128, 128, 128);
+        --color-text-600: rgb(160, 160, 160);
+        --color-text-700: rgb(255, 255, 255);
+        --color-text-800: rgb(240, 240, 240);
+        --color-text-900: rgb(220, 220, 220);
+        --color-text-sidebar: rgb(255, 255, 255);
+    }
+
+    html[data-theme='abyss'] {
+        --color-header: #1a1a2e;
+
+        --color-background-100: #1e1e22;
+        --color-background-200: #23233a;
+        --color-background-300: #25222f;
+        --color-background-400: #1b1c40;
+        --color-background-500: #211842;
+        --color-background-600: #4d3d87;
+        --color-background-700: #ffffffaa;
+        --color-background-800: #ffffff88;
+        --color-background-900: #ffffff66;
+        --color-background-transparent: #0000001a;
+
+        --color-primary-100: #7580d7;
+        --color-primary-200: #5e6ad0;
+        --color-primary-300: #424fc2;
+        --color-primary-400: #3a46b0;
+        --color-primary-500: #323da0;
+        --color-primary-600: #2a3490;
+        --color-primary-700: #252b7f;
+        --color-primary-800: #1f2370;
+        --color-primary-900: #191b60;
+
+        --color-text-100: #ffffff;
+        --color-text-200: #f0f0f0;
+        --color-text-300: #d0d0d0;
+        --color-text-400: #b0b0b0;
+        --color-text-500: #909090;
+        --color-text-600: #707070;
+        --color-text-700: #000000;
+        --color-text-800: #202020;
+        --color-text-900: #404040;
+        --color-text-sidebar: rgb(255, 255, 255);
     }
 }
 
@@ -35,7 +89,7 @@
 
 /* Markdown styles */
 .markdown {
-    @apply text-text-base;
+    @apply text-text-300;
 }
 
 .markdown h1 {
@@ -83,7 +137,7 @@
 }
 
 .markdown a {
-    @apply text-primary-base hover:underline;
+    @apply text-primary-300 hover:underline;
 }
 
 .markdown table {
@@ -101,4 +155,5 @@
 
 * {
     scrollbar-width: thin;
+    scrollbar-color: var(--color-background-500) transparent;
 }

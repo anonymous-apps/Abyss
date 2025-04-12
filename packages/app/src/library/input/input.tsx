@@ -24,7 +24,7 @@ export const Input = ({ value, onChange, label, placeholder, type = 'text', opti
                     onChange={e => onChange(e.target.value)}
                     placeholder={placeholder}
                     onKeyDown={onKeyDown}
-                    className="w-full bg-background-transparent text-text-200 border border-background-light rounded px-2 py-1 text-sm focus:outline-none focus:border-primary-700"
+                    className="w-full bg-background-transparent text-text-100 border border-background-100 rounded px-2 py-1 text-sm focus:outline-none focus:border-primary-700"
                 />
                 {options && (
                     <div className="flex gap-2 mt-2">
@@ -34,8 +34,8 @@ export const Input = ({ value, onChange, label, placeholder, type = 'text', opti
                                 onClick={() => onChange(option.id)}
                                 className={`px-3 py-1 text-sm rounded-md transition-colors ${
                                     value === option.id
-                                        ? 'border border-background-light bg-background-transparent'
-                                        : 'border border-background-light hover:bg-background-transparent'
+                                        ? 'border border-background-100 bg-background-transparent'
+                                        : 'border border-background-100 hover:bg-background-transparent'
                                 }`}
                             >
                                 {option.name}
@@ -59,7 +59,7 @@ export const InputArea = ({ value, onChange, label, placeholder, onKeyDown }: In
                     placeholder={placeholder}
                     onKeyDown={onKeyDown}
                     rows={7}
-                    className="w-full bg-background-transparent text-text-200 border border-background-light rounded px-2 py-1 text-sm focus:outline-none focus:border-primary-700"
+                    className="w-full bg-background-transparent text-text-100 border border-background-100 rounded px-2 py-1 text-sm focus:outline-none focus:border-primary-700"
                 />
             </div>
         </div>

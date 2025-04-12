@@ -27,7 +27,7 @@ export function ModelProfileViewPage() {
     ];
 
     const content = !modelProfile.data ? (
-        <div className="text-text-base">Loading model profile data...</div>
+        <div className="text-text-300">Loading model profile data...</div>
     ) : (
         <>
             <IconSection title="Profile Information" icon={Box}>

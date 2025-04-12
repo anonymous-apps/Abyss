@@ -26,7 +26,7 @@ export function App() {
     useTheme();
 
     return (
-        <div>
+        <div className="text-text-300">
             <BrowserRouter>
                 <HeaderBar />
                 <Routes>

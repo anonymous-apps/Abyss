@@ -105,7 +105,7 @@ export function ChatCreatePage() {
 
             <textarea
                 rows={6}
-                className="mt-4 w-full bg-background-transparent border border-background-light rounded px-2 py-1 text-sm focus:outline-none"
+                className="mt-4 w-full bg-background-transparent border border-background-100 rounded px-2 py-1 text-sm focus:outline-none"
                 value={message}
                 onChange={e => setMessage(e.target.value)}
                 placeholder="Enter your message here"

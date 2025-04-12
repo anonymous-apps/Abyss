@@ -28,7 +28,7 @@ export function ToolViewPage() {
     ];
 
     const content = !tool.data ? (
-        <div className="text-text-base">Loading tool data...</div>
+        <div className="text-text-300">Loading tool data...</div>
     ) : (
         <>
             <IconSection title="Tool Information" icon={Hammer}>

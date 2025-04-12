@@ -50,15 +50,15 @@ export const HeaderBar = () => {
     return (
         <div
             ref={headerRef}
-            className="fixed z-10 top-0 left-0 w-full text-center border-background-light"
+            className="fixed z-10 top-0 left-0 w-full text-center border-background-100"
             style={{ height: '55px', fontSize: '30px', lineHeight: '55px' }}
         >
             <div className="absolute top-0 left-0 right-[40%] h-full flex items-center justify-center menuDragSection"></div>
             <div className="absolute bottom-0 left-0 w-full h-[50%] flex items-center justify-center menuDragSection"></div>
 
-            <div className={`absolute text-text-light h-[45%] w-[40%] right-0 flex gap-1 mt-1 px-2 z-10 ${isHomePage ? 'hidden' : ''}`}>
+            <div className={`absolute text-text-sidebar h-[45%] w-[40%] right-0 flex gap-1 mt-1 px-2 z-10 ${isHomePage ? 'hidden' : ''}`}>
                 <ChevronLeftIcon
-                    className={`h-full w-full rounded-sm ${hasHistory ? 'opacity-100 hover:bg-primary-light ' : 'opacity-20'}`}
+                    className={`h-full w-full rounded-sm ${hasHistory ? 'opacity-100 hover:bg-primary-100 ' : 'opacity-20'}`}
                     onClick={onPopPageHistory}
                 />
                 <ChevronRightIcon className={`h-full w-full rounded-sm opacity-20`} />

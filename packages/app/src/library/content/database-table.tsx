@@ -10,7 +10,7 @@ export function TableKeyValue({ table, column, value }: { table: string; column:
     if (value && value.toString().split('::').length === 2) {
         const [tableName] = value.toString().split('::');
         return (
-            <Link to={`/database/id/${tableName}/record/${value}`} className="text-text-base underline hover:text-primary-base">
+            <Link to={`/database/id/${tableName}/record/${value}`} className="text-text-300 underline hover:text-primary-300">
                 {value}
             </Link>
         );
@@ -37,21 +37,21 @@ export function TableKeyValue({ table, column, value }: { table: string; column:
 
 export function CustomTable({ table, records }: DatabaseTableProps) {
     if (!records || records.length === 0) {
-        return <div className="text-text-500">No records found</div>;
+        return <div className="text-text-700">No records found</div>;
     }
 
     // Get column headers from first record
     const columns = Object.keys(records[0]);
 
     return (
-        <div className="overflow-x-auto rounded-sm text-text-dark">
+        <div className="overflow-x-auto rounded-sm text-text-700">
             <table className="w-full border-collapse text-xs overflow-hidden rounded-sm border">
                 <thead>
                     <tr className="capitalize bg-background-transparent">
                         {columns
                             .filter(column => column !== 'createdAt' && column !== 'updatedAt')
                             .map((column, colIndex) => (
-                                <th key={column} className="p-1.5 text-left text-text-200 font-medium border-b border-background-light">
+                                <th key={column} className="p-1.5 text-left text-text-100 font-medium border-b border-background-100">
                                     {column}
                                 </th>
                             ))}

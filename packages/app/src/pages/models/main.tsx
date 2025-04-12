@@ -42,7 +42,7 @@ export function ModelProfileMainPage() {
                             ))}
                         </TileGrid>
                     ) : (
-                        <div className="text-text-500">No model profiles found</div>
+                        <div className="text-text-700">No model profiles found</div>
                     )}
                 </IconSection>
             </PageCrumbed>

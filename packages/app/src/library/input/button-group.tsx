@@ -15,7 +15,7 @@ interface ButtonGroupProps<T extends string> {
 
 export function ButtonGroup<T extends string>({ options, value, onChange, className = '', disabled = false }: ButtonGroupProps<T>) {
     return (
-        <div className={`flex rounded overflow-hidden border border-background-dark ${className}`}>
+        <div className={`flex rounded overflow-hidden border border-background-700 ${className}`}>
             {options.map((option, index) => {
                 const isFirst = index === 0;
                 const isLast = index === options.length - 1;
@@ -32,11 +32,11 @@ export function ButtonGroup<T extends string>({ options, value, onChange, classN
                             ${isLast ? 'rounded-r-sm' : ''}
                             ${
                                 isSelected
-                                    ? 'bg-primary-base text-text-light'
-                                    : 'bg-background-transparent text-text-base hover:bg-primary-light hover:text-text-light'
+                                    ? 'bg-primary-300 text-text-100'
+                                    : 'bg-background-transparent text-text-300 hover:bg-primary-100 hover:text-text-100'
                             }
                             ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
-                            ${!isLast ? 'border-r border-background-dark' : ''}
+                            ${!isLast ? 'border-r border-background-700' : ''}
                         `}
                     >
                         {option.label}

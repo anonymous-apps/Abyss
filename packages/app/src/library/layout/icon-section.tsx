@@ -14,7 +14,7 @@ export const IconSection = ({ children, title, subtitle, icon: Icon, action }: I
         <div className="flex flex-col rounded-md p-2 -translate-x-2 mb-8 transition-all duration-300">
             <div className="flex items-center gap-2">
                 <div className="flex items-center gap-2 flex-1">
-                    <Icon className="w-4 h-4 text-primary-base font-bold" />
+                    <Icon className="w-4 h-4 text-primary-300 font-bold" />
                     <h2 className="text-sm font-bold">{title}</h2>
                 </div>
                 {action}

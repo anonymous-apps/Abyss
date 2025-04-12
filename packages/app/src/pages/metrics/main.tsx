@@ -21,7 +21,7 @@ export function MetricsPage() {
                 value: metric.value,
                 dimensions: Object.keys(metric.dimensions || {}).join(', '),
                 'Graph it': (
-                    <Link className="text-text-base underline hover:text-primary-base" to={`/metrics/graph/${metric.name}`}>
+                    <Link className="text-text-300 underline hover:text-primary-300" to={`/metrics/graph/${metric.name}`}>
                         View in Graph
                     </Link>
                 ),
@@ -44,7 +44,7 @@ export function MetricsPage() {
                             <Link
                                 key={name as string}
                                 to={`/metrics/graph/${name}`}
-                                className="text-text-base underline hover:text-primary-base capitalize flex items-center"
+                                className="text-text-300 underline hover:text-primary-300 capitalize flex items-center"
                             >
                                 <FileDigit size={16} className="mr-2" />
                                 {name.split('-').join(' ')}

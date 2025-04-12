@@ -53,7 +53,7 @@ export function ChatViewPage() {
             icon={Box}
             onClick={() => navigate(`/models/id/${chat.model?.id}`)}
             tooltip="View model profile"
-            className="bg-background-dark"
+            className="bg-background-700"
         />
     );
 
@@ -73,7 +73,7 @@ export function ChatViewPage() {
 
             {chat.thread?.lockingId?.length ? (
                 <div className="flex justify-center my-4">
-                    <div className="animate-bounce text-text-dark">
+                    <div className="animate-bounce text-text-700">
                         <BotIcon />
                     </div>
                 </div>

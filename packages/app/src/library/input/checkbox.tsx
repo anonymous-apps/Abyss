@@ -22,7 +22,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({ checked, onChange, label, de
                     checked={checked}
                     onChange={e => onChange(e.target.checked)}
                     disabled={disabled}
-                    className="h-4 w-4 rounded focus:ring-primary-light bg-background-transparent checked:bg-primary-base"
+                    className="h-4 w-4 rounded focus:ring-primary-100 bg-background-transparent checked:bg-primary-300"
                 />
                 {label && (
                     <label htmlFor={checkboxId} className="font-medium cursor-pointer">
@@ -30,7 +30,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({ checked, onChange, label, de
                     </label>
                 )}
             </div>
-            {description && <p className="text-sm text-text-500 ml-8 opacity-70">{description}</p>}
+            {description && <p className="text-sm text-text-700 ml-8 opacity-70">{description}</p>}
         </div>
     );
 };

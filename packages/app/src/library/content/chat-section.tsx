@@ -82,10 +82,10 @@ function SectionHeader({ message }: { message: MessageRecord }) {
 
     return (
         <div className="flex items-center text-xs mb-1 gap-4 rounded-sm p-1 w-fit">
-            <div className="bg-primary-base text-text-light rounded-sm px-1 pr-2 py-1 -translate-x-1">
+            <div className="bg-primary-300 text-text-100 rounded-sm px-1 pr-2 py-1 -translate-x-1">
                 <ReferencedObject sourceId={message.sourceId} />
             </div>
-            <span className="text-text-dark opacity-70 text-xms">{formattedTime}</span>
+            <span className="text-text-700 opacity-70 text-xms">{formattedTime}</span>
         </div>
     );
 }
@@ -125,9 +125,9 @@ function AiToolMessageSection({ message }: { message: MessageRecord<MessageToolC
 
     return (
         <div className="rounded overflow-hidden my-2 mr-10 w-full">
-            <div className="flex items-center justify-between border rounded-lg p-2 bg-background-base z-10 relative">
+            <div className="flex items-center justify-between border rounded-lg p-2 bg-background-300 z-10 relative">
                 <div className="flex items-center gap-2 capitalize">
-                    {isRunning && <Loader2 size={18} className="animate-spin border border-primary-base" />}
+                    {isRunning && <Loader2 size={18} className="animate-spin border border-primary-300" />}
                     {isError && <X size={18} className="text-red-500 bg-red-100 rounded-full p-0.5 border border-red-500" />}
                     {isIdle && <TerminalIcon className="w-4 h-4" />}
                     {isComplete && <Check size={18} className="text-green-700 bg-green-200 rounded-full p-0.5 border border-green-700" />}
@@ -136,7 +136,7 @@ function AiToolMessageSection({ message }: { message: MessageRecord<MessageToolC
                 <div className="flex items-center gap-1">
                     <button
                         className={`px-2 py-1 text-xs rounded font-bold opacity-80 hover:opacity-100  ${
-                            viewMode === 'input' ? 'bg-primary-base text-text-light' : 'bg-transparent hover:text-primary-base'
+                            viewMode === 'input' ? 'bg-primary-300 text-text-100' : 'bg-transparent hover:text-primary-300'
                         }`}
                         onClick={() => setViewMode(viewMode === 'input' ? null : 'input')}
                     >
@@ -144,7 +144,7 @@ function AiToolMessageSection({ message }: { message: MessageRecord<MessageToolC
                     </button>
                     <button
                         className={`px-2 py-1 text-xs rounded font-bold opacity-80 hover:opacity-100  ${
-                            viewMode === 'output' ? 'bg-primary-base text-text-light' : 'bg-transparent hover:text-primary-base'
+                            viewMode === 'output' ? 'bg-primary-300 text-text-100' : 'bg-transparent hover:text-primary-300'
                         }`}
                         onClick={() => setViewMode(viewMode === 'output' ? null : 'output')}
                     >
@@ -166,7 +166,7 @@ function AiToolMessageSection({ message }: { message: MessageRecord<MessageToolC
             {invokable && (
                 <div className="flex items-center justify-end">
                     <button
-                        className="px-2 py-1 text-xs rounded font-bold border border-primary-base  hover:bg-primary-base hover:text-text-light flex items-center gap-2"
+                        className="px-2 py-1 text-xs rounded font-bold border border-primary-300  hover:bg-primary-300 hover:text-text-100 flex items-center gap-2"
                         onClick={onInvokeTool}
                     >
                         <PlayIcon className="w-4 h-4" />

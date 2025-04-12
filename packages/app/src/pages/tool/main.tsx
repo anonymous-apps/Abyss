@@ -33,7 +33,7 @@ export function ToolsPage() {
                         ))}
                     </TileGrid>
                 ) : (
-                    <div className="text-text-500 text-sm mb-4">No defined tools</div>
+                    <div className="text-text-700 text-sm mb-4">No defined tools</div>
                 )}
             </IconSection>
         </>

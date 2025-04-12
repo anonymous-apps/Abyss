@@ -115,7 +115,7 @@ export function AgentCreatePage() {
                                 placeholder="Select a model"
                             />
                         ) : (
-                            <div className="text-text-500">No model connections found. Please create a model connection first.</div>
+                            <div className="text-text-700">No model connections found. Please create a model connection first.</div>
                         )}
                     </div>
                 </IconSection>
@@ -149,7 +149,7 @@ export function AgentCreatePage() {
                             </div>
                         ))
                     ) : (
-                        <div className="text-text-500">No tools found. You can create an agent without tools, or create tools first.</div>
+                        <div className="text-text-700">No tools found. You can create an agent without tools, or create tools first.</div>
                     )}
                 </IconSection>
 

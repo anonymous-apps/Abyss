@@ -22,8 +22,8 @@ export const IconButton: React.FC<IconButtonProps> = ({
         <button
             onClick={onClick}
             disabled={disabled}
-            className={`p-1 px-3 border border-primary-light rounded transition-colors flex gap-3 items-center bg-background-transparent ${
-                disabled ? 'opacity-50 cursor-not-allowed' : 'hover:border-primary-base hover:text-primary-base'
+            className={`p-1 px-3 border border-primary-100 rounded transition-colors flex gap-3 items-center bg-background-transparent ${
+                disabled ? 'opacity-50 cursor-not-allowed' : 'hover:border-primary-300 hover:text-primary-300'
             } ${className} ${borderless ? 'border-none' : ''}`}
         >
             <Icon size={18} />
@@ -45,12 +45,12 @@ export const Button: React.FC<ButtonProps> = ({ onClick, className = '', childre
         <button
             onClick={onClick}
             disabled={disabled}
-            className={` text-sm px-3 py-1 border border-primary-light rounded transition-colors bg-background-transparent flex gap-2 items-center justify-center ${
+            className={` text-sm px-3 py-1 border border-primary-100 rounded transition-colors bg-background-transparent flex gap-2 items-center justify-center ${
                 disabled
                     ? 'opacity-50 cursor-not-allowed'
                     : selected
-                    ? 'border-primary-base text-text-light bg-primary-base bg-background-transparent'
-                    : 'hover:bg-primary-base hover:text-text-light'
+                    ? 'border-primary-300 text-text-100 bg-primary-300 bg-background-transparent'
+                    : 'hover:bg-primary-300 hover:text-text-100'
             } ${className}`}
         >
             {children}
@@ -71,7 +71,7 @@ export const GhostButton: React.FC<GhostButtonProps> = ({ onClick, className = '
             onClick={onClick}
             disabled={disabled}
             className={`text-sm px-3 py-1 border border-transparent rounded transition-colors bg-transparent ${
-                disabled ? 'opacity-50 cursor-not-allowed' : 'hover:border-primary-light hover:text-primary-base'
+                disabled ? 'opacity-50 cursor-not-allowed' : 'hover:border-primary-100 hover:text-primary-300'
             } ${className}`}
         >
             {children}
@@ -127,16 +127,16 @@ export const GhostIconButton: React.FC<GhostIconButtonProps> = ({
                 onMouseEnter={() => tooltip && setShowTooltip(true)}
                 onMouseLeave={() => tooltip && setShowTooltip(false)}
                 className={`flex items-center gap-2 text-sm px-1 py-1 border border-transparent rounded transition-colors bg-transparent ${
-                    disabled ? 'opacity-50 cursor-not-allowed' : 'hover:border-primary-light hover:text-primary-base'
+                    disabled ? 'opacity-50 cursor-not-allowed' : 'hover:border-primary-100'
                 } ${className}`}
             >
                 <Icon className="w-4 h-4" />
                 {label && <span>{label}</span>}
             </button>
             {tooltip && showTooltip && (
-                <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-2 py-1 bg-primary-base text-text-light text-xs rounded shadow-lg whitespace-nowrap z-10">
+                <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-2 py-1 bg-primary-300 text-text-100 text-xs rounded shadow-lg whitespace-nowrap z-10">
                     {tooltip}
-                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-b-primary-base"></div>
+                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-b-primary-300"></div>
                 </div>
             )}
         </div>

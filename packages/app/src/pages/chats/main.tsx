@@ -14,7 +14,7 @@ export function ChatMainPage() {
     const navigate = useNavigate();
 
     const createChatHeader = (
-        <div className="flex flex-row items-center justify-between border-b border-background-light p-1">
+        <div className="flex flex-row items-center justify-between border-b border-background-100 p-1">
             <div className="text-sm rounded-sm mt-2 mb-1 px-2">Chats</div>
             <GhostIconButton icon={Plus} onClick={() => navigate('/chats/create')} />
         </div>

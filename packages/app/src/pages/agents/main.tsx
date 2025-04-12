@@ -46,7 +46,7 @@ export function AgentMainPage() {
                             ))}
                         </TileGrid>
                     ) : (
-                        <div className="text-text-500">No agents found</div>
+                        <div className="text-text-700">No agents found</div>
                     )}
                 </IconSection>
             </PageCrumbed>

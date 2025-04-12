@@ -19,7 +19,7 @@ export function Select({ value, onChange, options, placeholder, className = '', 
                     value={value}
                     onChange={e => onChange(e.target.value)}
                     disabled={disabled}
-                    className={`w-full bg-background-transparent text-text-200 border border-background-light rounded px-2 py-1 text-sm focus:outline-none focus:border-primary-700 appearance-none pr-8 ${
+                    className={`w-full bg-background-transparent text-text-100 border border-background-100 rounded px-2 py-1 text-sm focus:outline-none focus:border-primary-700 appearance-none pr-8 ${
                         disabled ? 'opacity-60 cursor-not-allowed' : ''
                     } ${className}`}
                 >

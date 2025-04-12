@@ -18,7 +18,7 @@ export function CustomRendererForConversationThread({ thread }: { thread: Render
 
     return (
         <>
-            <div className="border-t mt-2 border-background-light">
+            <div className="border-t mt-2 border-background-100">
                 {messages.turns.map((message, index) => (
                     <div key={index} className="pt-4">
                         <div className="flex items-center text-xs mb-1 gap-2 capitalize">

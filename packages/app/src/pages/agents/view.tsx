@@ -85,7 +85,7 @@ export function AgentViewPage() {
     ];
 
     const content = !agent.data ? (
-        <div className="text-text-base">Loading agent data...</div>
+        <div className="text-text-300">Loading agent data...</div>
     ) : (
         <>
             <IconSection title="Agent Information" icon={Bot}>

@@ -42,7 +42,10 @@ export function SettingsPage() {
                 <Select
                     value={settings.data.theme || 'etherial'}
                     onChange={onChangeAppTheme}
-                    options={[{ value: 'etherial', label: 'Etherial' }]}
+                    options={[
+                        { value: 'etherial', label: 'Etherial' },
+                        { value: 'abyss', label: 'Abyss' },
+                    ]}
                 />
             </IconSection>
 
@@ -61,7 +64,7 @@ export function SettingsPage() {
                         Tracking updates from GitHub <Link className="inline-block" size={16} />
                     </a>
                     <div className="flex flex-row gap-2">
-                        <div className="text-text-base">{updateerMessage(updater.status, updater.progress)}</div>
+                        <div className="text-text-300">{updateerMessage(updater.status, updater.progress)}</div>
                         {updater.status === AppUpdaterStatus.READY_TO_INSTALL && (
                             <Button onClick={() => updater.restartToUpdate()}>Restart to update</Button>
                         )}

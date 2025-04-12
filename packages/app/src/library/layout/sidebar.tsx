@@ -19,10 +19,8 @@ export const SidebarItem: React.FC<SidebarItemProps> = ({ title, icon: Icon, url
     return (
         <Link
             to={url}
-            className={`relative flex items-center gap-2 px-2 py-1 transition-colors text-xs ${
-                isActive
-                    ? 'bg-primary-base text-text-light'
-                    : 'pacity-70 hover:opacity-100 hover:bg-primary-950 hover:text-text-200 hover:bg-background-dark '
+            className={`relative flex items-center gap-2 px-2 py-1 transition-colors text-xs text-text-300 ${
+                isActive ? 'bg-primary-300' : 'pacity-70 hover:opacity-100 hover:bg-background-transparent '
             }`}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
@@ -56,7 +54,7 @@ interface SidebarSectionProps {
 const SidebarSection: React.FC<SidebarSectionProps> = ({ title }) => {
     return (
         <div className="flex flex-col gap-1">
-            <div className="text-text-500 text-xs rounded-sm py-1 mt-5 mb-1 px-2 opacity-50">{title}</div>
+            <div className="text-text-sidebar text-xs rounded-sm py-1 mt-5 mb-1 px-2 opacity-50">{title}</div>
         </div>
     );
 };
@@ -76,7 +74,7 @@ export function Sidebar() {
 
     return (
         <div
-            className="relative left-0 top-0 h-screen flex flex-col pt-5 min-w-[150px] bg-background-dark transition-opacity duration-300 text-text-light"
+            className="relative left-0 top-0 h-screen flex flex-col pt-5 min-w-[150px] transition-opacity duration-300"
             style={{ opacity }}
         >
             <SidebarSection title="Activity" />
@@ -99,7 +97,7 @@ interface WithSidebarProps {
 
 export function WithSidebar({ children }: WithSidebarProps) {
     return (
-        <div className="flex flex-row text-text-base max-h-[100vh]">
+        <div className="flex flex-row max-h-[100vh]">
             <Sidebar />
             <div className="w-full h-[100vh] overflow-y-auto">{children}</div>
         </div>
