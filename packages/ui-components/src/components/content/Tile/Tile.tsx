@@ -34,7 +34,7 @@ export const Tile: React.FC<TileProps> = ({ title, icon, children, footer, onCli
             className={`
                 relative w-[300px] h-[150px] rounded p-2 flex flex-col transition-all duration-200 
                 border border-background-500 bg-background-transparent
-                ${isClickable ? 'cursor-pointer hover:border-primary-300' : ''}
+                ${isClickable ? 'cursor-pointer hover:border-primary-500' : ''}
                 ${className}
             `}
             onClick={isClickable ? onClick : undefined}

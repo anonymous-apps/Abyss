@@ -84,3 +84,18 @@
     scrollbar-width: thin;
     scrollbar-color: var(--color-background-500) transparent;
 }
+
+/* Invert utility class for images */
+.invert {
+    filter: invert(1);
+}
+
+/* Dark mode specific inversion */
+[data-theme='abyss'] .invert {
+    filter: invert(1);
+}
+
+/* Light mode specific inversion */
+[data-theme='etherial'] .invert {
+    filter: invert(0);
+}

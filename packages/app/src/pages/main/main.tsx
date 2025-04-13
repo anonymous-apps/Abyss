@@ -2,6 +2,7 @@ import { IconOption } from '@abyss/ui-components';
 import { Box, DatabaseIcon, MessageCircle, Play, Settings } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
+import { Logo } from '../../library/logos';
 import { Database } from '../../main';
 import { useTableRecordUserSettings } from '../../state/database-connection';
 import { useSidebarFadeStore } from '../../state/sidebar-fade';
@@ -39,12 +40,7 @@ export function MainPage() {
     return (
         <div className="flex h-screen">
             <div className="flex flex-col items-center justify-center transition-all duration-[1s]" style={{ width: sidebarWidth }}>
-                <img
-                    src={logoPath}
-                    alt="logo"
-                    className="w-[150px] mb-4 transition-all duration-[1s]"
-                    style={{ opacity: contentOpacity }}
-                />
+                <Logo logo="abyss" size={150} />
                 <div
                     className="text-4xl font-bold text-center transition-all duration-[1s] text-text-300"
                     style={{ opacity: contentOpacity }}

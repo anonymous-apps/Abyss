@@ -2,7 +2,7 @@ import { IconSection, PageCrumbed, Tile, TileGrid } from '@abyss/ui-components';
 import { Box, Plus } from 'lucide-react';
 import React from 'react';
 import { GhostIconButton } from '../../library/input/button';
-import { ProviderLogo } from '../../library/logos';
+import { Logo } from '../../library/logos';
 import { useModelProfileMain } from './main.hook';
 
 export function ModelProfileMainPage() {
@@ -29,7 +29,7 @@ export function ModelProfileMainPage() {
                                 title={model.name || 'Untitled'}
                                 onClick={() => navigate(`/models/id/${model.id}`)}
                                 icon={<Box className="w-4 h-4" />}
-                                footer={<ProviderLogo provider={model.provider} className="w-6 h-6" />}
+                                footer={<Logo logo={model.provider} className="w-6 h-6" />}
                             >
                                 {model.description}
                             </Tile>
