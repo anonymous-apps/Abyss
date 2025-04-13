@@ -1,7 +1,6 @@
-import { IconSection, PageCrumbed } from '@abyss/ui-components';
+import { IconSection, PageCrumbed, Tile, TileGrid } from '@abyss/ui-components';
 import { Bot, Box, CircleHelp } from 'lucide-react';
 import React from 'react';
-import { Tile, TileGrid } from '../../library/layout/tile-grid';
 import { useToolsPage } from './tools.hook';
 
 export function ToolsPage() {
@@ -22,7 +21,7 @@ export function ToolsPage() {
                             <Tile
                                 key={tool.id}
                                 title={tool.name || 'Untitled'}
-                                href={`/tools/id/${tool.id}`}
+                                onClick={() => navigate(`/tools/id/${tool.id}`)}
                                 icon={<ToolIconForType type={tool.type} />}
                             >
                                 {tool.description || 'No description'}
