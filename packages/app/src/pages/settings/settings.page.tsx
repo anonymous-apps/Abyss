@@ -1,7 +1,7 @@
 import { IconSection, PageCrumbed, SelectDropdown } from '@abyss/ui-components';
 import { PaintBucket } from 'lucide-react';
 import React from 'react';
-import { useSettingsPage } from './main.hook';
+import { useSettingsPage } from './settings.hook';
 
 export function SettingsPage() {
     const { breadcrumbs, record, onChangeAppTheme } = useSettingsPage();

@@ -5,7 +5,7 @@ import { IconSection } from './IconSection';
 
 // Meta information for the component
 const meta: Meta<typeof IconSection> = {
-    title: 'Layout/IconSection',
+    title: 'Content/IconSection',
     component: IconSection,
     parameters: {
         layout: 'centered',
