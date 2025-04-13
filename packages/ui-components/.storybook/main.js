@@ -6,9 +6,6 @@ const config = {
         name: '@storybook/react-vite',
         options: {},
     },
-    docs: {
-        autodocs: 'tag',
-    },
     core: {
         builder: '@storybook/builder-vite',
     },

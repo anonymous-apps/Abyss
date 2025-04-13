@@ -9,7 +9,7 @@ const meta: Meta<typeof IconOption> = {
     parameters: {
         layout: 'centered',
     },
-    tags: ['autodocs'],
+
     argTypes: {
         isDisabled: {
             control: 'boolean',

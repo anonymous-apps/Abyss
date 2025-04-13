@@ -1,10 +1,10 @@
+import { PageCrumbed } from '@abyss/ui-components/src/components/layout/PageCrumbed';
 import { Box, Globe, Settings } from 'lucide-react';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Button } from '../../library/input/button';
 import { Input } from '../../library/input/input';
 import { IconSection } from '../../library/layout/icon-section';
-import { PageCrumbed } from '../../library/layout/page-crumbed';
 import { WithSidebar } from '../../library/layout/sidebar';
 import { AnthropicLogo, GeminiLogo, OpenAILogo } from '../../library/logos';
 import { Database } from '../../main';

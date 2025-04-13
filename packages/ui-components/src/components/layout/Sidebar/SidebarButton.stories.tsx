@@ -8,7 +8,7 @@ const meta: Meta<typeof SidebarButton> = {
     parameters: {
         layout: 'padded',
     },
-    tags: ['autodocs'],
+
     argTypes: {
         isActive: {
             control: 'boolean',

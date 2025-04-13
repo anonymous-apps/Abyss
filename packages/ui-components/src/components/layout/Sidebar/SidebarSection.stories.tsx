@@ -7,7 +7,7 @@ const meta: Meta<typeof SidebarSection> = {
     parameters: {
         layout: 'padded',
     },
-    tags: ['autodocs'],
+
     argTypes: {
         title: {
             control: 'text',

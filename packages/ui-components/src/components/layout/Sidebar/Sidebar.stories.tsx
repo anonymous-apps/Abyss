@@ -10,7 +10,7 @@ const meta: Meta<typeof Sidebar> = {
     parameters: {
         layout: 'padded',
     },
-    tags: ['autodocs'],
+
     argTypes: {
         width: {
             control: { type: 'number' },

@@ -12,6 +12,7 @@ interface PageCrumbedProps {
     subtitle?: string;
     breadcrumbs?: Breadcrumb[];
 }
+
 export const PageCrumbed = ({ children, title, subtitle, breadcrumbs }: PageCrumbedProps) => {
     return (
         <div className="flex flex-row text-text-300 h-full w-full bg-background-300 overflow-y-auto">

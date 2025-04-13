@@ -2,9 +2,9 @@ import { IconOption } from '@abyss/ui-components';
 import { Box, DatabaseIcon, MessageCircle, Play, Settings } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { Database } from '../main';
-import { useTableRecordUserSettings } from '../state/database-connection';
-import { useSidebarFadeStore } from '../state/sidebar-fade';
+import { Database } from '../../main';
+import { useTableRecordUserSettings } from '../../state/database-connection';
+import { useSidebarFadeStore } from '../../state/sidebar-fade';
 export function MainPage() {
     const navigate = useNavigate();
 
