@@ -42,7 +42,7 @@ export function ModelProfileCreatePage() {
     return (
         <PageCrumbed title="Create Model Profile" breadcrumbs={breadcrumbs}>
             <IconSection title="Name" subtitle="The name for your model profile" icon={Box}>
-                <Input label="Name" value={name} onChange={e => setName(e.target.value)} />
+                <Input label="Name" value={name} onChange={setName} />
             </IconSection>
 
             <IconSection title="Provider" subtitle="Select the provider for your model connection" icon={Globe}>

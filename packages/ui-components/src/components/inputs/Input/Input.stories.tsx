@@ -20,7 +20,13 @@ const meta: Meta<typeof Input> = {
             control: 'select',
             options: ['text', 'password', 'email', 'number'],
         },
-        onChange: { action: 'changed' },
+        options: {
+            control: 'object',
+        },
+        onChange: {
+            action: 'changed',
+            description: 'Returns string value directly instead of event',
+        },
     },
 };
 
@@ -38,6 +44,7 @@ export const Default: Story = {
 export const WithLabel: Story = {
     args: {
         placeholder: 'Enter your username',
+        label: 'Username',
     },
 };
 
@@ -87,5 +94,50 @@ export const Email: Story = {
         type: 'email',
         placeholder: 'Enter your email',
         icon: Mail,
+    },
+};
+
+// Input with options
+export const WithOptions: Story = {
+    args: {
+        placeholder: 'Select a fruit or type your own',
+        label: 'Fruit',
+        options: [
+            { label: 'Apple', content: 'Apple' },
+            { label: 'Banana', content: 'Banana' },
+            { label: 'Orange', content: 'Orange' },
+            { label: 'Strawberry', content: 'Strawberry' },
+            { label: 'Pineapple', content: 'Pineapple' },
+        ],
+    },
+};
+
+// Input with options and icon
+export const WithOptionsAndIcon: Story = {
+    args: {
+        placeholder: 'Search a location',
+        label: 'Location',
+        icon: Search,
+        options: [
+            { label: 'New York', content: 'New York, NY' },
+            { label: 'Los Angeles', content: 'Los Angeles, CA' },
+            { label: 'Chicago', content: 'Chicago, IL' },
+            { label: 'San Francisco', content: 'San Francisco, CA' },
+        ],
+    },
+};
+
+// Disabled input with options
+export const DisabledWithOptions: Story = {
+    args: {
+        placeholder: 'Select a category',
+        label: 'Category',
+        isDisabled: true,
+        options: [
+            { label: 'Technology', content: 'Technology' },
+            { label: 'Science', content: 'Science' },
+            { label: 'Art', content: 'Art' },
+            { label: 'Sports', content: 'Sports' },
+        ],
     },
 };

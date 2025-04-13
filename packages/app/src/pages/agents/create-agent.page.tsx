@@ -32,16 +32,11 @@ export function CreateAgentPage() {
         >
             <IconSection title="Agent Information" subtitle="Configure your agent's basic information" icon={Bot}>
                 <div className="flex flex-col gap-4 max-w-2xl">
-                    <Input
-                        label="Name"
-                        value={name}
-                        onChange={e => setName(e.target.value)}
-                        placeholder="User facing name (not sent to agent)"
-                    />
+                    <Input label="Name" value={name} onChange={setName} placeholder="User facing name (not sent to agent)" />
                     <Input
                         label="Description"
                         value={description}
-                        onChange={e => setDescription(e.target.value)}
+                        onChange={setDescription}
                         placeholder="User facing description (not sent to agent)"
                     />
                 </div>
