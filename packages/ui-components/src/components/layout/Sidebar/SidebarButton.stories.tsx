@@ -3,7 +3,7 @@ import { FileText, Home } from 'lucide-react';
 import { SidebarButton } from './SidebarButton';
 
 const meta: Meta<typeof SidebarButton> = {
-    title: 'Components/SidebarButton',
+    title: 'Layout/SidebarButton',
     component: SidebarButton,
     parameters: {
         layout: 'padded',

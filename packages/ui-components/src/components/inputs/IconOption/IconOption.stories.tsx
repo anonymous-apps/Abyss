@@ -4,7 +4,7 @@ import IconOption from './IconOption';
 
 // Meta information for the component
 const meta: Meta<typeof IconOption> = {
-    title: 'Components/IconOption',
+    title: 'Inputs/IconOption',
     component: IconOption,
     parameters: {
         layout: 'centered',

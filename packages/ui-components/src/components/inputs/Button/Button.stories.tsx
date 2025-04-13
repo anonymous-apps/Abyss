@@ -4,7 +4,7 @@ import Button from './Button';
 
 // Meta information for the component
 const meta: Meta<typeof Button> = {
-    title: 'Components/Button',
+    title: 'Inputs/Button',
     component: Button,
     parameters: {
         layout: 'centered',

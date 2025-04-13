@@ -5,7 +5,7 @@ import { SidebarButton } from './SidebarButton';
 import { SidebarSection } from './SidebarSection';
 
 const meta: Meta<typeof Sidebar> = {
-    title: 'Components/Sidebar',
+    title: 'Layout/Sidebar',
     component: Sidebar,
     parameters: {
         layout: 'padded',
