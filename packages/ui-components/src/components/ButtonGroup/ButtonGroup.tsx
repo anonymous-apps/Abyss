@@ -9,16 +9,12 @@ export interface ButtonGroupProps {
      * Additional className for styling
      */
     className?: string;
-    /**
-     * Variant of button group
-     */
-    variant?: 'default' | 'primary-with-icons';
 }
 
 /**
  * ButtonGroup component for displaying a horizontal group of buttons
  */
-export const ButtonGroup: React.FC<ButtonGroupProps> = ({ buttons, className = '', variant = 'default' }) => {
+export const ButtonGroup: React.FC<ButtonGroupProps> = ({ buttons, className = '' }) => {
     return (
         <div className={`inline-flex ${className}`}>
             {buttons.map((button, index) => {
@@ -29,22 +25,15 @@ export const ButtonGroup: React.FC<ButtonGroupProps> = ({ buttons, className = '
 
                 // First button should only round left corners
                 if (index === 0) {
-                    additionalClass = 'rounded-r-none border-r border-r-primary-300';
+                    additionalClass = '!rounded-r-none border-r border-r-primary-300';
                 }
                 // Last button should only round right corners
                 else if (index === buttons.length - 1) {
-                    additionalClass = 'rounded-l-none';
+                    additionalClass = '!rounded-l-none';
                 }
                 // Middle buttons should have no rounded corners
                 else {
-                    additionalClass = 'rounded-none border-r border-r-primary-300';
-                }
-
-                // Apply variant-specific props
-                if (variant === 'primary-with-icons') {
-                    additionalProps.variant = 'primary';
-                    // If the button doesn't already have an icon, we could handle that here
-                    // but we'd need to know what icon to use
+                    additionalClass = '!rounded-none border-r border-r-primary-300';
                 }
 
                 return React.cloneElement(child, {

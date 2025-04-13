@@ -20,41 +20,77 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     isDisabled?: boolean;
 }
 
-export const Button: React.FC<ButtonProps> = ({
-    children,
-    variant = 'primary',
+export const Button: React.FC<ButtonProps> = ({ children, variant = 'primary', icon: Icon, className = '', ...props }) => {
+    // Check if button is icon-only
+    const isIconOnly = Icon && !children;
+
+    // Base Styles
+    const baseStyles = 'inline-flex items-center justify-center font-medium rounded-sm transition-all';
+    const paddingStyles = isIconOnly ? 'p-1' : 'px-3 py-1 text-sm';
+    const providedStyles = className;
+
+    if (variant === 'primary') {
+        return <PrimaryButton {...props} className={`${baseStyles} ${paddingStyles} ${providedStyles}`} children={children} icon={Icon} />;
+    }
+
+    if (variant === 'secondary') {
+        return (
+            <SecondaryButton {...props} className={`${baseStyles} ${paddingStyles} ${providedStyles}`} children={children} icon={Icon} />
+        );
+    }
+
+    throw new Error('Invalid button variant');
+};
+
+const PrimaryButton: React.FC<ButtonProps> = ({
     icon: Icon,
     isLoading = false,
     isDisabled = false,
     className = '',
+    children,
     ...props
 }) => {
-    // Check if button is icon-only
-    const isIconOnly = Icon && !children;
-
-    // Base button styles
-    const baseStyles = 'inline-flex items-center justify-center font-medium rounded-md transition-all';
-
-    // Padding styles based on whether the button is icon-only
-    const paddingStyles = isIconOnly ? 'p-1' : 'px-3 py-1 text-sm';
-
-    // Variant styles
-    const variantStyles = {
-        primary: 'bg-primary-500 text-text-900 hover:bg-primary-600 hover:shadow-lg',
-        secondary: 'text-primary-500 hover:border hover:border-primary-500 hover:bg-primary-500/5',
-    };
-
-    // Disabled styles
-    const disabledStyles = isDisabled ? 'opacity-50 cursor-not-allowed' : '';
-
     return (
         <button
-            className={`${baseStyles} ${paddingStyles} ${variantStyles[variant]} ${disabledStyles} ${className}`}
-            disabled={isDisabled || isLoading}
             {...props}
+            className={`
+                ${className}
+                ${
+                    !isLoading && !isDisabled
+                        ? 'bg-primary-500 hover:bg-primary-600 hover:shadow-lg'
+                        : 'cursor-not-allowed bg-background-500'
+                }
+                text-text-900
+            `}
+            disabled={isDisabled || isLoading}
         >
-            {isLoading && <Loader2 className={`${isIconOnly ? 'h-5 w-5' : 'mr-2 h-4 w-4'} animate-spin`} />}
-            {!isLoading && Icon && <Icon className={`${isIconOnly ? 'h-5 w-5' : 'mr-2 h-4 w-4'}`} />}
+            {Icon && <Icon className={`${!children ? 'h-5 w-5' : 'mr-2 h-4 w-4'}`} />}
+            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {children}
+        </button>
+    );
+};
+
+const SecondaryButton: React.FC<ButtonProps> = ({
+    icon: Icon,
+    isLoading = false,
+    isDisabled = false,
+    className = '',
+    children,
+    ...props
+}) => {
+    return (
+        <button
+            {...props}
+            className={`
+                ${className}
+                ${!isDisabled ? 'hover:bg-primary-100' : ''}
+                text-primary-500
+            `}
+            disabled={isDisabled || isLoading}
+        >
+            {Icon && <Icon className={`${!children ? 'h-5 w-5' : 'mr-2 h-4 w-4'}`} />}
+            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {children}
         </button>
     );

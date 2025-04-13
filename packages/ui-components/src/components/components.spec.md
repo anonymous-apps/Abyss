@@ -1,6 +1,6 @@
 # UI Components in this package.
 
-This is a high level spec to identify what components are and how they operate
+This is a high level spec to identify what components are and how they operate.
 
 ## Button
 
