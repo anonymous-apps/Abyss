@@ -54,8 +54,8 @@ export function MainPage() {
             </div>
 
             <div
-                className={`p-8 overflow-auto flex-1 flex items-center justify-center transition-all duration-[1s] ${
-                    sidebarWidth === '150px' ? 'w-full' : 'w-[calc(100vw-150px)] bg-background-300 '
+                className={`p-8 overflow-auto flex-1 flex items-center justify-center transition-all duration-[1s] bg-background-300 ${
+                    sidebarWidth === '150px' ? 'w-full' : 'w-[calc(100vw-150px)]'
                 } `}
                 style={{ paddingLeft: `calc(100vw - calc(60vw + ${sidebarWidth}) + 20px)` }}
             >

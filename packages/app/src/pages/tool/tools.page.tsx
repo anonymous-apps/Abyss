@@ -1,5 +1,5 @@
-import { Button, IconSection, PageCrumbed } from '@abyss/ui-components';
-import { Bot, Box, CircleHelp, Plus } from 'lucide-react';
+import { IconSection, PageCrumbed } from '@abyss/ui-components';
+import { Bot, Box, CircleHelp } from 'lucide-react';
 import React from 'react';
 import { Tile, TileGrid } from '../../library/layout/tile-grid';
 import { useToolsPage } from './tools.hook';
@@ -7,13 +7,15 @@ import { useToolsPage } from './tools.hook';
 export function ToolsPage() {
     const { tools, navigateToCreate, navigate } = useToolsPage();
 
-    const content = !tools.loading && tools.data && (
-        <>
-            <IconSection
-                title="Defined Tool Connections"
-                icon={Box}
-                action={<Button variant="secondary" icon={Plus} onClick={navigateToCreate} tooltip="Create" />}
-            >
+    return (
+        <PageCrumbed
+            title="Defined Tools"
+            breadcrumbs={[
+                { name: 'Home', onClick: () => navigate('/') },
+                { name: 'Tools', onClick: () => navigate('/tools') },
+            ]}
+        >
+            <IconSection title="Defined Tool Connections" icon={Box}>
                 {tools.data && tools.data.length > 0 ? (
                     <TileGrid>
                         {tools.data.map(tool => (
@@ -31,18 +33,6 @@ export function ToolsPage() {
                     <div className="text-text-700 text-sm mb-4">No defined tools</div>
                 )}
             </IconSection>
-        </>
-    );
-
-    return (
-        <PageCrumbed
-            title="Defined Tools"
-            breadcrumbs={[
-                { name: 'Home', onClick: () => navigate('/') },
-                { name: 'Tools', onClick: () => navigate('/tools') },
-            ]}
-        >
-            {content}
         </PageCrumbed>
     );
 }
