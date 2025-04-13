@@ -26,6 +26,7 @@ export function useChatMain() {
         const activeStream = threads.data?.find(t => t.id === entry.threadId)?.lockingId?.length;
 
         return {
+            id: entry.id,
             title: entry.name,
             icon: getIconForSourceType(entry.references?.sourceId || ''),
             url: `/chats/id/${entry.id}`,
@@ -37,5 +38,6 @@ export function useChatMain() {
     return {
         sidebarItems,
         handleCreateChat,
+        handleDeleteChat,
     };
 }

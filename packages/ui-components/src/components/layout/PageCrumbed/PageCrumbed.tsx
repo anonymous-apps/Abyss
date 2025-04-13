@@ -68,7 +68,7 @@ export const PageCrumbed: React.FC<PageCrumbedProps> = ({ children, title, subti
                         ))}
                     </div>
                 )}
-                <div className="border-b border-background-500 mb-8"></div>
+                <div className="border-b border-background-500 mb-2"></div>
                 {loading ? (
                     <div className="flex justify-center items-center h-40">
                         <Loader2 className="h-4 w-4 animate-spin text-primary-500" />

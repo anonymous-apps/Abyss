@@ -8,7 +8,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ children, title, titleAction, 
     return (
         <div className={`flex flex-col bg-background-100 h-full ${className}`} style={{ width: `${width}px` }}>
             {title && (
-                <div className="flex items-center justify-between p-3 border-b border-background-300">
+                <div className="flex items-center justify-between p-3 border-b border-background-500">
                     <h2 className="font-medium">{title}</h2>
                     {titleAction && <div className="ml-2">{titleAction}</div>}
                 </div>

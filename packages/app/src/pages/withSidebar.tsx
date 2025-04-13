@@ -1,13 +1,54 @@
+import { Sidebar as AbyssSidebar, SidebarButton as AbyssSidebarButton, SidebarSection as AbyssSidebarSection } from '@abyss/ui-components';
+import { Bot, Box, ChartLine, DatabaseIcon, MessageSquare, Play, SettingsIcon } from 'lucide-react';
 import React from 'react';
-import { useOutlet } from 'react-router';
-import { Sidebar } from '../library/layout/sidebar';
+import { useLocation, useNavigate, useOutlet } from 'react-router';
+import { useSidebarFadeStore } from '../state/sidebar-fade';
 
-export function WithSidebar() {
+export function AppSidebar() {
+    const location = useLocation();
+    const nav = useNavigate();
+
+    const navProps = (path: string) => ({
+        onClick: () => nav(path),
+        isActive: location.pathname.startsWith(path),
+    });
+
+    const { sidebarFadeable, setSidebarFadeable } = useSidebarFadeStore();
+    const [opacity, setOpacity] = React.useState(sidebarFadeable ? 0 : 1);
+
+    React.useEffect(() => {
+        const timer = setTimeout(() => {
+            setOpacity(1);
+            setSidebarFadeable(false);
+        }, 100);
+
+        return () => clearTimeout(timer);
+    }, []);
+
+    return (
+        <div className="transition-opacity duration-[1.5s]" style={{ opacity }}>
+            <AbyssSidebar className="pt-10">
+                <AbyssSidebarSection title="Activity" />
+                <AbyssSidebarButton label="Chats" icon={MessageSquare} {...navProps('/chats')} />
+                <AbyssSidebarSection title="Configuration" />
+                <AbyssSidebarButton label="Models" icon={Box} {...navProps('/models')} />
+                <AbyssSidebarButton label="Agents" icon={Bot} {...navProps('/agents')} />
+                <AbyssSidebarButton label="Tools" icon={Play} {...navProps('/tools')} />
+                <AbyssSidebarButton label="Settings" icon={SettingsIcon} {...navProps('/settings')} />
+                <AbyssSidebarSection title="Settings" />
+                <AbyssSidebarButton label="Storage" icon={DatabaseIcon} {...navProps('/database')} />
+                <AbyssSidebarButton label="Metrics" icon={ChartLine} {...navProps('/metrics')} />
+            </AbyssSidebar>
+        </div>
+    );
+}
+
+export function WithAppSidebar() {
     const outlet = useOutlet();
 
     return (
         <div className="flex flex-row max-h-[100vh]">
-            <Sidebar />
+            <AppSidebar />
             <div className="w-full h-[100vh] overflow-y-auto">{outlet}</div>
         </div>
     );

@@ -19,7 +19,7 @@ import { ModelProfileViewPage } from './pages/models/view.page';
 import { SettingsPage } from './pages/settings/settings.page';
 import { ToolsPage } from './pages/tool/tools.page';
 import { ToolViewPage } from './pages/tool/view.page';
-import { WithSidebar } from './pages/withSidebar';
+import { WithAppSidebar } from './pages/withSidebar';
 import { useTheme } from './state/theme-state';
 
 export function App() {
@@ -32,7 +32,7 @@ export function App() {
                 <HeaderBar />
                 <Routes>
                     <Route path="/" element={<MainPage />} />
-                    <Route path="/" element={<WithSidebar />}>
+                    <Route path="/" element={<WithAppSidebar />}>
                         <Route path="/settings" element={<SettingsPage />} />
                         <Route path="/models" element={<ModelProfileMainPage />} />
                         <Route path="/models/create" element={<ModelProfileCreatePage />} />
