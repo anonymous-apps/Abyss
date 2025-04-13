@@ -1,11 +1,8 @@
+import { Button, Checkbox, IconSection, PageCrumbed } from '@abyss/ui-components';
 import { Bot, Box, Play, Trash2 } from 'lucide-react';
 import React from 'react';
-import { DestructiveButton } from '../../library/input/button';
-import { Checkbox } from '../../library/input/checkbox';
 import { EditableLabelValue } from '../../library/input/label-value';
 import { Select } from '../../library/input/select';
-import { IconSection } from '../../library/layout/icon-section';
-import { PageCrumbed } from '../../library/layout/page-crumbed';
 import { useViewAgent } from './view-agent.hook';
 
 export function ViewAgentPage() {
@@ -25,12 +22,12 @@ export function ViewAgentPage() {
     } = useViewAgent();
 
     return (
-        <PageCrumbed title={`Agent: ${agent.data?.name || 'Loading...'}`} breadcrumbs={breadcrumbs}>
+        <PageCrumbed title={`Agent: ${agent.data?.name || ''}`} breadcrumbs={breadcrumbs}>
             <IconSection title="Agent Information" icon={Bot}>
                 <EditableLabelValue
                     data={{
-                        name: agent.data?.name || 'Loading...',
-                        description: agent.data?.description || 'Loading...',
+                        name: agent.data?.name || '',
+                        description: agent.data?.description || '',
                     }}
                     editableKeys={['name', 'description']}
                     onChange={handleUpdateAgent}
@@ -84,7 +81,9 @@ export function ViewAgentPage() {
             </IconSection>
 
             <IconSection title="Danger Zone" icon={Trash2}>
-                <DestructiveButton onClick={handleDelete}>Delete Agent</DestructiveButton>
+                <Button icon={Trash2} onClick={handleDelete}>
+                    Delete Agent
+                </Button>
             </IconSection>
         </PageCrumbed>
     );

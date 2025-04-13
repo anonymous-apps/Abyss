@@ -83,5 +83,6 @@ export function useCreateAgent() {
         handleChangeToolPermission,
         handleCreateAgent,
         isFormValid,
+        navigate,
     };
 }

@@ -1,11 +1,7 @@
+import { Button, Checkbox, IconSection, Input, PageCrumbed } from '@abyss/ui-components';
 import { Bot, Box, Play } from 'lucide-react';
 import React from 'react';
-import { Button } from '../../library/input/button';
-import { Checkbox } from '../../library/input/checkbox';
-import { Input } from '../../library/input/input';
 import { Select } from '../../library/input/select';
-import { IconSection } from '../../library/layout/icon-section';
-import { PageCrumbed } from '../../library/layout/page-crumbed';
 import { useCreateAgent } from './create-agent.hook';
 
 export function CreateAgentPage() {
@@ -23,24 +19,30 @@ export function CreateAgentPage() {
         handleChangeToolPermission,
         handleCreateAgent,
         isFormValid,
+        navigate,
     } = useCreateAgent();
 
     return (
         <PageCrumbed
             title="Create Agent"
             breadcrumbs={[
-                { name: 'Home', url: '/' },
-                { name: 'Agents', url: '/agents' },
-                { name: 'Create', url: '/agents/create' },
+                { name: 'Home', onClick: () => navigate('/') },
+                { name: 'Agents', onClick: () => navigate('/agents') },
+                { name: 'Create', onClick: () => navigate('/agents/create') },
             ]}
         >
             <IconSection title="Agent Information" subtitle="Configure your agent's basic information" icon={Bot}>
                 <div className="flex flex-col gap-4 max-w-2xl">
-                    <Input label="Name" value={name} onChange={setName} placeholder="User facing name (not sent to agent)" />
+                    <Input
+                        label="Name"
+                        value={name}
+                        onChange={e => setName(e.target.value)}
+                        placeholder="User facing name (not sent to agent)"
+                    />
                     <Input
                         label="Description"
                         value={description}
-                        onChange={setDescription}
+                        onChange={e => setDescription(e.target.value)}
                         placeholder="User facing description (not sent to agent)"
                     />
                 </div>
@@ -76,13 +78,13 @@ export function CreateAgentPage() {
                     <div>Loading tools...</div>
                 ) : tools.data && tools.data.length > 0 ? (
                     tools.data.map(tool => (
-                        <div key={tool.id} className="flex flex-row gap-2 p-4 rounded-md justify-between w-full">
+                        <div key={tool.id} className="flex flex-row gap-10 py-4 rounded-md justify-between w-full">
                             <Checkbox
-                                id={`tool-${tool.id}`}
                                 checked={selectedTools[tool.id]?.selected || false}
-                                onChange={checked => handleToggleTool(tool.id)}
+                                onChange={() => handleToggleTool(tool.id)}
                                 label={tool.name}
-                                description={tool.description}
+                                description={tool.description.substring(0, 100)}
+                                className="capitalize"
                             />
                             <Select
                                 value={selectedTools[tool.id]?.permission}
@@ -100,8 +102,12 @@ export function CreateAgentPage() {
                 )}
             </IconSection>
 
-            <div className="flex justify-start mt-6">
-                <Button onClick={handleCreateAgent} disabled={!isFormValid} className={!isFormValid ? 'opacity-50 cursor-not-allowed' : ''}>
+            <div className="flex justify-end mt-6">
+                <Button
+                    onClick={handleCreateAgent}
+                    isDisabled={!isFormValid}
+                    className={!isFormValid ? 'opacity-50 cursor-not-allowed' : ''}
+                >
                     Create Agent
                 </Button>
             </div>

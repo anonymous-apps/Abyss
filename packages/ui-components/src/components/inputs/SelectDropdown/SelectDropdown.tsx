@@ -51,7 +51,7 @@ export const SelectDropdown: React.FC<SelectDropdownProps> = ({ options, selecte
                     ))}
                     {options.length === 0 && <option disabled>No options available</option>}
                 </select>
-                <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                <div className="absolute inset-y-0 right-0 flex items-center justify-center px-2 pointer-events-none">
                     <ChevronDown className="h-4 w-4" />
                 </div>
             </div>

@@ -106,9 +106,9 @@ export function useViewAgent() {
     };
 
     const breadcrumbs = [
-        { name: 'Home', url: '/' },
-        { name: 'Agents', url: '/agents' },
-        { name: agent.data?.name || id || '', url: `/agents/id/${id}` },
+        { name: 'Home', onClick: () => navigate('/') },
+        { name: 'Agents', onClick: () => navigate('/agents') },
+        { name: agent.data?.name || id || '', onClick: () => navigate(`/agents/id/${id}`) },
     ];
 
     return {
@@ -124,5 +124,6 @@ export function useViewAgent() {
         handleToggleTool,
         handleChangeToolPermission,
         handleDelete,
+        navigate,
     };
 }

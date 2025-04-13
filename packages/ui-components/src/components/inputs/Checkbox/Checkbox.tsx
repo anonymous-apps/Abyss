@@ -48,20 +48,22 @@ export const Checkbox: React.FC<CheckboxProps> = ({
                         type="checkbox"
                         id={checkboxId}
                         checked={checked}
-                        onChange={e => {
-                            if (onChange) {
-                                onChange(e);
-                            }
-                        }}
+                        onChange={onChange}
                         disabled={isDisabled}
                         className={`
-                            h-4 w-4 rounded 
-                            focus:ring-2 focus:ring-primary-500 
-                            bg-background-transparent 
-                            checked:bg-primary-500 
-                            border border-background-300
-                            ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
-                        `}
+                                w-4 h-4 rounded appearance-none border border-background-300
+                                ${checked ? 'bg-primary-500 border-primary-500' : 'bg-background-100'}
+                                ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+                                relative
+                            `}
+                        style={{
+                            backgroundImage: checked
+                                ? "url(\"data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e\")"
+                                : '',
+                            backgroundSize: '100% 100%',
+                            backgroundPosition: 'center',
+                            backgroundRepeat: 'no-repeat',
+                        }}
                         {...props}
                     />
                     {label && (
@@ -73,7 +75,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
                         </label>
                     )}
                 </div>
-                {description && <p className="text-sm text-text-700 ml-8 opacity-70">{description}</p>}
+                {description && <p className="text-sm text-text-500 ml-8 opacity-70">{description}</p>}
             </div>
             {tooltip && showTooltip && (
                 <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-2 py-1 bg-primary-300 text-text-900 text-xs rounded shadow-lg whitespace-nowrap z-10">

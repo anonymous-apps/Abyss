@@ -10,9 +10,13 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
      * Is the input disabled
      */
     isDisabled?: boolean;
+    /**
+     * Optional label to display above the input
+     */
+    label?: string;
 }
 
-export const Input: React.FC<InputProps> = ({ icon: Icon, isDisabled = false, className = '', placeholder, ...props }) => {
+export const Input: React.FC<InputProps> = ({ icon: Icon, isDisabled = false, className = '', placeholder, label, ...props }) => {
     const inputId = props.id || `input-${Math.random().toString(36).substring(2, 9)}`;
 
     // Base styles
@@ -28,6 +32,11 @@ export const Input: React.FC<InputProps> = ({ icon: Icon, isDisabled = false, cl
                 <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-text-400">
                     <Icon className="h-4 w-4" />
                 </div>
+            )}
+            {label && (
+                <label htmlFor={inputId} className="text-text-500 text-sm mb-1">
+                    {label}
+                </label>
             )}
             <input
                 id={inputId}
