@@ -74,7 +74,7 @@ const PrimaryButton: React.FC<ButtonProps> = ({
                 onMouseEnter={() => tooltip && setShowTooltip(true)}
                 onMouseLeave={() => tooltip && setShowTooltip(false)}
             >
-                {Icon && <Icon className={`${!children ? 'h-5 w-5' : 'mr-2 h-4 w-4'}`} />}
+                {Icon && <Icon className={`${!children ? 'h-4 w-4' : 'mr-2 h-4 w-4'}`} />}
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {children}
             </button>
@@ -112,7 +112,7 @@ const SecondaryButton: React.FC<ButtonProps> = ({
                 onMouseEnter={() => tooltip && setShowTooltip(true)}
                 onMouseLeave={() => tooltip && setShowTooltip(false)}
             >
-                {Icon && <Icon className={`${!children ? 'h-5 w-5' : 'mr-2 h-4 w-4'}`} />}
+                {Icon && <Icon className={`${!children ? 'h-4 w-4' : 'mr-2 h-4 w-4'}`} />}
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {children}
             </button>

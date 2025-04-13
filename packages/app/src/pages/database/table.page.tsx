@@ -1,15 +1,13 @@
+import { Button, IconSection, PageCrumbed } from '@abyss/ui-components';
 import { Table, Trash } from 'lucide-react';
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { CustomTable } from '../../library/content/database-table';
-import { GhostIconButton } from '../../library/input/button';
-import { IconSection } from '../../library/layout/icon-section';
-import { PageCrumbed } from '../../library/layout/page-crumbed';
-import { WithSidebar } from '../../library/layout/sidebar';
 import { Database } from '../../main';
 import { useDatabaseTableSubscription } from '../../state/database-connection';
 
 export function ViewTablePage() {
+    const navigate = useNavigate();
     const { id } = useParams();
 
     const scanTable = useDatabaseTableSubscription(id as string, async database =>
@@ -17,9 +15,9 @@ export function ViewTablePage() {
     );
 
     const breadcrumbs = [
-        { name: 'Home', url: '/' },
-        { name: 'Database', url: '/database' },
-        { name: id!, url: `/database/id/${id}` },
+        { name: 'Home', onClick: () => navigate('/') },
+        { name: 'Database', onClick: () => navigate('/database') },
+        { name: id!, onClick: () => navigate(`/database/id/${id}`) },
     ];
 
     const onPurgeTable = () => {
@@ -31,7 +29,7 @@ export function ViewTablePage() {
             <IconSection
                 title={`SQLite Table: ${id}`}
                 icon={Table}
-                action={<GhostIconButton icon={Trash} onClick={onPurgeTable} label="Purge Table" />}
+                action={<Button variant="secondary" icon={Trash} onClick={onPurgeTable} />}
             >
                 <CustomTable table={id as string} records={scanTable.data as Record<string, any>[]} />
             </IconSection>
@@ -39,10 +37,8 @@ export function ViewTablePage() {
     );
 
     return (
-        <WithSidebar>
-            <PageCrumbed title={`SQLite Table: ${id}`} breadcrumbs={breadcrumbs}>
-                {content}
-            </PageCrumbed>
-        </WithSidebar>
+        <PageCrumbed title={`SQLite Table: ${id}`} breadcrumbs={breadcrumbs}>
+            {content}
+        </PageCrumbed>
     );
 }
