@@ -8,8 +8,8 @@ import { MessageRecord, MessageText, MessageToolCall } from '../../../server/pre
 import { Database } from '../../main';
 import { useDatabaseRecordSubscription, useDatabaseTableSubscription } from '../../state/database-connection';
 import { GhostIconButton } from '../input/button';
+import { ReferencedObject } from '../references';
 import { MonospaceText } from './monospace-text';
-import { ReferencedObject } from './record-references';
 
 interface ChatMessageSectionProps {
     message: MessageRecord;

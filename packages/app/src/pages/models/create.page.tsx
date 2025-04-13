@@ -10,17 +10,17 @@ import { useModelProfileCreate } from './create.hook';
 const Providers = [
     {
         name: 'OpenAI',
-        icon: <OpenAILogo className="w-6 h-6" />,
+        icon: <OpenAILogo logo="OpenAI" className="w-6 h-6" />,
         component: OpenAIConfig,
     },
     {
         name: 'Gemini',
-        icon: <GeminiLogo className="w-6 h-6" />,
+        icon: <GeminiLogo logo="Gemini" className="w-6 h-6" />,
         component: GeminiConfig,
     },
     {
         name: 'Anthropic',
-        icon: <AnthropicLogo className="w-6 h-6" />,
+        icon: <AnthropicLogo logo="Anthropic" className="w-6 h-6" />,
         component: AnthropicConfig,
     },
 ];
@@ -36,18 +36,11 @@ export function ModelProfileCreatePage() {
         data,
         setData,
         handleCreateConnection,
-        navigate,
+        breadcrumbs,
     } = useModelProfileCreate();
 
     return (
-        <PageCrumbed
-            title="Create Model Profile"
-            breadcrumbs={[
-                { name: 'Home', onClick: () => navigate('/') },
-                { name: 'Models', onClick: () => navigate('/models') },
-                { name: 'Create', onClick: () => navigate('/models/create') },
-            ]}
-        >
+        <PageCrumbed title="Create Model Profile" breadcrumbs={breadcrumbs}>
             <IconSection title="Name" subtitle="The name for your model profile" icon={Box}>
                 <Input label="Name" value={name} onChange={e => setName(e.target.value)} />
             </IconSection>

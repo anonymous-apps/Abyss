@@ -10,9 +10,27 @@ export function useToolsPage() {
 
     const navigateToCreate = () => navigate('/tools/create');
 
+    const navigateToHome = () => {
+        navigate('/');
+    };
+
+    const navigateToTools = () => {
+        navigate('/tools');
+    };
+
+    const navigateToTool = (id: string) => {
+        navigate(`/tools/id/${id}`);
+    };
+
+    const breadcrumbs = [
+        { name: 'Home', onClick: navigateToHome },
+        { name: 'Tools', onClick: navigateToTools },
+    ];
+
     return {
         tools,
         navigateToCreate,
-        navigate,
+        breadcrumbs,
+        navigateToTool,
     };
 }

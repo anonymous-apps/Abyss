@@ -45,6 +45,20 @@ export function useChatView() {
         navigate(`/models/id/${chat.model?.id}`);
     };
 
+    const navigateToHome = () => {
+        navigate('/');
+    };
+
+    const navigateToChats = () => {
+        navigate('/chats');
+    };
+
+    const breadcrumbs = [
+        { name: 'Home', onClick: navigateToHome },
+        { name: 'Chats', onClick: navigateToChats },
+        { name: chat.chat?.name || 'Chat', onClick: () => {} },
+    ];
+
     return {
         chat,
         message,
@@ -54,5 +68,8 @@ export function useChatView() {
         onSendMessage,
         navigateToModel,
         isTyping: !!chat.thread?.lockingId?.length,
+        breadcrumbs,
+        navigateToHome,
+        navigateToChats,
     };
 }

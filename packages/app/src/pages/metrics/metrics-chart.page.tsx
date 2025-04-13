@@ -13,18 +13,14 @@ export function MetricsChartPage() {
         processedData,
         timeBucketOptions,
         aggregationMethods,
-        navigate,
+        breadcrumbs,
     } = useMetricsChart();
 
     return (
         <PageCrumbed
             title={`Metric: ${metricName || 'Loading...'}`}
             subtitle="Visualization of metric data over time"
-            breadcrumbs={[
-                { name: 'Home', onClick: () => navigate('/') },
-                { name: 'Metrics', onClick: () => navigate('/metrics') },
-                { name: metricName!, onClick: () => navigate(`/metrics/graph/${metricName}`) },
-            ]}
+            breadcrumbs={breadcrumbs}
         >
             <IconSection title="Metric Chart" icon={ChartLine} subtitle="Visualization of metric data over time">
                 <div className="mb-4 flex flex-wrap gap-4 justify-between">

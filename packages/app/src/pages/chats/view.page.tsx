@@ -1,22 +1,19 @@
-import { Button, InputArea } from '@abyss/ui-components';
+import { Button, InputArea, PageCrumbed } from '@abyss/ui-components';
 import { BotIcon, Box } from 'lucide-react';
 import React from 'react';
 import { ChatMessageSection } from '../../library/content/chat-section';
-import { getIconForSourceType } from '../../library/content/record-references';
-import { PageHeader } from '../../library/layout/page-header';
+import { getIconForSourceType } from '../../library/references';
 import { useChatView } from './view.hook';
 
 export function ChatViewPage() {
-    const { chat, message, setMessage, handleKeyPress, onAskAiToRespond, onSendMessage, navigateToModel, isTyping } = useChatView();
+    const { chat, message, setMessage, handleKeyPress, onAskAiToRespond, onSendMessage, navigateToModel, isTyping, breadcrumbs } =
+        useChatView();
 
     const headerReference = <Button variant="secondary" onClick={navigateToModel} icon={Box} tooltip="View model profile" />;
+    const icon = React.createElement(getIconForSourceType(chat.chat?.references?.sourceId || ''));
 
     return (
-        <PageHeader
-            title={chat.chat?.name || 'Loading...'}
-            icon={getIconForSourceType(chat.chat?.references?.sourceId || '')}
-            action={headerReference}
-        >
+        <PageCrumbed title={chat.chat?.name || 'Loading...'} icon={icon} actions={headerReference} breadcrumbs={breadcrumbs}>
             {chat.messages?.map((m, index) => (
                 <ChatMessageSection
                     message={m}
@@ -47,6 +44,6 @@ export function ChatViewPage() {
                     </div>
                 </>
             )}
-        </PageHeader>
+        </PageCrumbed>
     );
 }

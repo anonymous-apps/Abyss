@@ -9,9 +9,29 @@ export function useModelProfileMain() {
         navigate('/models/create');
     };
 
+    const navigateToHome = () => {
+        navigate('/');
+    };
+
+    const navigateToModels = () => {
+        navigate('/models');
+    };
+
+    const navigateToModelDetail = (modelId: string) => {
+        navigate(`/models/id/${modelId}`);
+    };
+
+    const breadcrumbs = [
+        { name: 'Home', onClick: navigateToHome },
+        { name: 'Models', onClick: navigateToModels },
+    ];
+
     return {
         modelProfiles,
         handleCreateNew,
-        navigate,
+        breadcrumbs,
+        navigateToHome,
+        navigateToModels,
+        navigateToModelDetail,
     };
 }

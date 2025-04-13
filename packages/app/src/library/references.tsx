@@ -1,6 +1,6 @@
 import { Bell, Bot, Box, Hammer, LucideIcon, MessageCircleQuestion, User } from 'lucide-react';
 import React from 'react';
-import { useDatabaseTableSubscription } from '../../state/database-connection';
+import { useDatabaseTableSubscription } from '../state/database-connection';
 
 export function getIconForSourceType(source: string): LucideIcon {
     switch (source.toLowerCase().split('::')[0]) {

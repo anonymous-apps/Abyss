@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { getIconForSourceType } from '../../library/content/record-references';
+import { getIconForSourceType } from '../../library/references';
 import { Database } from '../../main';
 import { useScanTableChat, useScanTableMessageThread } from '../../state/database-connection';
 

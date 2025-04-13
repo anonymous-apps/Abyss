@@ -1,19 +1,14 @@
 import { IconSection, PageCrumbed, Tile, TileGrid } from '@abyss/ui-components';
-import { Bot, Box, CircleHelp } from 'lucide-react';
+import { Box } from 'lucide-react';
 import React from 'react';
+import { ToolIcon } from '../../library/icons';
 import { useToolsPage } from './tools.hook';
 
 export function ToolsPage() {
-    const { tools, navigateToCreate, navigate } = useToolsPage();
+    const { tools, navigateToCreate, navigateToTool, breadcrumbs } = useToolsPage();
 
     return (
-        <PageCrumbed
-            title="Defined Tools"
-            breadcrumbs={[
-                { name: 'Home', onClick: () => navigate('/') },
-                { name: 'Tools', onClick: () => navigate('/tools') },
-            ]}
-        >
+        <PageCrumbed title="Defined Tool Connections" breadcrumbs={breadcrumbs}>
             <IconSection title="Defined Tool Connections" icon={Box}>
                 {tools.data && tools.data.length > 0 ? (
                     <TileGrid>
@@ -21,8 +16,8 @@ export function ToolsPage() {
                             <Tile
                                 key={tool.id}
                                 title={tool.name || 'Untitled'}
-                                onClick={() => navigate(`/tools/id/${tool.id}`)}
-                                icon={<ToolIconForType type={tool.type} />}
+                                onClick={() => navigateToTool(tool.id)}
+                                icon={<ToolIcon type={tool.type} />}
                             >
                                 {tool.description || 'No description'}
                             </Tile>
@@ -34,15 +29,4 @@ export function ToolsPage() {
             </IconSection>
         </PageCrumbed>
     );
-}
-
-export function ToolIconForType({ type }: { type: string }) {
-    switch (type) {
-        case 'BUILD-NODE-TOOL':
-            return <Bot className="w-4 h-4" />;
-        case 'NodeJS':
-            return <img src="/nodejs.png" alt="Node.js Tool" className="w-4 h-4" />;
-        default:
-            return <CircleHelp className="w-4 h-4" />;
-    }
 }

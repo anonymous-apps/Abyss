@@ -114,6 +114,26 @@ export function useMetricsChart() {
     // Fetch metrics data
     const metrics = useDatabaseTableSubscription('Metric', async database => database.table.metric.queryMetrics(metricName || ''));
 
+    // Navigation functions
+    const navigateToHome = () => {
+        navigate('/');
+    };
+
+    const navigateToMetrics = () => {
+        navigate('/metrics');
+    };
+
+    const navigateToMetricChart = () => {
+        navigate(`/metrics/graph/${metricName}`);
+    };
+
+    // Define breadcrumbs
+    const breadcrumbs = [
+        { name: 'Home', onClick: navigateToHome },
+        { name: 'Metrics', onClick: navigateToMetrics },
+        { name: metricName!, onClick: navigateToMetricChart },
+    ];
+
     // Process data for the chart using useMemo
     const processedData = useMemo(() => {
         if (!metrics.data) return { chartData: [], bucketKeys: [] };
@@ -211,6 +231,9 @@ export function useMetricsChart() {
         processedData,
         timeBucketOptions,
         aggregationMethods,
-        navigate,
+        breadcrumbs,
+        navigateToHome,
+        navigateToMetrics,
+        navigateToMetricChart,
     };
 }

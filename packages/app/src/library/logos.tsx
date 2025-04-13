@@ -32,6 +32,11 @@ export function GeminiLogo({ className, size = 24 }: LogoProps) {
     return <img src={getLogoPath('gemini.svg')} alt="Gemini Logo" className={className} width={size} height={size} />;
 }
 
+// Nodejs Logo Component
+export function NodejsLogo({ className, size = 24 }: LogoProps) {
+    return <img src={getLogoPath('nodejs.png')} alt="Node.js Logo" className={className} width={size} height={size} />;
+}
+
 // Logo Component
 export function Logo({ className, size = 24, logo }: LogoProps) {
     switch (logo.toLowerCase()) {
@@ -43,6 +48,8 @@ export function Logo({ className, size = 24, logo }: LogoProps) {
             return <GeminiLogo className={className} size={size} logo={logo} />;
         case 'abyss':
             return <AbyssLogo className={className} size={size} logo={logo} />;
+        case 'nodejs':
+            return <NodejsLogo className={className} size={size} logo={logo} />;
         default:
             console.error(`Unknown logo: ${logo}`);
             return (

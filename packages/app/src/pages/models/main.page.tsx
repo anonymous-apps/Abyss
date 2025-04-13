@@ -6,16 +6,10 @@ import { Logo } from '../../library/logos';
 import { useModelProfileMain } from './main.hook';
 
 export function ModelProfileMainPage() {
-    const { modelProfiles, handleCreateNew, navigate } = useModelProfileMain();
+    const { modelProfiles, handleCreateNew, breadcrumbs, navigateToModelDetail } = useModelProfileMain();
 
     return (
-        <PageCrumbed
-            title="Connected Models"
-            breadcrumbs={[
-                { name: 'Home', onClick: () => navigate('/') },
-                { name: 'Models', onClick: () => navigate('/models') },
-            ]}
-        >
+        <PageCrumbed title="Connected Models" breadcrumbs={breadcrumbs}>
             <IconSection
                 title="Connected Models"
                 icon={Box}
@@ -27,7 +21,7 @@ export function ModelProfileMainPage() {
                             <Tile
                                 key={model.id}
                                 title={model.name || 'Untitled'}
-                                onClick={() => navigate(`/models/id/${model.id}`)}
+                                onClick={() => navigateToModelDetail(model.id)}
                                 icon={<Box className="w-4 h-4" />}
                                 footer={<Logo logo={model.provider} className="w-6 h-6" />}
                             >

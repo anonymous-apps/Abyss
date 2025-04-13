@@ -21,6 +21,24 @@ export function useModelProfileCreate() {
         navigate('/models');
     };
 
+    const navigateToHome = () => {
+        navigate('/');
+    };
+
+    const navigateToModels = () => {
+        navigate('/models');
+    };
+
+    const navigateToCreate = () => {
+        navigate('/models/create');
+    };
+
+    const breadcrumbs = [
+        { name: 'Home', onClick: navigateToHome },
+        { name: 'Models', onClick: navigateToModels },
+        { name: 'Create', onClick: navigateToCreate },
+    ];
+
     return {
         selectedProvider,
         setSelectedProvider,
@@ -31,6 +49,9 @@ export function useModelProfileCreate() {
         data,
         setData,
         handleCreateConnection,
-        navigate,
+        breadcrumbs,
+        navigateToHome,
+        navigateToModels,
+        navigateToCreate,
     };
 }
