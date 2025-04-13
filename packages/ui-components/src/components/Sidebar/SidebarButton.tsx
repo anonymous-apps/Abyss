@@ -18,8 +18,8 @@ export const SidebarButton: React.FC<SidebarButtonProps> = ({
     return (
         <div
             className={`
-                group relative flex items-center px-3 py-2 cursor-pointer select-none
-                ${isActive ? 'bg-primary-100 text-primary-700' : 'text-text-400 hover:bg-background-200'}
+                group relative flex items-center px-2 py-1 cursor-pointer select-none
+                ${isActive ? 'bg-primary-100 text-primary-500' : 'text-text-400 hover:bg-background-200'}
                 ${className}
             `}
             onClick={onClick}

@@ -31,7 +31,7 @@ export function MainPage() {
         setContentOpacity(0);
         setTimeout(() => {
             navigate(href, { viewTransition: true });
-        }, 300);
+        }, 1000);
     };
 
     //@ts-ignore
@@ -39,10 +39,15 @@ export function MainPage() {
 
     return (
         <div className="flex h-screen">
-            <div className="flex flex-col items-center justify-center transition-all duration-300" style={{ width: sidebarWidth }}>
-                <img src={logoPath} alt="logo" className="w-[150px] mb-4 transition-all duration-300" style={{ opacity: contentOpacity }} />
+            <div className="flex flex-col items-center justify-center transition-all duration-[1s]" style={{ width: sidebarWidth }}>
+                <img
+                    src={logoPath}
+                    alt="logo"
+                    className="w-[150px] mb-4 transition-all duration-[1s]"
+                    style={{ opacity: contentOpacity }}
+                />
                 <div
-                    className="text-4xl font-bold text-center transition-all duration-300 text-text-300"
+                    className="text-4xl font-bold text-center transition-all duration-[1s] text-text-300"
                     style={{ opacity: contentOpacity }}
                 >
                     Abyss
@@ -50,12 +55,12 @@ export function MainPage() {
             </div>
 
             <div
-                className={`p-8 overflow-auto flex-1 flex items-center justify-center transition-all duration-300 ${
+                className={`p-8 overflow-auto flex-1 flex items-center justify-center transition-all duration-[1s] ${
                     sidebarWidth === '150px' ? 'w-full' : 'w-[calc(100vw-150px)] bg-background-300 '
                 } `}
                 style={{ paddingLeft: `calc(100vw - calc(60vw + ${sidebarWidth}) + 20px)` }}
             >
-                <div className="max-w-2xl w-full space-y-4 transition-all duration-300" style={{ opacity: contentOpacity }}>
+                <div className="max-w-2xl w-full space-y-4 transition-all duration-[1s]" style={{ opacity: contentOpacity }}>
                     <ClickableIconOption title="Models" icon={Box} onClick={() => handleNavigation('/models')}>
                         Connect to AI models locally using Ollama or cloud providers like OpenAI or Aws Bedrock
                     </ClickableIconOption>

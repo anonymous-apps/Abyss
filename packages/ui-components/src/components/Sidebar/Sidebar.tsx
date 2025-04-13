@@ -4,7 +4,7 @@ import { SidebarProps } from './SidebarTypes';
 /**
  * Sidebar component for displaying a vertical navigation menu
  */
-export const Sidebar: React.FC<SidebarProps> = ({ children, title, titleAction, width = 240, className = '' }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ children, title, titleAction, width = 150, className = '' }) => {
     return (
         <div className={`flex flex-col bg-background-100 h-full ${className}`} style={{ width: `${width}px` }}>
             {title && (

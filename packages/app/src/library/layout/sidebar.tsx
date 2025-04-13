@@ -1,6 +1,7 @@
+import { Sidebar as AbyssSidebar, SidebarButton as AbyssSidebarButton, SidebarSection as AbyssSidebarSection } from '@abyss/ui-components';
 import { Bot, Box, ChartLine, DatabaseIcon, Loader2, MessageSquare, Play, Settings, X, type LucideIcon } from 'lucide-react';
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useSidebarFadeStore } from '../../state/sidebar-fade';
 
 export interface SidebarItemProps {
@@ -60,6 +61,14 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({ title }) => {
 };
 
 export function Sidebar() {
+    const location = useLocation();
+    const nav = useNavigate();
+
+    const navProps = (path: string) => ({
+        onClick: () => nav(path),
+        isActive: location.pathname.startsWith(path),
+    });
+
     const { sidebarFadeable, setSidebarFadeable } = useSidebarFadeStore();
     const [opacity, setOpacity] = React.useState(sidebarFadeable ? 0 : 1);
 
@@ -73,20 +82,19 @@ export function Sidebar() {
     }, []);
 
     return (
-        <div
-            className="relative left-0 top-0 h-screen flex flex-col pt-5 min-w-[150px] transition-opacity duration-300"
-            style={{ opacity }}
-        >
-            <SidebarSection title="Activity" />
-            <SidebarItem title="Chats" icon={MessageSquare} url="/chats" />
-            <SidebarSection title="Configuration" />
-            <SidebarItem title="Models" icon={Box} url="/models" />
-            <SidebarItem title="Agents" icon={Bot} url="/agents" />
-            <SidebarItem title="Tools" icon={Play} url="/tools" />
-            <SidebarItem title="Settings" icon={Settings} url="/settings" />
-            <SidebarSection title="Monitoring" />
-            <SidebarItem title="Storage" icon={DatabaseIcon} url="/database" />
-            <SidebarItem title="Metrics" icon={ChartLine} url="/metrics" />
+        <div className="transition-opacity duration-[1.5s]" style={{ opacity }}>
+            <AbyssSidebar className="pt-10">
+                <AbyssSidebarSection title="Activity" />
+                <AbyssSidebarButton label="Chats" icon={MessageSquare} {...navProps('/chats')} />
+                <AbyssSidebarSection title="Configuration" />
+                <AbyssSidebarButton label="Models" icon={Box} {...navProps('/models')} />
+                <AbyssSidebarButton label="Agents" icon={Bot} {...navProps('/agents')} />
+                <AbyssSidebarButton label="Tools" icon={Play} {...navProps('/tools')} />
+                <AbyssSidebarButton label="Settings" icon={Settings} {...navProps('/settings')} />
+                <AbyssSidebarSection title="Settings" />
+                <AbyssSidebarButton label="Storage" icon={DatabaseIcon} {...navProps('/database')} />
+                <AbyssSidebarButton label="Metrics" icon={ChartLine} {...navProps('/metrics')} />
+            </AbyssSidebar>
         </div>
     );
 }

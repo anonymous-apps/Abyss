@@ -47,14 +47,12 @@ export const WithSections: Story = {
     args: {
         title: 'Project',
         children: [
-            <SidebarSection key="main" title="Main">
-                <SidebarButton label="Dashboard" icon={Home} isActive={true} />
-                <SidebarButton label="Projects" icon={Briefcase} />
-            </SidebarSection>,
-            <SidebarSection key="settings" title="Settings">
-                <SidebarButton label="Profile" icon={User} />
-                <SidebarButton label="Preferences" icon={Settings} />
-            </SidebarSection>,
+            <SidebarSection key="main" title="Main" />,
+            <SidebarButton key="dashboard" label="Dashboard" icon={Home} isActive={true} />,
+            <SidebarButton key="projects" label="Projects" icon={Briefcase} />,
+            <SidebarSection key="settings" title="Settings" />,
+            <SidebarButton key="profile" label="Profile" icon={User} />,
+            <SidebarButton key="preferences" label="Preferences" icon={Settings} />,
         ],
     },
 };

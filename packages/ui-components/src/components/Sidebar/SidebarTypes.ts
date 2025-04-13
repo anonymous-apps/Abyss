@@ -34,11 +34,6 @@ export interface SidebarSectionProps {
     title: string;
 
     /**
-     * Children to render in the section
-     */
-    children: ReactNode;
-
-    /**
      * Additional className for styling
      */
     className?: string;
