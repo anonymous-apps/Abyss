@@ -1,8 +1,6 @@
-import { PageCrumbed } from '@abyss/ui-components';
+import { IconSection, PageCrumbed, SelectDropdown } from '@abyss/ui-components';
 import { PaintBucket } from 'lucide-react';
 import React from 'react';
-import { Select } from '../../library/input/select';
-import { IconSection } from '../../library/layout/icon-section';
 import { useSettingsPage } from './main.hook';
 
 export function SettingsPage() {
@@ -11,12 +9,13 @@ export function SettingsPage() {
     return (
         <PageCrumbed title={'Abyss Settings'} breadcrumbs={breadcrumbs} loading={record === undefined}>
             <IconSection icon={PaintBucket} title="App Theme">
-                <Select
-                    value={record?.theme || 'etherial'}
-                    onChange={onChangeAppTheme}
+                <SelectDropdown
+                    className="w-52"
+                    selectedId={record?.theme || 'etherial'}
+                    onSelect={onChangeAppTheme}
                     options={[
-                        { value: 'etherial', label: 'Etherial' },
-                        { value: 'abyss', label: 'Abyss' },
+                        { id: 'etherial', label: 'Etherial' },
+                        { id: 'abyss', label: 'Abyss' },
                     ]}
                 />
             </IconSection>
