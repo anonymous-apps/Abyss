@@ -21,6 +21,9 @@ const meta: Meta<typeof Button> = {
         isDisabled: {
             control: 'boolean',
         },
+        tooltip: {
+            control: 'text',
+        },
         onClick: { action: 'clicked' },
     },
 };
@@ -76,5 +79,23 @@ export const IconOnly: Story = {
     args: {
         variant: 'primary',
         icon: Plus,
+    },
+};
+
+// Button with tooltip
+export const WithTooltip: Story = {
+    args: {
+        variant: 'primary',
+        children: 'Hover Me',
+        tooltip: 'This is a tooltip',
+    },
+};
+
+// Icon button with tooltip
+export const IconWithTooltip: Story = {
+    args: {
+        variant: 'primary',
+        icon: Plus,
+        tooltip: 'Add New Item',
     },
 };
