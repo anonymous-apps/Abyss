@@ -1,23 +1,18 @@
+import { Button, IconSection, PageCrumbed } from '@abyss/ui-components';
 import { Bot, Box, CircleHelp, Plus } from 'lucide-react';
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { GhostIconButton } from '../../library/input/button';
-import { IconSection } from '../../library/layout/icon-section';
-import { PageCrumbed } from '../../library/layout/page-crumbed';
-import { WithSidebar } from '../../library/layout/sidebar';
 import { Tile, TileGrid } from '../../library/layout/tile-grid';
-import { useScanTableTool } from '../../state/database-connection';
+import { useToolsPage } from './tools.hook';
 
 export function ToolsPage() {
-    const tools = useScanTableTool();
-    const navigate = useNavigate();
+    const { tools, navigateToCreate, navigate } = useToolsPage();
 
     const content = !tools.loading && tools.data && (
         <>
             <IconSection
                 title="Defined Tool Connections"
                 icon={Box}
-                action={<GhostIconButton icon={Plus} onClick={() => navigate('/tools/create')} tooltip="Create" />}
+                action={<Button variant="secondary" icon={Plus} onClick={navigateToCreate} tooltip="Create" />}
             >
                 {tools.data && tools.data.length > 0 ? (
                     <TileGrid>
@@ -40,17 +35,15 @@ export function ToolsPage() {
     );
 
     return (
-        <WithSidebar>
-            <PageCrumbed
-                title="Defined Tools"
-                breadcrumbs={[
-                    { name: 'Home', url: '/' },
-                    { name: 'Tools', url: '/tools' },
-                ]}
-            >
-                {content}
-            </PageCrumbed>
-        </WithSidebar>
+        <PageCrumbed
+            title="Defined Tools"
+            breadcrumbs={[
+                { name: 'Home', onClick: () => navigate('/') },
+                { name: 'Tools', onClick: () => navigate('/tools') },
+            ]}
+        >
+            {content}
+        </PageCrumbed>
     );
 }
 

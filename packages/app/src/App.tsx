@@ -17,8 +17,8 @@ import { ModelProfileCreatePage } from './pages/models/create';
 import { ModelProfileMainPage } from './pages/models/main';
 import { ModelProfileViewPage } from './pages/models/view';
 import { SettingsPage } from './pages/settings/settings.page';
-import { ToolsPage } from './pages/tool/main';
-import { ToolViewPage } from './pages/tool/view';
+import { ToolsPage } from './pages/tool/tools.page';
+import { ToolViewPage } from './pages/tool/view.page';
 import { WithSidebar } from './pages/withSidebar';
 import { useTheme } from './state/theme-state';
 
