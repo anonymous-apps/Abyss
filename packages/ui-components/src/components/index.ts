@@ -1,5 +1,6 @@
 export * from './content/IconSection';
 export * from './content/Tile';
+export * from './data/Table';
 export * from './inputs/Button';
 export * from './inputs/ButtonGroup';
 export * from './inputs/IconOption';
