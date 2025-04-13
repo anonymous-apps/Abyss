@@ -1,7 +1,6 @@
-import { IconSection, PageCrumbed, Tile, TileGrid } from '@abyss/ui-components';
+import { Button, IconSection, PageCrumbed, Tile, TileGrid } from '@abyss/ui-components';
 import { Box, Plus } from 'lucide-react';
 import React from 'react';
-import { GhostIconButton } from '../../library/input/button';
 import { Logo } from '../../library/logos';
 import { useModelProfileMain } from './main.hook';
 
@@ -13,7 +12,7 @@ export function ModelProfileMainPage() {
             <IconSection
                 title="Connected Models"
                 icon={Box}
-                action={<GhostIconButton icon={Plus} onClick={handleCreateNew} tooltip="New Connection" />}
+                action={<Button variant="secondary" icon={Plus} onClick={handleCreateNew} tooltip="New Connection" />}
             >
                 {modelProfiles.data && modelProfiles.data.length > 0 ? (
                     <TileGrid>

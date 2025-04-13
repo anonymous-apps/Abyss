@@ -1,5 +1,5 @@
+import { Input } from '@abyss/ui-components';
 import React from 'react';
-import { Input } from '../../../library/input/input';
 
 interface AnthropicConfigProps {
     selectedModel: string;
@@ -15,7 +15,7 @@ const DEFAULT_MODELS = [{ id: 'claude-3-7-sonnet-20250219', name: 'Claude 3.7' }
 export function AnthropicConfig({ selectedModel, config, onModelChange, onConfigChange }: AnthropicConfigProps) {
     return (
         <>
-            <Input label="Model ID" value={selectedModel} onChange={onModelChange} options={DEFAULT_MODELS} />
+            <Input label="Model ID" value={selectedModel} onChange={e => onModelChange(e.target.value)} />
             <Input label="API Key" value={config.apiKey} onChange={e => onConfigChange({ ...config, apiKey: e })} />
         </>
     );

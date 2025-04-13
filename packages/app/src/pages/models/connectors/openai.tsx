@@ -1,5 +1,5 @@
+import { Input } from '@abyss/ui-components';
 import React from 'react';
-import { Input } from '../../../library/input/input';
 
 interface OpenAIConfigProps {
     selectedModel: string;
@@ -18,7 +18,7 @@ const DEFAULT_MODELS = [
 export function OpenAIConfig({ selectedModel, config, onModelChange, onConfigChange }: OpenAIConfigProps) {
     return (
         <>
-            <Input label="Model ID" value={selectedModel} onChange={onModelChange} options={DEFAULT_MODELS} />
+            <Input label="Model ID" value={selectedModel} onChange={e => onModelChange(e.target.value)} />
             <Input label="API Key" value={config.apiKey} onChange={e => onConfigChange({ ...config, apiKey: e })} />
         </>
     );

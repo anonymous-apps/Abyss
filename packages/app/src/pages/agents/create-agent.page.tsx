@@ -1,7 +1,6 @@
-import { Button, Checkbox, IconSection, Input, PageCrumbed } from '@abyss/ui-components';
+import { Button, Checkbox, IconSection, Input, PageCrumbed, SelectDropdown } from '@abyss/ui-components';
 import { Bot, Box, Play } from 'lucide-react';
 import React from 'react';
-import { Select } from '../../library/input/select';
 import { useCreateAgent } from './create-agent.hook';
 
 export function CreateAgentPage() {
@@ -53,15 +52,13 @@ export function CreateAgentPage() {
                     {modelConnections.loading ? (
                         <div>Loading models...</div>
                     ) : modelConnections.data && modelConnections.data.length > 0 ? (
-                        <Select
-                            label="Choose a model"
-                            value={selectedModelId}
-                            onChange={setSelectedModelId}
+                        <SelectDropdown
+                            selectedId={selectedModelId}
+                            onSelect={setSelectedModelId}
                             options={modelConnections.data.map(model => ({
-                                value: model.id,
+                                id: model.id,
                                 label: `${model.name}`,
                             }))}
-                            placeholder="Select a model"
                         />
                     ) : (
                         <div className="text-text-700">No model connections found. Please create a model connection first.</div>
@@ -86,14 +83,13 @@ export function CreateAgentPage() {
                                 description={tool.description.substring(0, 100)}
                                 className="capitalize"
                             />
-                            <Select
-                                value={selectedTools[tool.id]?.permission}
-                                onChange={permission => handleChangeToolPermission(tool.id, permission)}
+                            <SelectDropdown
+                                selectedId={selectedTools[tool.id]?.permission}
+                                onSelect={permission => handleChangeToolPermission(tool.id, permission)}
                                 options={[
-                                    { value: 'automatic', label: 'Automatic' },
-                                    { value: 'user-controlled', label: 'User Controlled' },
+                                    { id: 'automatic', label: 'Automatic' },
+                                    { id: 'user-controlled', label: 'User Controlled' },
                                 ]}
-                                disabled={!selectedTools[tool.id]?.selected}
                             />
                         </div>
                     ))

@@ -1,8 +1,6 @@
-import { IconSection, PageCrumbed } from '@abyss/ui-components';
-import { Box, Settings, Trash2 } from 'lucide-react';
+import { IconSection, LabelValue, PageCrumbed } from '@abyss/ui-components';
+import { Box, Settings } from 'lucide-react';
 import React from 'react';
-import { DestructiveButton } from '../../library/input/button';
-import { EditableLabelValue } from '../../library/input/label-value';
 import { useModelProfileView } from './view.hook';
 
 export function ModelProfileViewPage() {
@@ -13,31 +11,21 @@ export function ModelProfileViewPage() {
     ) : (
         <>
             <IconSection title="Profile Information" icon={Box}>
-                <EditableLabelValue
+                <LabelValue
                     data={{
                         name: modelProfile.data.name,
                         description: modelProfile.data.description,
                         provider: modelProfile.data.provider,
                         modelId: modelProfile.data.modelId,
                     }}
-                    editableKeys={['description', 'name', 'provider', 'modelId']}
-                    onChange={handleUpdateData}
                 />
             </IconSection>
 
             {modelProfile.data.data && Object.keys(modelProfile.data.data).length > 0 && (
                 <IconSection title="Configuration" icon={Settings}>
-                    <EditableLabelValue
-                        data={modelProfile.data.data as Record<string, any>}
-                        editableKeys={Object.keys(modelProfile.data.data)}
-                        onChange={handleUpdateConfig}
-                    />
+                    <LabelValue data={modelProfile.data.data as Record<string, any>} />
                 </IconSection>
             )}
-
-            <IconSection title="Danger Zone" icon={Trash2}>
-                <DestructiveButton onClick={handleDelete}>Delete Model Profile</DestructiveButton>
-            </IconSection>
         </>
     );
 

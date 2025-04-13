@@ -1,3 +1,4 @@
+import { Button } from '@abyss/ui-components';
 import { formatDistanceToNow } from 'date-fns';
 import { BinaryIcon, Check, Globe, Hammer, Loader2, NotepadText, PlayIcon, TerminalIcon, X } from 'lucide-react';
 import React, { useState } from 'react';
@@ -7,7 +8,6 @@ import 'react18-json-view/src/style.css';
 import { MessageRecord, MessageText, MessageToolCall } from '../../../server/preload/controllers/message';
 import { Database } from '../../main';
 import { useDatabaseRecordSubscription, useDatabaseTableSubscription } from '../../state/database-connection';
-import { GhostIconButton } from '../input/button';
 import { ReferencedObject } from '../references';
 import { MonospaceText } from './monospace-text';
 
@@ -39,7 +39,8 @@ export function ChatMessageSection({ message, showHeader }: ChatMessageSectionPr
 
             <div className="flex items-center justify-start flex-col ml-auto text-xs gap-1 h-fit rounded-lg mb-2">
                 {message.references?.networkCallId && (
-                    <GhostIconButton
+                    <Button
+                        variant="secondary"
                         icon={Globe}
                         onClick={() => navigate(`/database/id/networkCall/record/${message.references?.networkCallId}`)}
                         tooltip="View API call"
@@ -47,7 +48,8 @@ export function ChatMessageSection({ message, showHeader }: ChatMessageSectionPr
                     />
                 )}
                 {message.references?.renderedConversationThreadId && (
-                    <GhostIconButton
+                    <Button
+                        variant="secondary"
                         icon={NotepadText}
                         onClick={() =>
                             navigate(`/database/id/renderedConversationThread/record/${message.references?.renderedConversationThreadId}`)
@@ -57,7 +59,8 @@ export function ChatMessageSection({ message, showHeader }: ChatMessageSectionPr
                     />
                 )}
                 {message.references?.responseStreamId && (
-                    <GhostIconButton
+                    <Button
+                        variant="secondary"
                         icon={BinaryIcon}
                         onClick={() => navigate(`/database/id/responseStream/record/${message.references?.responseStreamId}`)}
                         tooltip="View Response Stream"
@@ -65,7 +68,8 @@ export function ChatMessageSection({ message, showHeader }: ChatMessageSectionPr
                     />
                 )}
                 {message.references?.toolSourceId && (
-                    <GhostIconButton
+                    <Button
+                        variant="secondary"
                         icon={Hammer}
                         onClick={() => navigate(`/database/id/tool/record/${message.references?.toolSourceId}`)}
                         tooltip="View Tool"

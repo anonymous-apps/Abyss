@@ -1,7 +1,6 @@
-import { IconSection, PageCrumbed, Tile, TileGrid } from '@abyss/ui-components';
+import { Button, IconSection, PageCrumbed, Tile, TileGrid } from '@abyss/ui-components';
 import { Bot, Plus } from 'lucide-react';
 import React from 'react';
-import { GhostIconButton } from '../../library/input/button';
 import { useAgentsPage } from './agents-page.hook';
 
 export function AgentsPage() {
@@ -18,7 +17,7 @@ export function AgentsPage() {
             <IconSection
                 title="Agents"
                 icon={Bot}
-                action={<GhostIconButton icon={Plus} onClick={handleCreateAgent} tooltip="Create Agent" />}
+                action={<Button variant="secondary" icon={Plus} onClick={handleCreateAgent} tooltip="Create Agent" />}
             >
                 {agents.data && agents.data.length > 0 ? (
                     <TileGrid>

@@ -1,8 +1,6 @@
-import { Button, Checkbox, IconSection, PageCrumbed } from '@abyss/ui-components';
+import { Button, Checkbox, IconSection, LabelValue, PageCrumbed, SelectDropdown } from '@abyss/ui-components';
 import { Bot, Box, Play, Trash2 } from 'lucide-react';
 import React from 'react';
-import { EditableLabelValue } from '../../library/input/label-value';
-import { Select } from '../../library/input/select';
 import { useViewAgent } from './view-agent.hook';
 
 export function ViewAgentPage() {
@@ -24,29 +22,25 @@ export function ViewAgentPage() {
     return (
         <PageCrumbed title={`Agent: ${agent.data?.name || ''}`} breadcrumbs={breadcrumbs}>
             <IconSection title="Agent Information" icon={Bot}>
-                <EditableLabelValue
+                <LabelValue
                     data={{
                         name: agent.data?.name || '',
                         description: agent.data?.description || '',
                     }}
-                    editableKeys={['name', 'description']}
-                    onChange={handleUpdateAgent}
                 />
             </IconSection>
 
             <IconSection title="Model Configuration" icon={Box}>
                 <div className="flex flex-col gap-4 max-w-2xl">
-                    <Select
-                        label="Choose a model"
-                        value={selectedModelId}
-                        onChange={handleUpdateModelId}
+                    <SelectDropdown
+                        selectedId={selectedModelId}
+                        onSelect={handleUpdateModelId}
                         options={
                             modelConnections.data?.map(model => ({
-                                value: model.id,
+                                id: model.id,
                                 label: model.name,
                             })) || []
                         }
-                        placeholder="Select a model"
                     />
                 </div>
             </IconSection>
@@ -63,14 +57,13 @@ export function ViewAgentPage() {
                                     label={tool.name}
                                     description={tool.description}
                                 />
-                                <Select
-                                    value={selectedTools[tool.id]?.permission || 'automatic'}
-                                    onChange={permission => handleChangeToolPermission(tool.id, permission)}
+                                <SelectDropdown
+                                    selectedId={selectedTools[tool.id]?.permission || 'automatic'}
+                                    onSelect={permission => handleChangeToolPermission(tool.id, permission)}
                                     options={[
-                                        { value: 'automatic', label: 'Automatic' },
-                                        { value: 'user-controlled', label: 'User Controlled' },
+                                        { id: 'automatic', label: 'Automatic' },
+                                        { id: 'user-controlled', label: 'User Controlled' },
                                     ]}
-                                    disabled={!selectedTools[tool.id]?.selected}
                                 />
                             </div>
                         ))}

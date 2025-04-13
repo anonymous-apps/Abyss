@@ -1,7 +1,6 @@
-import { Button, ButtonGroup, IconSection, PageCrumbed } from '@abyss/ui-components';
+import { Button, ButtonGroup, IconSection, PageCrumbed, SelectDropdown } from '@abyss/ui-components';
 import { Bot, Box, MessageCircle } from 'lucide-react';
 import React from 'react';
-import { Select } from '../../library/input/select';
 import { useChatCreate } from './create.hook';
 
 export function ChatCreatePage() {
@@ -35,20 +34,16 @@ export function ChatCreatePage() {
             </div>
 
             {chatType === 'model' ? (
-                <Select
-                    label="Choose a model to chat with"
-                    value={selectedModel}
-                    onChange={setSelectedModel}
-                    options={modelOptions}
-                    placeholder="Select a model"
+                <SelectDropdown
+                    selectedId={selectedModel}
+                    onSelect={setSelectedModel}
+                    options={modelOptions.map(option => ({ id: option.value, label: option.label }))}
                 />
             ) : (
-                <Select
-                    label="Choose an agent to chat with"
-                    value={selectedAgent}
-                    onChange={setSelectedAgent}
-                    options={agentOptions}
-                    placeholder="Select an agent"
+                <SelectDropdown
+                    selectedId={selectedAgent}
+                    onSelect={setSelectedAgent}
+                    options={agentOptions.map(option => ({ id: option.value, label: option.label }))}
                 />
             )}
 
