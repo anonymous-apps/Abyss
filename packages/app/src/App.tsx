@@ -30,7 +30,7 @@ export function App() {
             <BrowserRouter>
                 <HeaderBar />
                 <Routes>
-                    <Route path="/root" element={<MainPage />} />
+                    <Route path="/" element={<MainPage />} />
                     <Route path="/" element={<WithSidebar />}>
                         <Route path="/settings" element={<SettingsPage />} />
                         <Route path="/models" element={<ModelProfileMainPage />} />

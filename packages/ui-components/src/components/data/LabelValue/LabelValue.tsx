@@ -27,7 +27,7 @@ export const LabelValue: React.FC<LabelValueProps> = ({ data, className = '', ig
     return (
         <div className={`flex flex-col gap-4 ${className}`}>
             {entries.map(([key, value]) => (
-                <div key={key} className="flex flex-col">
+                <div key={key} className="flex flex-col hover:bg-background-200 p-1 rounded-sm">
                     <div className="text-xs text-text-600 font-medium lowercase mb-1">{key}</div>
                     <div className="text-sm break-words whitespace-pre-wrap">
                         {React.isValidElement(value) ? value : typeof value === 'object' ? JSON.stringify(value) : value || '-'}
