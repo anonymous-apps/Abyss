@@ -34,6 +34,7 @@ const preview = {
                 alignItems: 'center',
                 justifyContent: 'center',
                 backgroundColor: selectedTheme === 'abyss' ? '#2d2d33' : '#f8f8f8',
+                color: selectedTheme === 'abyss' ? '#e6e6e6' : '#333333',
             };
 
             React.useEffect(() => {
