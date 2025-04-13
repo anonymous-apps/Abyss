@@ -2,7 +2,7 @@
 import './styles/index.css';
 
 // Export components
-export * from './components/Button';
+export * from './components';
 
-// Export providers
-export * from './providers/ThemeProvider';
+// Export theme constants and utilities
+export * from './styles/theme-exports';

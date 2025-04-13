@@ -11,21 +11,59 @@ const preview = {
                 date: /Date$/,
             },
         },
-        themes: {
+        backgrounds: { disable: true },
+        layout: 'centered',
+        theme: {
             default: 'abyss',
+            selector: 'select',
             list: [
-                { name: 'abyss', class: 'abyss', color: '#1e1e22' },
-                { name: 'etherial', class: 'etherial', color: '#f6f7fa' },
+                { name: 'Abyss', value: 'abyss' },
+                { name: 'Etherial', value: 'etherial' },
             ],
         },
     },
     decorators: [
-        Story => (
-            <div className="p-4 bg-background-300 min-h-screen">
-                <Story />
-            </div>
-        ),
+        (Story, context) => {
+            const selectedTheme = context.globals.theme || 'abyss';
+
+            // Create theme-specific styles
+            const containerStyles = {
+                width: 'calc(100vw - 16px)',
+                height: 'calc(100vh - 16px)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: selectedTheme === 'abyss' ? '#211842' : '#f6f7fa',
+            };
+
+            React.useEffect(() => {
+                const storybookRoot = document.getElementById('storybook-root');
+                if (storybookRoot) {
+                    storybookRoot.style.padding = '0';
+                }
+            }, []);
+
+            return (
+                <div data-theme={selectedTheme} style={containerStyles}>
+                    <Story />
+                </div>
+            );
+        },
     ],
+    globalTypes: {
+        theme: {
+            name: 'Theme',
+            description: 'Global theme for components',
+            defaultValue: 'abyss',
+            toolbar: {
+                icon: 'paintbrush',
+                items: [
+                    { value: 'abyss', title: 'Abyss' },
+                    { value: 'etherial', title: 'Etherial' },
+                ],
+            },
+        },
+    },
 };
 
 export default preview;
