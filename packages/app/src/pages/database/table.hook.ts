@@ -22,7 +22,7 @@ export function useTable() {
 
     const onOpenRecordStr = (record: string) => {
         const [recordTable, recordId] = record.toString().split('::');
-        navigate(`/database/id/${recordTable}/record/${recordId}`);
+        navigate(`/database/id/${recordTable}/record/${record}`);
     };
 
     return { table: id, data: scanTable.data, breadcrumbs, onPurgeTable, scanTable, onOpenRecordStr };

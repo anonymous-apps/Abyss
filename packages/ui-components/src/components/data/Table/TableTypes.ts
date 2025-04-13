@@ -17,7 +17,7 @@ export interface TableCellProps {
     /**
      * Optional click handler for records
      */
-    onRecordClick?: (record: Record<string, any>) => void;
+    onRecordClick?: (recordId: string) => void;
 }
 
 /**
@@ -39,7 +39,7 @@ export interface TableProps {
     /**
      * Optional click handler for records
      */
-    onRecordClick?: (record: Record<string, any>) => void;
+    onRecordClick?: (recordId: string) => void;
     /**
      * Optional CSS class name
      */

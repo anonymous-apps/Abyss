@@ -18,7 +18,7 @@ export function ViewTablePage() {
                     data={scanTable.data as Record<string, any>[]}
                     ignoreColumns={['createdAt', 'updatedAt']}
                     onRowClick={record => onOpenRecordStr(record.id)}
-                    onRecordClick={record => onOpenRecordStr(record)}
+                    onRecordClick={recordId => onOpenRecordStr(recordId)}
                 />
             </IconSection>
         </PageCrumbed>
