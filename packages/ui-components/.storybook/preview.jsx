@@ -33,7 +33,7 @@ const preview = {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                backgroundColor: selectedTheme === 'abyss' ? '#211842' : '#f6f7fa',
+                backgroundColor: selectedTheme === 'abyss' ? '#2d2d33' : '#f8f8f8',
             };
 
             React.useEffect(() => {

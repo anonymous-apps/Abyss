@@ -1,4 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
+import { Plus, Search } from 'lucide-react';
 import Button from './Button';
 
 // Meta information for the component
@@ -12,11 +13,7 @@ const meta: Meta<typeof Button> = {
     argTypes: {
         variant: {
             control: 'select',
-            options: ['primary', 'secondary', 'outline', 'ghost'],
-        },
-        size: {
-            control: 'select',
-            options: ['sm', 'md', 'lg'],
+            options: ['primary', 'secondary'],
         },
         isLoading: {
             control: 'boolean',
@@ -47,22 +44,6 @@ export const Secondary: Story = {
     },
 };
 
-// Outline variant example
-export const Outline: Story = {
-    args: {
-        variant: 'outline',
-        children: 'Button',
-    },
-};
-
-// Ghost variant example
-export const Ghost: Story = {
-    args: {
-        variant: 'ghost',
-        children: 'Button',
-    },
-};
-
 // Loading state example
 export const Loading: Story = {
     args: {
@@ -81,20 +62,19 @@ export const Disabled: Story = {
     },
 };
 
-// Small size example
-export const Small: Story = {
+// Button with icon and text
+export const WithIcon: Story = {
     args: {
         variant: 'primary',
-        children: 'Small',
-        size: 'sm',
+        children: 'Search',
+        icon: Search,
     },
 };
 
-// Large size example
-export const Large: Story = {
+// Button with icon only
+export const IconOnly: Story = {
     args: {
         variant: 'primary',
-        children: 'Large',
-        size: 'lg',
+        icon: Plus,
     },
 };
