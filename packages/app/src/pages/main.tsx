@@ -1,11 +1,10 @@
+import { IconOption } from '@abyss/ui-components';
 import { Box, DatabaseIcon, MessageCircle, Play, Settings } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { ClickableIconOption } from '../library/layout/nav-options';
 import { Database } from '../main';
 import { useTableRecordUserSettings } from '../state/database-connection';
 import { useSidebarFadeStore } from '../state/sidebar-fade';
-
 export function MainPage() {
     const navigate = useNavigate();
 
@@ -61,25 +60,25 @@ export function MainPage() {
                 style={{ paddingLeft: `calc(100vw - calc(60vw + ${sidebarWidth}) + 20px)` }}
             >
                 <div className="max-w-2xl w-full space-y-4 transition-all duration-[1s]" style={{ opacity: contentOpacity }}>
-                    <ClickableIconOption title="Models" icon={Box} onClick={() => handleNavigation('/models')}>
+                    <IconOption title="Models" icon={Box} onClick={() => handleNavigation('/models')}>
                         Connect to AI models locally using Ollama or cloud providers like OpenAI or Aws Bedrock
-                    </ClickableIconOption>
+                    </IconOption>
 
-                    <ClickableIconOption title="Chats" icon={MessageCircle} onClick={() => handleNavigation('/chats')}>
+                    <IconOption title="Chats" icon={MessageCircle} onClick={() => handleNavigation('/chats')}>
                         Chat with AI models directly or with custom agents you build
-                    </ClickableIconOption>
+                    </IconOption>
 
-                    <ClickableIconOption title="Tools" icon={Play} onClick={() => handleNavigation('/tools')}>
+                    <IconOption title="Tools" icon={Play} onClick={() => handleNavigation('/tools')}>
                         Connect to MCP servers and leverage their tools to automate your workflows, or build your own tools.
-                    </ClickableIconOption>
+                    </IconOption>
 
-                    <ClickableIconOption title="Database" icon={DatabaseIcon} onClick={() => handleNavigation('/database')}>
+                    <IconOption title="Database" icon={DatabaseIcon} onClick={() => handleNavigation('/database')}>
                         View saved data stored on your machine. All data is stored locally in sqlite and can be accessed by you at any time.
-                    </ClickableIconOption>
+                    </IconOption>
 
-                    <ClickableIconOption title="Settings" icon={Settings} onClick={() => handleNavigation('/settings')}>
+                    <IconOption title="Settings" icon={Settings} onClick={() => handleNavigation('/settings')}>
                         Configure application settings, themes, and other preferences.
-                    </ClickableIconOption>
+                    </IconOption>
                 </div>
             </div>
         </div>
