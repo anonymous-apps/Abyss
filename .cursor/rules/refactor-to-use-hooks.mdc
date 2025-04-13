@@ -1,0 +1,14 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+The current open page needs to match the style guide for pages in this application, specifically we should have two files
+
+- mypage.page.tsx - renders the page and uses the hook file
+- mypage.hook.ts - abstracts away all the state for simplicity
+
+See example files like this:
+- [database-table.tsx](mdc:packages/app/src/library/content/database-table.tsx) & [database.page.tsx](mdc:packages/app/src/pages/database/database.page.tsx)
+
+Specifically the I have referenced another page (not the database table page above) which I want you to refactor into the -hook -page design

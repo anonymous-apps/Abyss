@@ -1,0 +1,19 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+The curren open / provided file from the packages/app/src folder is the target component for this transofmration. I want this component to instead live in the packages/ui-componenets library
+
+Do the following:
+- Understand what this component does
+- Read the button component from [button.tsx](mdc:packages/app/src/library/input/button.tsx) [Button.stories.tsx](mdc:packages/ui-components/src/components/inputs/Button/Button.stories.tsx) for reference as to what a well structured component could be
+- Create a new component folder under the ui-components/src/components/[grouping] where you see fit
+- Add a stories.tsx, an index.ts a [component].tsx and updeat the index.ts with the data
+- Add a seperate types.ts file for tracking types for components
+- Dont add any README.md files for it though
+
+
+When building the component, make use of tailwind css styles, and follow how other components are structured.
+More generally, dont overcomplicate things. If the referenced component didnt have a disabled state, dont add one. If it lacked a loading state, dont add one. Ect.
+

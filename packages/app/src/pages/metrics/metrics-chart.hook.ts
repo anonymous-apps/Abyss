@@ -1,16 +1,10 @@
 import { addDays, addHours, addMinutes, format, subDays, subHours, subMonths } from 'date-fns';
-import { ChartLine } from 'lucide-react';
-import React, { useEffect, useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { ButtonGroup, ButtonGroupOption } from '../../library/input/button-group';
-import { IconSection } from '../../library/layout/icon-section';
-import { PageCrumbed } from '../../library/layout/page-crumbed';
-import { WithSidebar } from '../../library/layout/sidebar';
+import { useEffect, useMemo, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useDatabaseTableSubscription } from '../../state/database-connection';
 
 // Define time bucket options
-type TimeBucketOption = {
+export type TimeBucketOption = {
     label: string;
     value: string;
     getStartTime: () => Date;
@@ -20,7 +14,7 @@ type TimeBucketOption = {
     parseBucketKey: (key: string) => Date;
 };
 
-const timeBucketOptions: TimeBucketOption[] = [
+export const timeBucketOptions: TimeBucketOption[] = [
     {
         label: 'Last Hour',
         value: 'hour',
@@ -99,18 +93,19 @@ const timeBucketOptions: TimeBucketOption[] = [
 ];
 
 // Define aggregation methods
-type AggregationMethod = 'sum' | 'average' | 'max' | 'min';
+export type AggregationMethod = 'sum' | 'average' | 'max' | 'min';
 
-const aggregationMethods: ButtonGroupOption<AggregationMethod>[] = [
-    { label: 'Average', value: 'average' },
-    { label: 'Sum', value: 'sum' },
-    { label: 'Maximum', value: 'max' },
-    { label: 'Minimum', value: 'min' },
+export const aggregationMethods = [
+    { label: 'Average', value: 'average' as AggregationMethod },
+    { label: 'Sum', value: 'sum' as AggregationMethod },
+    { label: 'Maximum', value: 'max' as AggregationMethod },
+    { label: 'Minimum', value: 'min' as AggregationMethod },
 ];
 
-export function MetricChartPage() {
+export function useMetricsChart() {
     const { metricName } = useParams<{ metricName: string }>();
 
+    const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [selectedTimeBucket, setSelectedTimeBucket] = useState<string>('day');
@@ -185,7 +180,7 @@ export function MetricChartPage() {
 
             return {
                 time: timeBucketOption.formatTime(date),
-                value: aggregatedValue,
+                value: Math.round(aggregatedValue * 100) / 100,
                 ...dimensions,
             };
         });
@@ -205,59 +200,17 @@ export function MetricChartPage() {
         }
     }, [metrics.data, metrics.error]);
 
-    return (
-        <WithSidebar>
-            <PageCrumbed
-                title={`Metric: ${metricName || 'Loading...'}`}
-                subtitle="Visualization of metric data over time"
-                breadcrumbs={[
-                    { name: 'Home', url: '/' },
-                    { name: 'Metrics', url: '/metrics' },
-                    { name: metricName!, url: `/metrics/graph/${metricName}` },
-                ]}
-            >
-                <IconSection title="Metric Chart" icon={ChartLine} subtitle="Visualization of metric data over time">
-                    <div className="mb-4 flex flex-wrap gap-4 justify-between">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Time Range</label>
-                            <ButtonGroup
-                                options={timeBucketOptions.map(option => ({
-                                    label: option.label,
-                                    value: option.value,
-                                }))}
-                                value={selectedTimeBucket}
-                                onChange={setSelectedTimeBucket}
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Aggregation Method</label>
-                            <ButtonGroup options={aggregationMethods} value={aggregationMethod} onChange={setAggregationMethod} />
-                        </div>
-                    </div>
-                    <div className="h-[400px] w-full">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <LineChart data={processedData.chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#2a2a2a33" />
-                                <XAxis
-                                    dataKey="time"
-                                    angle={-45}
-                                    textAnchor="end"
-                                    height={70}
-                                    interval={Math.max(1, Math.floor(processedData.bucketKeys.length / 10))}
-                                />
-                                <YAxis />
-                                <Tooltip
-                                    contentStyle={{
-                                        borderRadius: '4px',
-                                    }}
-                                />
-                                <Legend />
-                                <Line type="monotone" dataKey="value" stroke="#3b82f6" activeDot={{ r: 8 }} animationDuration={300} />
-                            </LineChart>
-                        </ResponsiveContainer>
-                    </div>
-                </IconSection>
-            </PageCrumbed>
-        </WithSidebar>
-    );
+    return {
+        metricName,
+        isLoading,
+        error,
+        selectedTimeBucket,
+        setSelectedTimeBucket,
+        aggregationMethod,
+        setAggregationMethod,
+        processedData,
+        timeBucketOptions,
+        aggregationMethods,
+        navigate,
+    };
 }

@@ -21,6 +21,9 @@ const meta: Meta<typeof Button> = {
         isDisabled: {
             control: 'boolean',
         },
+        isInactive: {
+            control: 'boolean',
+        },
         tooltip: {
             control: 'text',
         },
@@ -62,6 +65,15 @@ export const Disabled: Story = {
         variant: 'primary',
         children: 'Disabled',
         isDisabled: true,
+    },
+};
+
+// Inactive state example
+export const Inactive: Story = {
+    args: {
+        variant: 'primary',
+        children: 'Inactive',
+        isInactive: true,
     },
 };
 

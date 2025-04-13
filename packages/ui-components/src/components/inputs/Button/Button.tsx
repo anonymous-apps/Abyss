@@ -19,6 +19,10 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
      */
     isDisabled?: boolean;
     /**
+     * Is the button inactive (dimmed but still clickable)
+     */
+    isInactive?: boolean;
+    /**
      * Optional tooltip text to display on hover
      */
     tooltip?: string;
@@ -50,6 +54,7 @@ const PrimaryButton: React.FC<ButtonProps> = ({
     icon: Icon,
     isLoading = false,
     isDisabled = false,
+    isInactive = false,
     className = '',
     children,
     tooltip,
@@ -65,8 +70,8 @@ const PrimaryButton: React.FC<ButtonProps> = ({
                     ${className}
                     ${
                         !isLoading && !isDisabled
-                            ? 'bg-primary-500 hover:bg-primary-600 hover:shadow-lg'
-                            : 'cursor-not-allowed bg-background-500'
+                            ? `${isInactive ? 'bg-primary-300' : 'bg-primary-500'} hover:bg-primary-600 hover:shadow-lg`
+                            : `cursor-not-allowed bg-background-500`
                     }
                     text-text-900
                 `}

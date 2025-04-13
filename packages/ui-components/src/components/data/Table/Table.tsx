@@ -55,40 +55,42 @@ export const Table: React.FC<TableProps> = ({ table, data, onRowClick, className
     };
 
     return (
-        <div className={`overflow-x-auto w-full rounded-sm ${className}`}>
-            <table className="w-full border-collapse text-xs overflow-hidden rounded-sm border">
-                <thead>
-                    <tr className="bg-background-transparent">
-                        {columns.map(column => (
-                            <th
-                                key={column}
-                                className="p-2 text-text-100 font-medium border-b border-background-100 capitalize"
-                                style={{ textAlign: 'left' }}
-                            >
-                                {column}
-                            </th>
-                        ))}
-                    </tr>
-                </thead>
-                <tbody>
-                    {data.map((record, rowIndex) => (
-                        <tr
-                            key={rowIndex}
-                            className={`${onRowClick ? 'hover:bg-background-100 transition-colors cursor-pointer' : ''}`}
-                            onClick={() => handleRowClick(record)}
-                        >
+        <div className={`w-full rounded-sm ${className} p-2 bg-background-100`}>
+            <div className="overflow-x-auto">
+                <table className="w-full border-collapse text-xs overflow-hidden rounded-sm border">
+                    <thead className="sticky top-0 z-10">
+                        <tr className="bg-background-300">
                             {columns.map(column => (
-                                <td
+                                <th
                                     key={column}
-                                    className="p-2 text-text-300 max-w-[250px] truncate border-b border-background-100 border-opacity-50"
+                                    className="p-2 text-text-100 font-medium border-b border-background-100 capitalize"
+                                    style={{ textAlign: 'left' }}
                                 >
-                                    <TableCell value={record[column]} table={table} column={column} onRecordClick={onRecordClick} />
-                                </td>
+                                    {column}
+                                </th>
                             ))}
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {data.map((record, rowIndex) => (
+                            <tr
+                                key={rowIndex}
+                                className={`${onRowClick ? 'hover:bg-background-200 transition-colors cursor-pointer' : ''}`}
+                                onClick={() => handleRowClick(record)}
+                            >
+                                {columns.map(column => (
+                                    <td
+                                        key={column}
+                                        className="p-2 text-text-300 max-w-[250px] truncate border-b border-background-100 border-opacity-50"
+                                    >
+                                        <TableCell value={record[column]} table={table} column={column} onRecordClick={onRecordClick} />
+                                    </td>
+                                ))}
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 };
