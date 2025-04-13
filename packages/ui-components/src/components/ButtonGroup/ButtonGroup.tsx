@@ -4,7 +4,8 @@ export interface ButtonGroupProps {
     /**
      * Array of buttons to display in the group
      */
-    buttons: ReactNode[];
+    children: ReactNode[];
+
     /**
      * Additional className for styling
      */
@@ -14,10 +15,10 @@ export interface ButtonGroupProps {
 /**
  * ButtonGroup component for displaying a horizontal group of buttons
  */
-export const ButtonGroup: React.FC<ButtonGroupProps> = ({ buttons, className = '' }) => {
+export const ButtonGroup: React.FC<ButtonGroupProps> = ({ children, className = '' }) => {
     return (
         <div className={`inline-flex ${className}`}>
-            {buttons.map((button, index) => {
+            {children.map((button, index) => {
                 // Clone button element to modify its className
                 const child = React.Children.only(button) as React.ReactElement;
                 let additionalClass = '';
@@ -28,7 +29,7 @@ export const ButtonGroup: React.FC<ButtonGroupProps> = ({ buttons, className = '
                     additionalClass = '!rounded-r-none border-r border-r-primary-300';
                 }
                 // Last button should only round right corners
-                else if (index === buttons.length - 1) {
+                else if (index === children.length - 1) {
                     additionalClass = '!rounded-l-none';
                 }
                 // Middle buttons should have no rounded corners

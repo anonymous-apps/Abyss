@@ -17,7 +17,7 @@ type Story = StoryObj<typeof ButtonGroup>;
 
 export const Default: Story = {
     args: {
-        buttons: [
+        children: [
             <Button key="1" variant="primary">
                 Button 1
             </Button>,
@@ -33,14 +33,14 @@ export const Default: Story = {
 
 export const MixedVariants: Story = {
     args: {
-        buttons: [
+        children: [
             <Button key="1" variant="primary">
                 Primary
             </Button>,
-            <Button key="2" variant="secondary">
-                Secondary
+            <Button key="2" variant="primary" isDisabled={true}>
+                Disabled
             </Button>,
-            <Button key="3" variant="primary">
+            <Button key="3" variant="primary" isLoading={true}>
                 Primary
             </Button>,
         ],
@@ -49,8 +49,7 @@ export const MixedVariants: Story = {
 
 export const PrimaryWithIcons: Story = {
     args: {
-        variant: 'primary-with-icons',
-        buttons: [
+        children: [
             <Button key="1" icon={Home}>
                 Home
             </Button>,
