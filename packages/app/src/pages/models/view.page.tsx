@@ -1,30 +1,12 @@
+import { IconSection, PageCrumbed } from '@abyss/ui-components';
 import { Box, Settings, Trash2 } from 'lucide-react';
 import React from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
 import { DestructiveButton } from '../../library/input/button';
 import { EditableLabelValue } from '../../library/input/label-value';
-import { IconSection } from '../../library/layout/icon-section';
-import { PageCrumbed } from '../../library/layout/page-crumbed';
-import { WithSidebar } from '../../library/layout/sidebar';
-import { Database } from '../../main';
-import { useTableRecordModelConnections } from '../../state/database-connection';
+import { useModelProfileView } from './view.hook';
 
 export function ModelProfileViewPage() {
-    const { id } = useParams();
-    const navigate = useNavigate();
-
-    const modelProfile = useTableRecordModelConnections(id || '');
-    const handleDelete = async () => {
-        if (!id) return;
-        await Database.table.modelConnections.delete(id);
-        navigate('/models');
-    };
-
-    const breadcrumbs = [
-        { name: 'Home', url: '/' },
-        { name: 'Models', url: '/models' },
-        { name: id || '', url: `/models/id/${id}` },
-    ];
+    const { modelProfile, handleDelete, handleUpdateData, handleUpdateConfig, breadcrumbs } = useModelProfileView();
 
     const content = !modelProfile.data ? (
         <div className="text-text-300">Loading model profile data...</div>
@@ -39,10 +21,7 @@ export function ModelProfileViewPage() {
                         modelId: modelProfile.data.modelId,
                     }}
                     editableKeys={['description', 'name', 'provider', 'modelId']}
-                    onChange={data => {
-                        const newData = { ...modelProfile.data, ...data };
-                        Database.table.modelConnections.update(id || '', newData);
-                    }}
+                    onChange={handleUpdateData}
                 />
             </IconSection>
 
@@ -51,10 +30,7 @@ export function ModelProfileViewPage() {
                     <EditableLabelValue
                         data={modelProfile.data.data as Record<string, any>}
                         editableKeys={Object.keys(modelProfile.data.data)}
-                        onChange={data => {
-                            const newData = { ...modelProfile.data, data };
-                            Database.table.modelConnections.update(id || '', newData);
-                        }}
+                        onChange={handleUpdateConfig}
                     />
                 </IconSection>
             )}
@@ -66,10 +42,8 @@ export function ModelProfileViewPage() {
     );
 
     return (
-        <WithSidebar>
-            <PageCrumbed title={`Model Profile: ${modelProfile.data?.name || 'Loading...'}`} breadcrumbs={breadcrumbs}>
-                {content}
-            </PageCrumbed>
-        </WithSidebar>
+        <PageCrumbed title={`Model Profile: ${modelProfile.data?.name || ''}`} breadcrumbs={breadcrumbs}>
+            {content}
+        </PageCrumbed>
     );
 }
