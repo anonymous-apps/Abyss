@@ -35,6 +35,10 @@ export default {
             inject: {
                 insertAt: 'top',
             },
+            extract: false,
+            modules: false,
+            autoModules: false,
+            use: ['sass', 'stylus', 'less'],
         }),
     ],
 };
