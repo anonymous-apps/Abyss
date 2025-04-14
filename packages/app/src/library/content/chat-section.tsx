@@ -1,6 +1,6 @@
-import { Button } from '@abyss/ui-components';
+import { ChatMessageText, ChatTurnHeader } from '@abyss/ui-components';
 import { formatDistanceToNow } from 'date-fns';
-import { BinaryIcon, Check, Globe, Hammer, Loader2, NotepadText, PlayIcon, TerminalIcon, X } from 'lucide-react';
+import { Check, Loader2, PlayIcon, TerminalIcon, X } from 'lucide-react';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import JsonView from 'react18-json-view';
@@ -8,9 +8,8 @@ import 'react18-json-view/src/style.css';
 import { MessageRecord, MessageText, MessageToolCall } from '../../../server/preload/controllers/message';
 import { Database } from '../../main';
 import { useDatabaseRecordSubscription, useDatabaseTableSubscription } from '../../state/database-connection';
-import { ReferencedObject } from '../references';
+import { useActionItems, useRecordReference } from '../references';
 import { MonospaceText } from './monospace-text';
-
 interface ChatMessageSectionProps {
     message: MessageRecord;
     showHeader: boolean;
@@ -25,90 +24,40 @@ export function ChatMessageSection({ message, showHeader }: ChatMessageSectionPr
     const isAiToolSender = sender !== 'USER' && 'tool' in message.content;
 
     return (
-        <div className="relative flex flex-row gap-2">
-            <div
-                className={`hover:bg-background-transparent border border-transparent  transition-all duration-300 rounded-sm p-1 text-sm flex-1`}
-            >
-                {showHeader && <SectionHeader message={message} />}
-                <div className="flex items-center px-1">
-                    {isUserTextSender && <UserMessageSection message={message as MessageRecord<MessageText>} />}
-                    {isAiTextSender && <AiMessageTextSection message={message as MessageRecord<MessageText>} />}
-                    {isAiToolSender && <AiToolMessageSection message={message as MessageRecord<MessageToolCall>} />}
-                </div>
-            </div>
-
-            <div className="flex items-center justify-start flex-col ml-auto text-xs gap-1 h-fit rounded-lg mb-2">
-                {message.references?.networkCallId && (
-                    <Button
-                        variant="secondary"
-                        icon={Globe}
-                        onClick={() => navigate(`/database/id/networkCall/record/${message.references?.networkCallId}`)}
-                        tooltip="View API call"
-                        className="opacity-20 hover:opacity-100 z-10"
-                    />
-                )}
-                {message.references?.renderedConversationThreadId && (
-                    <Button
-                        variant="secondary"
-                        icon={NotepadText}
-                        onClick={() =>
-                            navigate(`/database/id/renderedConversationThread/record/${message.references?.renderedConversationThreadId}`)
-                        }
-                        tooltip="View Conversation Snapshot"
-                        className="opacity-20 hover:opacity-100 z-10"
-                    />
-                )}
-                {message.references?.responseStreamId && (
-                    <Button
-                        variant="secondary"
-                        icon={BinaryIcon}
-                        onClick={() => navigate(`/database/id/responseStream/record/${message.references?.responseStreamId}`)}
-                        tooltip="View Response Stream"
-                        className="opacity-20 hover:opacity-100 z-10"
-                    />
-                )}
-                {message.references?.toolSourceId && (
-                    <Button
-                        variant="secondary"
-                        icon={Hammer}
-                        onClick={() => navigate(`/database/id/tool/record/${message.references?.toolSourceId}`)}
-                        tooltip="View Tool"
-                        className="opacity-20 hover:opacity-100 z-10"
-                    />
-                )}
-            </div>
+        <div>
+            {showHeader && <SectionHeader message={message} />}
+            {isUserTextSender && <UserMessageSection message={message as MessageRecord<MessageText>} />}
+            {isAiTextSender && <AiMessageTextSection message={message as MessageRecord<MessageText>} />}
+            {isAiToolSender && <AiToolMessageSection message={message as MessageRecord<MessageToolCall>} />}
         </div>
     );
 }
 
 function SectionHeader({ message }: { message: MessageRecord }) {
+    const navigate = useNavigate();
+    const reference = useRecordReference({ sourceId: message.sourceId });
     const formattedTime = formatDistanceToNow(new Date(message.createdAt), { addSuffix: true });
 
     return (
-        <div className="flex items-center text-xs mb-1 gap-4 rounded-sm p-1 w-fit">
-            <div className="bg-primary-300 text-text-100 rounded-sm px-1 pr-2 py-1 -translate-x-1">
-                <ReferencedObject sourceId={message.sourceId} />
-            </div>
-            <span className="text-text-700 opacity-70 text-xms">{formattedTime}</span>
-        </div>
+        <ChatTurnHeader
+            icon={reference.icon}
+            label={reference.label}
+            timestamp={formattedTime}
+            onClick={reference.link ? () => navigate(reference.link!) : undefined}
+        />
     );
 }
 
 function UserMessageSection({ message }: { message: MessageRecord<MessageText> }) {
-    return (
-        <pre className="rounded overflow-hidden my-2 mr-10" style={{ fontFamily: 'sans-serif' }}>
-            {message.content.text}
-        </pre>
-    );
+    const actionItems = useActionItems(message);
+    return <ChatMessageText text={message.content.text} actionItems={actionItems} />;
 }
 
 function AiMessageTextSection({ message }: { message: MessageRecord<MessageText> }) {
-    return (
-        <pre className="rounded overflow-hidden my-2 mr-10 w-full whitespace-pre-wrap" style={{ fontFamily: 'sans-serif' }}>
-            {message.content.text}
-        </pre>
-    );
+    const actionItems = useActionItems(message);
+    return <ChatMessageText text={message.content.text} actionItems={actionItems} />;
 }
+
 function AiToolMessageSection({ message }: { message: MessageRecord<MessageToolCall> }) {
     const [viewMode, setViewMode] = useState<'input' | 'output' | null>('input');
     const invokable = message.content.tool.status === 'idle' || !message.content.tool.status;

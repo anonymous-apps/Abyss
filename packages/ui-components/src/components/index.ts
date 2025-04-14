@@ -1,3 +1,5 @@
+export * from './chat-components/ChatMessageText';
+export * from './chat-components/ChatTurnHeader';
 export * from './content/IconSection';
 export * from './content/Tile';
 export * from './data/LabelValue';

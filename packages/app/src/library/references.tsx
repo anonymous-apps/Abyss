@@ -1,6 +1,13 @@
-import { Bell, Bot, Box, Hammer, LucideIcon, MessageCircleQuestion, User } from 'lucide-react';
-import React from 'react';
+import { ActionItem } from '@abyss/ui-components';
+import { Bell, BinaryIcon, Bot, Box, Globe, Hammer, LucideIcon, MessageCircleQuestion, NotepadText, User } from 'lucide-react';
+import { useNavigate } from 'react-router';
 import { useDatabaseTableSubscription } from '../state/database-connection';
+
+export interface RecordReference {
+    icon: LucideIcon;
+    label: string;
+    link?: string;
+}
 
 export function getIconForSourceType(source: string): LucideIcon {
     switch (source.toLowerCase().split('::')[0]) {
@@ -22,54 +29,79 @@ export function getIconForSourceType(source: string): LucideIcon {
     }
 }
 
-export function ReferencedObject({ sourceId }: { sourceId: string }) {
+export function useRecordReference({ sourceId }: { sourceId: string }): RecordReference {
     const recordType = sourceId.toLowerCase().split('::')[0];
 
     if (recordType === 'user') {
-        return <ReferencedObjectYou />;
+        const Icon = getIconForSourceType('user');
+        return {
+            icon: Icon,
+            label: 'You',
+        };
     }
 
     if (recordType === 'modelconnections') {
-        return <ReferencedObjectModel modelConnectionId={sourceId} />;
+        const Icon = getIconForSourceType('modelConnections');
+        const data = useDatabaseTableSubscription('modelConnections', db => db.table.modelConnections.findById(sourceId));
+        return {
+            icon: Icon,
+            label: data.data?.name || '',
+            link: `/database/id/modelconnections/record/${sourceId}`,
+        };
     }
 
     if (recordType === 'agent') {
-        return <ReferencedObjectAgent agentId={sourceId} />;
+        const Icon = getIconForSourceType('agent');
+        const data = useDatabaseTableSubscription('agent', db => db.table.agent.findById(sourceId));
+        return {
+            icon: Icon,
+            label: data.data?.name || '',
+            link: `/database/id/agent/record/${sourceId}`,
+        };
     }
 
-    return <>?</>;
+    return {
+        icon: MessageCircleQuestion,
+        label: 'Unknown',
+    };
 }
 
-export function ReferencedObjectYou() {
-    const Icon = getIconForSourceType('user');
-    return (
-        <div className="flex items-center gap-2">
-            <Icon size={14} />
-            <span>You</span>
-        </div>
-    );
-}
+export function useActionItems({ references }: { references?: Record<string, string | undefined> }) {
+    const navigate = useNavigate();
+    const actionItems: ActionItem[] = [];
+    const reference = references ?? {};
 
-export function ReferencedObjectModel({ modelConnectionId }: { modelConnectionId: string }) {
-    const data = useDatabaseTableSubscription('modelConnections', db => db.table.modelConnections.findById(modelConnectionId));
-    const Icon = getIconForSourceType('modelConnections');
+    if (reference.networkCallId) {
+        actionItems.push({
+            icon: Globe,
+            tooltip: 'View API call',
+            onClick: () => navigate(`/database/id/networkCall/record/${reference.networkCallId}`),
+        });
+    }
 
-    return (
-        <div className="flex items-center gap-2">
-            <Icon size={14} className="" />
-            <span>{data.data?.name}</span>
-        </div>
-    );
-}
+    if (reference.renderedConversationThreadId) {
+        actionItems.push({
+            icon: NotepadText,
+            tooltip: 'View conversation snapshot',
+            onClick: () => navigate(`/database/id/renderedConversationThread/record/${reference.renderedConversationThreadId}`),
+        });
+    }
 
-export function ReferencedObjectAgent({ agentId }: { agentId: string }) {
-    const data = useDatabaseTableSubscription('agent', db => db.table.agent.findById(agentId));
-    const Icon = getIconForSourceType('agent');
+    if (reference.responseStreamId) {
+        actionItems.push({
+            icon: BinaryIcon,
+            tooltip: 'View Response Stream',
+            onClick: () => navigate(`/database/id/responseStream/record/${reference.responseStreamId}`),
+        });
+    }
 
-    return (
-        <div className="flex items-center gap-2">
-            <Icon size={14} />
-            <span>{data.data?.name}</span>
-        </div>
-    );
+    if (reference.toolSourceId) {
+        actionItems.push({
+            icon: Hammer,
+            tooltip: 'View Tool',
+            onClick: () => navigate(`/database/id/tool/record/${reference.toolSourceId}`),
+        });
+    }
+
+    return actionItems;
 }
