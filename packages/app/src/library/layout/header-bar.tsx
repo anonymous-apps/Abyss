@@ -2,15 +2,12 @@ import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import React, { useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Database } from '../../main';
-import { useDatabaseTableSubscription } from '../../state/database-connection';
 
 export const HeaderBar = () => {
     const location = useLocation();
     const isHomePage = location.pathname === '/';
     const navigate = useNavigate();
     const headerRef = useRef<HTMLDivElement>(null);
-    const userSettings = useDatabaseTableSubscription('UserSettings', async database => database.table.userSettings.get());
-    const hasHistory = userSettings.data?.pageHistory?.length;
 
     const updateScale = () => {
         if (headerRef.current) {
@@ -35,15 +32,9 @@ export const HeaderBar = () => {
     }, []);
 
     const onPopPageHistory = async () => {
-        if (hasHistory) {
-            const lastPage = await Database.table.userSettings.popPageHistory();
-            if (lastPage) {
-                if (lastPage === location.pathname) {
-                    onPopPageHistory();
-                } else {
-                    navigate(lastPage);
-                }
-            }
+        const lastPage = await Database.table.userSettings.popPageHistory();
+        if (lastPage) {
+            navigate(lastPage);
         }
     };
 
@@ -57,10 +48,7 @@ export const HeaderBar = () => {
             <div className="absolute bottom-0 left-0 w-full h-[50%] flex items-center justify-center menuDragSection"></div>
 
             <div className={`absolute text-text-sidebar h-[45%] w-[40%] right-0 flex gap-1 mt-1 px-2 z-10 ${isHomePage ? 'hidden' : ''}`}>
-                <ChevronLeftIcon
-                    className={`h-full w-full rounded-sm ${hasHistory ? 'opacity-100 hover:bg-primary-100 ' : 'opacity-20'}`}
-                    onClick={onPopPageHistory}
-                />
+                <ChevronLeftIcon className={`h-full w-full rounded-sm opacity-100 hover:bg-primary-100`} onClick={onPopPageHistory} />
                 <ChevronRightIcon className={`h-full w-full rounded-sm opacity-20`} />
             </div>
         </div>

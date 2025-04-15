@@ -22,9 +22,11 @@ import { AskAiToRespondToThread } from './workflows/respond-to-thread';
 // Setup prisma to support sqlite
 const require = createRequire(import.meta.url);
 const prismaModule = require('@prisma/client') as {
-    PrismaClient: new () => PrismaClient;
+    PrismaClient: new (options?: any) => PrismaClient;
 };
-export const prisma = new prismaModule.PrismaClient();
+export const prisma = new prismaModule.PrismaClient({
+    log: ['query', 'info', 'warn', 'error'],
+});
 
 // Allow subscriptions to database changes
 interface DatabaseTableSubscriber {
@@ -85,7 +87,7 @@ export function removeRecordSubscriber(table: string, recordId: string, subscrib
     subscriberRegistry.delete(subscriberId);
 }
 
-export function notifyTableChanged(table: string, recordId?: string) {
+export function notifyTableChanged(table: string, recordId?: string, data?: any) {
     const tableKey = table.toLowerCase();
     if (!subscribersById.has(tableKey)) {
         return;
@@ -96,7 +98,7 @@ export function notifyTableChanged(table: string, recordId?: string) {
     for (const subscriberId of subscribers) {
         const subscriber = subscriberRegistry.get(subscriberId);
         if (subscriber) {
-            subscriber({ table, recordId });
+            subscriber({ table, recordId, data });
         }
     }
 

@@ -5,7 +5,7 @@ import { ToolIcon } from '../../library/icons';
 import { useToolsPage } from './tools.hook';
 
 export function ToolsPage() {
-    const { tools, navigateToCreate, navigateToTool, breadcrumbs } = useToolsPage();
+    const { tools, navigateToTool, breadcrumbs } = useToolsPage();
 
     return (
         <PageCrumbed title="Defined Tool Connections" breadcrumbs={breadcrumbs}>
