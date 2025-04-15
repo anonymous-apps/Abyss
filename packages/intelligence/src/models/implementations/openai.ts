@@ -43,12 +43,12 @@ export class OpenAILanguageModel extends LanguageModel {
     private buildMessages(thread: ChatThread): OpenAIMessage[] {
         const turns = thread.getTurns();
         const messages: OpenAIMessage[] = [];
-        const differedMessages: OpenAIMessage[] = [];
 
         // Convert the chat turns into OpenAI API format
         for (const turn of turns) {
             const role = turn.sender === 'user' ? 'user' : 'assistant';
             const content: any[] = [];
+            const differedMessages: any[] = [];
 
             for (const partial of turn.partials) {
                 if (partial.type === 'text') {
@@ -64,17 +64,12 @@ export class OpenAILanguageModel extends LanguageModel {
                     // Convert tool call to XML and add as text content
                     content.push({ type: 'text', text: createXmlFromObject(partial.name, partial.args) });
                     differedMessages.push({
-                        role,
-                        content: [
-                            {
-                                type: 'text',
-                                text: createXmlFromObject('toolCallResult', {
-                                    callId: partial.callId,
-                                    name: partial.name,
-                                    output: partial.output,
-                                }),
-                            },
-                        ],
+                        type: 'text',
+                        text: createXmlFromObject('toolCallResult', {
+                            callId: partial.callId,
+                            name: partial.name,
+                            output: partial.output,
+                        }),
                     });
                 }
             }
