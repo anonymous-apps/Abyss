@@ -35,14 +35,17 @@ export function CustomRendererForConversationThread({ thread }: { thread: Render
             <div className={`${viewMode === 'system' ? 'block' : 'hidden'}`}>
                 {messages.turns.map((message, index) => (
                     <div key={index} className="pt-4">
-                        <div className="flex items-center text-xs mb-1 gap-2 capitalize">
+                        <div className="flex items-center text-xs mb-1 gap-2 capitalize text-primary-500">
                             {message.sender === 'user' && <User size={14} className="" />}
                             {message.sender === 'bot' && <BrainIcon size={14} className="" />}
                             {message.sender}
                         </div>
                         <div className="text-sm my-3">
                             {message.partials.map((partial, pIndex) => (
-                                <pre key={pIndex} className="whitespace-pre-wrap font-mono border-l-2 pl-2">
+                                <pre
+                                    key={pIndex}
+                                    className="whitespace-pre-wrap font-mono border-l border-background-500 pl-2 text-text-500"
+                                >
                                     {JSON.stringify(partial, null, 2)}
                                 </pre>
                             ))}
@@ -68,8 +71,8 @@ function JsonView({ json }: { json: any }) {
         if (!isObject) {
             return (
                 <div className="mb-2">
-                    <pre className="text-xs text-gray-500">{displayPath}</pre>
-                    <pre className="whitespace-pre-wrap font-mono border-l-2 pl-2">
+                    <pre className="text-xs text-primary-500">{displayPath}</pre>
+                    <pre className="whitespace-pre-wrap font-mono border-l-2 pl-2 my-2 text-text-500">
                         {typeof value === 'string' ? value : JSON.stringify(value, null, 2)}
                     </pre>
                 </div>
@@ -84,14 +87,14 @@ function JsonView({ json }: { json: any }) {
             <div className={`mb-2 ${isRoot ? '' : 'ml-4 bg-[#00000008] p-2 rounded-md'}`}>
                 <div className="flex items-center cursor-pointer" onClick={toggleCollapse}>
                     <span className="mr-2 text-xs">{hasChildren ? (isCollapsed ? '▶' : '▼') : '•'}</span>
-                    <pre className="text-xs text-gray-500">{displayPath}</pre>
-                    <span className="text-xs ml-2 text-gray-400">
+                    <pre className="text-xs text-primary-500">{displayPath}</pre>
+                    <span className="text-xs ml-2 text-primary-400">
                         {isObject && Array.isArray(value) ? `Array(${entries.length})` : `Object(${entries.length})`}
                     </span>
                 </div>
 
                 {!isCollapsed && hasChildren && (
-                    <div className="pl-4 border-l border-gray-200">
+                    <div className="pl-4 border-l border-background-500">
                         {entries.map(([key, childValue]) => {
                             const currentPath = path ? `${path}.${key}` : key;
                             return <CollapsibleNode key={currentPath} path={currentPath} value={childValue} />;
