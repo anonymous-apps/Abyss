@@ -1,5 +1,4 @@
 import { ChatThread } from '../../constructs/chat-thread/chat-thread';
-import { ChatTurn } from '../../constructs/chat-thread/types';
 import { Log } from '../../utils/logs';
 import { createStreamingFetch } from '../../utils/network/fetch-utils';
 import { createGenericStreamParser, parseJSON } from '../../utils/network/stream-parser';
@@ -53,39 +52,46 @@ export class GeminiLanguageModel extends LanguageModel {
 
     private buildContents(thread: ChatThread): GeminiContent[] {
         const turns = thread.getTurns();
+        const contents: GeminiContent[] = [];
 
         // Convert the chat turns into Gemini API format
-        // Each turn becomes a separate item in the contents array
-        const contents = turns.map((turn: ChatTurn) => {
-            const parts = turn.partials
-                .map(partial => {
-                    if (partial.type === 'text') {
-                        return { text: partial.content };
-                    } else if (partial.type === 'image') {
-                        return {
-                            inline_data: {
-                                mime_type: 'image/jpeg',
-                                data: partial.base64Data,
-                            },
-                        };
-                    } else if (partial.type === 'toolCall') {
-                        // Convert tool call to XML and add as text content
-                        const toolCallXml = createXmlFromObject('toolCall', {
+        for (const turn of turns) {
+            const parts: any[] = [];
+            const differedParts: any[] = [];
+
+            for (const partial of turn.partials) {
+                if (partial.type === 'text') {
+                    parts.push({ text: partial.content });
+                } else if (partial.type === 'image') {
+                    parts.push({
+                        inline_data: {
+                            mime_type: 'image/jpeg',
+                            data: partial.base64Data,
+                        },
+                    });
+                } else if (partial.type === 'toolCall') {
+                    // Convert tool call to XML and add as text content
+                    parts.push({ text: createXmlFromObject(partial.name, partial.args) });
+                    differedParts.push({
+                        text: createXmlFromObject('toolCallResult', {
                             callId: partial.callId,
                             name: partial.name,
-                            args: partial.args,
                             output: partial.output,
-                        });
-                        return { text: toolCallXml };
-                    }
-                    return null;
-                })
-                .filter(Boolean);
+                        }),
+                    });
+                }
+            }
 
-            return { parts };
-        });
+            if (parts.length > 0) {
+                contents.push({ parts });
+            }
 
-        return contents as GeminiContent[];
+            if (differedParts.length > 0) {
+                contents.push({ parts: differedParts });
+            }
+        }
+
+        return contents;
     }
 
     protected async _stream(thread: ChatThread): Promise<LanguageModelStreamResult> {

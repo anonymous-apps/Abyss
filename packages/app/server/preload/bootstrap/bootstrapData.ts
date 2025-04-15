@@ -15,9 +15,14 @@ Format your code using module syntax like below:
 import a from 'dep1'
 import b from 'dep2'
 
+// Type of whatever you need, but has to ultimately be a string record
+interface InputType {
+    [key: string]: string | InputType
+}
+
 // Will be automatically invoked when your tool is called
 // MAKE SURE IT IS EXPORTED AS DEFAULT
-export default function handler (input_object_matching_your_type) {
+export default function handler (input_object_matching_your_type: InputType) {
     // Will be provided back to the model when the tool is called
     return my_response
 }
@@ -30,7 +35,7 @@ export default function handler (input_object_matching_your_type) {
                 code: 'Raw Nodejs Source code as common js format as detailed in the example',
                 inputs: {
                     parameter1:
-                        'description of what this parameter is for, you can have many keys to describe all the inputs needed for the tool. All keys must be strings and the values will be strings.',
+                        'description of what this parameter is for, you can have many keys to describe all the inputs needed for the tool. All keys must be strings and the values will be strings. This means that if you need a number from the invoker you will have to convert it from a string to a number.',
                 },
                 dependencies:
                     'a comma separated list of npm dependencies that will be installed automaticallty before the script runs like axios, lodash, ect',

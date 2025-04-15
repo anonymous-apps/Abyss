@@ -43,6 +43,7 @@ export class OpenAILanguageModel extends LanguageModel {
     private buildMessages(thread: ChatThread): OpenAIMessage[] {
         const turns = thread.getTurns();
         const messages: OpenAIMessage[] = [];
+        const differedMessages: OpenAIMessage[] = [];
 
         // Convert the chat turns into OpenAI API format
         for (const turn of turns) {
@@ -61,13 +62,20 @@ export class OpenAILanguageModel extends LanguageModel {
                     });
                 } else if (partial.type === 'toolCall') {
                     // Convert tool call to XML and add as text content
-                    const toolCallXml = createXmlFromObject('toolCall', {
-                        callId: partial.callId,
-                        name: partial.name,
-                        args: partial.args,
-                        output: partial.output,
+                    content.push({ type: 'text', text: createXmlFromObject(partial.name, partial.args) });
+                    differedMessages.push({
+                        role,
+                        content: [
+                            {
+                                type: 'text',
+                                text: createXmlFromObject('toolCallResult', {
+                                    callId: partial.callId,
+                                    name: partial.name,
+                                    output: partial.output,
+                                }),
+                            },
+                        ],
                     });
-                    content.push({ type: 'text', text: toolCallXml });
                 }
             }
 
@@ -76,6 +84,11 @@ export class OpenAILanguageModel extends LanguageModel {
                 messages.push({ role, content: content[0].text });
             } else if (content.length > 0) {
                 messages.push({ role, content });
+            }
+
+            if (differedMessages.length > 0) {
+                const otherRole = role === 'user' ? 'assistant' : 'user';
+                messages.push({ role: otherRole, content: differedMessages });
             }
         }
 

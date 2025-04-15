@@ -57,6 +57,7 @@ export class AnthropicLanguageModel extends LanguageModel {
         for (const turn of turns) {
             const role = turn.sender === 'user' ? 'user' : 'assistant';
             const content: AnthropicContent[] = [];
+            const differeedContent: AnthropicContent[] = [];
 
             for (const partial of turn.partials) {
                 if (partial.type === 'text') {
@@ -72,13 +73,15 @@ export class AnthropicLanguageModel extends LanguageModel {
                     });
                 } else if (partial.type === 'toolCall') {
                     // Convert tool call to XML and add as text content
-                    const toolCallXml = createXmlFromObject('toolCall', {
-                        callId: partial.callId,
-                        name: partial.name,
-                        args: partial.args,
-                        output: partial.output,
+                    content.push({ type: 'text', text: createXmlFromObject(partial.name, partial.args) });
+                    differeedContent.push({
+                        type: 'text',
+                        text: createXmlFromObject('toolCallResult', {
+                            callId: partial.callId,
+                            name: partial.name,
+                            output: partial.output,
+                        }),
                     });
-                    content.push({ type: 'text', text: toolCallXml });
                 }
             }
 
@@ -87,6 +90,11 @@ export class AnthropicLanguageModel extends LanguageModel {
                 messages.push({ role, content: content[0].text || '' });
             } else if (content.length > 0) {
                 messages.push({ role, content });
+            }
+
+            if (differeedContent.length > 0) {
+                const otherRole = role === 'user' ? 'assistant' : 'user';
+                messages.push({ role: otherRole, content: differeedContent });
             }
         }
 
