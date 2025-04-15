@@ -45,10 +45,18 @@ export function useDatabaseTableSubscription<T>(table: string, callback: (databa
     return query;
 }
 
-export function useDatabaseRecordSubscription<T>(table: string, recordId: string, callback: (database: PrismaAPI) => Promise<T>) {
+export function useDatabaseRecordSubscription<T>(
+    table: string,
+    recordId: string | undefined,
+    callback: (database: PrismaAPI) => Promise<T>
+) {
     const query = useDatabaseQuery(callback);
 
     useEffect(() => {
+        if (!recordId) {
+            return;
+        }
+        query.refetch();
         const subscriptionId = Database.subscribeRecord(table, recordId, data => {
             query.refetch();
         });
@@ -62,7 +70,7 @@ export function useScanTableModelConnections() {
     return useDatabaseTableSubscription('ModelConnections', async database => database.table.modelConnections.scanTable());
 }
 
-export function useTableRecordModelConnections(id: string) {
+export function useTableRecordModelConnections(id: string | undefined) {
     return useDatabaseRecordSubscription('ModelConnections', id, async database => database.table.modelConnections.findById(id));
 }
 
@@ -74,7 +82,7 @@ export function useScanTableMessageThread() {
     return useDatabaseTableSubscription('MessageThread', async database => database.table.messageThread.scanTable());
 }
 
-export function useTableRecordMessageThread(id: string) {
+export function useTableRecordMessageThread(id: string | undefined) {
     return useDatabaseRecordSubscription('MessageThread', id, async database => database.table.messageThread.findById(id));
 }
 
@@ -82,16 +90,8 @@ export function useScanTableMessage() {
     return useDatabaseTableSubscription('Message', async database => database.table.message.scanTable());
 }
 
-export function useTableRecordMessage(id: string) {
+export function useTableRecordMessage(id: string | undefined) {
     return useDatabaseRecordSubscription('Message', id, async database => database.table.message.findById(id));
-}
-
-export function useScanTableNetworkCall() {
-    return useDatabaseTableSubscription('NetworkCall', async database => database.table.networkCall.scanTable());
-}
-
-export function useTableRecordNetworkCall(id: string) {
-    return useDatabaseRecordSubscription('NetworkCall', id, async database => database.table.networkCall.findById(id));
 }
 
 export function useScanTableRenderedConversationThread() {
@@ -100,7 +100,7 @@ export function useScanTableRenderedConversationThread() {
     );
 }
 
-export function useTableRecordRenderedConversationThread(id: string) {
+export function useTableRecordRenderedConversationThread(id: string | undefined) {
     return useDatabaseRecordSubscription('RenderedConversationThread', id, async database =>
         database.table.renderedConversationThread.findById(id)
     );
@@ -110,7 +110,7 @@ export function useScanTableChat() {
     return useDatabaseTableSubscription('Chat', async database => database.table.chat.scanTable());
 }
 
-export function useTableRecordChat(id: string) {
+export function useTableRecordChat(id: string | undefined) {
     return useDatabaseRecordSubscription('Chat', id, async database => database.table.chat.findById(id));
 }
 
@@ -118,7 +118,7 @@ export function useScanTableAgent() {
     return useDatabaseTableSubscription('Agent', async database => database.table.agent.scanTable());
 }
 
-export function useTableRecordAgent(id: string) {
+export function useTableRecordAgent(id: string | undefined) {
     return useDatabaseRecordSubscription('Agent', id, async database => database.table.agent.findById(id));
 }
 
@@ -126,7 +126,7 @@ export function useScanTableAgentToolConnection() {
     return useDatabaseTableSubscription('AgentToolConnection', async database => database.table.agentToolConnection.scanTable());
 }
 
-export function useTableRecordAgentToolConnection(id: string) {
+export function useTableRecordAgentToolConnection(id: string | undefined) {
     return useDatabaseRecordSubscription('AgentToolConnection', id, async database => database.table.agentToolConnection.findById(id));
 }
 
@@ -134,7 +134,7 @@ export function useScanTableTool() {
     return useDatabaseTableSubscription('Tool', async database => database.table.tool.scanTable());
 }
 
-export function useTableRecordTool(id: string) {
+export function useTableRecordTool(id: string | undefined) {
     return useDatabaseRecordSubscription('Tool', id, async database => database.table.tool.findById(id));
 }
 
@@ -142,7 +142,7 @@ export function useScanTableToolInvocation() {
     return useDatabaseTableSubscription('ToolInvocation', async database => database.table.toolInvocation.scanTable());
 }
 
-export function useTableRecordToolInvocation(id: string) {
+export function useTableRecordToolInvocation(id: string | undefined) {
     return useDatabaseRecordSubscription('ToolInvocation', id, async database => database.table.toolInvocation.findById(id));
 }
 
@@ -150,7 +150,7 @@ export function useScanTableMetric() {
     return useDatabaseTableSubscription('Metric', async database => database.table.metric.scanTable());
 }
 
-export function useTableRecordMetric(id: string) {
+export function useTableRecordMetric(id: string | undefined) {
     return useDatabaseRecordSubscription('Metric', id, async database => database.table.metric.findById(id));
 }
 
@@ -158,6 +158,6 @@ export function useScanTableTextLog() {
     return useDatabaseTableSubscription('TextLog', async database => database.table.textLog.scanTable());
 }
 
-export function useTableRecordTextLog(id: string) {
+export function useTableRecordTextLog(id: string | undefined) {
     return useDatabaseRecordSubscription('TextLog', id, async database => database.table.textLog.findById(id));
 }

@@ -40,7 +40,10 @@ export class BaseDatabaseConnection<T extends BaseRecord> {
         return result;
     }
 
-    async getByRecordId(recordId: string): Promise<T | null> {
+    async getByRecordId(recordId: string | undefined): Promise<T | null> {
+        if (!recordId) {
+            return null;
+        }
         return (await this.getTable().findFirst({ where: { id: recordId } })) as T | null;
     }
 
@@ -68,7 +71,10 @@ export class BaseDatabaseConnection<T extends BaseRecord> {
         await this.notifyChange({ id });
     }
 
-    async findById(id: string): Promise<T | null> {
+    async findById(id: string | undefined): Promise<T | null> {
+        if (!id) {
+            return null;
+        }
         return (await this.getTable().findUnique({ where: { id } })) as T | null;
     }
 

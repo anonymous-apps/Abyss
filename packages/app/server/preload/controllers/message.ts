@@ -9,7 +9,6 @@ export type MessageToolCall = {
         toolId?: string;
         name: string;
         parameters: Record<string, any>;
-        status: 'idle' | 'running' | 'complete' | 'failed';
         invocationId?: string;
     };
 };

@@ -1,8 +1,8 @@
 import { Button, InputArea, PageCrumbed } from '@abyss/ui-components';
 import { BotIcon, Box } from 'lucide-react';
 import React from 'react';
-import { ChatMessageSection } from '../../library/content/chat-section';
 import { getIconForSourceType } from '../../library/references';
+import { ChatHistoryRenderer } from './components/ChatContent';
 import { useChatView } from './view.hook';
 
 export function ChatViewPage() {
@@ -13,14 +13,8 @@ export function ChatViewPage() {
     const icon = React.createElement(getIconForSourceType(chat.chat?.references?.sourceId || ''));
 
     return (
-        <PageCrumbed title={chat.chat?.name || 'Loading...'} icon={icon} actions={headerReference} breadcrumbs={breadcrumbs}>
-            {chat.messages?.map((m, index) => (
-                <ChatMessageSection
-                    message={m}
-                    key={m.id}
-                    showHeader={index === 0 || chat.messages?.at(index - 1)?.sourceId !== m.sourceId}
-                />
-            ))}
+        <PageCrumbed title={chat.chat?.name || ''} icon={icon} actions={headerReference} breadcrumbs={breadcrumbs}>
+            <ChatHistoryRenderer messages={chat.messages} />
 
             {isTyping ? (
                 <div className="flex justify-center my-4">

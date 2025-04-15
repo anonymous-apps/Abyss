@@ -17,11 +17,7 @@ export function MetricsChartPage() {
     } = useMetricsChart();
 
     return (
-        <PageCrumbed
-            title={`Metric: ${metricName || 'Loading...'}`}
-            subtitle="Visualization of metric data over time"
-            breadcrumbs={breadcrumbs}
-        >
+        <PageCrumbed title={`Metric: ${metricName || ''}`} subtitle="Visualization of metric data over time" breadcrumbs={breadcrumbs}>
             <IconSection title="Metric Chart" icon={ChartLine} subtitle="Visualization of metric data over time">
                 <div className="mb-4 flex flex-wrap gap-4 justify-between">
                     <div>
