@@ -83,12 +83,10 @@ export async function handlerInvokeBuildNodejsTool(input: InvokeBuildNodejsToolI
         outputs.push(`\n# Tool created: ${tool.name} ${tool.id}`);
 
         // Save status
-        await ToolInvocationController.complete(toolInvocation.id, {
-            workspacePath: workspacePath.replace(userDataPath, ''),
-        });
+        await ToolInvocationController.complete(toolInvocation.id);
     } catch (error) {
         await TextLogController.appendToLog(log.id, `\n\n Error: ${error}`);
-        await ToolInvocationController.error(toolInvocation.id, error.message);
+        await ToolInvocationController.error(toolInvocation.id);
     } finally {
         await TextLogController.appendToLog(log.id, outputs.join('\n'));
     }

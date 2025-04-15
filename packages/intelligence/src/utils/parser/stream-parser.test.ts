@@ -81,7 +81,7 @@ describe('StreamParser', () => {
             expect(messages[1].type).toBe('toolCall');
             expect(messages[2].type).toBe('text');
             expect((messages[1] as ToolCallMessage).name).toBe('tool1');
-            expect((messages[1] as ToolCallMessage).arguments).toEqual({
+            expect((messages[1] as ToolCallMessage).args).toEqual({
                 data: { name: 'John' },
             });
         });
@@ -107,7 +107,7 @@ describe('StreamParser', () => {
             expect(messages.length).toBe(1);
             expect(messages[0].type).toBe('toolCall');
             expect((messages[0] as ToolCallMessage).name).toBe('parent');
-            expect((messages[0] as ToolCallMessage).arguments).toEqual({
+            expect((messages[0] as ToolCallMessage).args).toEqual({
                 child: 'value1',
             });
         });
@@ -152,7 +152,7 @@ describe('StreamParser', () => {
             expect(messages.length).toBe(1);
             expect(messages[0].type).toBe('toolCall');
             expect((messages[0] as ToolCallMessage).name).toBe('tool');
-            expect((messages[0] as ToolCallMessage).arguments).toEqual({
+            expect((messages[0] as ToolCallMessage).args).toEqual({
                 data: '![CDATA[value1]]>',
             });
         });
@@ -188,7 +188,7 @@ describe('StreamParser', () => {
             // Second message should be a tool call
             expect(messages[1].type).toBe('toolCall');
             expect((messages[1] as ToolCallMessage).name).toBe('tool');
-            expect((messages[1] as ToolCallMessage).arguments).toEqual({
+            expect((messages[1] as ToolCallMessage).args).toEqual({
                 data: 'value1',
             });
 
@@ -240,7 +240,7 @@ describe('StreamParser', () => {
             expect(messages.length).toBe(1);
             expect(messages[0].type).toBe('toolCall');
             expect((messages[0] as ToolCallMessage).name).toBe('tool');
-            expect((messages[0] as ToolCallMessage).arguments).toEqual({
+            expect((messages[0] as ToolCallMessage).args).toEqual({
                 data: 'value1',
             });
         });
@@ -265,7 +265,7 @@ describe('StreamParser', () => {
             expect(messages.length).toBe(1);
             expect(messages[0].type).toBe('toolCall');
             expect((messages[0] as ToolCallMessage).name).toBe('tool');
-            expect((messages[0] as ToolCallMessage).arguments).toEqual({
+            expect((messages[0] as ToolCallMessage).args).toEqual({
                 data: 'value1',
             });
         });

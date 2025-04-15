@@ -9,7 +9,7 @@ import { AskAgentToRespondToThreadInput } from './types';
 export async function handlerAskAgentToRespondToThread(input: AskAgentToRespondToThreadInput) {
     // Setup the model and thread
     const connection = await buildIntelegence(input.connection);
-    const thread = buildThread(input.messages);
+    const thread = await buildThread(input.messages);
 
     // Block the chat thread
     const responseStream = await ResponseStreamController.createFromModelConnection(input.connection);
@@ -28,6 +28,7 @@ export async function handlerAskAgentToRespondToThread(input: AskAgentToRespondT
         }));
 
         const stream = await Operations.streamWithTools({ model: connection, thread, toolDefinitions });
+        await RenderedConversationThreadController.updateRawInput(renderedThread.id, stream.metadata?.inputContext);
 
         // Rerender thread
         await RenderedConversationThreadController.update(renderedThread.id, {
@@ -81,8 +82,7 @@ export async function handlerAskAgentToRespondToThread(input: AskAgentToRespondT
                         tool: {
                             toolId: toolConnection?.tool.id,
                             name: toolCall.name || '',
-                            parameters: toolCall.arguments || {},
-                            status: 'idle',
+                            parameters: toolCall.args || {},
                         },
                     },
                 });
@@ -96,7 +96,7 @@ export async function handlerAskAgentToRespondToThread(input: AskAgentToRespondT
                             name: existingContent.tool.name || toolCall.name,
                             parameters: {
                                 ...existingContent.tool.parameters,
-                                ...toolCall.arguments,
+                                ...toolCall.args,
                             },
                         },
                     },

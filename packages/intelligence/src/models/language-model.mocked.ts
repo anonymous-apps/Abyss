@@ -1,6 +1,7 @@
 import { ChatThread } from '../constructs/chat-thread';
 import { AsyncStream } from '../constructs/stream/stream';
 import { LanguageModel } from './language-model';
+import { LanguageModelStreamResult } from './types';
 
 /**
  * A mocked implementation of the LanguageModel for testing
@@ -53,7 +54,12 @@ export class MockedLanguageModel extends LanguageModel {
      * @param thread The chat thread to respond to
      * @returns A Promise resolving to an AsyncStream of string chunks
      */
-    protected async _stream(thread: ChatThread): Promise<AsyncStream<string>> {
-        return this.streamResponseFunction(thread);
+    protected async _stream(thread: ChatThread): Promise<LanguageModelStreamResult> {
+        return {
+            metadata: {
+                inputContext: [],
+            },
+            stream: this.streamResponseFunction(thread),
+        };
     }
 }

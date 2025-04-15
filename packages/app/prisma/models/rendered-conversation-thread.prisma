@@ -6,4 +6,5 @@ model RenderedConversationThread {
 
   // Serialized JSON array of messages in the conversation
   messages   String 
+  rawInput   Json?
 } 

@@ -25,7 +25,7 @@ const prismaModule = require('@prisma/client') as {
     PrismaClient: new (options?: any) => PrismaClient;
 };
 export const prisma = new prismaModule.PrismaClient({
-    log: ['query', 'info', 'warn', 'error'],
+    // log: ['query', 'info', 'warn', 'error'],
 });
 
 // Allow subscriptions to database changes

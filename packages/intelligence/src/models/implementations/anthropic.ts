@@ -1,10 +1,10 @@
-import { AsyncStream } from '../../constructs';
 import { ChatThread } from '../../constructs/chat-thread/chat-thread';
 import { Log } from '../../utils/logs';
 import { createStreamingFetch } from '../../utils/network/fetch-utils';
 import { createGenericStreamParser, parseJSON, parseSSE } from '../../utils/network/stream-parser';
 import { createXmlFromObject } from '../../utils/object-to-xml/object-to-xml';
 import { LanguageModel } from '../language-model';
+import { LanguageModelStreamResult } from '../types';
 
 export interface AnthropicLanguageModelOptions {
     apiKey?: string;
@@ -75,16 +75,10 @@ export class AnthropicLanguageModel extends LanguageModel {
                     const toolCallXml = createXmlFromObject('toolCall', {
                         callId: partial.callId,
                         name: partial.name,
-                        arguments: partial.arguments,
+                        args: partial.args,
+                        output: partial.output,
                     });
                     content.push({ type: 'text', text: toolCallXml });
-                } else if (partial.type === 'toolResult') {
-                    // Convert tool result to XML and add as text content
-                    const toolResultXml = createXmlFromObject('toolResult', {
-                        callId: partial.callId,
-                        result: partial.result,
-                    });
-                    content.push({ type: 'text', text: toolResultXml });
                 }
             }
 
@@ -99,7 +93,7 @@ export class AnthropicLanguageModel extends LanguageModel {
         return messages;
     }
 
-    protected async _stream(thread: ChatThread): Promise<AsyncStream<string>> {
+    protected async _stream(thread: ChatThread): Promise<LanguageModelStreamResult> {
         const messages = this.buildMessages(thread);
         const modelName = this.getName();
 
@@ -148,7 +142,15 @@ export class AnthropicLanguageModel extends LanguageModel {
             };
 
             // Use the generic stream parser
-            return createGenericStreamParser(reader, decoder, modelName, parseAnthropicChunk);
+            const stream = await createGenericStreamParser(reader, decoder, modelName, parseAnthropicChunk);
+
+            // Return the stream and metadata
+            return {
+                metadata: {
+                    inputContext: messages,
+                },
+                stream: stream,
+            };
         } catch (error) {
             Log.error(modelName, `Streaming error: ${error}`);
             throw error;

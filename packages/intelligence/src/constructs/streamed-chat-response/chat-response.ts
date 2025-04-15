@@ -1,5 +1,6 @@
 import { v4 } from 'uuid';
 import { LanguageModel } from '../../models/language-model';
+import { LanguageModelStreamResult } from '../../models/types';
 import { Log } from '../../utils/logs';
 import { ChatThread } from '../chat-thread/chat-thread';
 import {
@@ -16,7 +17,8 @@ import {
 interface Props {
     model: LanguageModel;
     inputThread: ChatThread;
-    batchingConstant?: number; // Time in ms to wait before flushing events
+    batchingConstant?: number;
+    metadata?: LanguageModelStreamResult['metadata'];
 }
 
 export class StreamedChatResponse {
@@ -24,6 +26,7 @@ export class StreamedChatResponse {
     public readonly inputThread: ChatThread;
     private readonly batchingConstant: number;
 
+    public readonly metadata?: LanguageModelStreamResult['metadata'];
     private messages: Message[] = [];
     private currentMessage: Message | null = null;
     private fullTextMessage: string = '';
@@ -41,9 +44,10 @@ export class StreamedChatResponse {
     private pendingMessages: Map<string, Message> = new Map();
 
     constructor(props: Props) {
+        this.metadata = props.metadata;
         this.model = props.model;
         this.inputThread = props.inputThread;
-        this.batchingConstant = props.batchingConstant || 100; // Default to 100ms if not specified
+        this.batchingConstant = props.batchingConstant || 100;
     }
 
     // Text management methods
@@ -102,7 +106,7 @@ export class StreamedChatResponse {
             type: 'toolCall',
             uuid: v4(),
             name,
-            arguments: {},
+            args: {},
             completed: false,
         };
         this.scheduleMessageUpdate(this.currentMessage);
@@ -110,7 +114,7 @@ export class StreamedChatResponse {
 
     public setToolCallArguments(args: Record<string, any>): void {
         if (this.currentMessage && this.currentMessage.type === 'toolCall') {
-            this.currentMessage.arguments = args;
+            this.currentMessage.args = args;
             this.scheduleMessageUpdate(this.currentMessage);
         }
     }
@@ -118,7 +122,7 @@ export class StreamedChatResponse {
     public updateToolCall(keypath: string, value: string): void {
         if (this.currentMessage && this.currentMessage.type === 'toolCall') {
             const keys = keypath.split('.');
-            let current: any = this.currentMessage.arguments;
+            let current: any = this.currentMessage.args;
 
             // Navigate to the nested object where we need to update
             for (let i = 0; i < keys.length - 1; i++) {

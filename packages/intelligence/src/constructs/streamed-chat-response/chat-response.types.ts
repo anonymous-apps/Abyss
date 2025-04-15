@@ -16,7 +16,8 @@ export type ToolCallMessage = {
     type: 'toolCall';
     uuid: string;
     name: string;
-    arguments: Record<string, any>;
+    args: Record<string, any>;
+    output?: string;
     completed: boolean;
 };
 

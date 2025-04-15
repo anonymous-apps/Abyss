@@ -3,7 +3,6 @@ import { BaseDatabaseConnection, BaseRecord } from './_base';
 export interface ToolInvocationRecord extends BaseRecord {
     toolId: string;
     parameters: Record<string, any>;
-    result?: Record<string, any>;
     textLogId?: string;
     status: 'idle' | 'running' | 'complete' | 'failed';
 }
@@ -27,16 +26,14 @@ class _ToolInvocationController extends BaseDatabaseConnection<ToolInvocationRec
         return result as ToolInvocationRecord[];
     }
 
-    async complete(id: string, result: Record<string, any>): Promise<ToolInvocationRecord> {
+    async complete(id: string): Promise<ToolInvocationRecord> {
         return await this.update(id, {
-            result,
             status: 'complete',
         });
     }
 
-    async error(id: string, errorMessage: string): Promise<ToolInvocationRecord> {
+    async error(id: string): Promise<ToolInvocationRecord> {
         return await this.update(id, {
-            result: { error: errorMessage },
             status: 'failed',
         });
     }

@@ -1,13 +1,5 @@
 import { dedent } from '../../utils/dedent/dedent';
-import {
-    ChatContextProps,
-    ChatTurn,
-    ImageMessagePartial,
-    MessageSender,
-    TextMessagePartial,
-    ToolCallMessagePartial,
-    ToolResultMessagePartial,
-} from './types';
+import { ChatContextProps, ChatTurn, ImageMessagePartial, MessageSender, TextMessagePartial, ToolCallMessagePartial } from './types';
 
 /**
  * @description Manages chat context between a user and bot, handling message turns and formatting
@@ -68,20 +60,10 @@ export class ChatThread {
         };
     }
 
-    private _createToolCallPartial(callId: string, name: string, arguments_: Record<string, any>): ToolCallMessagePartial {
+    private _createToolCallPartial(params: Omit<ToolCallMessagePartial, 'type'>): ToolCallMessagePartial {
         return {
             type: 'toolCall',
-            callId,
-            name,
-            arguments: arguments_,
-        };
-    }
-
-    private _createToolResultPartial(callId: string, result: any): ToolResultMessagePartial {
-        return {
-            type: 'toolResult',
-            callId,
-            result,
+            ...params,
         };
     }
 
@@ -158,9 +140,9 @@ export class ChatThread {
     /**
      * @description Adds a tool call message to the current turn or creates a new turn
      */
-    public addToolCallMessage(callId: string, name: string, arguments_: Record<string, any>, sender: MessageSender): ChatThread {
+    public addToolCallMessage(sender: MessageSender, params: Omit<ToolCallMessagePartial, 'type' | 'sender'>): ChatThread {
         const lastTurn = this._getLastTurn();
-        const toolCallPartial = this._createToolCallPartial(callId, name, arguments_);
+        const toolCallPartial = this._createToolCallPartial(params);
 
         // If no turns yet or if last turn was from the other sender, create a new turn
         if (!lastTurn || lastTurn.sender !== sender) {
@@ -176,32 +158,6 @@ export class ChatThread {
         updatedTurns[lastTurnIndex] = {
             ...updatedTurns[lastTurnIndex],
             partials: [...updatedTurns[lastTurnIndex].partials, toolCallPartial],
-        };
-
-        return new ChatThread({ turns: updatedTurns });
-    }
-
-    /**
-     * @description Adds a tool result message to the current turn or creates a new turn
-     */
-    public addToolResultMessage(callId: string, result: any, sender: MessageSender): ChatThread {
-        const lastTurn = this._getLastTurn();
-        const toolResultPartial = this._createToolResultPartial(callId, result);
-
-        // If no turns yet or if last turn was from the other sender, create a new turn
-        if (!lastTurn || lastTurn.sender !== sender) {
-            return this.addTurn({
-                sender,
-                partials: [toolResultPartial],
-            });
-        }
-
-        // Add to existing turn from the same sender
-        const updatedTurns = [...this.turns];
-        const lastTurnIndex = updatedTurns.length - 1;
-        updatedTurns[lastTurnIndex] = {
-            ...updatedTurns[lastTurnIndex],
-            partials: [...updatedTurns[lastTurnIndex].partials, toolResultPartial],
         };
 
         return new ChatThread({ turns: updatedTurns });
@@ -238,15 +194,8 @@ export class ChatThread {
     /**
      * @description Convenience method to add a bot tool call message
      */
-    public addBotToolCallMessage(callId: string, name: string, arguments_: Record<string, any>): ChatThread {
-        return this.addToolCallMessage(callId, name, arguments_, 'bot');
-    }
-
-    /**
-     * @description Convenience method to add a user tool result message
-     */
-    public addUserToolResultMessage(callId: string, result: any): ChatThread {
-        return this.addToolResultMessage(callId, result, 'user');
+    public addBotToolCallMessage(params: Omit<ToolCallMessagePartial, 'type' | 'sender'>): ChatThread {
+        return this.addToolCallMessage('bot', params);
     }
 
     /**
@@ -281,10 +230,7 @@ export class ChatThread {
                             return `[IMAGE: ${(partial as ImageMessagePartial).base64Data.substring(0, 20)}...]`;
                         } else if (partial.type === 'toolCall') {
                             const toolCall = partial as ToolCallMessagePartial;
-                            return `[TOOL CALL: ${toolCall.name}(${JSON.stringify(toolCall.arguments)})]`;
-                        } else if (partial.type === 'toolResult') {
-                            const toolResult = partial as ToolResultMessagePartial;
-                            return `[TOOL RESULT: ${JSON.stringify(toolResult.result)}]`;
+                            return `[TOOL CALL: ${toolCall.name}(${JSON.stringify(toolCall.args)})]`;
                         }
                         return '';
                     })

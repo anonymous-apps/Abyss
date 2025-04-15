@@ -20,5 +20,9 @@ export function useRecordPage() {
         { name: recordId!, onClick: () => navigate(`/database/id/${id}/record/${recordId}`) },
     ];
 
-    return { record, breadcrumbs };
+    return {
+        record,
+        breadcrumbs,
+        type: recordId?.split(':')[0],
+    };
 }

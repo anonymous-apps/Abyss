@@ -1,4 +1,3 @@
-import { AsyncStream } from '../../constructs';
 import { ChatThread } from '../../constructs/chat-thread/chat-thread';
 import { ChatTurn } from '../../constructs/chat-thread/types';
 import { Log } from '../../utils/logs';
@@ -6,6 +5,7 @@ import { createStreamingFetch } from '../../utils/network/fetch-utils';
 import { createGenericStreamParser, parseJSON } from '../../utils/network/stream-parser';
 import { createXmlFromObject } from '../../utils/object-to-xml/object-to-xml';
 import { LanguageModel } from '../language-model';
+import { LanguageModelStreamResult } from '../types';
 
 export interface GeminiLanguageModelOptions {
     apiKey?: string;
@@ -73,16 +73,10 @@ export class GeminiLanguageModel extends LanguageModel {
                         const toolCallXml = createXmlFromObject('toolCall', {
                             callId: partial.callId,
                             name: partial.name,
-                            arguments: partial.arguments,
+                            args: partial.args,
+                            output: partial.output,
                         });
                         return { text: toolCallXml };
-                    } else if (partial.type === 'toolResult') {
-                        // Convert tool result to XML and add as text content
-                        const toolResultXml = createXmlFromObject('toolResult', {
-                            callId: partial.callId,
-                            result: partial.result,
-                        });
-                        return { text: toolResultXml };
                     }
                     return null;
                 })
@@ -94,7 +88,7 @@ export class GeminiLanguageModel extends LanguageModel {
         return contents as GeminiContent[];
     }
 
-    protected async _stream(thread: ChatThread): Promise<AsyncStream<string>> {
+    protected async _stream(thread: ChatThread): Promise<LanguageModelStreamResult> {
         const contents = this.buildContents(thread);
         const modelName = this.getName();
 
@@ -177,7 +171,15 @@ export class GeminiLanguageModel extends LanguageModel {
             };
 
             // Use the generic stream parser
-            return createGenericStreamParser(reader, decoder, modelName, parseGeminiChunk);
+            const stream = await createGenericStreamParser(reader, decoder, modelName, parseGeminiChunk);
+
+            // Return the stream and metadata
+            return {
+                metadata: {
+                    inputContext: contents,
+                },
+                stream: stream,
+            };
         } catch (error) {
             Log.error(modelName, `Streaming error: ${error}`);
             throw error;

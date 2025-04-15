@@ -1,7 +1,7 @@
 import { ChatThread } from '../constructs/chat-thread';
-import { AsyncStream } from '../constructs/stream/stream';
-import { StorageController } from '../storage';
 import { Log } from '../utils/logs';
+import { LanguageModelChatResult, LanguageModelStreamResult } from './types';
+
 /**
  * Abstract base class for language models
  */
@@ -49,25 +49,8 @@ export abstract class LanguageModel {
      * @param thread The chat thread to respond to
      * @returns A Promise resolving to the model's response
      */
-    public async invoke(thread: ChatThread, cache?: StorageController): Promise<ChatThread> {
+    public async invoke(thread: ChatThread): Promise<LanguageModelChatResult> {
         try {
-            const invokeKey = {
-                provider: this.provider,
-                model: this.id,
-                thread: thread.toLogString(),
-            };
-
-            if (cache) {
-                Log.debug(this.getName(), `Checking cache for invoke key`);
-                const cachedResponse = await cache.read(invokeKey);
-                if (cachedResponse) {
-                    Log.log(this.getName(), `Found cached response for invoke key, returning cached response instead of invoking model`);
-                    return ChatThread.deserialize(cachedResponse as any);
-                } else {
-                    Log.debug(this.getName(), `No cached response found for invoke key, invoking model`);
-                }
-            }
-
             Log.debug(this.getName(), `Invoking model via streaming`);
 
             // Use streaming to get the response
@@ -75,7 +58,7 @@ export abstract class LanguageModel {
             let responseText = '';
 
             // Collect all chunks from the stream
-            for await (const chunk of stream) {
+            for await (const chunk of stream.stream) {
                 responseText += chunk;
             }
 
@@ -83,12 +66,11 @@ export abstract class LanguageModel {
             const response = thread.addBotTextMessage(responseText);
             Log.debug(this.getName(), `Got response from model!`);
 
-            if (cache) {
-                Log.debug(this.getName(), `Saving response to cache for future invocations`);
-                await cache.save(invokeKey, response.serialize());
-            }
-
-            return response;
+            return {
+                metadata: stream.metadata,
+                response: responseText,
+                outputThread: response,
+            };
         } catch (error) {
             Log.error(this.getName(), `Error responding to thread: ${error}`);
             throw error;
@@ -101,7 +83,7 @@ export abstract class LanguageModel {
      * @param thread The chat thread to respond to
      * @returns A Promise resolving to an AsyncStream of string chunks
      */
-    public async stream(thread: ChatThread): Promise<AsyncStream<string>> {
+    public async stream(thread: ChatThread): Promise<LanguageModelStreamResult> {
         try {
             Log.debug(this.getName(), `Streaming response from model`);
             return await this._stream(thread);
@@ -116,5 +98,5 @@ export abstract class LanguageModel {
      * @param thread The chat thread to respond to
      * @returns A Promise resolving to an AsyncStream of string chunks
      */
-    protected abstract _stream(thread: ChatThread): Promise<AsyncStream<string>>;
+    protected abstract _stream(thread: ChatThread): Promise<LanguageModelStreamResult>;
 }

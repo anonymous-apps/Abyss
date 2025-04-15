@@ -1,4 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
+import { Copy, FileJson, RefreshCw, Undo2 } from 'lucide-react';
 import ChatToolCall from './ChatToolCall';
 
 // Meta information for the component
@@ -14,7 +15,7 @@ const meta: Meta<typeof ChatToolCall> = {
         },
         status: {
             control: 'select',
-            options: ['not_invoked', 'running', 'success', 'failure'],
+            options: ['idle', 'running', 'complete', 'failed'],
         },
         inputData: {
             control: 'object',
@@ -23,21 +24,37 @@ const meta: Meta<typeof ChatToolCall> = {
             control: 'text',
         },
         onInvoke: { action: 'invoked' },
+        actionItems: { control: 'object' },
     },
 };
 
 export default meta;
 type Story = StoryObj<typeof ChatToolCall>;
 
+// Default action items for stories
+const defaultActionItems = [
+    {
+        icon: Copy,
+        tooltip: 'Copy to clipboard',
+        onClick: () => console.log('Copy clicked'),
+    },
+    {
+        icon: FileJson,
+        tooltip: 'Export as JSON',
+        onClick: () => console.log('Export clicked'),
+    },
+];
+
 // Not invoked tool
-export const NotInvoked: Story = {
+export const Idle: Story = {
     args: {
         toolName: 'list-files',
-        status: 'not_invoked',
+        status: 'idle',
         inputData: {
             path: '/home/user/documents',
             includeHidden: false,
         },
+        actionItems: defaultActionItems,
     },
 };
 
@@ -50,27 +67,36 @@ export const Running: Story = {
             query: 'SELECT * FROM users WHERE active = true',
             limit: 10,
         },
+        actionItems: [
+            ...defaultActionItems,
+            {
+                icon: Undo2,
+                tooltip: 'Cancel operation',
+                onClick: () => console.log('Cancel clicked'),
+            },
+        ],
     },
 };
 
 // Successful tool execution
-export const Success: Story = {
+export const Complete: Story = {
     args: {
         toolName: 'execute-command',
-        status: 'success',
+        status: 'complete',
         inputData: {
             command: 'echo "Hello World"',
             timeout: 5000,
         },
         outputText: 'Hello World\nCommand executed successfully with exit code 0.',
+        actionItems: defaultActionItems,
     },
 };
 
 // Failed tool execution
-export const Failure: Story = {
+export const Failed: Story = {
     args: {
         toolName: 'fetch-api-data',
-        status: 'failure',
+        status: 'failed',
         inputData: {
             url: 'https://api.example.com/data',
             method: 'GET',
@@ -79,6 +105,14 @@ export const Failure: Story = {
             },
         },
         outputText: 'Error: Failed to fetch data from API\nHTTP Status: 404\nMessage: Resource not found',
+        actionItems: [
+            ...defaultActionItems,
+            {
+                icon: RefreshCw,
+                tooltip: 'Retry operation',
+                onClick: () => console.log('Retry clicked'),
+            },
+        ],
     },
 };
 
@@ -86,7 +120,7 @@ export const Failure: Story = {
 export const ComplexInput: Story = {
     args: {
         toolName: 'transform-data',
-        status: 'success',
+        status: 'complete',
         inputData: {
             data: {
                 users: [
@@ -108,5 +142,6 @@ export const ComplexInput: Story = {
             transformations: ['lowercase', 'remove-nulls'],
         },
         outputText: 'Transformation complete. 3 objects processed.',
+        actionItems: defaultActionItems,
     },
 };

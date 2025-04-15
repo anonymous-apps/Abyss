@@ -11,7 +11,9 @@ import { AgentRecord } from '../controllers/agent';
 import { AgentToolConnectionController } from '../controllers/agent-tool-connection';
 import { MessageRecord } from '../controllers/message';
 import { ModelConnectionsRecord } from '../controllers/model-connections';
+import { TextLogController } from '../controllers/text-log';
 import { ToolController } from '../controllers/tool';
+import { ToolInvocationController } from '../controllers/tool-invocation';
 
 export function buildIntelegence(aiConnection: ModelConnectionsRecord) {
     let languageModel: LanguageModel | undefined;
@@ -44,7 +46,7 @@ export function buildIntelegence(aiConnection: ModelConnectionsRecord) {
     return languageModel;
 }
 
-export function buildThread(messages: MessageRecord[]) {
+export async function buildThread(messages: MessageRecord[]) {
     let context = ChatThread.fromStrings();
 
     for (const message of messages) {
@@ -58,7 +60,17 @@ export function buildThread(messages: MessageRecord[]) {
             if ('text' in message.content) {
                 context = context.addBotTextMessage(message.content.text);
             } else if ('tool' in message.content) {
-                context = context.addBotToolCallMessage(message.id, message.content.tool.name, message.content.tool.parameters);
+                const toolCall = await ToolInvocationController.getByRecordId(message.content.tool.invocationId);
+                const toolOutput = await TextLogController.getByRecordId(toolCall?.textLogId);
+
+                console.log('toolOutput', toolOutput, 'toolCall', message.content.tool);
+
+                context = context.addBotToolCallMessage({
+                    callId: message.id,
+                    name: message.content.tool.name,
+                    args: message.content.tool.parameters,
+                    output: toolOutput?.text,
+                });
             } else {
                 throw new Error('Unsupported message content ' + JSON.stringify(message.content));
             }

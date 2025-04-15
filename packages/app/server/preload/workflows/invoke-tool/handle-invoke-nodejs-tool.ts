@@ -39,22 +39,20 @@ export async function handleInvokeNodejsTool(input: InvokeNodejsToolInput) {
         const inputJson = JSON.stringify(parameters);
 
         // Run the tool
-        const buildResult = await runCommandAtPath(`npm run build`, workspacePath);
+        await runCommandAtPath(`npm run build`, workspacePath);
         const startResult = await runCommandAtPath(`export INPUT='${inputJson}' && npm run start`, workspacePath);
 
         // Update the log with the result
         await TextLogController.appendToLog(log.id, startResult);
 
         // Complete the tool invocation
-        await ToolInvocationController.complete(toolInvocation.id, {
-            result: startResult,
-        });
+        await ToolInvocationController.complete(toolInvocation.id);
     } catch (error) {
         // Log the error
         await TextLogController.appendToLog(log.id, `\n\n Error: ${error}`);
 
         // Mark the tool invocation as failed
-        await ToolInvocationController.error(toolInvocation.id, error.message);
+        await ToolInvocationController.error(toolInvocation.id);
 
         throw error;
     }

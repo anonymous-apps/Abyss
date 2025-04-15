@@ -9,7 +9,7 @@ import { AskRawModelToRespondToThreadInput } from './types';
 export async function handlerAskRawModelToRespondToThread(input: AskRawModelToRespondToThreadInput) {
     // Setup the model and thread
     const connection = await buildIntelegence(input.connection);
-    const thread = buildThread(input.messages);
+    const thread = await buildThread(input.messages);
 
     // Block the chat thread
     const responseStream = await ResponseStreamController.createFromModelConnection(input.connection);
@@ -19,6 +19,7 @@ export async function handlerAskRawModelToRespondToThread(input: AskRawModelToRe
     try {
         // Stream the response
         const stream = await Operations.streamText({ model: connection, thread });
+        await RenderedConversationThreadController.updateRawInput(renderedThread.id, stream.metadata?.inputContext);
 
         // Save the messages to the chat thread
         const seenTextMessages: Record<string, MessageRecord> = {};

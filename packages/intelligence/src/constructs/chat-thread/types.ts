@@ -14,16 +14,11 @@ export type ToolCallMessagePartial = {
     type: 'toolCall';
     callId: string;
     name: string;
-    arguments: Record<string, any>;
+    args: Record<string, any>;
+    output?: string;
 };
 
-export type ToolResultMessagePartial = {
-    type: 'toolResult';
-    callId: string;
-    result: any;
-};
-
-export type ChatMessagePartial = TextMessagePartial | ImageMessagePartial | ToolCallMessagePartial | ToolResultMessagePartial;
+export type ChatMessagePartial = TextMessagePartial | ImageMessagePartial | ToolCallMessagePartial;
 
 export interface ChatTurn {
     sender: MessageSender;

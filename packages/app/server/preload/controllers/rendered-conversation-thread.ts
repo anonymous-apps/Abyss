@@ -3,6 +3,7 @@ import { BaseDatabaseConnection, BaseRecord } from './_base';
 
 export interface RenderedConversationThreadRecord extends BaseRecord {
     messages: string;
+    rawInput: any;
 }
 
 class _RenderedConversationThreadController extends BaseDatabaseConnection<RenderedConversationThreadRecord> {
@@ -13,8 +14,15 @@ class _RenderedConversationThreadController extends BaseDatabaseConnection<Rende
     async createFromThread(thread: ChatThread) {
         const renderedThread = await this.create({
             messages: thread.serialize(),
+            rawInput: '-',
         });
         return renderedThread;
+    }
+
+    async updateRawInput(id: string, rawInput: any) {
+        return await this.update(id, {
+            rawInput,
+        });
     }
 }
 

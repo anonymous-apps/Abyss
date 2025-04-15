@@ -12,11 +12,11 @@ export async function streamText(options: StreamTextOptions): Promise<StreamedCh
     // Call stream against model
     Log.log('streamText', `Streaming response from model ${model.getName()} . . .`);
     const stream = await model.stream(thread);
-    const response = new StreamedChatResponse({ model, inputThread: thread });
+    const response = new StreamedChatResponse({ model, inputThread: thread, metadata: stream.metadata });
 
     // Stream to chat response directly
     (async () => {
-        for await (const message of stream) {
+        for await (const message of stream.stream) {
             Log.log('streamText', `Received message: ${message}`);
             response.addText(message);
             response.addTextToCurrentTextMessage(message);

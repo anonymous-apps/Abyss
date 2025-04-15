@@ -19,9 +19,10 @@ export async function streamWithTools(options: AskWithToolCallsOptions): Promise
     Log.log('askWithTools', `Streaming response from model ${model.getName()} . . .`);
     const stream = await model.stream(threadWithToolCalls);
     const parser = new StreamParser({
-        stream,
+        stream: stream.stream,
         model,
         inputThread: threadWithToolCalls,
+        metadata: stream.metadata,
     });
 
     // Start parsing
