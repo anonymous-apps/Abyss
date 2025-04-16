@@ -5,7 +5,7 @@ import { AppUpdaterStatus } from '../../state/app-updater';
 import { useSettingsPage } from './settings.hook';
 
 export function SettingsPage() {
-    const { breadcrumbs, record, onChangeAppTheme, updates } = useSettingsPage();
+    const { breadcrumbs, record, onChangeAppTheme, updates, version } = useSettingsPage();
 
     return (
         <PageCrumbed title={'Abyss Settings'} breadcrumbs={breadcrumbs} loading={record === undefined}>
@@ -22,6 +22,7 @@ export function SettingsPage() {
             </IconSection>
             <IconSection icon={Download} title="Update">
                 <div className="text-sm text-text-500">
+                    <div>Current Version: {version || 'unknown'}</div>
                     {updates.status === AppUpdaterStatus.IDLE && <Button onClick={updates.checkForUpdate}>Check for Updates</Button>}
                     {updates.status === AppUpdaterStatus.CHECKING_FOR_UPDATES && <div>Checking for Updates . . .</div>}
                     {updates.status === AppUpdaterStatus.DOWNLOADING && <div>Downloading Update . . .</div>}

@@ -56,6 +56,7 @@ async function createWindow() {
     appController.setMainWindow(window);
     appController.setIpcMain(ipcMain);
     appController.setupAutoUpdater();
+    appController.setupAppInfoHandlers();
     window.setWindowButtonVisibility(false);
 
     if (url) {

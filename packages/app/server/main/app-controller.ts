@@ -1,4 +1,4 @@
-import { BrowserWindow, IpcMain, IpcMainInvokeEvent } from 'electron';
+import { app, BrowserWindow, IpcMain, IpcMainInvokeEvent } from 'electron';
 import { setupAutoUpdater } from './handlers/auto-update';
 
 export class AppController {
@@ -36,5 +36,10 @@ export class AppController {
 
     public setupAutoUpdater() {
         setupAutoUpdater(this);
+    }
+
+    public setupAppInfoHandlers() {
+        // Use Electron's built-in getVersion method instead of reading package.json
+        this.addIpcHandler('get-app-version', () => app.getVersion());
     }
 }

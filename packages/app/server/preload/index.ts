@@ -45,3 +45,9 @@ contextBridge.exposeInMainWorld('fs', {
             ? `${process.env.VITE_DEV_SERVER_URL}/${asset}`
             : path.join(__dirname, '..', '..', 'app.asar.unpacked', 'assets', asset),
 });
+
+// Expose app information to the renderer process
+contextBridge.exposeInMainWorld('app', {
+    // Get the app version
+    getVersion: () => ipcRenderer.invoke('get-app-version'),
+});

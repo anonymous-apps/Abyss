@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Database } from '../../main';
 import { useAppUpdator } from '../../state/app-updater';
@@ -26,5 +26,11 @@ export function useSettingsPage() {
         updates.checkForUpdate();
     }, []);
 
-    return { breadcrumbs: pageBreadcrumbs, record: settings.data, onChangeAppTheme, updates };
+    // Version
+    const [version, setVersion] = useState<string | undefined>(undefined);
+    useEffect(() => {
+        window.app.getVersion().then(setVersion);
+    }, []);
+
+    return { breadcrumbs: pageBreadcrumbs, record: settings.data, onChangeAppTheme, updates, version };
 }
