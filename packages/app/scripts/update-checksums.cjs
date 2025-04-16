@@ -35,7 +35,7 @@ async function updateChecksums() {
     const ymlContent = fs.readFileSync(ymlPath, 'utf8');
     const ymlData = yaml.load(ymlContent);
 
-    // Update checksums for each file
+    // Update checksums and sizes for each file
     for (const file of ymlData.files) {
         const filePath = path.join(distDir, file.url);
         if (!fs.existsSync(filePath)) {
@@ -46,22 +46,32 @@ async function updateChecksums() {
         // Compute new checksum
         const newChecksum = await hashFile(filePath);
         file.sha512 = newChecksum;
-        console.log(`Updated checksum for ${file.url}: ${newChecksum}`);
+
+        // Update file size
+        const stats = fs.statSync(filePath);
+        file.size = stats.size;
+
+        console.log(`Updated checksum and size for ${file.url}: ${newChecksum}, ${stats.size} bytes`);
     }
 
-    // Update the main path checksum if it exists
+    // Update the main path checksum and size if it exists
     if (ymlData.path) {
         const mainFilePath = path.join(distDir, ymlData.path);
         if (fs.existsSync(mainFilePath)) {
             ymlData.sha512 = await hashFile(mainFilePath);
-            console.log(`Updated main path checksum: ${ymlData.sha512}`);
+
+            // Update main file size
+            const stats = fs.statSync(mainFilePath);
+            ymlData.size = stats.size;
+
+            console.log(`Updated main path checksum and size: ${ymlData.sha512}, ${stats.size} bytes`);
         }
     }
 
     // Write the updated YAML back to the file
     const updatedYml = yaml.dump(ymlData);
     fs.writeFileSync(ymlPath, updatedYml);
-    console.log('Successfully updated checksums in latest-mac.yml');
+    console.log('Successfully updated checksums and sizes in latest-mac.yml');
 }
 
 updateChecksums();
