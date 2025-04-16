@@ -3,7 +3,7 @@
     "private": true,
     "workspaces": [
         "packages/app",
-        "packages/shared",
+        "packages/ui-components",
         "packages/intelligence"
     ],
     "scripts": {
