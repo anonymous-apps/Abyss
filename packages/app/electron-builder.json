@@ -40,7 +40,7 @@
     },
     "publish": {
         "provider": "github",
-        "owner": "abyss-mcp",
+        "owner": "anonymous-apps",
         "repo": "Abyss"
     }
 }
