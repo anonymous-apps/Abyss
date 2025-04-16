@@ -10,10 +10,10 @@
     "scripts": {
         "dev": "npm run prisma:merge && vite",
         "drizzle": "drizzle-kit push:sqlite",
-        "build:mac": "vite build && npm run prisma && electron-builder build --mac",
+        "build:mac": "vite build && npm run prisma && electron-builder build --mac ",
         "debug:mac": "npm run build:mac && dist/mac/Abyss.app/Contents/MacOS/Abyss",
         "debug:asar": "npx asar extract dist/mac/Abyss.app/Contents/Resources/app.asar ./tmp/extracted-app",
-        "publish:mac": "vite build && npm run prisma && electron-builder build --mac --publish always",
+        "publish:mac": "vite build && npm run prisma && electron-builder build --mac --publish always && npm run publish:checksums",
         "publish:checksums": "node scripts/update-checksums.cjs && node scripts/publish-new-checksums.cjs",
         "bump": "npm version patch",
         "prisma": "DATABASE_URL=file:./dev.db npm run prisma:migrate && npm run prisma:generate && npm run prisma:copy",
