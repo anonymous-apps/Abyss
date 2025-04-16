@@ -14,7 +14,7 @@
         "debug:mac": "npm run build:mac && dist/mac/Abyss.app/Contents/MacOS/Abyss",
         "debug:asar": "npx asar extract dist/mac/Abyss.app/Contents/Resources/app.asar ./tmp/extracted-app",
         "publish:mac": "vite build && npm run prisma && electron-builder build --mac --publish always && npm run publish:checksums",
-        "publish:checksums": "node scripts/update-checksums.cjs && node scripts/publish-new-checksums.cjs",
+        "publish:checksums": "node scripts/update-checksums.cjs && node scripts/publish-new-checksums.mjs",
         "bump": "npm version patch",
         "prisma": "DATABASE_URL=file:./dev.db npm run prisma:migrate && npm run prisma:generate && npm run prisma:copy",
         "prisma:generate": "npm run prisma:merge && prisma generate",
@@ -47,6 +47,7 @@
     },
     "devDependencies": {
         "@headlessui/tailwindcss": "^0.2.0",
+        "@octokit/rest": "^21.1.1",
         "@vitejs/plugin-react": "^4.2.1",
         "autoprefixer": "^10.4.20",
         "electron": "^34.2.0",
