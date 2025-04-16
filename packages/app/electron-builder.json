@@ -1,8 +1,8 @@
 {
     "asar": true,
     "asarUnpack": ["**/node_modules/@prisma/client/**", "**/node_modules/.prisma/client/**"],
-    "afterPack": "scripts/duplicate-prisma.cjs && scripts/update-checksums.cjs",
-    "afterSign": "scripts/notarize.cjs",
+    "afterPack": "scripts/after-pack.cjs",
+    "afterSign": "scripts/after-sign.cjs",
     "appId": "com.abyssal.abyss",
     "productName": "Abyss",
     "directories": {

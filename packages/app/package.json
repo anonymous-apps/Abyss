@@ -1,6 +1,6 @@
 {
     "name": "@abyss/app",
-    "version": "0.0.34",
+    "version": "0.0.35",
     "description": "Abyss AI Desktop Application",
     "author": {
         "name": "A Developer!"
@@ -14,6 +14,7 @@
         "debug:mac": "npm run build:mac && dist/mac/Abyss.app/Contents/MacOS/Abyss",
         "debug:asar": "npx asar extract dist/mac/Abyss.app/Contents/Resources/app.asar ./tmp/extracted-app",
         "publish:mac": "vite build && npm run prisma && electron-builder build --mac --publish always",
+        "publish:checksums": "node scripts/update-checksums.cjs && node scripts/publish-new-checksums.cjs",
         "bump": "npm version patch",
         "prisma": "DATABASE_URL=file:./dev.db npm run prisma:migrate && npm run prisma:generate && npm run prisma:copy",
         "prisma:generate": "npm run prisma:merge && prisma generate",

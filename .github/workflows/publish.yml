@@ -72,6 +72,11 @@ jobs:
                   GH_TOKEN: ${{ secrets.GH_TOKEN }}
               run: npm run publish
 
+            - name: Publish checksums to GitHub
+              env:
+                  GH_TOKEN: ${{ secrets.GH_TOKEN }}
+              run: npm run publish:checksums
+
             - name: Clean up keychain and provisioning profile
               run: |
                   security delete-keychain $RUNNER_TEMP/app-signing.keychain-db
