@@ -38,7 +38,6 @@ module.exports = {
                     700: 'var(--color-text-700)',
                     800: 'var(--color-text-800)',
                     900: 'var(--color-text-900)',
-                    sidebar: 'var(--color-text-sidebar)',
                 },
                 header: 'var(--color-header)',
             },

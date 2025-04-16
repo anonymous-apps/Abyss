@@ -7,7 +7,7 @@ import { SidebarSectionProps } from './SidebarTypes';
 export const SidebarSection: React.FC<SidebarSectionProps> = ({ title, className = '' }) => {
     return (
         <div className={`mt-4 ${className}`}>
-            <div className="py-1 text-xs px-2 font-medium text-background-800 capitalize tracking-wider">{title}</div>
+            <div className="py-1 text-xs px-2  text-text-700 lowercase tracking-wider display-font">{title}</div>
         </div>
     );
 };

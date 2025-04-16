@@ -1,26 +1,12 @@
-import { Check, Loader2, LucideIcon, PlayIcon, TerminalIcon, X } from 'lucide-react';
+import { Check, Loader2, PlayIcon, TerminalIcon, X } from 'lucide-react';
 import React, { useState } from 'react';
 import JsonView from 'react18-json-view';
 import 'react18-json-view/src/style.css';
 import { MonospaceText } from '../../content/MonospaceText/MonospaceText';
 import Button from '../../inputs/Button';
+import { ActionItem } from '../ChatMessageText';
 
 export type ToolCallStatus = 'idle' | 'running' | 'complete' | 'failed';
-
-export interface ActionItem {
-    /**
-     * Icon for the action item
-     */
-    icon: LucideIcon;
-    /**
-     * Tooltip text for the action item
-     */
-    tooltip: string;
-    /**
-     * Click handler for the action item
-     */
-    onClick: () => void;
-}
 
 export interface ChatToolCallProps {
     /**

@@ -110,7 +110,7 @@ const SecondaryButton: React.FC<ButtonProps> = ({
                 {...props}
                 className={`
                     ${className}
-                    ${!isDisabled ? 'hover:bg-primary-100' : ''}
+                    ${!isDisabled ? 'hover:bg-primary-200' : ''}
                     text-primary-500
                 `}
                 disabled={isDisabled || isLoading}

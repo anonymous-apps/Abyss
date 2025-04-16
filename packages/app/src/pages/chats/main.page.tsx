@@ -11,8 +11,8 @@ export function ChatMainPage() {
     return (
         <div className="flex flex-row overflow-hidden h-[100vh]">
             <Sidebar
-                className="bg-background-200"
-                title="Chats"
+                className="bg-[#040404]"
+                title="chats"
                 titleAction={<Button variant="secondary" icon={Plus} onClick={handleCreateChat} />}
                 width={200}
             >

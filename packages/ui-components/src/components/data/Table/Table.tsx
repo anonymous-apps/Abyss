@@ -75,7 +75,7 @@ export const Table: React.FC<TableProps> = ({ table, data, onRowClick, className
                         {data.map((record, rowIndex) => (
                             <tr
                                 key={rowIndex}
-                                className={`${onRowClick ? 'hover:bg-background-200 transition-colors cursor-pointer' : ''}`}
+                                className={`${onRowClick ? 'hover:bg-primary-100 transition-colors cursor-pointer' : ''}`}
                                 onClick={() => handleRowClick(record)}
                             >
                                 {columns.map(column => (

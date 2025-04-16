@@ -39,8 +39,11 @@ export function MainPage() {
 
     return (
         <div className="flex h-screen">
-            <div className="flex flex-col items-center justify-center transition-all duration-[1s]" style={{ width: sidebarWidth }}>
-                <Logo logo="abyss" size={150} />
+            <div
+                className="flex flex-col items-center justify-center transition-all duration-[1s] display-font"
+                style={{ width: sidebarWidth, opacity: contentOpacity }}
+            >
+                <Logo logo="abyss" size={250} />
                 <div
                     className="text-4xl font-bold text-center transition-all duration-[1s] text-text-300"
                     style={{ opacity: contentOpacity }}

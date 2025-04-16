@@ -26,8 +26,8 @@ export function AppSidebar() {
     }, []);
 
     return (
-        <div className="transition-opacity duration-[1.5s]" style={{ opacity }}>
-            <AbyssSidebar className="pt-10">
+        <div className="transition-opacity duration-[0.5s]" style={{ opacity }}>
+            <AbyssSidebar className="" title="Abyss">
                 <AbyssSidebarSection title="Activity" />
                 <AbyssSidebarButton label="Chats" icon={MessageSquare} {...navProps('/chats')} />
                 <AbyssSidebarSection title="Configuration" />

@@ -45,6 +45,7 @@ async function createWindow() {
         backgroundColor: '#00000000',
         titleBarStyle: 'hidden',
         vibrancy: 'fullscreen-ui',
+        titleBarOverlay: false,
         movable: true,
         center: true,
         kiosk: false,
@@ -54,6 +55,7 @@ async function createWindow() {
 
     appController.setMainWindow(window);
     appController.setupAutoUpdater();
+    window.setWindowButtonVisibility(false);
 
     if (url) {
         window.loadURL(url);

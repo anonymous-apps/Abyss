@@ -39,7 +39,7 @@ export interface PageCrumbedProps {
 
 export const PageCrumbed: React.FC<PageCrumbedProps> = ({ children, title, subtitle, breadcrumbs, icon, actions, loading = false }) => {
     return (
-        <div className="flex flex-row text-text-300 h-full w-full bg-background-300 overflow-y-auto">
+        <div className="flex flex-row text-text-300 h-full w-full bg-background-300 overflow-y-auto base-font">
             <div className={`w-full px-5 pt-[20px] pb-[60px] mx-auto max-w-5xl `}>
                 <div className="flex justify-between items-center mb-2">
                     <div className="flex items-center">
