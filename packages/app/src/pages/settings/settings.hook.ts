@@ -1,7 +1,8 @@
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { Database } from '../../main';
+import { useAppUpdator } from '../../state/app-updater';
 import { useTableRecordUserSettings } from '../../state/database-connection';
-
 export function useSettingsPage() {
     // Navigation
     const navigate = useNavigate();
@@ -18,5 +19,12 @@ export function useSettingsPage() {
         Database.table.userSettings.updateFirst({ theme });
     };
 
-    return { breadcrumbs: pageBreadcrumbs, record: settings.data, onChangeAppTheme };
+    // Updating
+    const updates = useAppUpdator();
+
+    useEffect(() => {
+        updates.checkForUpdate();
+    }, []);
+
+    return { breadcrumbs: pageBreadcrumbs, record: settings.data, onChangeAppTheme, updates };
 }
