@@ -4,7 +4,7 @@ import { AppController } from '../app-controller';
 export function setupAutoUpdater(controller: AppController) {
     autoUpdater.setFeedURL({
         provider: 'github',
-        owner: 'abyss-mcp',
+        owner: 'anonymous-apps',
         repo: 'Abyss',
         private: false,
     });
