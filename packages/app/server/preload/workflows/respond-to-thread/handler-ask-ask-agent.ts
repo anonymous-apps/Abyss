@@ -4,10 +4,14 @@ import { MessageThreadController } from '../../controllers/message-thread';
 import { MetricController } from '../../controllers/metric';
 import { RenderedConversationThreadController } from '../../controllers/rendered-conversation-thread';
 import { ResponseStreamController } from '../../controllers/response-stream';
+import { AiLabelChat } from '../label-chat';
 import { buildIntelegence, buildThread } from '../utils';
 import { AskAgentToRespondToThreadInput } from './types';
 
 export async function handlerAskAgentToRespondToThread(input: AskAgentToRespondToThreadInput) {
+    // Async start label
+    void AiLabelChat(input);
+
     // Setup the model and thread
     const connection = await buildIntelegence(input.connection);
     const thread = await buildThread(input.messages);
@@ -42,6 +46,7 @@ export async function handlerAskAgentToRespondToThread(input: AskAgentToRespondT
                 });
             });
         });
+
         // Rerender thread
         await RenderedConversationThreadController.update(renderedThread.id, {
             messages: stream.inputThread.serialize(),

@@ -15,6 +15,10 @@ class _ChatController extends BaseDatabaseConnection<ChatRecord> {
         const chat = await this.create({ ...chatData, threadId: thread.id });
         return chat;
     }
+
+    async nameChat(chatId: string, name: string): Promise<void> {
+        await this.update(chatId, { name });
+    }
 }
 
 export const ChatController = new _ChatController();
