@@ -11,6 +11,7 @@ export function useViewPrompt() {
     const [name, setName] = useState('');
     const [text, setText] = useState('');
     const [dimensions, setDimensions] = useState('{}');
+    const [isDimensionValid, setIsDimensionValid] = useState(true);
 
     useEffect(() => {
         if (prompt.data) {
@@ -50,7 +51,19 @@ export function useViewPrompt() {
         { name: prompt.data?.name || id || '', onClick: () => navigate(`/prompts/id/${id}`) },
     ];
 
+    const saveDimensions = () => {
+        try {
+            const prettyDimensions = stringifyPretty(JSON.parse(dimensions));
+            setDimensions(prettyDimensions);
+            setIsDimensionValid(true);
+        } catch (error) {
+            setIsDimensionValid(false);
+        }
+    };
+
     return {
+        isDimensionValid,
+        saveDimensions,
         prompt,
         name,
         setName,
@@ -63,4 +76,13 @@ export function useViewPrompt() {
         handleDelete,
         navigate,
     };
+}
+
+/**
+ * Stringifies an object with pretty formatting
+ * @param obj - The object to stringify
+ * @returns The stringified object with pretty formatting
+ */
+function stringifyPretty(obj: any) {
+    return JSON.stringify(obj, null, 2);
 }

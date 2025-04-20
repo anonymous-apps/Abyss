@@ -1,22 +1,11 @@
 import { Button, IconSection, Input, InputArea, PageCrumbed } from '@abyss/ui-components';
 import { AlertCircle, FileInput, Trash2 } from 'lucide-react';
-import React, { useState } from 'react';
+import React from 'react';
 import { useViewPrompt } from './view-prompt.hook';
 
 export function ViewPromptPage() {
-    const { prompt, name, setName, text, setText, dimensions, setDimensions, breadcrumbs, handleUpdatePrompt, handleDelete } =
+    const { prompt, name, setName, text, setText, dimensions, setDimensions, breadcrumbs, handleUpdatePrompt, handleDelete, isDimensionValid, saveDimensions } =
         useViewPrompt();
-    const [isDimensionValid, setIsDimensionValid] = useState(true);
-
-    const saveDimensions = () => {
-        try {
-            const prettyDimensions = stringifyPretty(JSON.parse(dimensions));
-            setDimensions(prettyDimensions);
-            setIsDimensionValid(true);
-        } catch (error) {
-            setIsDimensionValid(false);
-        }
-    }
 
     return (
         <PageCrumbed title={`Prompt: ${prompt.data?.name || ''}`} breadcrumbs={breadcrumbs}>
@@ -66,13 +55,4 @@ export function ViewPromptPage() {
             </IconSection>
         </PageCrumbed>
     );
-}
-
-/**
- * Stringifies an object with pretty formatting
- * @param obj - The object to stringify
- * @returns The stringified object with pretty formatting
- */
-function stringifyPretty(obj: any) {
-    return JSON.stringify(obj, null, 2);
 }
