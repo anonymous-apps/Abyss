@@ -4,14 +4,10 @@ import { MessageThreadController } from '../../controllers/message-thread';
 import { MetricController } from '../../controllers/metric';
 import { ModelInvokeController } from '../../controllers/model-invoke';
 import { RenderedConversationThreadController } from '../../controllers/rendered-conversation-thread';
-import { AiLabelChat } from '../label-chat';
 import { buildIntelegence, buildThread } from '../utils';
 import { AskAgentToRespondToThreadInput } from './types';
 
 export async function handlerAskAgentToRespondToThread(input: AskAgentToRespondToThreadInput) {
-    // Async start label
-    void AiLabelChat(input);
-
     // Setup the model and thread
     const connection = await buildIntelegence(input.connection);
     const thread = await buildThread(input.messages);
