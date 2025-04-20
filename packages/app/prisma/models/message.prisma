@@ -12,7 +12,4 @@ model Message {
 
   // Metadata about the message content including the type of the message itself
   content    Json
-
-  // Status of the message
-  status     String
 } 

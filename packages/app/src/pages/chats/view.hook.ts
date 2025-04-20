@@ -32,7 +32,6 @@ export function useChatView() {
             if (chat.chat && chat.chat.id && chat.thread && chat.thread.id && message.trim()) {
                 await Database.table.messageThread.addMessage(chat.thread.id, {
                     sourceId: 'USER',
-                    status: 'complete',
                     content: { text: message },
                 });
                 setMessage('');

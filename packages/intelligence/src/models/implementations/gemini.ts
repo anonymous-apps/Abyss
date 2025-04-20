@@ -1,11 +1,8 @@
-import { AsyncObject } from '../../constructs/async-object/async-obj';
 import { ChatThread } from '../../constructs/chat-thread/chat-thread';
 import { Log } from '../../utils/logs';
-import { createStreamingFetch } from '../../utils/network/fetch-utils';
-import { createGenericStreamParser, parseJSON } from '../../utils/network/stream-parser';
 import { createXmlFromObject } from '../../utils/object-to-xml/object-to-xml';
 import { LanguageModel } from '../language-model';
-import { LanguageModelStreamResult } from '../types';
+import { LanguageModelChatResult } from '../types';
 
 export interface GeminiLanguageModelOptions {
     apiKey?: string;
@@ -23,7 +20,7 @@ interface GeminiContent {
     }[];
 }
 
-interface GeminiStreamResponse {
+interface GeminiResponse {
     candidates?: Array<{
         content?: {
             parts?: Array<{
@@ -31,15 +28,17 @@ interface GeminiStreamResponse {
             }>;
         };
     }>;
+    usageMetadata?: {
+        promptTokenCount: number;
+        candidatesTokenCount: number;
+        totalTokenCount: number;
+    };
 }
 
 export class GeminiLanguageModel extends LanguageModel {
     private modelId = 'gemini-2.0-flash-exp';
     private apiKey: string;
     private enableImageGeneration: boolean;
-    private accumulatedData: string = '';
-    private stack: string[] = [];
-    private objectStartIndex: number = -1;
 
     constructor(props: GeminiLanguageModelOptions = {}) {
         // If image generation is enabled, use the appropriate model ID
@@ -95,7 +94,7 @@ export class GeminiLanguageModel extends LanguageModel {
         return contents;
     }
 
-    protected async _stream(thread: ChatThread): Promise<LanguageModelStreamResult> {
+    protected async _invoke(thread: ChatThread): Promise<LanguageModelChatResult> {
         const contents = this.buildContents(thread);
         const modelName = this.getName();
         const startTime = Date.now();
@@ -105,9 +104,10 @@ export class GeminiLanguageModel extends LanguageModel {
 
         try {
             // Create the fetch request
-            const response = await createStreamingFetch(
-                `https://generativelanguage.googleapis.com/v1beta/models/${this.modelId}:streamGenerateContent?key=${this.apiKey}`,
+            const response = await fetch(
+                `https://generativelanguage.googleapis.com/v1beta/models/${this.modelId}:generateContent?key=${this.apiKey}`,
                 {
+                    method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
@@ -115,96 +115,37 @@ export class GeminiLanguageModel extends LanguageModel {
                         contents,
                         generationConfig,
                     }),
-                },
-                modelName
+                }
             );
 
-            if (!response.body) {
-                throw new Error('Response body is null');
+            if (!response.ok) {
+                throw new Error(`Gemini API error: ${response.status} ${response.statusText}`);
             }
 
-            const reader = response.body.getReader();
-            const decoder = new TextDecoder();
+            const responseData = await response.json();
+            const parsed = JSON.parse(JSON.stringify(responseData)) as GeminiResponse;
 
-            // Create a parser function for Gemini's streaming format
-            const parseGeminiChunk = (chunk: string): string | null => {
-                try {
-                    this.accumulatedData += chunk;
-                    let result: string | null = null;
+            if (!parsed?.candidates?.[0]?.content?.parts?.[0]?.text) {
+                throw new Error('No content in Gemini response');
+            }
 
-                    // Process each character
-                    for (let i = 0; i < chunk.length; i++) {
-                        const char = chunk[i];
+            const responseText = parsed.candidates[0].content.parts[0].text;
 
-                        if (char === '[' || char === '{') {
-                            if (char === '{' && this.stack.length === 1) {
-                                // Start of an object inside the array
-                                this.objectStartIndex = this.accumulatedData.length - chunk.length + i;
-                            }
-                            this.stack.push(char);
-                        } else if (char === ']' || char === '}') {
-                            const lastOpen = this.stack.pop();
-                            if (!lastOpen) continue;
-
-                            // If we just closed an object inside the array
-                            if (char === '}' && this.stack.length === 1 && this.stack[0] === '[' && this.objectStartIndex !== -1) {
-                                try {
-                                    const objectStr = this.accumulatedData.substring(
-                                        this.objectStartIndex,
-                                        this.accumulatedData.length - chunk.length + i + 1
-                                    );
-                                    const parsed = parseJSON<GeminiStreamResponse>(objectStr);
-                                    if (parsed?.candidates?.[0]?.content?.parts?.[0]?.text) {
-                                        result = parsed.candidates[0].content.parts[0].text;
-                                    }
-                                } catch (error) {
-                                    Log.debug(modelName, `Failed to parse object: ${error}`);
-                                }
-                                this.objectStartIndex = -1;
-                            }
-
-                            // If we just closed the array, reset everything
-                            if (char === ']' && this.stack.length === 0) {
-                                this.accumulatedData = '';
-                                this.objectStartIndex = -1;
-                            }
-                        }
-                    }
-
-                    return result;
-                } catch (error) {
-                    Log.debug(modelName, `Failed to parse chunk: ${error}`);
-                    return null;
-                }
+            // Create metrics
+            const metrics = {
+                inputTokens: parsed.usageMetadata?.promptTokenCount || 0,
+                outputTokens: parsed.usageMetadata?.candidatesTokenCount || 0,
+                totalTokens: parsed.usageMetadata?.totalTokenCount || 0,
             };
 
-            // Use the generic stream parser
-            const stream = await createGenericStreamParser(reader, decoder, modelName, parseGeminiChunk);
-
-            // Create metrics tracking
-            const resultMetrics = new AsyncObject<Record<string, number>>({});
-            stream.waitForComplete().then(result => {
-                const endTime = Date.now();
-                const duration = endTime - startTime;
-                resultMetrics.update({
-                    invokeTime: duration,
-                    inputCharacters: JSON.stringify(contents).length,
-                    outputCharacters: result.join('').length,
-                    invokes: 1,
-                });
-                resultMetrics.dispatch();
-            });
-
-            // Return the stream and metadata
+            // Return the result
             return {
-                metadata: {
-                    inputContext: contents,
-                },
-                stream: stream,
-                metrics: resultMetrics.subscribe(),
+                inputContext: contents,
+                response: responseText,
+                metrics: metrics,
             };
         } catch (error) {
-            Log.error(modelName, `Streaming error: ${error}`);
+            Log.error(modelName, `Error: ${error}`);
             throw error;
         }
     }

@@ -97,11 +97,11 @@ export function useActionItems({ references }: { references?: Record<string, str
         });
     }
 
-    if (reference.responseStreamId) {
+    if (reference.modelInvokeId) {
         actionItems.push({
             icon: BinaryIcon,
-            tooltip: 'View Response Stream',
-            onClick: () => navigate(`/database/id/responseStream/record/${reference.responseStreamId}`),
+            tooltip: 'View Model Invoke',
+            onClick: () => navigate(`/database/id/modelInvoke/record/${reference.modelInvokeId}`),
         });
     }
 

@@ -1,24 +1,22 @@
-import { Message } from '@abyss/intelligence';
+import { Message } from '@abyss/intelligence/dist/parser/messages.types';
 import { BaseDatabaseConnection, BaseRecord } from './_base';
 import { ModelConnectionsRecord } from './model-connections';
 
-export interface ResponseStreamRecord extends BaseRecord {
+export interface ModelInvokeRecord extends BaseRecord {
     sourceId: string;
     parsedMessages: Message[];
-    status: 'streaming' | 'complete';
     rawOutput: string;
 }
 
-class _ResponseStreamController extends BaseDatabaseConnection<ResponseStreamRecord> {
+class _ModelInvokeController extends BaseDatabaseConnection<ModelInvokeRecord> {
     constructor() {
-        super('responseStream', 'A stream of messages and possibly tool calls from a single model');
+        super('ModelInvoke', 'A stream of messages and possibly tool calls from a single model');
     }
 
     async createFromModelConnection(connection: ModelConnectionsRecord) {
         return await this.create({
             sourceId: connection.id,
             parsedMessages: [],
-            status: 'streaming',
             rawOutput: '',
         });
     }
@@ -42,12 +40,6 @@ class _ResponseStreamController extends BaseDatabaseConnection<ResponseStreamRec
         });
     }
 
-    async complete(streamId: string) {
-        await this.update(streamId, {
-            status: 'complete',
-        });
-    }
-
     async updateRawOutput(streamId: string, rawOutput: string) {
         await this.update(streamId, {
             rawOutput,
@@ -55,4 +47,4 @@ class _ResponseStreamController extends BaseDatabaseConnection<ResponseStreamRec
     }
 }
 
-export const ResponseStreamController = new _ResponseStreamController();
+export const ModelInvokeController = new _ModelInvokeController();

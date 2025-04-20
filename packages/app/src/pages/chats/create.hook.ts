@@ -50,14 +50,12 @@ export function useChatCreate() {
         if (systemPrompt) {
             await Database.table.messageThread.addMessage(chatRecord.threadId, {
                 sourceId: 'SYSTEM',
-                status: 'complete',
                 content: { text: systemPrompt },
             });
         }
 
         await Database.table.messageThread.addMessage(chatRecord.threadId, {
             sourceId: 'USER',
-            status: 'complete',
             content: { text: message },
         });
 

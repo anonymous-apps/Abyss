@@ -1,11 +1,8 @@
-import { AsyncObject } from '../../constructs/async-object/async-obj';
 import { ChatThread } from '../../constructs/chat-thread/chat-thread';
 import { Log } from '../../utils/logs';
-import { createStreamingFetch } from '../../utils/network/fetch-utils';
-import { createGenericStreamParser, parseJSON, parseSSE } from '../../utils/network/stream-parser';
 import { createXmlFromObject } from '../../utils/object-to-xml/object-to-xml';
 import { LanguageModel } from '../language-model';
-import { LanguageModelStreamResult } from '../types';
+import { LanguageModelChatResult } from '../types';
 
 export interface OpenAILanguageModelOptions {
     apiKey?: string;
@@ -18,12 +15,17 @@ interface OpenAIMessage {
     content: any[];
 }
 
-interface OpenAIStreamResponse {
+interface OpenAIResponse {
     choices?: Array<{
-        delta?: {
+        message?: {
             content?: string;
         };
     }>;
+    usage?: {
+        prompt_tokens: number;
+        completion_tokens: number;
+        total_tokens: number;
+    };
 }
 
 export class OpenAILanguageModel extends LanguageModel {
@@ -91,80 +93,59 @@ export class OpenAILanguageModel extends LanguageModel {
         return messages;
     }
 
-    protected async _stream(thread: ChatThread): Promise<LanguageModelStreamResult> {
+    protected async _invoke(thread: ChatThread): Promise<LanguageModelChatResult> {
         const messages = this.buildMessages(thread);
         const modelName = this.getName();
         const startTime = Date.now();
 
         try {
             // Create the fetch request
-            const response = await createStreamingFetch(
-                'https://api.openai.com/v1/chat/completions',
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${this.apiKey}`,
-                    },
-                    body: JSON.stringify({
-                        model: this.modelId,
-                        messages,
-                        stream: true,
-                    }),
+            const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${this.apiKey}`,
                 },
-                modelName
-            );
-
-            if (!response.body) {
-                throw new Error('Response body is null');
-            }
-
-            const reader = response.body.getReader();
-            const decoder = new TextDecoder();
-
-            // Create a parser function for OpenAI's streaming format
-            const parseOpenAIChunk = (chunk: string): string | null => {
-                const lines = chunk.split('\n').filter(line => line.trim() !== '');
-                const results: string[] = [];
-                for (const line of lines) {
-                    const sseData = parseSSE(line);
-                    if (sseData) {
-                        const parsed = parseJSON<OpenAIStreamResponse>(sseData);
-                        if (parsed?.choices?.[0]?.delta?.content) {
-                            results.push(parsed.choices[0].delta.content);
-                        }
-                    }
-                }
-
-                return results.join('');
-            };
-
-            // Use the generic stream parser
-            const stream = await createGenericStreamParser(reader, decoder, modelName, parseOpenAIChunk);
-
-            // Create metrics tracking
-            const resultMetrics = new AsyncObject<Record<string, number>>({});
-            stream.waitForComplete().then(result => {
-                const endTime = Date.now();
-                const duration = endTime - startTime;
-                resultMetrics.update({
-                    invokeTime: duration,
-                    inputCharacters: JSON.stringify(messages).length,
-                    outputCharacters: result.join('').length,
-                    invokes: 1,
-                });
-                resultMetrics.dispatch();
+                body: JSON.stringify({
+                    model: this.modelId,
+                    messages,
+                    stream: false,
+                }),
             });
 
-            // Return the stream and metadata
+            if (!response.ok) {
+                throw new Error(`OpenAI API error: ${response.status} ${response.statusText}`);
+            }
+
+            const responseData = await response.json();
+            const parsed = JSON.parse(JSON.stringify(responseData)) as OpenAIResponse;
+
+            if (!parsed?.choices?.[0]?.message?.content) {
+                throw new Error('No content in OpenAI response');
+            }
+
+            const responseText = parsed.choices[0].message.content;
+
+            const endTime = Date.now();
+            const duration = endTime - startTime;
+
+            // Create metrics
+            const metrics = {
+                invokeTime: duration,
+                inputTokens: parsed.usage?.prompt_tokens || 0,
+                outputTokens: parsed.usage?.completion_tokens || 0,
+                totalTokens: parsed.usage?.total_tokens || 0,
+                invokes: 1,
+            };
+
+            // Return the result
             return {
-                metadata: {
-                    inputContext: messages,
-                },
-                stream: stream,
-                metrics: resultMetrics.subscribe(),
+                inputContext: messages,
+                response: responseText,
+                metrics: metrics,
             };
         } catch (error) {
-            Log.error(modelName, `Streaming error: ${error}`);
+            Log.error(modelName, `Error: ${error}`);
             throw error;
         }
     }

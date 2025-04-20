@@ -1,4 +1,4 @@
-model ResponseStream {
+model ModelInvoke {
   id         String   @id 
   references Json?    
   createdAt  DateTime @default(now())
@@ -7,12 +7,9 @@ model ResponseStream {
   // ID of the source that generated this response
   sourceId    String
 
-  // JSON array of parsed messages in the response stream
+  // JSON array of parsed messages in the response
   parsedMessages Json
 
-  // Current status of the stream (e.g., 'streaming', 'complete')
-  status      String
-
-  // Raw output text from the stream
+  // Raw output text from the model
   rawOutput   String
 } 

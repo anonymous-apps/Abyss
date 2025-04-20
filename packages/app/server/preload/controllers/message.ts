@@ -16,7 +16,6 @@ export type MessageToolCall = {
 export interface MessageRecord<T = MessageText | MessageToolCall> extends BaseRecord {
     threadId: string;
     sourceId: string;
-    status: 'streaming' | 'complete';
     content: T;
 }
 
@@ -31,23 +30,6 @@ class _MessageController extends BaseDatabaseConnection<MessageRecord> {
             orderBy: { createdAt: 'asc' },
         });
         return result as MessageRecord[];
-    }
-
-    async completeMessagesById(messageIds: string[]): Promise<void> {
-        if (messageIds.length === 0) {
-            return;
-        }
-
-        await this.getTable().updateMany({
-            where: {
-                id: {
-                    in: messageIds,
-                },
-            },
-            data: {
-                status: 'complete',
-            },
-        });
     }
 }
 

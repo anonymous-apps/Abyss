@@ -1,6 +1,6 @@
 import { ChatThread } from '../constructs/chat-thread';
 import { Log } from '../utils/logs';
-import { LanguageModelChatResult, LanguageModelStreamResult } from './types';
+import { LanguageModelChatResult } from './types';
 
 /**
  * Abstract base class for language models
@@ -51,26 +51,14 @@ export abstract class LanguageModel {
      */
     public async invoke(thread: ChatThread): Promise<LanguageModelChatResult> {
         try {
-            Log.debug(this.getName(), `Invoking model via streaming`);
+            Log.debug(this.getName(), `Invoking model`);
 
-            // Use streaming to get the response
-            const stream = await this._stream(thread);
-            let responseText = '';
+            // Call the implementation-specific _invoke method
+            const result = await this._invoke(thread);
 
-            // Collect all chunks from the stream
-            for await (const chunk of stream.stream) {
-                responseText += chunk;
-            }
-
-            // Create a new thread with the response
-            const response = thread.addBotTextMessage(responseText);
             Log.debug(this.getName(), `Got response from model!`);
 
-            return {
-                metadata: stream.metadata,
-                response: responseText,
-                outputThread: response,
-            };
+            return result;
         } catch (error) {
             Log.error(this.getName(), `Error responding to thread: ${error}`);
             throw error;
@@ -78,25 +66,9 @@ export abstract class LanguageModel {
     }
 
     /**
-     * Stream a response to a chat thread
-     *
+     * Internal method to implement model invocation for a specific model
      * @param thread The chat thread to respond to
-     * @returns A Promise resolving to an AsyncStream of string chunks
+     * @returns A Promise resolving to a LanguageModelChatResult
      */
-    public async stream(thread: ChatThread): Promise<LanguageModelStreamResult> {
-        try {
-            Log.debug(this.getName(), `Streaming response from model`);
-            return await this._stream(thread);
-        } catch (error) {
-            Log.error(this.getName(), `Error streaming response from thread: ${error}`);
-            throw error;
-        }
-    }
-
-    /**
-     * Internal method to implement streaming for a specific model
-     * @param thread The chat thread to respond to
-     * @returns A Promise resolving to an AsyncStream of string chunks
-     */
-    protected abstract _stream(thread: ChatThread): Promise<LanguageModelStreamResult>;
+    protected abstract _invoke(thread: ChatThread): Promise<LanguageModelChatResult>;
 }

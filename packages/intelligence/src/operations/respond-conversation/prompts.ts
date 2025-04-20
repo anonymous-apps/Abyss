@@ -27,7 +27,8 @@ export function buildToolUsePrompt(thread: ChatThread, tools: ToolDefinition[]) 
                 dedent(`
                 ### Tool: ${getIdForTool(tool)}
                 ${tool.description}
-                An example of its usage is below. If your response contains the XML representation of the tool call as part of your response, you will have invoked the tool.
+
+                An example of this tool being usedis below. If your response contains the XML representation of the tool call as part of your response, you will have invoked the tool.
 
             `) + createXmlFromZod(getIdForTool(tool), tool.parameters)
         )
@@ -55,6 +56,7 @@ export function buildToolUsePrompt(thread: ChatThread, tools: ToolDefinition[]) 
             .map(tool => getIdForTool(tool))
             .join(', ')}], calling other tools will result in an error and you must use xml syntax as in the example to call them. 
         You cannot just ask the user to call the tool, you must include the xml syntax as part of your response.
+        All tools follow the format of a top level tag with the tool name, and then child tags with the tool parameters with content inside them, without child tags the tool will not be called.
     `;
 
     return thread.addUserTextMessage(toolUseDetails).addUserTextMessage(toolCallsString).addUserTextMessage(ToolUseExamplePrompt);

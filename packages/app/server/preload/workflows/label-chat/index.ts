@@ -1,4 +1,5 @@
 import { createZodFromObject, Operations } from '@abyss/intelligence';
+import { ToolCallMessage } from '@abyss/intelligence/dist/constructs/streamed-chat-response/chat-response.types';
 import { ChatController, ChatRecord } from '../../controllers/chat';
 import { MessageRecord } from '../../controllers/message';
 import { MessageThreadRecord } from '../../controllers/message-thread';
@@ -35,28 +36,20 @@ export async function AiLabelChat(input: AiLabelChatInput) {
         The label shouldnt worry about tool calls or definitions, just the core user requests.
     `);
 
-    // Stream the response
-    const stream = await Operations.streamWithTools({ model: connection, thread: threadWithQuestion, toolDefinitions });
+    const response = await Operations.generateWithTools({ model: connection, thread: threadWithQuestion, toolDefinitions });
 
     // Capture the metrics
-    stream.modelResponse.metrics.then(metrics => {
-        Object.entries(metrics).forEach(([key, value]) => {
-            MetricController.emit({
-                name: key,
-                dimensions: {
-                    provider: connection.provider,
-                    model: connection.id,
-                    thread: input.thread.id,
-                },
-                value,
-            });
-        });
+    MetricController.consume(response.outputMetrics, {
+        provider: connection.provider,
+        model: connection.id,
+        thread: input.thread.id,
     });
 
-    stream.onToolCallUpdate(async toolCall => {
-        if (toolCall.name === 'label') {
-            const label = toolCall.args.labelText;
-            await ChatController.nameChat(input.chat.id, label);
-        }
-    });
+    // Update the chat with the label
+    const labelCall = response.outputMessages.find(message => message.type === 'toolCall' && message.name === 'label');
+    if (labelCall) {
+        await ChatController.update(input.chat.id, {
+            name: (labelCall as ToolCallMessage).args.label,
+        });
+    }
 }

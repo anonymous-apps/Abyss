@@ -18,9 +18,9 @@ describe('object-to-zod', () => {
             expect(schema.shape).toHaveProperty('email');
 
             // Verify each field is a ZodString with the correct description
-            expect(schema.shape.name._def.description).toBe('The name of the person');
-            expect(schema.shape.age._def.description).toBe('The age of the person in years');
-            expect(schema.shape.email._def.description).toBe('The email address of the person');
+            expect(schema.shape.name.description).toBe('The name of the person');
+            expect(schema.shape.age.description).toBe('The age of the person in years');
+            expect(schema.shape.email.description).toBe('The email address of the person');
 
             // Verify the schema can parse valid data
             const validData = {
@@ -67,23 +67,23 @@ describe('object-to-zod', () => {
             expect(schema.shape).toHaveProperty('contact');
 
             // Verify the top-level string field
-            expect(schema.shape.name._def.description).toBe('The name of the person');
+            expect(schema.shape.name.description).toBe('The name of the person');
 
             // Verify nested objects
-            expect(schema.shape.address._def.shape).toHaveProperty('street');
-            expect(schema.shape.address._def.shape).toHaveProperty('city');
-            expect(schema.shape.address._def.shape).toHaveProperty('country');
+            expect(schema.shape.address.shape).toHaveProperty('street');
+            expect(schema.shape.address.shape).toHaveProperty('city');
+            expect(schema.shape.address.shape).toHaveProperty('country');
 
-            expect(schema.shape.contact._def.shape).toHaveProperty('email');
-            expect(schema.shape.contact._def.shape).toHaveProperty('phone');
+            expect(schema.shape.contact.shape).toHaveProperty('email');
+            expect(schema.shape.contact.shape).toHaveProperty('phone');
 
             // Verify descriptions in nested objects
-            expect(schema.shape.address._def.shape.street._def.description).toBe('The street address');
-            expect(schema.shape.address._def.shape.city._def.description).toBe('The city name');
-            expect(schema.shape.address._def.shape.country._def.description).toBe('The country name');
+            expect(schema.shape.address.shape.street.description).toBe('The street address');
+            expect(schema.shape.address.shape.city.description).toBe('The city name');
+            expect(schema.shape.address.shape.country.description).toBe('The country name');
 
-            expect(schema.shape.contact._def.shape.email._def.description).toBe('The email address');
-            expect(schema.shape.contact._def.shape.phone._def.description).toBe('The phone number');
+            expect(schema.shape.contact.shape.email.description).toBe('The email address');
+            expect(schema.shape.contact.shape.phone.description).toBe('The phone number');
 
             // Verify the schema can parse valid data
             const validData = {
@@ -121,18 +121,18 @@ describe('object-to-zod', () => {
 
             // Verify the schema has the correct shape
             expect(schema.shape).toHaveProperty('person');
-            expect(schema.shape.person._def.shape).toHaveProperty('name');
-            expect(schema.shape.person._def.shape).toHaveProperty('details');
-            expect(schema.shape.person._def.shape.details._def.shape).toHaveProperty('age');
-            expect(schema.shape.person._def.shape.details._def.shape).toHaveProperty('address');
-            expect(schema.shape.person._def.shape.details._def.shape.address._def.shape).toHaveProperty('street');
-            expect(schema.shape.person._def.shape.details._def.shape.address._def.shape).toHaveProperty('city');
+            expect(schema.shape.person.shape).toHaveProperty('name');
+            expect(schema.shape.person.shape).toHaveProperty('details');
+            expect(schema.shape.person.shape.details.shape).toHaveProperty('age');
+            expect(schema.shape.person.shape.details.shape).toHaveProperty('address');
+            expect(schema.shape.person.shape.details.shape.address.shape).toHaveProperty('street');
+            expect(schema.shape.person.shape.details.shape.address.shape).toHaveProperty('city');
 
             // Verify descriptions in deeply nested objects
-            expect(schema.shape.person._def.shape.name._def.description).toBe('The name of the person');
-            expect(schema.shape.person._def.shape.details._def.shape.age._def.description).toBe('The age of the person');
-            expect(schema.shape.person._def.shape.details._def.shape.address._def.shape.street._def.description).toBe('The street address');
-            expect(schema.shape.person._def.shape.details._def.shape.address._def.shape.city._def.description).toBe('The city name');
+            expect(schema.shape.person.shape.name.description).toBe('The name of the person');
+            expect(schema.shape.person.shape.details.shape.age.description).toBe('The age of the person');
+            expect(schema.shape.person.shape.details.shape.address.shape.street.description).toBe('The street address');
+            expect(schema.shape.person.shape.details.shape.address.shape.city.description).toBe('The city name');
 
             // Verify the schema can parse valid data
             const validData = {
