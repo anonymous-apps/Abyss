@@ -14,7 +14,7 @@ export function ChatMainPage() {
                 className="bg-[#040404]"
                 title="chats"
                 titleAction={<Button variant="secondary" icon={Plus} onClick={handleCreateChat} />}
-                width={200}
+                width={300}
             >
                 {sidebarItems.map(item => (
                     <SidebarButton
@@ -23,7 +23,7 @@ export function ChatMainPage() {
                         icon={item.icon}
                         onClick={() => navigate(item.url)}
                         isActive={location.pathname === item.url}
-                        isInProgress={item.status === 'loading'}
+                        isInProgress={item.status === 'in-progress'}
                         isClosable={true}
                         onClose={() => handleDeleteChat(item.id)}
                     />

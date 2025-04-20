@@ -1,0 +1,13 @@
+model Document {
+    id         String   @id 
+    references Json?    
+    createdAt  DateTime @default(now())
+    updatedAt  DateTime @updatedAt
+
+    // Version of the document
+    version    Int
+
+    // Text of the document
+    text       String
+    
+}

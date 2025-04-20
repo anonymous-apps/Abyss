@@ -22,8 +22,6 @@ export async function handlerAskRawModelToRespondToThread(input: AskRawModelToRe
         const stream = await Operations.streamText({ model: connection, thread });
         await RenderedConversationThreadController.updateRawInput(renderedThread.id, stream.modelResponse.metadata.inputContext);
 
-        console.log('stream.modelResponse', stream.modelResponse);
-
         // Capture the metrics
         stream.modelResponse.metrics.then(metrics => {
             Object.entries(metrics).forEach(([key, value]) => {

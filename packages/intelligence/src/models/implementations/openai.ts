@@ -47,7 +47,7 @@ export class OpenAILanguageModel extends LanguageModel {
 
         // Convert the chat turns into OpenAI API format
         for (const turn of turns) {
-            const role = turn.sender === 'user' ? 'user' : 'assistant';
+            const role = turn.sender === 'bot' ? 'assistant' : 'user';
             const content: any[] = [];
             const differedMessages: any[] = [];
 

@@ -6,10 +6,12 @@ import { PrismaBoostrapper } from './bootstrap/bootstrapData';
 import { AgentController } from './controllers/agent';
 import { AgentToolConnectionController } from './controllers/agent-tool-connection';
 import { ChatController } from './controllers/chat';
+import { DocumentController } from './controllers/document';
 import { MessageController } from './controllers/message';
 import { MessageThreadController } from './controllers/message-thread';
 import { MetricController } from './controllers/metric';
 import { ModelConnectionsController } from './controllers/model-connections';
+import { PromptController } from './controllers/prompt';
 import { RenderedConversationThreadController } from './controllers/rendered-conversation-thread';
 import { ResponseStreamController } from './controllers/response-stream';
 import { TextLogController } from './controllers/text-log';
@@ -133,6 +135,8 @@ const tableControllers = {
     metric: MetricController.export(),
     textLog: TextLogController.export(),
     responseStream: ResponseStreamController.export(),
+    document: DocumentController.export(),
+    prompt: PromptController.export(),
 };
 
 const PrismaAPI = {

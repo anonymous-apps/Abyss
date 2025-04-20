@@ -161,3 +161,11 @@ export function useScanTableTextLog() {
 export function useTableRecordTextLog(id: string | undefined) {
     return useDatabaseRecordSubscription('TextLog', id, async database => database.table.textLog.findById(id));
 }
+
+export function useScanTablePrompt() {
+    return useDatabaseTableSubscription('Prompt', async database => database.table.prompt.scanTable());
+}
+
+export function useTableRecordPrompt(id: string | undefined) {
+    return useDatabaseRecordSubscription('Prompt', id, async database => database.table.prompt.findById(id));
+}

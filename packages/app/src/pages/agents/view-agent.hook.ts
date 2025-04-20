@@ -5,6 +5,7 @@ import { Database } from '../../main';
 import {
     useScanTableAgentToolConnection,
     useScanTableModelConnections,
+    useScanTablePrompt,
     useScanTableTool,
     useTableRecordAgent,
 } from '../../state/database-connection';
@@ -21,6 +22,8 @@ export function useViewAgent() {
     const [toolConnections, setRenderedToolConnections] = useState<AgentToolConnectionRecord[] | undefined>(undefined);
     const [selectedModelId, setSelectedModelId] = useState('');
     const [selectedTools, setSelectedTools] = useState<{ [toolId: string]: { selected: boolean; permission: string } }>({});
+
+    const prompts = useScanTablePrompt();
 
     useEffect(() => {
         if (_toolConnections.data) {
@@ -105,6 +108,12 @@ export function useViewAgent() {
         }
     };
 
+    const handleUpdatePromptId = (newPromptId: string) => {
+        if (agent.data) {
+            Database.table.agent.update(id || '', { ...agent.data, systemPromptId: newPromptId });
+        }
+    };
+
     const breadcrumbs = [
         { name: 'Home', onClick: () => navigate('/') },
         { name: 'Agents', onClick: () => navigate('/agents') },
@@ -125,5 +134,7 @@ export function useViewAgent() {
         handleChangeToolPermission,
         handleDelete,
         navigate,
+        prompts,
+        handleUpdatePromptId,
     };
 }

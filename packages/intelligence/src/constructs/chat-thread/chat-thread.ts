@@ -178,6 +178,13 @@ export class ChatThread {
     }
 
     /**
+     * @description Convenience method to add a system text message
+     */
+    public addSystemTextMessage(text: string): ChatThread {
+        return this.addTextMessage(text, 'system');
+    }
+
+    /**
      * @description Convenience method to add a user image message
      */
     public addUserImageMessage(base64Data: string): ChatThread {

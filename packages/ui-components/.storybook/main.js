@@ -6,10 +6,11 @@ const config = {
         name: '@storybook/react-vite',
         options: {},
     },
-    core: {
-        builder: '@storybook/builder-vite',
+    docs: {
+        autodocs: 'tag',
     },
     // Use JSX file for preview
     previewAnnotations: ['./.storybook/preview.jsx'],
 };
+
 export default config;

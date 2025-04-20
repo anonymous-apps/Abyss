@@ -12,4 +12,7 @@ model Agent {
 
   // ID of the chat model this agent uses
   chatModelId String
+
+  // Prompt ID for system prompt
+  systemPromptId String?
 } 

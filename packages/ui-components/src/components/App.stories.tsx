@@ -50,9 +50,9 @@ export const AppDemo: Story = {
                     <SidebarButton icon={Home} label="Dashboard" isActive />
                     <SidebarButton icon={FileText} label="Projects" />
                     <SidebarButton icon={Users} label="Team" />
-                    <SidebarButton icon={List} label="Tasks" />
+                    <SidebarButton icon={List} label="Tasks" isInProgress />
                     <SidebarSection key="admin" title="Admin" />
-                    <SidebarButton icon={Settings} label="Settings" />
+                    <SidebarButton icon={Settings} label="Settings" isInProgress isClosable />
                 </Sidebar>
 
                 {/* Main Content */}

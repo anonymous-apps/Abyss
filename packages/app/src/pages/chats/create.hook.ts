@@ -22,11 +22,23 @@ export function useChatCreate() {
         }
     }, [allModels.data, allAgents.data, chatType]);
 
+    const getSystemPrompt = async (sourceId: string) => {
+        if (chatType === 'model') {
+            return null;
+        }
+
+        const agent = await Database.table.agent.findById(sourceId);
+        const prompt = await Database.table.prompt.findById(agent?.systemPromptId);
+        return prompt?.text;
+    };
+
     const handleSubmit = async () => {
         const sourceId = chatType === 'model' ? selectedModel : selectedAgent;
         if (!sourceId || !message) {
             return;
         }
+
+        const systemPrompt = await getSystemPrompt(sourceId);
 
         const chatRecord = await Database.table.chat.createWithThread({
             name: 'New Chat',
@@ -34,6 +46,14 @@ export function useChatCreate() {
                 sourceId,
             },
         });
+
+        if (systemPrompt) {
+            await Database.table.messageThread.addMessage(chatRecord.threadId, {
+                sourceId: 'SYSTEM',
+                status: 'complete',
+                content: { text: systemPrompt },
+            });
+        }
 
         await Database.table.messageThread.addMessage(chatRecord.threadId, {
             sourceId: 'USER',

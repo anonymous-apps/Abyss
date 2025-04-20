@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Database } from '../../main';
-import { useScanTableModelConnections, useScanTableTool } from '../../state/database-connection';
+import { useScanTableModelConnections, useScanTablePrompt, useScanTableTool } from '../../state/database-connection';
 
 export function useCreateAgent() {
     const [name, setName] = useState('');
@@ -12,6 +12,9 @@ export function useCreateAgent() {
     const navigate = useNavigate();
     const modelConnections = useScanTableModelConnections();
     const tools = useScanTableTool();
+
+    const prompts = useScanTablePrompt();
+    const [selectedPromptId, setSelectedPromptId] = useState('');
 
     useEffect(() => {
         if (tools.data) {
@@ -51,6 +54,7 @@ export function useCreateAgent() {
             name,
             description,
             chatModelId: selectedModelId,
+            systemPromptId: selectedPromptId,
         });
 
         const toolPromises = Object.entries(selectedTools)
@@ -84,5 +88,8 @@ export function useCreateAgent() {
         handleCreateAgent,
         isFormValid,
         navigate,
+        prompts,
+        selectedPromptId,
+        setSelectedPromptId,
     };
 }

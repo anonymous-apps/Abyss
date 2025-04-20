@@ -56,7 +56,7 @@ export class AnthropicLanguageModel extends LanguageModel {
 
         // Convert the chat turns into Anthropic API format
         for (const turn of turns) {
-            const role = turn.sender === 'user' ? 'user' : 'assistant';
+            const role = turn.sender === 'bot' ? 'assistant' : 'user';
             const content: AnthropicContent[] = [];
             const differeedContent: AnthropicContent[] = [];
 

@@ -16,6 +16,9 @@ import { MetricsPage } from './pages/metrics/metrics.page';
 import { ModelProfileCreatePage } from './pages/models/create.page';
 import { ModelProfileMainPage } from './pages/models/main.page';
 import { ModelProfileViewPage } from './pages/models/view.page';
+import { CreatePromptPage } from './pages/prompts/create-prompt.page';
+import { PromptsPage } from './pages/prompts/prompts-page.page';
+import { ViewPromptPage } from './pages/prompts/view-prompt.page';
 import { SettingsPage } from './pages/settings/settings.page';
 import { ToolsPage } from './pages/tool/tools.page';
 import { ToolViewPage } from './pages/tool/view.page';
@@ -51,6 +54,9 @@ export function App() {
                         <Route path="/agents" element={<AgentsPage />} />
                         <Route path="/agents/create" element={<CreateAgentPage />} />
                         <Route path="/agents/id/:id" element={<ViewAgentPage />} />
+                        <Route path="/prompts" element={<PromptsPage />} />
+                        <Route path="/prompts/create" element={<CreatePromptPage />} />
+                        <Route path="/prompts/id/:id" element={<ViewPromptPage />} />
                     </Route>
                     <Route path="*" element={<MainPage />} />
                 </Routes>

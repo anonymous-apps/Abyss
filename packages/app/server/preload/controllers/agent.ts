@@ -4,6 +4,7 @@ export interface AgentRecord extends BaseRecord {
     name: string;
     description: string;
     chatModelId: string;
+    systemPromptId?: string;
 }
 
 class _AgentController extends BaseDatabaseConnection<AgentRecord> {

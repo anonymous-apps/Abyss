@@ -56,6 +56,12 @@ export async function buildThread(messages: MessageRecord[]) {
             } else {
                 throw new Error('Unsupported message content ' + JSON.stringify(message.content));
             }
+        } else if (message.sourceId === 'SYSTEM') {
+            if ('text' in message.content) {
+                context = context.addBotTextMessage(message.content.text);
+            } else {
+                throw new Error('Unsupported message content ' + JSON.stringify(message.content));
+            }
         } else {
             if ('text' in message.content) {
                 context = context.addBotTextMessage(message.content.text);

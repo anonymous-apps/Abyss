@@ -1,5 +1,5 @@
 import { Button, Checkbox, IconSection, LabelValue, PageCrumbed, SelectDropdown } from '@abyss/ui-components';
-import { Bot, Box, Play, Trash, Trash2 } from 'lucide-react';
+import { Bot, Box, FileText, Play, Trash, Trash2 } from 'lucide-react';
 import React from 'react';
 import { useViewAgent } from './view-agent.hook';
 
@@ -17,6 +17,8 @@ export function ViewAgentPage() {
         handleToggleTool,
         handleChangeToolPermission,
         handleDelete,
+        prompts,
+        handleUpdatePromptId,
     } = useViewAgent();
 
     return (
@@ -28,6 +30,25 @@ export function ViewAgentPage() {
                         description: agent.data?.description || '',
                     }}
                 />
+            </IconSection>
+
+            <IconSection title="System Prompt" icon={FileText}>
+                <div className="grid grid-cols-1 gap-4 max-w-2xl">
+                    {prompts.loading ? (
+                        <div>Loading prompts...</div>
+                    ) : prompts.data && prompts.data.length > 0 ? (
+                        <SelectDropdown
+                            selectedId={agent.data?.systemPromptId || ''}
+                            onSelect={handleUpdatePromptId}
+                            options={prompts.data.map(prompt => ({
+                                id: prompt.id,
+                                label: prompt.name,
+                            }))}
+                        />
+                    ) : (
+                        <div className="text-text-700">No prompts found. Please create a prompt first.</div>
+                    )}
+                </div>
             </IconSection>
 
             <IconSection title="Model Configuration" icon={Box}>

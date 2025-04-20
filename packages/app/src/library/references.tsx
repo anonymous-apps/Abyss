@@ -1,5 +1,5 @@
 import { ActionItem } from '@abyss/ui-components';
-import { Bell, BinaryIcon, Bot, Box, Globe, Hammer, LucideIcon, MessageCircleQuestion, NotepadText, User } from 'lucide-react';
+import { Bell, BinaryIcon, Bot, Box, Cog, Globe, Hammer, LucideIcon, MessageCircleQuestion, NotepadText, User } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import { useDatabaseTableSubscription } from '../state/database-connection';
 
@@ -11,6 +11,8 @@ export interface RecordReference {
 
 export function getIconForSourceType(source: string): LucideIcon {
     switch (source.toLowerCase().split('::')[0]) {
+        case 'system':
+            return Cog;
         case 'ai':
         case 'chat':
         case 'chatmodel':
@@ -37,6 +39,14 @@ export function useRecordReference({ sourceId }: { sourceId: string }): RecordRe
         return {
             icon: Icon,
             label: 'You',
+        };
+    }
+
+    if (recordType === 'system') {
+        const Icon = getIconForSourceType('system');
+        return {
+            icon: Icon,
+            label: 'System',
         };
     }
 

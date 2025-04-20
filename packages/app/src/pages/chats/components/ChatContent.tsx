@@ -22,6 +22,12 @@ export function ChatHistoryRenderer({ messages }: { messages?: MessageRecord[] }
             } else {
                 console.error('Unknown message type', message);
             }
+        } else if (message.sourceId === 'SYSTEM') {
+            if ('text' in message.content) {
+                elements.push(<SystemMessageSection key={message.id} message={message as MessageRecord<MessageText>} />);
+            } else {
+                console.error('Unknown message type', message);
+            }
         } else {
             if ('text' in message.content) {
                 elements.push(<AiMessageTextSection key={message.id} message={message as MessageRecord<MessageText>} />);
@@ -34,6 +40,10 @@ export function ChatHistoryRenderer({ messages }: { messages?: MessageRecord[] }
     }
 
     return <div className="flex flex-col gap-2">{elements}</div>;
+}
+
+function SystemMessageSection({ message }: { message: MessageRecord<MessageText> }) {
+    return <ChatMessageText text={message.content.text} />;
 }
 
 function UserMessageSection({ message }: { message: MessageRecord<MessageText> }) {

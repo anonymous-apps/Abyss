@@ -21,8 +21,20 @@
         "test": "npm run test --workspace=packages/intelligence"
     },
     "devDependencies": {
+        "@storybook/addon-essentials": "^7.6.17",
+        "@storybook/addon-interactions": "^7.6.17",
+        "@storybook/addon-links": "^7.6.17",
+        "@storybook/addon-onboarding": "^1.0.11",
+        "@storybook/blocks": "^7.6.17",
+        "@storybook/builder-vite": "^7.6.17",
+        "@storybook/react": "^7.6.17",
+        "@storybook/react-vite": "^7.6.17",
+        "@storybook/test": "^7.6.17",
+        "@vitejs/plugin-react": "^4.2.1",
         "icon-gen": "^3.0.1",
-        "sharp": "^0.33.2"
+        "sharp": "^0.33.2",
+        "storybook": "^7.6.17",
+        "vite": "^5.1.4"
     },
     "dependencies": {
         "@electron/notarize": "^2.5.0",

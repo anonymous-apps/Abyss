@@ -1,5 +1,5 @@
 import { Button, Checkbox, IconSection, Input, PageCrumbed, SelectDropdown } from '@abyss/ui-components';
-import { Bot, Box, Play } from 'lucide-react';
+import { Bot, Box, FileText, Play } from 'lucide-react';
 import React from 'react';
 import { useCreateAgent } from './create-agent.hook';
 
@@ -18,6 +18,9 @@ export function CreateAgentPage() {
         handleCreateAgent,
         isFormValid,
         navigate,
+        prompts,
+        selectedPromptId,
+        setSelectedPromptId,
     } = useCreateAgent();
 
     return (
@@ -38,6 +41,25 @@ export function CreateAgentPage() {
                         onChange={setDescription}
                         placeholder="User facing description (not sent to agent)"
                     />
+                </div>
+            </IconSection>
+
+            <IconSection title="System Prompt" subtitle="Choose which prompt this agent will use as its system prompt" icon={FileText}>
+                <div className="grid grid-cols-1 gap-4 max-w-2xl">
+                    {prompts.loading ? (
+                        <div>Loading prompts...</div>
+                    ) : prompts.data && prompts.data.length > 0 ? (
+                        <SelectDropdown
+                            selectedId={selectedPromptId}
+                            onSelect={setSelectedPromptId}
+                            options={prompts.data.map(prompt => ({
+                                id: prompt.id,
+                                label: prompt.name,
+                            }))}
+                        />
+                    ) : (
+                        <div className="text-text-700">No prompts found. Please optionally create a prompt first.</div>
+                    )}
                 </div>
             </IconSection>
 

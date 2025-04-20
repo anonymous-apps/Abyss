@@ -1,4 +1,4 @@
-export type MessageSender = 'user' | 'bot';
+export type MessageSender = 'user' | 'bot' | 'system';
 
 export type TextMessagePartial = {
     type: 'text';
