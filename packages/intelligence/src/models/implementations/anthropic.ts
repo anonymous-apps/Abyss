@@ -163,6 +163,7 @@ export class AnthropicLanguageModel extends LanguageModel {
                     outputCharacters: result.join('').length,
                     invokes: 1,
                 });
+                resultMetrics.dispatch();
             });
 
             // Return the stream and metadata
