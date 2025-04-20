@@ -1,5 +1,6 @@
 import { MessageController } from '../../controllers/message';
 import { ToolController } from '../../controllers/tool';
+import { handleInvokeDocumentWriterTool } from './handle-doc-writer-tool';
 import { handleInvokeNodejsTool } from './handle-invoke-nodejs-tool';
 import { handlerInvokeBuildNodejsTool } from './handler-build-nodejs-tool';
 
@@ -22,6 +23,10 @@ export async function InvokeToolFromMessage(messageId: string) {
 
     if (tool.type === 'NodeJS') {
         return handleInvokeNodejsTool({ message, tool });
+    }
+
+    if (tool.type === 'DOCUMENT-WRITER') {
+        return handleInvokeDocumentWriterTool({ message, tool });
     }
 
     throw new Error('Unsupported tool type: ' + tool.type);

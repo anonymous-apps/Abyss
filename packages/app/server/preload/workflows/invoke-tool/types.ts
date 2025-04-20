@@ -10,3 +10,8 @@ export interface InvokeNodejsToolInput {
     message: MessageRecord;
     tool: ToolRecord;
 }
+
+export interface InvokeDocumentWriterToolInput {
+    message: MessageRecord;
+    tool: ToolRecord;
+}

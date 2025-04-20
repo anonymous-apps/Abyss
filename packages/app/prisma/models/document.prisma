@@ -4,8 +4,9 @@ model Document {
     createdAt  DateTime @default(now())
     updatedAt  DateTime @updatedAt
 
-    // Version of the document
-    version    Int
+    // Previous versions of the document
+    previousId String?
+    nextId     String?
 
     // Type of the document
     type       String

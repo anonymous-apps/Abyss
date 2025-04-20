@@ -68,25 +68,15 @@ export function ViewAgentPage() {
 
             <IconSection title="Tool Configuration" icon={Play}>
                 {!tools.loading && toolConnections ? (
-                    <div className="grid grid-cols-1 gap-4">
+                    <div className="grid grid-cols-1 gap-5">
                         {tools.data?.map(tool => (
-                            <div key={tool.id} className="flex flex-row gap-2 p-4 rounded-md justify-between w-full">
-                                <Checkbox
-                                    id={`tool-${tool.id}`}
-                                    checked={selectedTools[tool.id]?.selected || false}
-                                    onChange={() => handleToggleTool(tool.id)}
-                                    label={tool.name}
-                                    description={tool.description}
-                                />
-                                <SelectDropdown
-                                    selectedId={selectedTools[tool.id]?.permission || 'automatic'}
-                                    onSelect={permission => handleChangeToolPermission(tool.id, permission)}
-                                    options={[
-                                        { id: 'automatic', label: 'Automatic' },
-                                        { id: 'user-controlled', label: 'User Controlled' },
-                                    ]}
-                                />
-                            </div>
+                            <Checkbox
+                                id={`tool-${tool.id}`}
+                                checked={selectedTools[tool.id]?.selected || false}
+                                onChange={() => handleToggleTool(tool.id)}
+                                label={tool.name}
+                                description={tool.description.substring(0, 300)}
+                            />
                         ))}
                     </div>
                 ) : (

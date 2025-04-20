@@ -13,7 +13,13 @@ class _ToolController extends BaseDatabaseConnection<ToolRecord> {
         super('tool', 'Building blocks for agents that represent possible actions with parameters');
     }
 
-    
+    async createIfMissing(params: Omit<ToolRecord, 'id' | 'createdAt' | 'updatedAt'>) {
+        const existing = await this.findFirst({ where: { type: params.type } });
+        if (existing) {
+            return existing;
+        }
+        return this.create(params);
+    }
 }
 
 export const ToolController = new _ToolController();
