@@ -15,7 +15,7 @@ export function useMetrics() {
                 name: metric.name,
                 value: metric.value,
                 dimensions: Object.keys(metric.dimensions || {}).join(', '),
-                'Graph it': `metrics/graph/${metric.name}`,
+                'Graph it': `/metrics/graph/${metric.name}`,
             }));
         }, [metrics.data]) || [];
 

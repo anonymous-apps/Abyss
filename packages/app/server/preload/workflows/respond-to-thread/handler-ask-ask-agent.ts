@@ -1,6 +1,7 @@
 import { createZodFromObject, Operations } from '@abyss/intelligence';
 import { MessageController, MessageRecord, MessageToolCall } from '../../controllers/message';
 import { MessageThreadController } from '../../controllers/message-thread';
+import { MetricController } from '../../controllers/metric';
 import { RenderedConversationThreadController } from '../../controllers/rendered-conversation-thread';
 import { ResponseStreamController } from '../../controllers/response-stream';
 import { buildIntelegence, buildThread } from '../utils';
@@ -17,9 +18,6 @@ export async function handlerAskAgentToRespondToThread(input: AskAgentToRespondT
     await MessageThreadController.lockThread(input.thread.id, responseStream.id);
 
     try {
-        for (const tool of input.toolConnections) {
-            console.log(tool.tool.schema);
-        }
         // Stream the response via tool calls
         const toolDefinitions = input.toolConnections.map(tool => ({
             name: tool.tool.name,
@@ -28,8 +26,22 @@ export async function handlerAskAgentToRespondToThread(input: AskAgentToRespondT
         }));
 
         const stream = await Operations.streamWithTools({ model: connection, thread, toolDefinitions });
-        await RenderedConversationThreadController.updateRawInput(renderedThread.id, stream.metadata?.inputContext);
+        await RenderedConversationThreadController.updateRawInput(renderedThread.id, stream.modelResponse.metadata.inputContext);
 
+        // Capture the metrics
+        stream.modelResponse.metrics.then(metrics => {
+            Object.entries(metrics).forEach(([key, value]) => {
+                MetricController.emit({
+                    name: key,
+                    dimensions: {
+                        provider: connection.provider,
+                        model: connection.id,
+                        thread: input.thread.id,
+                    },
+                    value,
+                });
+            });
+        });
         // Rerender thread
         await RenderedConversationThreadController.update(renderedThread.id, {
             messages: stream.inputThread.serialize(),

@@ -1,5 +1,5 @@
 import { Button, Checkbox, IconSection, LabelValue, PageCrumbed, SelectDropdown } from '@abyss/ui-components';
-import { Bot, Box, Play, Trash2 } from 'lucide-react';
+import { Bot, Box, Play, Trash, Trash2 } from 'lucide-react';
 import React from 'react';
 import { useViewAgent } from './view-agent.hook';
 
@@ -21,7 +21,7 @@ export function ViewAgentPage() {
 
     return (
         <PageCrumbed title={`Agent: ${agent.data?.name || ''}`} breadcrumbs={breadcrumbs}>
-            <IconSection title="Agent Information" icon={Bot}>
+            <IconSection title="Agent Information" icon={Bot} action={<Button variant="secondary" icon={Trash} onClick={handleDelete} />}>
                 <LabelValue
                     data={{
                         name: agent.data?.name || '',

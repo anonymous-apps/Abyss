@@ -34,12 +34,42 @@ class _MetricController extends BaseDatabaseConnection<MetricRecord> {
         });
 
         const metricsByDimensions = getMetricRecordsByName.filter(record => {
-            return Object.keys(record.dimensions || {}).every(key => {
+            return Object.keys(dimensions || {}).every(key => {
                 return record.dimensions[key] === dimensions[key];
             });
         });
 
         return metricsByDimensions;
+    }
+
+    async getUniqueDimensionsForMetric(metricName: string) {
+        const metrics = await this.getTable().findMany({
+            where: {
+                name: metricName,
+            },
+        });
+
+        // Collect all dimension keys and their possible values across all metrics with this name
+        const dimensionKeys = new Set<string>();
+        const dimensionValues: Record<string, Set<any>> = {};
+
+        metrics.forEach(metric => {
+            if (metric.dimensions) {
+                Object.entries(metric.dimensions).forEach(([key, value]) => {
+                    dimensionKeys.add(key);
+
+                    // Initialize the set for this dimension key if it doesn't exist
+                    if (!dimensionValues[key]) {
+                        dimensionValues[key] = new Set();
+                    }
+
+                    // Add the value to the set of possible values for this dimension
+                    dimensionValues[key].add(value);
+                });
+            }
+        });
+
+        return dimensionValues;
     }
 
     async getUniqueMetricNames() {

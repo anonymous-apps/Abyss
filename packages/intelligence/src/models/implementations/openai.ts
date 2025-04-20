@@ -1,3 +1,4 @@
+import { AsyncObject } from '../../constructs/async-object/async-obj';
 import { ChatThread } from '../../constructs/chat-thread/chat-thread';
 import { Log } from '../../utils/logs';
 import { createStreamingFetch } from '../../utils/network/fetch-utils';
@@ -93,6 +94,7 @@ export class OpenAILanguageModel extends LanguageModel {
     protected async _stream(thread: ChatThread): Promise<LanguageModelStreamResult> {
         const messages = this.buildMessages(thread);
         const modelName = this.getName();
+        const startTime = Date.now();
 
         try {
             // Create the fetch request
@@ -139,12 +141,27 @@ export class OpenAILanguageModel extends LanguageModel {
             // Use the generic stream parser
             const stream = await createGenericStreamParser(reader, decoder, modelName, parseOpenAIChunk);
 
+            // Create metrics tracking
+            const resultMetrics = new AsyncObject<Record<string, number>>({});
+            stream.waitForComplete().then(result => {
+                const endTime = Date.now();
+                const duration = endTime - startTime;
+                resultMetrics.update({
+                    invokeTime: duration,
+                    inputCharacters: JSON.stringify(messages).length,
+                    outputCharacters: result.join('').length,
+                    invokes: 1,
+                });
+                resultMetrics.dispatch();
+            });
+
             // Return the stream and metadata
             return {
                 metadata: {
                     inputContext: messages,
                 },
                 stream: stream,
+                metrics: resultMetrics.subscribe(),
             };
         } catch (error) {
             Log.error(modelName, `Streaming error: ${error}`);

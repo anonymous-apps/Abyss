@@ -15,7 +15,6 @@ export function CreateAgentPage() {
         modelConnections,
         tools,
         handleToggleTool,
-        handleChangeToolPermission,
         handleCreateAgent,
         isFormValid,
         navigate,
@@ -77,14 +76,6 @@ export function CreateAgentPage() {
                                 label={tool.name}
                                 description={tool.description.substring(0, 100)}
                                 className="capitalize"
-                            />
-                            <SelectDropdown
-                                selectedId={selectedTools[tool.id]?.permission}
-                                onSelect={permission => handleChangeToolPermission(tool.id, permission)}
-                                options={[
-                                    { id: 'automatic', label: 'Automatic' },
-                                    { id: 'user-controlled', label: 'User Controlled' },
-                                ]}
                             />
                         </div>
                     ))

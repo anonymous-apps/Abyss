@@ -18,7 +18,7 @@ interface Props {
     model: LanguageModel;
     inputThread: ChatThread;
     batchingConstant?: number;
-    metadata?: LanguageModelStreamResult['metadata'];
+    modelResponse: LanguageModelStreamResult;
 }
 
 export class StreamedChatResponse {
@@ -26,7 +26,7 @@ export class StreamedChatResponse {
     public readonly inputThread: ChatThread;
     private readonly batchingConstant: number;
 
-    public readonly metadata?: LanguageModelStreamResult['metadata'];
+    public readonly modelResponse: LanguageModelStreamResult;
     private messages: Message[] = [];
     private currentMessage: Message | null = null;
     private fullTextMessage: string = '';
@@ -44,7 +44,7 @@ export class StreamedChatResponse {
     private pendingMessages: Map<string, Message> = new Map();
 
     constructor(props: Props) {
-        this.metadata = props.metadata;
+        this.modelResponse = props.modelResponse;
         this.model = props.model;
         this.inputThread = props.inputThread;
         this.batchingConstant = props.batchingConstant || 100;

@@ -1,6 +1,8 @@
 export class AsyncStream<T> implements AsyncIterable<T> {
     private buffer: T[] = [];
+    private allData: T[] = [];
     private waiter: ((value: IteratorResult<T>) => void) | null = null;
+    private completionWaiters: ((value: T[]) => void)[] = [];
     private done = false;
     private error: Error | null = null;
 
@@ -19,7 +21,9 @@ export class AsyncStream<T> implements AsyncIterable<T> {
         }
 
         this.buffer.push(...values);
+        this.allData.push(...values);
         this.notifyWaiter();
+        this.notifyCompletionWaiters();
     }
 
     /**
@@ -35,7 +39,9 @@ export class AsyncStream<T> implements AsyncIterable<T> {
         }
 
         this.buffer.push(value);
+        this.allData.push(value);
         this.notifyWaiter();
+        this.notifyCompletionWaiters();
     }
 
     /**
@@ -44,6 +50,7 @@ export class AsyncStream<T> implements AsyncIterable<T> {
     close(): void {
         this.done = true;
         this.notifyWaiter();
+        this.notifyCompletionWaiters();
     }
 
     /**
@@ -53,6 +60,7 @@ export class AsyncStream<T> implements AsyncIterable<T> {
     setError(error: Error): void {
         this.error = error;
         this.notifyWaiter();
+        this.notifyCompletionWaiters();
     }
 
     /**
@@ -77,6 +85,25 @@ export class AsyncStream<T> implements AsyncIterable<T> {
 
         return new Promise<IteratorResult<T>>(resolve => {
             this.waiter = resolve;
+        });
+    }
+
+    /**
+     * Wait for the stream to complete and return all values as an array
+     * Multiple readers can wait for completion simultaneously
+     * @returns Promise that resolves with an array of all values when the stream completes
+     */
+    public waitForComplete(): Promise<T[]> {
+        if (this.error) {
+            return Promise.reject(this.error);
+        }
+
+        if (this.done) {
+            return Promise.resolve([...this.allData]);
+        }
+
+        return new Promise<T[]>(resolve => {
+            this.completionWaiters.push(resolve);
         });
     }
 
@@ -107,6 +134,27 @@ export class AsyncStream<T> implements AsyncIterable<T> {
             } else if (this.done) {
                 currentWaiter({ value: undefined as any, done: true });
             }
+        }
+    }
+
+    /**
+     * Notify all completion waiters when the stream is done or has an error
+     */
+    private notifyCompletionWaiters(): void {
+        if (this.done || this.error) {
+            const waiters = this.completionWaiters;
+            this.completionWaiters = [];
+            const data = [...this.allData];
+
+            waiters.forEach(waiter => {
+                if (this.error) {
+                    setTimeout(() => {
+                        throw this.error;
+                    }, 0);
+                } else {
+                    waiter(data);
+                }
+            });
         }
     }
 

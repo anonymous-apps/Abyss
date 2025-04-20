@@ -60,6 +60,7 @@ export class MockedLanguageModel extends LanguageModel {
                 inputContext: [],
             },
             stream: this.streamResponseFunction(thread),
+            metrics: Promise.resolve({}),
         };
     }
 }

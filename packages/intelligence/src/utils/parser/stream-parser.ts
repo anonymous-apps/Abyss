@@ -8,7 +8,7 @@ interface Props {
     stream: AsyncStream<string>;
     model: LanguageModel;
     inputThread: ChatThread;
-    metadata?: LanguageModelStreamResult['metadata'];
+    modelResponse: LanguageModelStreamResult;
 }
 
 export class StreamParser {
@@ -24,7 +24,7 @@ export class StreamParser {
         this.chatResponse = new StreamedChatResponse({
             model: props.model,
             inputThread: props.inputThread,
-            metadata: props.metadata,
+            modelResponse: props.modelResponse,
         });
     }
 

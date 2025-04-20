@@ -12,14 +12,14 @@ interface OpenAIConfigProps {
 
 const DEFAULT_MODELS = [
     { label: 'GPT 4o', content: 'gpt-4o-2024-08-06' },
-    { label: 'O3 Mini', content: 'o3-mini-2025-01-31' },
+    { label: 'O4 Mini', content: 'o4-mini-2025-04-16' },
 ];
 
 export function OpenAIConfig({ selectedModel, config, onModelChange, onConfigChange }: OpenAIConfigProps) {
     return (
         <>
             <Input label="Model ID" value={selectedModel} onChange={onModelChange} options={DEFAULT_MODELS} />
-            <Input label="API Key" value={config.apiKey} onChange={onConfigChange} />
+            <Input label="API Key" value={config.apiKey} onChange={data => onConfigChange({ ...config, apiKey: data })} />
         </>
     );
 }

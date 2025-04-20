@@ -111,8 +111,18 @@ export function useMetricsChart() {
     const [selectedTimeBucket, setSelectedTimeBucket] = useState<string>('day');
     const [aggregationMethod, setAggregationMethod] = useState<AggregationMethod>('average');
 
+    // Dimensions
+    const [selectedDimensions, setSelectedDimensions] = useState<Record<string, any>>({});
+    const uniqueDimensions = useDatabaseTableSubscription('Metric', async database =>
+        database.table.metric.getUniqueDimensionsForMetric(metricName || '')
+    );
+
     // Fetch metrics data
-    const metrics = useDatabaseTableSubscription('Metric', async database => database.table.metric.queryMetrics(metricName || ''));
+    const metrics = useDatabaseTableSubscription(
+        'Metric',
+        async database => database.table.metric.queryMetrics(metricName || '', selectedDimensions),
+        [metricName]
+    );
 
     // Navigation functions
     const navigateToHome = () => {
@@ -235,5 +245,8 @@ export function useMetricsChart() {
         navigateToHome,
         navigateToMetrics,
         navigateToMetricChart,
+        selectedDimensions,
+        setSelectedDimensions,
+        uniqueDimensions,
     };
 }

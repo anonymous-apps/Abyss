@@ -63,8 +63,6 @@ export async function buildThread(messages: MessageRecord[]) {
                 const toolCall = await ToolInvocationController.getByRecordId(message.content.tool.invocationId);
                 const toolOutput = await TextLogController.getByRecordId(toolCall?.textLogId);
 
-                console.log('toolOutput', toolOutput, 'toolCall', message.content.tool);
-
                 context = context.addBotToolCallMessage({
                     callId: message.id,
                     name: message.content.tool.name,

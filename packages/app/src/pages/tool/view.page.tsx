@@ -1,5 +1,5 @@
-import { IconSection, LabelValue, PageCrumbed } from '@abyss/ui-components';
-import { Hammer } from 'lucide-react';
+import { Button, IconSection, LabelValue, PageCrumbed } from '@abyss/ui-components';
+import { Hammer, Trash } from 'lucide-react';
 import React from 'react';
 import { useToolViewPage } from './view.hook';
 
@@ -8,7 +8,7 @@ export function ToolViewPage() {
 
     return (
         <PageCrumbed title={`Action: ${tool.data?.name || ''}`} breadcrumbs={breadcrumbs}>
-            <IconSection title="Tool Information" icon={Hammer}>
+            <IconSection title="Tool Information" icon={Hammer} action={<Button variant="secondary" icon={Trash} onClick={handleDelete} />}>
                 <LabelValue
                     data={{
                         name: tool.data?.name || '',

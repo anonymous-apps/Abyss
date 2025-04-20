@@ -5,6 +5,7 @@ export interface LanguageModelStreamResult {
         inputContext: any[];
     };
     stream: AsyncStream<string>;
+    metrics: Promise<Record<string, number>>;
 }
 
 export interface LanguageModelChatResult {

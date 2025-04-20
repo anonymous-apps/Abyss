@@ -1,6 +1,7 @@
 import { Operations } from '@abyss/intelligence';
 import { MessageController, MessageRecord } from '../../controllers/message';
 import { MessageThreadController } from '../../controllers/message-thread';
+import { MetricController } from '../../controllers/metric';
 import { RenderedConversationThreadController } from '../../controllers/rendered-conversation-thread';
 import { ResponseStreamController } from '../../controllers/response-stream';
 import { buildIntelegence, buildThread } from '../utils';
@@ -19,7 +20,24 @@ export async function handlerAskRawModelToRespondToThread(input: AskRawModelToRe
     try {
         // Stream the response
         const stream = await Operations.streamText({ model: connection, thread });
-        await RenderedConversationThreadController.updateRawInput(renderedThread.id, stream.metadata?.inputContext);
+        await RenderedConversationThreadController.updateRawInput(renderedThread.id, stream.modelResponse.metadata.inputContext);
+
+        console.log('stream.modelResponse', stream.modelResponse);
+
+        // Capture the metrics
+        stream.modelResponse.metrics.then(metrics => {
+            Object.entries(metrics).forEach(([key, value]) => {
+                MetricController.emit({
+                    name: key,
+                    dimensions: {
+                        provider: connection.provider,
+                        model: connection.id,
+                        thread: input.thread.id,
+                    },
+                    value,
+                });
+            });
+        });
 
         // Save the messages to the chat thread
         const seenTextMessages: Record<string, MessageRecord> = {};

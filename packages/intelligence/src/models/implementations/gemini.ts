@@ -1,3 +1,4 @@
+import { AsyncObject } from '../../constructs/async-object/async-obj';
 import { ChatThread } from '../../constructs/chat-thread/chat-thread';
 import { Log } from '../../utils/logs';
 import { createStreamingFetch } from '../../utils/network/fetch-utils';
@@ -97,6 +98,7 @@ export class GeminiLanguageModel extends LanguageModel {
     protected async _stream(thread: ChatThread): Promise<LanguageModelStreamResult> {
         const contents = this.buildContents(thread);
         const modelName = this.getName();
+        const startTime = Date.now();
 
         // Set appropriate generation config
         const generationConfig = this.enableImageGeneration ? { responseModalities: ['Text', 'Image'] } : { responseModalities: ['Text'] };
@@ -179,12 +181,27 @@ export class GeminiLanguageModel extends LanguageModel {
             // Use the generic stream parser
             const stream = await createGenericStreamParser(reader, decoder, modelName, parseGeminiChunk);
 
+            // Create metrics tracking
+            const resultMetrics = new AsyncObject<Record<string, number>>({});
+            stream.waitForComplete().then(result => {
+                const endTime = Date.now();
+                const duration = endTime - startTime;
+                resultMetrics.update({
+                    invokeTime: duration,
+                    inputCharacters: JSON.stringify(contents).length,
+                    outputCharacters: result.join('').length,
+                    invokes: 1,
+                });
+                resultMetrics.dispatch();
+            });
+
             // Return the stream and metadata
             return {
                 metadata: {
                     inputContext: contents,
                 },
                 stream: stream,
+                metrics: resultMetrics.subscribe(),
             };
         } catch (error) {
             Log.error(modelName, `Streaming error: ${error}`);

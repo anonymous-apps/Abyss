@@ -16,7 +16,7 @@ export function AnthropicConfig({ selectedModel, config, onModelChange, onConfig
     return (
         <>
             <Input label="Model ID" value={selectedModel} onChange={onModelChange} options={DEFAULT_MODELS} />
-            <Input label="API Key" value={config.apiKey} onChange={onConfigChange} />
+            <Input label="API Key" value={config.apiKey} onChange={data => onConfigChange({ ...config, apiKey: data })} />
         </>
     );
 }

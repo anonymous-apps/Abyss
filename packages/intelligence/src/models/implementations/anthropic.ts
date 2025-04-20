@@ -1,3 +1,4 @@
+import { AsyncObject } from '../../constructs/async-object/async-obj';
 import { ChatThread } from '../../constructs/chat-thread/chat-thread';
 import { Log } from '../../utils/logs';
 import { createStreamingFetch } from '../../utils/network/fetch-utils';
@@ -104,6 +105,7 @@ export class AnthropicLanguageModel extends LanguageModel {
     protected async _stream(thread: ChatThread): Promise<LanguageModelStreamResult> {
         const messages = this.buildMessages(thread);
         const modelName = this.getName();
+        const startTime = Date.now();
 
         try {
             // Create the fetch request
@@ -151,6 +153,17 @@ export class AnthropicLanguageModel extends LanguageModel {
 
             // Use the generic stream parser
             const stream = await createGenericStreamParser(reader, decoder, modelName, parseAnthropicChunk);
+            const resultMetrics = new AsyncObject<Record<string, number>>({});
+            stream.waitForComplete().then(result => {
+                const endTime = Date.now();
+                const duration = endTime - startTime;
+                resultMetrics.update({
+                    invokeTime: duration,
+                    inputCharacters: messages.reduce((acc, message) => acc + message.content.length, 0),
+                    outputCharacters: result.join('').length,
+                    invokes: 1,
+                });
+            });
 
             // Return the stream and metadata
             return {
@@ -158,6 +171,7 @@ export class AnthropicLanguageModel extends LanguageModel {
                     inputContext: messages,
                 },
                 stream: stream,
+                metrics: resultMetrics.subscribe(),
             };
         } catch (error) {
             Log.error(modelName, `Streaming error: ${error}`);

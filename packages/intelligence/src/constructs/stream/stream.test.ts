@@ -141,4 +141,84 @@ describe('stream', () => {
             await promise1;
         });
     });
+
+    describe('waitForComplete', () => {
+        it('[Happy] should return all values when stream is already complete', async () => {
+            const stream = new AsyncStream<number>();
+            stream.pushAll([1, 2, 3]);
+            stream.close();
+
+            const result = await stream.waitForComplete();
+            expect(result).toEqual([1, 2, 3]);
+        });
+
+        it('[Happy] should wait for completion and return all values', async () => {
+            const stream = new AsyncStream<number>();
+            stream.push(1);
+            stream.push(2);
+
+            const completePromise = stream.waitForComplete();
+            stream.push(3);
+            stream.close();
+
+            const result = await completePromise;
+            expect(result).toEqual([1, 2, 3]);
+        });
+
+        it('[Happy] should allow multiple readers to wait for completion', async () => {
+            const stream = new AsyncStream<number>();
+            stream.push(1);
+
+            const promise1 = stream.waitForComplete();
+            const promise2 = stream.waitForComplete();
+
+            stream.push(2);
+            stream.close();
+
+            const [result1, result2] = await Promise.all([promise1, promise2]);
+            expect(result1).toEqual([1, 2]);
+            expect(result2).toEqual([1, 2]);
+        });
+
+        it('[Happy] should maintain all data while allowing streaming consumption', async () => {
+            const stream = new AsyncStream<number>();
+            stream.push(1);
+            stream.push(2);
+
+            // Start streaming consumption
+            const streamingPromise = (async () => {
+                const results: number[] = [];
+                for await (const item of stream) {
+                    results.push(item);
+                }
+                return results;
+            })();
+
+            // Wait for completion in parallel
+            const completePromise = stream.waitForComplete();
+
+            stream.push(3);
+            stream.close();
+
+            const [streamingResult, completeResult] = await Promise.all([streamingPromise, completePromise]);
+            expect(streamingResult).toEqual([1, 2, 3]);
+            expect(completeResult).toEqual([1, 2, 3]);
+        });
+
+        it('[Unhappy] should throw error if stream is in error state', async () => {
+            const stream = new AsyncStream<number>();
+            const error = new Error('Test error');
+            stream.setError(error);
+
+            await expect(stream.waitForComplete()).rejects.toThrow(error);
+        });
+
+        it('[Edge] should return empty array for empty completed stream', async () => {
+            const stream = new AsyncStream<number>();
+            stream.close();
+
+            const result = await stream.waitForComplete();
+            expect(result).toEqual([]);
+        });
+    });
 });
