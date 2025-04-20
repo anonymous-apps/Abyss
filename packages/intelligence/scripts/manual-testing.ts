@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import { writeFileSync } from 'fs';
+import { z } from 'zod';
 import * as Intelegence from '../src';
 dotenv.config();
 
@@ -11,22 +12,22 @@ const streamExample = async () => {
     const thread = new Intelegence.ChatThread().addUserTextMessage('Write a single pharagraph about cats.');
 
     console.log('Starting stream from Gemini...');
-    const stream = await Intelegence.Operations.streamText({
-        model: openai,
+    const stream = await Intelegence.Operations.generateWithTools({
+        model: anthropic,
         thread,
+        toolDefinitions: [
+            {
+                name: 'cat',
+                description: 'A tool to generate a single pharagraph about cats.',
+                parameters: z.object({
+                    name: z.string().describe('The name of the cat'),
+                }),
+            },
+        ],
     });
-    writeFileSync('context.input', stream.inputThread.toLogString());
-
-    const output: Intelegence.Message[] = [];
-    stream.onTextMessageUpdate(message => {
-        output.push(message);
-    });
-
-    stream.onComplete(() => {
-        writeFileSync('context.output', JSON.stringify(output, null, 2));
-    });
-
-    await stream.waitForCompletion();
+    writeFileSync('context.input', stream.threadOutput.toLogString());
+    writeFileSync('context.internal', stream.threadIntermediate.toLogString());
+    writeFileSync('context.output', stream.outputRaw);
 };
 
 streamExample();

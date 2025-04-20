@@ -1,3 +1,4 @@
+import { Message } from '../../parser/messages.types';
 import { dedent } from '../../utils/dedent/dedent';
 import { ChatContextProps, ChatTurn, ImageMessagePartial, MessageSender, TextMessagePartial, ToolCallMessagePartial } from './types';
 
@@ -83,6 +84,26 @@ export class ChatThread {
         }
 
         return new ChatThread({ turns: [...this.turns, turn] });
+    }
+
+    public addManyBotMessages(messages: Message[]): ChatThread {
+        let thread: ChatThread = this;
+
+        for (const message of messages) {
+            switch (message.type) {
+                case 'text':
+                    thread = thread.addBotTextMessage(message.content);
+                    break;
+                case 'toolCall':
+                    thread = thread.addBotToolCallMessage({
+                        callId: message.uuid,
+                        name: message.name,
+                        args: message.args,
+                    });
+                    break;
+            }
+        }
+        return thread;
     }
 
     /**

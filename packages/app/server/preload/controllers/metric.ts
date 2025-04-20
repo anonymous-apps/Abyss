@@ -77,6 +77,16 @@ class _MetricController extends BaseDatabaseConnection<MetricRecord> {
         const uniqueNames = [...new Set(metrics.map(metric => metric.name))];
         return uniqueNames as string[];
     }
+
+    async consume(metrics: Record<string, number>, dimensions: Record<string, string>) {
+        Object.entries(metrics).forEach(([name, value]) => {
+            this.emit({
+                name,
+                dimensions,
+                value,
+            });
+        });
+    }
 }
 
 export const MetricController = new _MetricController();

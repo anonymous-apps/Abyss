@@ -1,11 +1,8 @@
-import { AsyncObject } from '../../constructs/async-object/async-obj';
 import { ChatThread } from '../../constructs/chat-thread/chat-thread';
 import { Log } from '../../utils/logs';
-import { createStreamingFetch } from '../../utils/network/fetch-utils';
-import { createGenericStreamParser, parseJSON, parseSSE } from '../../utils/network/stream-parser';
 import { createXmlFromObject } from '../../utils/object-to-xml/object-to-xml';
 import { LanguageModel } from '../language-model';
-import { LanguageModelStreamResult } from '../types';
+import { LanguageModelChatResult } from '../types';
 
 export interface AnthropicLanguageModelOptions {
     apiKey?: string;
@@ -28,25 +25,25 @@ interface AnthropicContent {
     };
 }
 
-interface AnthropicStreamResponse {
-    type: string;
-    delta?: {
-        text?: string;
+interface AnthropicResponse {
+    content: Array<{
+        text: string;
+    }>;
+    usage?: {
+        input_tokens: number;
+        output_tokens: number;
     };
 }
 
 export class AnthropicLanguageModel extends LanguageModel {
-    private modelId = 'claude-3-opus-20240229';
     private apiKey: string;
+    private modelId: string;
     private enableVision: boolean;
 
     constructor(props: AnthropicLanguageModelOptions = {}) {
-        // If vision is enabled, use a model that supports it
-        const defaultModelId = props.enableVision ? 'claude-3-opus-20240229' : 'claude-3-opus-20240229';
-
-        super('anthropic', props.modelId || defaultModelId);
+        super('anthropic', props.modelId || 'claude-3-opus-20240229');
         this.apiKey = props.apiKey || (process && process.env.ANTHROPIC_API_KEY) || '';
-        this.modelId = props.modelId || defaultModelId;
+        this.modelId = props.modelId || 'claude-3-opus-20240229';
         this.enableVision = props.enableVision || false;
     }
 
@@ -102,80 +99,56 @@ export class AnthropicLanguageModel extends LanguageModel {
         return messages;
     }
 
-    protected async _stream(thread: ChatThread): Promise<LanguageModelStreamResult> {
+    protected async _invoke(thread: ChatThread): Promise<LanguageModelChatResult> {
         const messages = this.buildMessages(thread);
         const modelName = this.getName();
         const startTime = Date.now();
 
         try {
             // Create the fetch request
-            const response = await createStreamingFetch(
-                'https://api.anthropic.com/v1/messages',
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'x-api-key': this.apiKey,
-                        'anthropic-version': '2023-06-01',
-                    },
-                    body: JSON.stringify({
-                        model: this.modelId,
-                        messages,
-                        max_tokens: 4096,
-                        stream: true,
-                    }),
+            const response = await fetch('https://api.anthropic.com/v1/messages', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-api-key': this.apiKey,
+                    'anthropic-version': '2023-06-01',
                 },
-                modelName
-            );
-
-            if (!response.body) {
-                throw new Error('Response body is null');
-            }
-
-            const reader = response.body.getReader();
-            const decoder = new TextDecoder();
-
-            // Create a parser function for Anthropic's streaming format
-            const parseAnthropicChunk = (chunk: string): string | null => {
-                const lines = chunk.split('\n').filter(line => line.trim() !== '');
-                const results: string[] = [];
-                for (const line of lines) {
-                    const sseData = parseSSE(line);
-                    if (sseData) {
-                        const parsed = parseJSON<AnthropicStreamResponse>(sseData);
-                        if (parsed && parsed.type === 'content_block_delta' && parsed.delta?.text) {
-                            results.push(parsed.delta.text);
-                        }
-                    }
-                }
-
-                return results.join('');
-            };
-
-            // Use the generic stream parser
-            const stream = await createGenericStreamParser(reader, decoder, modelName, parseAnthropicChunk);
-            const resultMetrics = new AsyncObject<Record<string, number>>({});
-            stream.waitForComplete().then(result => {
-                const endTime = Date.now();
-                const duration = endTime - startTime;
-                resultMetrics.update({
-                    invokeTime: duration,
-                    inputCharacters: messages.reduce((acc, message) => acc + message.content.length, 0),
-                    outputCharacters: result.join('').length,
-                    invokes: 1,
-                });
-                resultMetrics.dispatch();
+                body: JSON.stringify({
+                    model: this.modelId,
+                    messages,
+                    max_tokens: 4096,
+                    stream: false,
+                }),
             });
 
-            // Return the stream and metadata
+            if (!response.ok) {
+                throw new Error(`Anthropic API error: ${response.status} ${response.statusText}`);
+            }
+
+            const responseData = await response.json();
+            const parsed = JSON.parse(JSON.stringify(responseData)) as AnthropicResponse;
+
+            if (!parsed?.content?.[0]?.text) {
+                throw new Error('No content in Anthropic response');
+            }
+
+            const responseText = parsed.content[0].text;
+
+            // Create metrics
+            const metrics = {
+                inputTokens: parsed.usage?.input_tokens || 0,
+                outputTokens: parsed.usage?.output_tokens || 0,
+                totalTokens: (parsed.usage?.input_tokens || 0) + (parsed.usage?.output_tokens || 0),
+            };
+
+            // Return the result
             return {
-                metadata: {
-                    inputContext: messages,
-                },
-                stream: stream,
-                metrics: resultMetrics.subscribe(),
+                inputContext: messages,
+                response: responseText,
+                metrics: metrics,
             };
         } catch (error) {
-            Log.error(modelName, `Streaming error: ${error}`);
+            Log.error(modelName, `Error: ${error}`);
             throw error;
         }
     }

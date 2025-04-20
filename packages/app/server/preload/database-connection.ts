@@ -11,9 +11,9 @@ import { MessageController } from './controllers/message';
 import { MessageThreadController } from './controllers/message-thread';
 import { MetricController } from './controllers/metric';
 import { ModelConnectionsController } from './controllers/model-connections';
+import { ModelInvokeController } from './controllers/model-invoke';
 import { PromptController } from './controllers/prompt';
 import { RenderedConversationThreadController } from './controllers/rendered-conversation-thread';
-import { ResponseStreamController } from './controllers/response-stream';
 import { TextLogController } from './controllers/text-log';
 import { ToolController } from './controllers/tool';
 import { ToolInvocationController } from './controllers/tool-invocation';
@@ -21,6 +21,7 @@ import { UserSettingsController } from './controllers/user-settings';
 import { CalculateSqliteSize } from './workflows/calculateSqliteSize';
 import { InvokeToolFromMessage } from './workflows/invoke-tool';
 import { AskAiToRespondToThread } from './workflows/respond-to-thread';
+
 // Setup prisma to support sqlite
 const require = createRequire(import.meta.url);
 const prismaModule = require('@prisma/client') as {
@@ -134,7 +135,7 @@ const tableControllers = {
     toolInvocation: ToolInvocationController.export(),
     metric: MetricController.export(),
     textLog: TextLogController.export(),
-    responseStream: ResponseStreamController.export(),
+    modelInvoke: ModelInvokeController.export(),
     document: DocumentController.export(),
     prompt: PromptController.export(),
 };

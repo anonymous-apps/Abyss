@@ -1,9 +1,9 @@
 import { createZodFromObject, Operations } from '@abyss/intelligence';
-import { MessageController, MessageRecord, MessageToolCall } from '../../controllers/message';
+import { MessageController } from '../../controllers/message';
 import { MessageThreadController } from '../../controllers/message-thread';
 import { MetricController } from '../../controllers/metric';
+import { ModelInvokeController } from '../../controllers/model-invoke';
 import { RenderedConversationThreadController } from '../../controllers/rendered-conversation-thread';
-import { ResponseStreamController } from '../../controllers/response-stream';
 import { AiLabelChat } from '../label-chat';
 import { buildIntelegence, buildThread } from '../utils';
 import { AskAgentToRespondToThreadInput } from './types';
@@ -17,9 +17,9 @@ export async function handlerAskAgentToRespondToThread(input: AskAgentToRespondT
     const thread = await buildThread(input.messages);
 
     // Block the chat thread
-    const responseStream = await ResponseStreamController.createFromModelConnection(input.connection);
+    const modelInvoke = await ModelInvokeController.createFromModelConnection(input.connection);
     const renderedThread = await RenderedConversationThreadController.createFromThread(thread);
-    await MessageThreadController.lockThread(input.thread.id, responseStream.id);
+    await MessageThreadController.lockThread(input.thread.id, modelInvoke.id);
 
     try {
         // Stream the response via tool calls
@@ -29,116 +29,67 @@ export async function handlerAskAgentToRespondToThread(input: AskAgentToRespondT
             parameters: createZodFromObject(tool.tool.schema),
         }));
 
-        const stream = await Operations.streamWithTools({ model: connection, thread, toolDefinitions });
-        await RenderedConversationThreadController.updateRawInput(renderedThread.id, stream.modelResponse.metadata.inputContext);
+        const response = await Operations.generateWithTools({ model: connection, thread, toolDefinitions });
+        await RenderedConversationThreadController.updateRawInput(renderedThread.id, response.threadInput.serialize());
 
         // Capture the metrics
-        stream.modelResponse.metrics.then(metrics => {
-            Object.entries(metrics).forEach(([key, value]) => {
-                MetricController.emit({
-                    name: key,
-                    dimensions: {
-                        provider: connection.provider,
-                        model: connection.id,
-                        thread: input.thread.id,
-                    },
-                    value,
-                });
-            });
+        MetricController.consume(response.outputMetrics, {
+            provider: connection.provider,
+            model: connection.id,
+            thread: input.thread.id,
         });
 
         // Rerender thread
         await RenderedConversationThreadController.update(renderedThread.id, {
-            messages: stream.inputThread.serialize(),
+            messages: response.threadOutput.serialize(),
         });
 
-        // Save the messages to the chat thread as they are produced
-        const seenMessages: Record<string, MessageRecord> = {};
-        const firstMessageReferences = {
-            responseStreamId: responseStream.id,
-            renderedConversationThreadId: renderedThread.id,
-        };
-
-        stream.onTextMessageUpdate(async message => {
-            if (!seenMessages[message.uuid]) {
-                const references = Object.keys(seenMessages).length === 0 ? firstMessageReferences : {};
-                seenMessages[message.uuid] = await MessageController.create({
+        // Save the messages to the chat thread
+        const messages = response.outputMessages;
+        console.log('messages', messages);
+        for (const message of messages) {
+            if (message.type === 'text') {
+                await MessageController.create({
                     threadId: input.thread.id,
                     sourceId: input.agent.id,
-                    status: 'streaming',
-                    references,
-                    content: {
-                        text: message.content,
-                    },
-                });
-            } else {
-                await MessageController.update(seenMessages[message.uuid].id, {
-                    content: {
-                        text: message.content,
-                    },
-                });
-            }
-        });
-
-        stream.onToolCallUpdate(async toolCall => {
-            const toolConnection = input.toolConnections.find(
-                tool => tool.tool.name.toLowerCase().replaceAll(' ', '-') === toolCall.name.toLowerCase().replaceAll(' ', '-')
-            );
-
-            if (!seenMessages[toolCall.uuid]) {
-                const references = Object.keys(seenMessages).length === 0 ? firstMessageReferences : {};
-                seenMessages[toolCall.uuid] = await MessageController.create({
-                    threadId: input.thread.id,
-                    sourceId: input.agent.id,
-                    status: 'streaming',
                     references: {
-                        ...references,
-                        toolSourceId: toolConnection?.tool.id,
+                        modelInvokeId: modelInvoke.id,
+                        renderedConversationThreadId: renderedThread.id,
                     },
                     content: {
-                        tool: {
-                            toolId: toolConnection?.tool.id,
-                            name: toolCall.name || '',
-                            parameters: toolCall.args || {},
-                        },
+                        text: message.content,
                     },
                 });
-            } else {
-                const existing = seenMessages[toolCall.uuid];
-                const existingContent = existing.content as MessageToolCall;
-                await MessageController.update(existing.id, {
+            }
+
+            if (message.type === 'toolCall') {
+                await MessageController.create({
+                    threadId: input.thread.id,
+                    sourceId: input.agent.id,
                     content: {
                         tool: {
-                            ...existingContent.tool,
-                            name: existingContent.tool.name || toolCall.name,
-                            parameters: {
-                                ...existingContent.tool.parameters,
-                                ...toolCall.args,
-                            },
+                            toolId: message.name,
+                            name: message.name,
+                            parameters: message.args,
                         },
                     },
                 });
             }
-        });
+        }
 
-        // Wait for the stream to complete
-        await stream.waitForCompletion();
-        await ResponseStreamController.update(responseStream.id, {
-            status: 'complete',
-            rawOutput: stream.getRawOutput(),
-            parsedMessages: stream.getMessages(),
+        // Save the model invoke
+        await ModelInvokeController.update(modelInvoke.id, {
+            rawOutput: response.outputRaw,
+            parsedMessages: response.apiBodyRaw,
         });
 
         // Save the final rendered thread
-        const newThread = stream.inputThread.addBotTextMessage(stream.getRawOutput());
         await RenderedConversationThreadController.update(renderedThread.id, {
-            messages: newThread.serialize(),
+            messages: response.threadOutput.serialize(),
         });
-
-        // Complete the messages once the stream is done
-        await MessageController.completeMessagesById(Object.keys(seenMessages));
+    } catch (error) {
+        console.error('Error in handlerAskAgentToRespondToThread', error);
     } finally {
-        await ResponseStreamController.complete(responseStream.id);
         await MessageThreadController.unlockThread(input.thread.id);
     }
 }
