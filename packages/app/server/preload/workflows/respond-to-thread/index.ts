@@ -4,8 +4,8 @@ import { ChatController } from '../../controllers/chat';
 import { MessageController } from '../../controllers/message';
 import { MessageThreadController } from '../../controllers/message-thread';
 import { ModelConnectionsController } from '../../controllers/model-connections';
-import { handlerAskAgentToRespondToThread } from './handler-ask-ask-agent';
-import { handlerAskRawModelToRespondToThread } from './handler-ask-raw-model';
+import { handlerAskAgentToRespondToThread } from './handler-ask-agent';
+import { handlerAskRawModelToRespondToThread } from './handler-ask-model';
 
 export async function AskAiToRespondToThread(chatId: string, sourceId: string) {
     const chat = await ChatController.getOrThrowByRecordId(chatId);

@@ -65,13 +65,16 @@ export function MetricsChartPage() {
                                 textAnchor="end"
                                 height={70}
                                 interval={Math.max(1, Math.floor(processedData.bucketKeys.length / 10))}
-                                tick={{ fill: 'var(--color-text-300)' }}
+                                tick={{ fill: 'var(--color-text-300)', fontSize: '0.5rem' }}
                             />
-                            <YAxis tickFormatter={(value: number) => value.toFixed(2)} tick={{ fill: 'var(--color-text-300)' }} />
+                            <YAxis
+                                tickFormatter={(value: number) => value.toFixed(0)}
+                                tick={{ fill: 'var(--color-text-300)', fontSize: '0.5rem' }}
+                            />
                             <Tooltip
                                 contentStyle={{
                                     borderRadius: '4px',
-                                    backgroundColor: 'var(--color-background-500)',
+                                    backgroundColor: 'var(--color-background-100)',
                                     color: 'var(--color-text-500)',
                                 }}
                             />
