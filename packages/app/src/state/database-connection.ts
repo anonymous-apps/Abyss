@@ -169,3 +169,11 @@ export function useScanTablePrompt() {
 export function useTableRecordPrompt(id: string | undefined) {
     return useDatabaseRecordSubscription('Prompt', id, async database => database.table.prompt.findById(id));
 }
+
+export function useScanTableDocument() {
+    return useDatabaseTableSubscription('Document', async database => database.table.document.scanTable());
+}
+
+export function useTableRecordDocument(id: string | undefined) {
+    return useDatabaseRecordSubscription('Document', id, async database => database.table.document.findById(id));
+}

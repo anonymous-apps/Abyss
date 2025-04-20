@@ -10,6 +10,8 @@ import { ChatViewPage } from './pages/chats/view.page';
 import { ListTablesPage } from './pages/database/database.page';
 import { ViewTableRecordPage } from './pages/database/record.page';
 import { ViewTablePage } from './pages/database/table.page';
+import { DocumentsPage } from './pages/documents/documents-page.page';
+import { ViewDocumentPage } from './pages/documents/view-document.page';
 import { MainPage } from './pages/main/main';
 import { MetricsChartPage } from './pages/metrics/metrics-chart.page';
 import { MetricsPage } from './pages/metrics/metrics.page';
@@ -57,6 +59,8 @@ export function App() {
                         <Route path="/prompts" element={<PromptsPage />} />
                         <Route path="/prompts/create" element={<CreatePromptPage />} />
                         <Route path="/prompts/id/:id" element={<ViewPromptPage />} />
+                        <Route path="/documents" element={<DocumentsPage />} />
+                        <Route path="/documents/id/:id" element={<ViewDocumentPage />} />
                     </Route>
                     <Route path="*" element={<MainPage />} />
                 </Routes>

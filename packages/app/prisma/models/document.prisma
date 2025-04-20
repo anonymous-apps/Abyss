@@ -7,6 +7,12 @@ model Document {
     // Version of the document
     version    Int
 
+    // Type of the document
+    type       String
+
+    // Title of the document
+    title      String
+
     // Text of the document
     text       String
     
