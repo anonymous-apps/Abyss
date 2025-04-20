@@ -87,6 +87,36 @@ class _MetricController extends BaseDatabaseConnection<MetricRecord> {
             });
         });
     }
+
+    async withMetrics<T>(name: string, handler: () => Promise<T>, dimensions: Record<string, any> = {}): Promise<T> {
+        const startTime = Date.now();
+        let success = false;
+
+        try {
+            const result = await handler();
+            success = true;
+            return result;
+        } catch (error) {
+            this.emit({
+                name: `instrumented.${name}.error`,
+                dimensions,
+                value: 1,
+            });
+            throw error;
+        } finally {
+            const duration = Date.now() - startTime;
+            this.emit({
+                name: `instrumented.${name}.duration`,
+                dimensions,
+                value: duration,
+            });
+            this.emit({
+                name: `instrumented.${name}.${success ? 'success' : 'failure'}`,
+                dimensions,
+                value: 1,
+            });
+        }
+    }
 }
 
 export const MetricController = new _MetricController();

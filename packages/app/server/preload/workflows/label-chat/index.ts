@@ -14,6 +14,20 @@ export interface AiLabelChatInput {
 }
 
 export async function AiLabelChat(input: AiLabelChatInput) {
+    MetricController.withMetrics(
+        'label-chat',
+        async () => {
+            await labelChat(input);
+        },
+        {
+            chatId: input.chat.id,
+            threadId: input.thread.id,
+            connectionId: input.connection.id,
+        }
+    );
+}
+
+async function labelChat(input: AiLabelChatInput) {
     // Setup the model and thread
     const connection = await buildIntelegence(input.connection);
     const thread = await buildThread(input.messages);

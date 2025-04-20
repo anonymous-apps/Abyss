@@ -1,12 +1,11 @@
-import { Button, IconSection, PageCrumbed, Table } from '@abyss/ui-components';
+import { Button, IconSection, Input, PageCrumbed, Table } from '@abyss/ui-components';
 import { Binary, ChartLine } from 'lucide-react';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useMetrics } from './metrics.hook';
 
 export function MetricsPage() {
-    const { uniqueMetricNames, renderableRows, navigate } = useMetrics();
-
+    const { uniqueMetricNames, renderableRows, navigate, filteredRenderableMetricNames, search, setSearch } = useMetrics();
     return (
         <PageCrumbed
             title="Metrics"
@@ -16,11 +15,21 @@ export function MetricsPage() {
                 { name: 'Metrics', onClick: () => navigate('/metrics') },
             ]}
         >
-            <IconSection title="Available Metrics" icon={ChartLine}>
-                <div className="flex flex-wrap gap-5">
-                    {uniqueMetricNames.data?.map(name => (
-                        <Button key={name as string} variant="secondary" onClick={() => navigate(`/metrics/graph/${name}`)} icon={Binary}>
-                            {name.split('-').join(' ')}
+            <IconSection title="Search Available Metrics" icon={ChartLine}>
+                <Input placeholder="Search for a metric" value={search} onChange={setSearch} />
+                <div className="gap-2 h-[100px] overflow-y-auto bg-background-100 mt-2 rounded-md p-2">
+                    {filteredRenderableMetricNames.map(name => (
+                        <Button key={name} variant="secondary" onClick={() => navigate(`/metrics/graph/${name}`)} icon={Binary}>
+                            {name.split('.').map(part => (
+                                <span
+                                    key={part}
+                                    className={`text-text-300 text-sm bg-primary-100 px-1 ${
+                                        part !== name.split('.').slice(-1)[0] ? 'border-r border-primary-200' : ''
+                                    }`}
+                                >
+                                    {part}
+                                </span>
+                            ))}
                         </Button>
                     ))}
                 </div>
