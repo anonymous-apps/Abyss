@@ -1,7 +1,7 @@
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import React, { useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Database } from '../../main';
+import { Database } from '../main';
 
 export const HeaderBar = () => {
     const location = useLocation();
