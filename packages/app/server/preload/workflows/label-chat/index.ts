@@ -28,6 +28,8 @@ export async function AiLabelChat(input: AiLabelChatInput) {
 }
 
 async function labelChat(input: AiLabelChatInput) {
+    console.log('AI Labeling chat', input.chat.id, input.thread.id, input.connection.id);
+
     // Setup the model and thread
     const connection = await buildIntelegence(input.connection);
     const thread = await buildThread(input.messages);
@@ -59,11 +61,13 @@ async function labelChat(input: AiLabelChatInput) {
         thread: input.thread.id,
     });
 
+    console.log(response.threadOutput.toLogString());
+
     // Update the chat with the label
     const labelCall = response.outputMessages.find(message => message.type === 'toolCall' && message.name === 'label');
     if (labelCall) {
         await ChatController.update(input.chat.id, {
-            name: (labelCall as ToolCallMessage).args.label,
+            name: (labelCall as ToolCallMessage).args.labelText,
         });
     }
 }

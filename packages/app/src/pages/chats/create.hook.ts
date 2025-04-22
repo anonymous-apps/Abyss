@@ -41,7 +41,7 @@ export function useChatCreate() {
         const systemPrompt = await getSystemPrompt(sourceId);
 
         const chatRecord = await Database.table.chat.createWithThread({
-            name: 'New Chat',
+            name: '',
             references: {
                 sourceId,
             },

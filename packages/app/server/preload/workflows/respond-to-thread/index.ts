@@ -5,9 +5,9 @@ import { MessageController } from '../../controllers/message';
 import { MessageThreadController } from '../../controllers/message-thread';
 import { MetricController } from '../../controllers/metric';
 import { ModelConnectionsController } from '../../controllers/model-connections';
+import { AiLabelChat } from '../label-chat';
 import { handlerAskAgentToRespondToThread } from './handler-ask-agent';
 import { handlerAskRawModelToRespondToThread } from './handler-ask-model';
-
 export async function AskAiToRespondToThread(chatId: string, sourceId: string) {
     const chat = await ChatController.getOrThrowByRecordId(chatId);
     const thread = await MessageThreadController.getOrThrowByRecordId(chat?.threadId);
@@ -17,6 +17,11 @@ export async function AskAiToRespondToThread(chatId: string, sourceId: string) {
 
     if (type === 'modelConnections') {
         const model = await ModelConnectionsController.getOrThrowByRecordId(sourceId);
+
+        if (!chat.name) {
+            void AiLabelChat({ chat, thread, messages, connection: model });
+        }
+
         return MetricController.withMetrics(
             'ask-raw-model',
             () => handlerAskRawModelToRespondToThread({ chat, thread, messages, connection: model }),
@@ -35,6 +40,11 @@ export async function AskAiToRespondToThread(chatId: string, sourceId: string) {
         const agent = await AgentController.getOrThrowByRecordId(sourceId);
         const model = await ModelConnectionsController.getOrThrowByRecordId(agent.chatModelId);
         const toolConnections = await AgentToolConnectionController.findByAgentId(agent.id);
+
+        if (!chat.name) {
+            void AiLabelChat({ chat, thread, messages, connection: model });
+        }
+
         return MetricController.withMetrics(
             'ask-agent',
             () => handlerAskAgentToRespondToThread({ chat, thread, messages, connection: model, agent, toolConnections }),

@@ -56,7 +56,7 @@ export function useRecordReference({ sourceId }: { sourceId: string }): RecordRe
         return {
             icon: Icon,
             label: data.data?.name || '',
-            link: `/database/id/modelconnections/record/${sourceId}`,
+            link: `/database/id/modelConnections/record/${sourceId}`,
         };
     }
 
