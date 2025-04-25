@@ -7,7 +7,7 @@ const commonConfig = {
     bundle: true,
     platform: 'node',
     target: 'node18',
-    format: 'cjs',
+    format: 'esm',
     outfile: 'dist/index.js',
     sourcemap: true,
     minify: process.env.NODE_ENV === 'production',

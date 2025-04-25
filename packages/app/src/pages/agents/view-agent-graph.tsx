@@ -20,6 +20,8 @@ export function ViewAgentGraphPage() {
         }));
     };
 
+    console.log(nodes);
+
     return (
         <div className="w-full h-full ">
             <AgentNodeDrawer onAddNode={handleAddNode} />

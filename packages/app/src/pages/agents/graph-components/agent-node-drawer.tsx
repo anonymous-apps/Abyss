@@ -1,4 +1,4 @@
-import { GraphNodeDefinition, OnChatMessageNode } from '@abyss/intelligence';
+import { GraphNodeDefinition, Nodes } from '@abyss/intelligence';
 import { Sidebar, SidebarButton, SidebarSection } from '@abyss/ui-components';
 import { MessageCircle } from 'lucide-react';
 import React from 'react';
@@ -15,7 +15,7 @@ export function AgentNodeDrawer({ onAddNode }: AgentNodeDrawerProps) {
                 <SidebarButton
                     label="On Chat Message"
                     icon={MessageCircle}
-                    onClick={() => onAddNode(new OnChatMessageNode().getDefinition())}
+                    onClick={() => onAddNode(Nodes.OnChatMessage.getDefinition())}
                 />
             </Sidebar>
         </div>
