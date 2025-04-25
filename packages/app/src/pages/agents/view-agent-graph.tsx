@@ -33,19 +33,17 @@ export function ViewAgentGraphPage() {
 
     const onConnect = useCallback(
         (connection: Connection) => {
-            console.log('onConnect', connection);
-            // Add more detailed logging to debug the issue
-            console.log('Source node ID:', connection.source);
-            console.log('Source handle ID:', connection.sourceHandle);
-            console.log('Target node ID:', connection.target);
-            console.log('Target handle ID:', connection.targetHandle);
+            setEdges(eds => addEdge(connection, eds));
+        },
+        [setEdges]
+    );
 
-            // Make sure both source and target handles exist before creating the edge
-            if (connection.source && connection.target) {
-                setEdges(eds => addEdge(connection, eds));
-            } else {
-                console.error('Cannot create edge: missing source or target');
-            }
+    // Handle node deletion
+    const onNodesDelete = useCallback(
+        (deletedNodes: RenderedGraphNode[]) => {
+            // Clean up any edges connected to the deleted nodes
+            const deletedNodeIds = new Set(deletedNodes.map(node => node.id));
+            setEdges(edges => edges.filter(edge => !deletedNodeIds.has(edge.source) && !deletedNodeIds.has(edge.target)));
         },
         [setEdges]
     );
@@ -65,6 +63,7 @@ export function ViewAgentGraphPage() {
                         onNodesChange={onNodesChange}
                         onEdgesChange={onEdgesChange}
                         onConnect={onConnect}
+                        onNodesDelete={onNodesDelete}
                         fitView
                         proOptions={{ hideAttribution: true }}
                         nodeTypes={{ custom: CustomAgentGraphNode }}

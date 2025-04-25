@@ -1,4 +1,5 @@
-import { Handle, Position } from '@xyflow/react';
+import { Handle, Position, useReactFlow } from '@xyflow/react';
+import { XIcon } from 'lucide-react';
 import React from 'react';
 import { RenderedGraphNode } from './graph.types';
 import { IdsToIcons } from './ids-to-icons';
@@ -6,6 +7,7 @@ import { IdsToIcons } from './ids-to-icons';
 export function CustomAgentGraphNode({ data }: { data: RenderedGraphNode['data'] }) {
     let leftHandles: React.ReactNode[] = [];
     let rightHandles: React.ReactNode[] = [];
+    const { deleteElements } = useReactFlow();
 
     const Icon = IdsToIcons[data.definition.icon];
 
@@ -33,6 +35,10 @@ export function CustomAgentGraphNode({ data }: { data: RenderedGraphNode['data']
         );
     }
 
+    const handleDelete = () => {
+        deleteElements({ nodes: [{ id: data.definition.id }] });
+    };
+
     return (
         <div className="bg-background-200">
             <div
@@ -43,9 +49,17 @@ export function CustomAgentGraphNode({ data }: { data: RenderedGraphNode['data']
                 }}
             >
                 <div className="flex flex-col border-b gap-1 p-1 min-w-[300px]" style={{ borderColor: data.definition.color }}>
-                    <div className="text-xs flex items-center gap-2 ">
-                        <Icon className="w-4 h-4" color={data.definition.color} />
-                        <div className="">{data.definition.name}</div>
+                    <div className="text-xs flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                            <Icon className="w-4 h-4" color={data.definition.color} />
+                            <div className="">{data.definition.name}</div>
+                        </div>
+                        <button
+                            onClick={handleDelete}
+                            className="rounded-sm hover:bg-background-300 text-text-500 hover:text-text-100 hover:bg-background-400"
+                        >
+                            <XIcon className="w-3 h-3" />
+                        </button>
                     </div>
                     <div className="text-[8px] text-text-500 ml-6">{data.definition.description}</div>
                 </div>
