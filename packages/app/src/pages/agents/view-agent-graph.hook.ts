@@ -97,7 +97,7 @@ export function useViewAgent() {
             const targetHandle =
                 targetNode?.data.definition.inputPorts[targetHandleLocalId as keyof typeof targetNode.data.definition.inputPorts];
             if (sourceHandle?.dataType !== targetHandle?.dataType) {
-                console.error('Source and target handle types do not match');
+                console.error('Source and target handle types do not match:', sourceHandle, targetHandle);
                 return;
             }
             const isTargetSignal = targetHandle?.type === 'signal';

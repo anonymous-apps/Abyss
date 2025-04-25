@@ -17,7 +17,11 @@ export function CustomAgentGraphNode({ data }: { data: RenderedGraphNode['data']
                 <div className="text-[8px] text-text-500 px-2 relative flex flex-row gap-1 justify-start">
                     {input.name} <pre className="opacity-70">({input.dataType})</pre>
                     <Handle
-                        className={` ${input.type === 'signal' ? 'h-3 rounded-sm bg-primary-500' : 'bg-background-600'}`}
+                        className={`${
+                            input.type === 'signal'
+                                ? 'h-3 rounded-sm bg-primary-200 border-primary-500'
+                                : 'bg-background-200 border-background-900 '
+                        }`}
                         type="target"
                         position={Position.Left}
                         id={data.definition.id + ':' + input.id}
@@ -33,7 +37,12 @@ export function CustomAgentGraphNode({ data }: { data: RenderedGraphNode['data']
             <div className="flex flex-col gap-1 relative" key={output.id}>
                 <div className="text-[8px] text-text-500 px-2 flex flex-row gap-1 justify-end relative">
                     {output.name} <pre className="opacity-70">({output.dataType})</pre>
-                    <Handle type="source" position={Position.Right} id={data.definition.id + ':' + output.id} />
+                    <Handle
+                        className={`bg-background-200 border-background-900`}
+                        type="source"
+                        position={Position.Right}
+                        id={data.definition.id + ':' + output.id}
+                    />
                 </div>
                 <div className="text-[6px] text-text-500 px-2">{output.description}</div>
             </div>
