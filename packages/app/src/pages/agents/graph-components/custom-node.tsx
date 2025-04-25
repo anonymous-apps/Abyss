@@ -64,8 +64,8 @@ export function CustomAgentGraphNode({ data }: { data: RenderedGraphNode['data']
                     <div className="text-[8px] text-text-500 ml-6">{data.definition.description}</div>
                 </div>
                 <div className="flex flex-row gap-2 relative my-1 mt-2 w-full">
-                    <div className="flex flex-col gap-2 flex-1">{leftHandles}</div>
-                    <div className="flex flex-col gap-2 flex-1 text-right">{rightHandles}</div>
+                    {leftHandles.length > 0 && <div className="flex flex-col gap-2 flex-1">{leftHandles}</div>}
+                    {rightHandles.length > 0 && <div className="flex flex-col gap-2 flex-1 text-right">{rightHandles}</div>}
                 </div>
             </div>
         </div>
