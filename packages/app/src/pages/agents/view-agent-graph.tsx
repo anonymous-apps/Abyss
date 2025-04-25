@@ -13,7 +13,6 @@ export function ViewAgentGraphPage() {
     return (
         <ReactFlowProvider>
             <div className="flex w-full h-full">
-                <AgentNodeDrawer onAddNode={handleAddNode} />
                 <div className="flex-1 h-full">
                     <div className="h-[54px] w-full  bg-[#0e0e0e] border-b border-background-600 py-2 border-l pl-4 flex items-center gap-2">
                         <Bot className="w-6 h-6 text-white" />
@@ -35,9 +34,16 @@ export function ViewAgentGraphPage() {
                         proOptions={{ hideAttribution: true }}
                         nodeTypes={{ custom: CustomAgentGraphNode }}
                     >
-                        <Background variant={BackgroundVariant.Dots} gap={12} size={1} className="bg-background-100" />
+                        <Background
+                            variant={BackgroundVariant.Dots}
+                            gap={12}
+                            size={1}
+                            className="bg-background-100"
+                            style={{ stroke: 'var(--color-background-400)' }}
+                        />
                     </ReactFlow>
                 </div>
+                <AgentNodeDrawer onAddNode={handleAddNode} />
             </div>
         </ReactFlowProvider>
     );
