@@ -13,7 +13,7 @@ class _RenderedConversationThreadController extends BaseDatabaseConnection<Rende
 
     async createFromThread(thread: ChatThread) {
         const renderedThread = await this.create({
-            messages: thread.serialize(),
+            messages: thread.save(),
             rawInput: '-',
         });
         return renderedThread;

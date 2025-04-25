@@ -1,4 +1,4 @@
-import { createZodFromObject, Operations } from '@abyss/intelligence';
+import { Operations } from '@abyss/intelligence';
 import { MessageController } from '../../controllers/message';
 import { MessageThreadController } from '../../controllers/message-thread';
 import { MetricController } from '../../controllers/metric';
@@ -18,15 +18,23 @@ export async function handlerAskAgentToRespondToThread(input: AskAgentToRespondT
     await MessageThreadController.lockThread(input.thread.id, modelInvoke.id);
 
     try {
-        // Stream the response via tool calls
+        // Build the tool definitions
         const toolDefinitions = input.toolConnections.map(tool => ({
+            id: tool.tool.shortId,
             name: tool.tool.name,
             description: tool.tool.description,
-            parameters: createZodFromObject(tool.tool.schema),
+            parameters: tool.tool.schema,
         }));
 
-        const response = await Operations.generateWithTools({ model: connection, thread, toolDefinitions });
-        await RenderedConversationThreadController.updateRawInput(renderedThread.id, response.threadInput.serialize());
+        // Compute delta messages and add them to the thread
+        const deltaMessages = thread.setCurrentTools(toolDefinitions);
+        if (deltaMessages.messages.length > 0) {
+            await MessageController.addManyToThread(input.thread.id, input.agent.id, deltaMessages.messages);
+        }
+
+        // Generate the response
+        const response = await Operations.generateWithTools({ model: connection, thread: deltaMessages.newThread });
+        await RenderedConversationThreadController.updateRawInput(renderedThread.id, response.threadInput.save());
 
         // Capture the metrics
         MetricController.consume(response.outputMetrics, {
@@ -37,12 +45,11 @@ export async function handlerAskAgentToRespondToThread(input: AskAgentToRespondT
 
         // Rerender thread
         await RenderedConversationThreadController.update(renderedThread.id, {
-            messages: response.threadOutput.serialize(),
+            messages: response.threadOutput.save(),
         });
 
         // Save the messages to the chat thread
         const messages = response.outputMessages;
-        console.log('messages', messages);
         for (const message of messages) {
             if (message.type === 'text') {
                 await MessageController.create({
@@ -52,23 +59,15 @@ export async function handlerAskAgentToRespondToThread(input: AskAgentToRespondT
                         modelInvokeId: modelInvoke.id,
                         renderedConversationThreadId: renderedThread.id,
                     },
-                    content: {
-                        text: message.content,
-                    },
+                    content: message,
                 });
             }
 
-            if (message.type === 'toolCall') {
+            if (message.type === 'toolRequest') {
                 await MessageController.create({
                     threadId: input.thread.id,
                     sourceId: input.agent.id,
-                    content: {
-                        tool: {
-                            toolId: message.name,
-                            name: message.name,
-                            parameters: message.args,
-                        },
-                    },
+                    content: message,
                 });
             }
         }
@@ -81,7 +80,7 @@ export async function handlerAskAgentToRespondToThread(input: AskAgentToRespondT
 
         // Save the final rendered thread
         await RenderedConversationThreadController.update(renderedThread.id, {
-            messages: response.threadOutput.serialize(),
+            messages: response.threadOutput.save(),
         });
     } catch (error) {
         console.error('Error in handlerAskAgentToRespondToThread', error);

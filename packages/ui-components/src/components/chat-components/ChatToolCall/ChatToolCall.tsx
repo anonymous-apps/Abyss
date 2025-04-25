@@ -1,4 +1,4 @@
-import { Check, Loader2, PlayIcon, TerminalIcon, X } from 'lucide-react';
+import { Check, ChevronDown, ChevronRight, Loader2, PlayIcon, TerminalIcon, X } from 'lucide-react';
 import React, { useState } from 'react';
 import JsonView from 'react18-json-view';
 import 'react18-json-view/src/style.css';
@@ -48,7 +48,9 @@ export const ChatToolCall: React.FC<ChatToolCallProps> = ({
     actionItems = [],
     className = '',
 }) => {
-    const [viewMode, setViewMode] = useState<'input' | 'output' | null>('input');
+    const [isExpanded, setIsExpanded] = useState(true);
+    const [activeTab, setActiveTab] = useState<'input' | 'output'>('input');
+
     const canInvoke = status === 'idle';
     const isRunning = status === 'running';
     const isError = status === 'failed';
@@ -58,80 +60,83 @@ export const ChatToolCall: React.FC<ChatToolCallProps> = ({
         return name.split('-').join(' ');
     };
 
+    const getStatusIcon = () => {
+        if (isRunning) return <Loader2 className="w-4 h-4 animate-spin text-primary-500" />;
+        if (isError) return <X className="w-4 h-4 text-red-500" />;
+        if (isComplete) return <Check className="w-4 h-4 text-green-500" />;
+        return <TerminalIcon className="w-4 h-4 text-text-500" />;
+    };
+
     return (
-        <div className={`relative rounded overflow-hidden my-2 w-full ${className}`}>
-            <div className="flex items-start">
-                <div className={`flex-grow pr-12`}>
-                    <div
-                        className={`
-                            flex items-center justify-between border rounded-t-lg p-2 bg-background-100 text-text-300 border-background-400 z-10 relative 
-                            text-sm
-                            ${viewMode === null ? 'rounded-b-lg' : ''}
-                        `}
-                    >
-                        <div className="flex items-center gap-2 capitalize">
-                            {isRunning && <Loader2 size={18} className="animate-spin text-primary-500" />}
-                            {isError && <X size={18} className="text-red-500" />}
-                            {canInvoke && <TerminalIcon className="w-4 h-4" />}
-                            {isComplete && <Check size={18} className="text-green-500" />}
-                            <span>{formatToolName(toolName)}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                            <button
-                                className={`px-2 py-1 text-xs rounded ${
-                                    viewMode === 'input' ? 'border border-primary-500 bg-primary-100 text-primary-500' : ''
-                                }`}
-                                onClick={() => setViewMode(viewMode === 'input' ? null : 'input')}
-                            >
-                                Input
-                            </button>
-                            <button
-                                className={`px-2 py-1 text-xs rounded ${
-                                    viewMode === 'output' ? 'border border-primary-500 bg-primary-100 text-primary-500' : ''
-                                } ${!outputText ? 'opacity-50' : ''}`}
-                                onClick={() => setViewMode(viewMode === 'output' ? null : 'output')}
-                                disabled={!outputText && status !== 'running'}
-                            >
-                                Output
-                            </button>
-                        </div>
+        <div className={`relative w-full rounded text-xs ${className}`}>
+            <div
+                className={`flex items-center gap-2 py-2 px-2 text-text-500 bg-background-200 rounded-t cursor-pointer hover:bg-background-200`}
+                onClick={() => setIsExpanded(!isExpanded)}
+            >
+                {getStatusIcon()}
+                <span className="capitalize flex-grow">{formatToolName(toolName)}</span>
+                {isExpanded ? <ChevronDown className="w-3 h-3 text-text-400" /> : <ChevronRight className="w-3 h-3 text-text-400" />}
+            </div>
+
+            {isExpanded && (
+                <div className=" relative overflow-hidden transition-all duration-300 ease-in-out border-background-300 w-full ">
+                    <div className="flex items-center gap-4 mb-2 text-xs absolute top-2 right-2 bg-background-200 rounded-b p-1">
+                        <span
+                            className={`cursor-pointer ${activeTab === 'input' ? 'text-primary-500 font-medium' : 'text-text-400'}`}
+                            onClick={() => setActiveTab('input')}
+                        >
+                            Input
+                        </span>
+                        <span
+                            className={`cursor-pointer ${activeTab === 'output' ? 'text-primary-500 font-medium' : 'text-text-400'} 
+                            ${!outputText && status !== 'running' ? 'opacity-50' : ''}`}
+                            onClick={() => (outputText || status === 'running' ? setActiveTab('output') : null)}
+                        >
+                            Output
+                        </span>
                     </div>
-                    {viewMode === 'input' && (
-                        <div className="overflow-hidden transition-all duration-300 ease-in-out" style={{ maxHeight: '500px' }}>
-                            <div className="border border-background-400 text-sm bg-background-200 p-2 rounded-b-lg overflow-auto max-h-[500px] -translate-y-2 pt-4">
-                                <JsonView src={inputData} />
-                            </div>
+
+                    {activeTab === 'input' && (
+                        <div className="border border-background-300 p-2 bg-background-200 overflow-auto max-h-[500px] w-full">
+                            <JsonView src={inputData} />
                         </div>
                     )}
-                    {viewMode === 'output' && (
-                        <div className="overflow-hidden transition-all duration-300 ease-in-out" style={{ maxHeight: '500px' }}>
-                            <div className="border border-background-400 p-2 bg-background-200 rounded-b-lg overflow-auto max-h-[500px] -translate-y-2 pt-4">
-                                {outputText ? (
-                                    <MonospaceText text={outputText} />
-                                ) : (
-                                    <div className="italic text-text-400">
-                                        {status === 'running' ? 'Execution in progress...' : 'No output available'}
-                                    </div>
-                                )}
-                            </div>
+
+                    {activeTab === 'output' && (
+                        <div className="border border-background-300 p-2 bg-background-200 overflow-auto max-h-[500px] w-full">
+                            {outputText ? (
+                                <MonospaceText text={outputText} />
+                            ) : (
+                                <div className="italic text-text-400">
+                                    {status === 'running' ? 'Execution in progress...' : 'No output available'}
+                                </div>
+                            )}
                         </div>
                     )}
+
                     {canInvoke && onInvoke && (
-                        <div className="mt-1">
+                        <div className="mt-2">
                             <Button onClick={onInvoke} icon={PlayIcon} variant="secondary">
                                 Invoke Tool
                             </Button>
                         </div>
                     )}
+
+                    {actionItems.length > 0 && (
+                        <div className="flex gap-1 mt-2">
+                            {actionItems.map((action, index) => (
+                                <Button
+                                    key={index}
+                                    variant="secondary"
+                                    icon={action.icon}
+                                    tooltip={action.tooltip}
+                                    onClick={action.onClick}
+                                />
+                            ))}
+                        </div>
+                    )}
                 </div>
-                {actionItems.length > 0 && (
-                    <div className="flex flex-col gap-1 px-1 absolute right-1 top-1">
-                        {actionItems.map((action, index) => (
-                            <Button key={index} variant="secondary" icon={action.icon} tooltip={action.tooltip} onClick={action.onClick} />
-                        ))}
-                    </div>
-                )}
-            </div>
+            )}
         </div>
     );
 };

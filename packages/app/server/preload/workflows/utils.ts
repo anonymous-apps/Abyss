@@ -47,33 +47,41 @@ export function buildIntelegence(aiConnection: ModelConnectionsRecord) {
 }
 
 export async function buildThread(messages: MessageRecord[]) {
-    let context = ChatThread.fromStrings();
+    let context = ChatThread.empty();
 
     for (const message of messages) {
         if (message.sourceId === 'USER') {
             if ('text' in message.content) {
-                context = context.addUserTextMessage(message.content.text);
+                context = context.addPartialWithSender('user', message.content);
             } else {
                 throw new Error('Unsupported message content ' + JSON.stringify(message.content));
             }
         } else if (message.sourceId === 'SYSTEM') {
             if ('text' in message.content) {
-                context = context.addBotTextMessage(message.content.text);
+                context = context.addPartialWithSender('bot', message.content);
+            } else if ('toolDefinitionAdded' in message.content) {
+                context = context.addPartialWithSender('bot', {
+                    type: 'toolDefinitionAdded',
+                    toolDefinitionAdded: { toolDefinitions: message.content.toolDefinitionAdded.toolDefinitions },
+                });
+            } else if ('toolDefinitionRemoved' in message.content) {
+                context = context.addPartialWithSender('bot', {
+                    type: 'toolDefinitionRemoved',
+                    toolDefinitionRemoved: { toolDefinitions: message.content.toolDefinitionRemoved.toolDefinitions },
+                });
             } else {
                 throw new Error('Unsupported message content ' + JSON.stringify(message.content));
             }
         } else {
             if ('text' in message.content) {
-                context = context.addBotTextMessage(message.content.text);
-            } else if ('tool' in message.content) {
-                const toolCall = await ToolInvocationController.getByRecordId(message.content.tool.invocationId);
+                context = context.addPartialWithSender('bot', message.content);
+            } else if ('toolRequest' in message.content) {
+                const toolCall = await ToolInvocationController.getByRecordId(message.content.toolRequest.callId);
                 const toolOutput = await TextLogController.getByRecordId(toolCall?.textLogId);
 
-                context = context.addBotToolCallMessage({
-                    callId: message.id,
-                    name: message.content.tool.name,
-                    args: message.content.tool.parameters,
-                    output: toolOutput?.text,
+                context = context.addPartialWithSender('bot', {
+                    type: 'toolResponse',
+                    toolResponse: { callId: message.id, output: toolOutput?.text || '' },
                 });
             } else {
                 throw new Error('Unsupported message content ' + JSON.stringify(message.content));

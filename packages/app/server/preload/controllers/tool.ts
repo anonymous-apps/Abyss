@@ -2,6 +2,7 @@ import { BaseDatabaseConnection, BaseRecord } from './_base';
 
 export interface ToolRecord extends BaseRecord {
     name: string;
+    shortId: string;
     description: string;
     type: string;
     schema: Record<string, any>;
@@ -18,7 +19,10 @@ class _ToolController extends BaseDatabaseConnection<ToolRecord> {
         if (existing) {
             return existing;
         }
-        return this.create(params);
+        return this.create({
+            ...params,
+            shortId: params.name.toLowerCase().replace(/ /g, '-') + '-' + crypto.randomUUID().substring(0, 4),
+        });
     }
 }
 

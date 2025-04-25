@@ -19,7 +19,7 @@ export async function handlerAskRawModelToRespondToThread(input: AskRawModelToRe
 
     try {
         // Stream the response
-        const response = await Operations.generateWithTools({ model: connection, thread, toolDefinitions: [] });
+        const response = await Operations.generateWithTools({ model: connection, thread });
         await RenderedConversationThreadController.updateRawInput(renderedThread.id, response.threadInput);
 
         // Capture the metrics
@@ -40,9 +40,7 @@ export async function handlerAskRawModelToRespondToThread(input: AskRawModelToRe
                         modelInvokeId: modelInvoke.id,
                         renderedConversationThreadId: renderedThread.id,
                     },
-                    content: {
-                        text: message.content,
-                    },
+                    content: message,
                 });
             }
         }
@@ -55,7 +53,7 @@ export async function handlerAskRawModelToRespondToThread(input: AskRawModelToRe
 
         // Save the final rendered thread
         await RenderedConversationThreadController.update(renderedThread.id, {
-            messages: response.threadOutput.serialize(),
+            messages: response.threadOutput.save(),
         });
     } catch (error) {
         console.error('Error in handlerAskRawModelToRespondToThread', error);

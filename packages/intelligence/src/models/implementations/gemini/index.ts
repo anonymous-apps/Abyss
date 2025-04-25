@@ -1,23 +1,13 @@
-import { ChatThread } from '../../constructs/chat-thread/chat-thread';
-import { Log } from '../../utils/logs';
-import { createXmlFromObject } from '../../utils/object-to-xml/object-to-xml';
-import { LanguageModel } from '../language-model';
-import { LanguageModelChatResult } from '../types';
+import { ChatThread } from '../../../constructs/chat-thread/chat-thread';
+import { Log } from '../../../utils/logs';
+import { LanguageModel } from '../../language-model';
+import { LanguageModelChatResult } from '../../types';
+import { buildGeminiContents } from './build-context';
 
 export interface GeminiLanguageModelOptions {
     apiKey?: string;
     modelId?: string;
     enableImageGeneration?: boolean;
-}
-
-interface GeminiContent {
-    parts: {
-        text?: string;
-        inline_data?: {
-            mime_type: string;
-            data: string;
-        };
-    }[];
 }
 
 interface GeminiResponse {
@@ -50,52 +40,8 @@ export class GeminiLanguageModel extends LanguageModel {
         this.enableImageGeneration = props.enableImageGeneration || true;
     }
 
-    private buildContents(thread: ChatThread): GeminiContent[] {
-        const turns = thread.getTurns();
-        const contents: GeminiContent[] = [];
-
-        // Convert the chat turns into Gemini API format
-        for (const turn of turns) {
-            const parts: any[] = [];
-            const differedParts: any[] = [];
-
-            for (const partial of turn.partials) {
-                if (partial.type === 'text') {
-                    parts.push({ text: partial.content });
-                } else if (partial.type === 'image') {
-                    parts.push({
-                        inline_data: {
-                            mime_type: 'image/jpeg',
-                            data: partial.base64Data,
-                        },
-                    });
-                } else if (partial.type === 'toolCall') {
-                    // Convert tool call to XML and add as text content
-                    parts.push({ text: createXmlFromObject(partial.name, partial.args) });
-                    differedParts.push({
-                        text: createXmlFromObject('toolCallResult', {
-                            callId: partial.callId,
-                            name: partial.name,
-                            output: partial.output,
-                        }),
-                    });
-                }
-            }
-
-            if (parts.length > 0) {
-                contents.push({ parts });
-            }
-
-            if (differedParts.length > 0) {
-                contents.push({ parts: differedParts });
-            }
-        }
-
-        return contents;
-    }
-
     protected async _invoke(thread: ChatThread): Promise<LanguageModelChatResult> {
-        const contents = this.buildContents(thread);
+        const contents = buildGeminiContents(thread);
         const modelName = this.getName();
         const startTime = Date.now();
 

@@ -7,6 +7,9 @@ model Tool {
   // Display name of the tool
   name       String
 
+  // Unique identifier for the tool
+  shortId    String 
+
   // Detailed description of the tool's functionality
   description String
 

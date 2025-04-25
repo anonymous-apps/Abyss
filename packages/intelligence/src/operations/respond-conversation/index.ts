@@ -7,11 +7,12 @@ export * from './errors';
 export * from './types';
 
 export async function generateWithTools(options: AskWithToolCallsOptions) {
-    const { model, thread, toolDefinitions } = options;
-    Log.log('generateWithTools', `Generating with tools against model ${model.getName()} with ${options.toolDefinitions.length} tools`);
+    const { model, thread } = options;
+    Log.log('generateWithTools', `Generating with tools against model ${model.getName()}`);
 
     // Build the tool calls string
-    const threadWithToolCalls = buildToolUsePrompt(thread, toolDefinitions);
+    const toolsInThread = thread.getListOfCurrentTools();
+    const threadWithToolCalls = buildToolUsePrompt(thread, toolsInThread);
 
     // Call model to get response
     Log.log('generateWithTools', `Getting response from model ${model.getName()} . . .`);
@@ -19,7 +20,7 @@ export async function generateWithTools(options: AskWithToolCallsOptions) {
 
     // Parse the response to extract tool calls
     const messages = parseString(result.response);
-    const resultThread = thread.addManyBotMessages(messages);
+    const resultThread = thread.addPartialWithSender('bot', ...messages);
 
     // Return the result
     return {

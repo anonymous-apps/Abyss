@@ -1,10 +1,8 @@
 import { ChatThread } from '../../constructs/chat-thread/chat-thread';
-import { dedent } from '../../utils/dedent/dedent';
-import { createXmlFromZod } from '../../utils/zod-to-xml/zod-to-xml';
 import { ToolDefinition } from './types';
 
 export function getIdForTool(tool: ToolDefinition) {
-    return tool.name.toLowerCase().replace(/ /g, '-');
+    return tool.id.toLowerCase().replace(/ /g, '-');
 }
 
 export function buildToolUsePrompt(thread: ChatThread, tools: ToolDefinition[]) {
@@ -17,26 +15,15 @@ export function buildToolUsePrompt(thread: ChatThread, tools: ToolDefinition[]) 
         ## Tool Usage
         I have setup a custom parser to handle special custom tool calls you can make use of.
         To use them, you can simply put XML directly into your response and the parser will capture this and run the requested tool call.
-        Below ill details the tools available to you and how to use them.
+        The tools you have access to are defined above in your conversation context.
+        You only have these tools at this time: [${tools.map(tool => getIdForTool(tool)).join(', ')}],
         Its very important to follow the syntax exactly as it is written below, the parser is designed to be very strict and will throw an error if it is not followed.
 
     `;
-    const toolCallsString = tools
-        .map(
-            tool =>
-                dedent(`
-                ### Tool: ${getIdForTool(tool)}
-                ${tool.description}
-
-                An example of this tool being usedis below. If your response contains the XML representation of the tool call as part of your response, you will have invoked the tool.
-
-            `) + createXmlFromZod(getIdForTool(tool), tool.parameters)
-        )
-        .join('\n');
 
     const ToolUseExamplePrompt = `
 
-        ## Example of response syntax
+        ## Example of tool in response syntax
         Here is an example of what your response could look like if you did have a <generate_cat_picture> tool. Make sure to include both thoughts for the user and the tool calls.
         The user will read the thoughts and the tool calls so its important to include both so they know what you are doing and why.
 
@@ -59,5 +46,10 @@ export function buildToolUsePrompt(thread: ChatThread, tools: ToolDefinition[]) 
         All tools follow the format of a top level tag with the tool name, and then child tags with the tool parameters with content inside them, without child tags the tool will not be called.
     `;
 
-    return thread.addUserTextMessage(toolUseDetails).addUserTextMessage(toolCallsString).addUserTextMessage(ToolUseExamplePrompt);
+    return thread.addPartialWithSender('user', {
+        type: 'text',
+        text: {
+            content: toolUseDetails + ToolUseExamplePrompt,
+        },
+    });
 }

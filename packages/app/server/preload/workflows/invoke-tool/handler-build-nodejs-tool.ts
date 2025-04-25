@@ -72,6 +72,7 @@ export async function handlerInvokeBuildNodejsTool(input: InvokeBuildNodejsToolI
             schema[key] = description as string;
         }
         const tool = await ToolController.create({
+            shortId: parameters.name.toLowerCase().replace(/ /g, '-') + '-' + crypto.randomUUID().substring(0, 4),
             name: parameters.name,
             description: parameters.description,
             type: 'NodeJS',

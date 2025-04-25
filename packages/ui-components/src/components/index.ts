@@ -1,3 +1,6 @@
+export * from './chat-components/ChatMessageSystemError';
+export * from './chat-components/ChatMessageSystemEvent';
+export * from './chat-components/ChatMessageSystemText';
 export * from './chat-components/ChatMessageText';
 export * from './chat-components/ChatToolCall';
 export * from './chat-components/ChatTurnHeader';

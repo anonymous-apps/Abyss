@@ -1,0 +1,188 @@
+import { Meta, StoryObj } from '@storybook/react';
+import { Bot, Clock, Copy, Eraser, Terminal, ThumbsUp, User } from 'lucide-react';
+
+// Import components
+import { ChatMessageText } from './chat-components/ChatMessageText/ChatMessageText';
+import { ChatToolCall } from './chat-components/ChatToolCall/ChatToolCall';
+import { ChatTurnHeader } from './chat-components/ChatTurnHeader/ChatTurnHeader';
+import { PageCrumbed } from './layout/PageCrumbed/PageCrumbed';
+import { Sidebar } from './layout/Sidebar/Sidebar';
+import { SidebarButton } from './layout/Sidebar/SidebarButton';
+import { SidebarSection } from './layout/Sidebar/SidebarSection';
+
+const meta: Meta = {
+    title: 'Pages/Chat',
+    parameters: {
+        layout: 'fullscreen',
+    },
+};
+
+export default meta;
+type Story = StoryObj;
+
+// Define message types for proper type checking
+type TextMessage = {
+    type: 'text';
+    content: string;
+};
+
+type ToolMessage = {
+    type: 'tool';
+    tool: string;
+    input: any;
+    status: 'idle' | 'running' | 'complete' | 'failed';
+    output?: string;
+};
+
+type ChatMessage = TextMessage | ToolMessage;
+
+type ChatTurn = {
+    role: 'user' | 'assistant';
+    timestamp: string;
+    messages: ChatMessage[];
+};
+
+// Sample chat conversation
+const sampleConversation: ChatTurn[] = [
+    {
+        role: 'user',
+        timestamp: '2023-10-20T14:30:00Z',
+        messages: [
+            {
+                type: 'text',
+                content: 'Could you help me list the files in my current directory and then create a simple README.md file?',
+            },
+        ],
+    },
+    {
+        role: 'assistant',
+        timestamp: '2023-10-20T14:30:05Z',
+        messages: [
+            {
+                type: 'text',
+                content: "I'll help you list the files in your current directory and create a README.md file.",
+            },
+            {
+                type: 'tool',
+                tool: 'run_terminal_cmd',
+                input: { command: 'ls -la' },
+                status: 'complete',
+                output: 'total 16\ndrwxr-xr-x  4 user  staff   128 Oct 20 14:25 .\ndrwxr-xr-x  8 user  staff   256 Oct 20 14:20 ..\n-rw-r--r--  1 user  staff  2489 Oct 20 14:22 package.json\ndrwxr-xr-x 12 user  staff   384 Oct 20 14:25 node_modules\ndrwxr-xr-x  8 user  staff   256 Oct 20 14:22 src',
+            },
+            {
+                type: 'text',
+                content:
+                    "I can see your directory contains package.json, a node_modules folder, and a src folder. Now I'll create a README.md file for your project.",
+            },
+            {
+                type: 'tool',
+                tool: 'edit_file',
+                input: {
+                    file: 'README.md',
+                    content:
+                        "# Project Title\n\nA brief description of what this project does and who it's for.\n\n## Installation\n\n```bash\nnpm install\n```\n\n## Usage\n\n```bash\nnpm start\n```\n\n## Features\n\n- Feature 1\n- Feature 2\n- Feature 3",
+                },
+                status: 'complete',
+                output: 'File README.md created successfully.',
+            },
+        ],
+    },
+    {
+        role: 'user',
+        timestamp: '2023-10-20T14:31:30Z',
+        messages: [
+            {
+                type: 'text',
+                content: 'Thanks! Could you also add a section about contributing to the project?',
+            },
+        ],
+    },
+    {
+        role: 'assistant',
+        timestamp: '2023-10-20T14:31:35Z',
+        messages: [
+            {
+                type: 'text',
+                content: "I'll add a section about contributing to the README.md file.",
+            },
+            {
+                type: 'tool',
+                tool: 'edit_file',
+                input: { file: 'README.md', action: 'update', content: 'Add contributing section' },
+                status: 'running',
+            },
+        ],
+    },
+];
+
+export const Chat: Story = {
+    render: () => {
+        return (
+            <div className="flex h-screen w-full overflow-hidden">
+                {/* Sidebar */}
+                <Sidebar title="Abyss" width={200}>
+                    <SidebarSection key="main" title="Chats" />
+                    <SidebarButton icon={Clock} label="Recent" isActive />
+                    <SidebarButton icon={Terminal} label="Terminal Helper" />
+                    <SidebarButton icon={Eraser} label="Code Cleaner" />
+                    <SidebarSection key="admin" title="Settings" />
+                    <SidebarButton icon={User} label="Profile" />
+                </Sidebar>
+
+                {/* Main Content */}
+                <div className="flex-1 overflow-hidden flex flex-col">
+                    <PageCrumbed
+                        title="Chat Session"
+                        subtitle="Terminal Helper"
+                        breadcrumbs={[
+                            { name: 'Chats', onClick: () => console.log('Chats clicked') },
+                            { name: 'Terminal Helper', onClick: () => console.log('Terminal Helper clicked') },
+                        ]}
+                        actions={
+                            <div className="flex gap-2">
+                                <button className="text-text-600 hover:text-text-900">
+                                    <Copy size={16} />
+                                </button>
+                                <button className="text-text-600 hover:text-text-900">
+                                    <ThumbsUp size={16} />
+                                </button>
+                            </div>
+                        }
+                    >
+                        <div className="flex-1 overflow-y-auto">
+                            <div className="space-y-6 pb-20">
+                                {/* Render conversation */}
+                                {sampleConversation.map((turn, turnIndex) => (
+                                    <div key={turnIndex} className="rounded-lg p-4">
+                                        <ChatTurnHeader
+                                            icon={turn.role === 'user' ? User : Bot}
+                                            label={turn.role === 'user' ? 'User' : 'Assistant'}
+                                            timestamp={turn.timestamp}
+                                        />
+
+                                        {turn.messages.map((message, msgIndex) => {
+                                            if (message.type === 'text') {
+                                                return <ChatMessageText key={`${turnIndex}-${msgIndex}`} text={message.content} />;
+                                            } else if (message.type === 'tool') {
+                                                return (
+                                                    <ChatToolCall
+                                                        key={`${turnIndex}-${msgIndex}`}
+                                                        toolName={message.tool}
+                                                        status={message.status}
+                                                        inputData={message.input}
+                                                        outputText={message.output || ''}
+                                                    />
+                                                );
+                                            }
+                                            return null;
+                                        })}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </PageCrumbed>
+                </div>
+            </div>
+        );
+    },
+};

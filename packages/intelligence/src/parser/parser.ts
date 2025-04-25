@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
+import { ChatMessagePartial } from '../constructs';
 import { Log } from '../utils/logs';
-import { Message } from './messages.types';
 
 // Helper to parse the inner content of a tool tag into an args object or return raw string
 function parseXmlContent(xmlContent: string): Record<string, any> | string {
@@ -140,8 +140,8 @@ function findMatchingEndTag(str: string, tagName: string, startIndex: number): n
 }
 
 // Main parsing function to split string into text and tool call messages
-export function parseString(input: string): Message[] {
-    const result: Message[] = [];
+export function parseString(input: string): ChatMessagePartial[] {
+    const result: ChatMessagePartial[] = [];
     let currentPos = 0;
 
     while (currentPos < input.length) {
@@ -152,7 +152,7 @@ export function parseString(input: string): Message[] {
             // No more '<' found, the rest of the string is text
             const text = input.substring(currentPos);
             if (text.length > 0) {
-                result.push({ type: 'text', content: text, uuid: uuidv4() });
+                result.push({ type: 'text', text: { content: text } });
             }
             break; // End of parsing
         }
@@ -160,7 +160,7 @@ export function parseString(input: string): Message[] {
         // Append text found before this potential tag
         const textBeforeTag = input.substring(currentPos, nextTagStart);
         if (textBeforeTag.length > 0) {
-            result.push({ type: 'text', content: textBeforeTag, uuid: uuidv4() });
+            result.push({ type: 'text', text: { content: textBeforeTag } });
         }
 
         // Find the end of the potential tag
@@ -169,7 +169,7 @@ export function parseString(input: string): Message[] {
             // No closing '>' found for this '<', treat the rest of the string as text
             const remainingText = input.substring(nextTagStart);
             if (remainingText.length > 0) {
-                result.push({ type: 'text', content: remainingText, uuid: uuidv4() });
+                result.push({ type: 'text', text: { content: remainingText } });
             }
             break; // End of parsing due to malformed tag
         }
@@ -205,23 +205,23 @@ export function parseString(input: string): Message[] {
                         );
                     }
                     // If args is empty or whitespace string, treat as a tool call with empty args.
-                    result.push({ type: 'toolCall', name: tagName, args: {}, uuid: uuidv4() });
+                    result.push({ type: 'toolRequest', toolRequest: { callId: uuidv4(), shortId: tagName, name: tagName, args: {} } });
                 } else {
                     // Content parsed to an object (valid keyed arguments).
-                    result.push({ type: 'toolCall', name: tagName, args: args, uuid: uuidv4() });
+                    result.push({ type: 'toolRequest', toolRequest: { callId: uuidv4(), shortId: tagName, name: tagName, args: args } });
                 }
                 // Continue parsing after the complete tool call structure (including the end tag)
                 currentPos = endTagPos + endTag.length;
             } else {
                 // Malformed XML: No matching end tag found for the start tag.
                 // Treat the start tag itself as text and continue parsing *after* it.
-                result.push({ type: 'text', content: potentialTag, uuid: uuidv4() });
+                result.push({ type: 'text', text: { content: potentialTag } });
                 currentPos = nextTagEnd + 1;
             }
         } else {
             // The potential tag is not a simple start tag (e.g., '</tag>', '<tag/>', '<?xml?>', '<!CDATA[..]]>', or just '< >')
             // Treat the entire potential tag structure as text.
-            result.push({ type: 'text', content: potentialTag, uuid: uuidv4() });
+            result.push({ type: 'text', text: { content: potentialTag } });
             // Continue parsing after this text block
             currentPos = nextTagEnd + 1;
         }
