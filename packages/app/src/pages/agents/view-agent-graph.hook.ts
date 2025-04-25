@@ -1,6 +1,6 @@
 import { GraphNodeDefinition } from '@abyss/intelligence';
 import { Connection, Edge, addEdge, useEdgesState, useNodesState } from '@xyflow/react';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Database } from '../../main';
 import { useTableRecordAgent } from '../../state/database-connection';
@@ -26,55 +26,28 @@ export function useViewAgent() {
     const [nodes, setNodes, onNodesChange] = useNodesState<RenderedGraphNode>([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
 
-    // Convert XYFlow Edge format to AgentGraphRecord edge format
-    // const convertToDbEdges = (flowEdges: Edge[]) => {
-    //     return flowEdges.map(edge => ({
-    //         id: edge.id,
-    //         sourceNode: edge.source,
-    //         sourceHandle: edge.sourceHandle || '',
-    //         targetNode: edge.target,
-    //         targetHandle: edge.targetHandle || '',
-    //     }));
-    // };
+    // Create a debounced save function with 1 second delay
+    const saveGraphStateToDb = useCallback(
+        (currentNodes: RenderedGraphNode[], currentEdges: Edge[]) => {
+            if (agent.data && id) {
+                handleUpdateAgent({
+                    graph: {
+                        nodes: currentNodes,
+                        edges: currentEdges,
+                    },
+                });
+                console.log('save');
+            }
+        },
+        [agent.data, id]
+    );
 
-    // Convert AgentGraphRecord edge format to XYFlow Edge format
-    const convertToFlowEdges = (dbEdges: any[]) => {
-        return dbEdges.map(edge => ({
-            id: edge.id,
-            source: edge.sourceNode,
-            sourceHandle: edge.sourceHandle,
-            target: edge.targetNode,
-            targetHandle: edge.targetHandle,
-        }));
-    };
-
-    // // Create a debounced save function with 1 second delay
-    // const saveGraphStateToDb = useCallback(
-    //     debounce((currentNodes: RenderedGraphNode[], currentEdges: Edge[]) => {
-    //         if (agent.data && id) {
-    //             handleUpdateAgent({
-    //                 graph: {
-    //                     nodes: currentNodes,
-    //                     edges: convertToDbEdges(currentEdges),
-    //                 },
-    //             });
-    //         }
-    //     }, 1000),
-    //     [agent.data, id]
-    // );
-
-    // // Save graph state when nodes or edges change
-    // useEffect(() => {
-    //     saveGraphStateToDb(nodes, edges);
-    // }, [nodes, edges, saveGraphStateToDb]);
-
-    // Load saved graph state on initial load
-    // useEffect(() => {
-    //     if (agent.data?.graph?.nodes && agent.data?.graph?.edges) {
-    //         setNodes(agent.data.graph.nodes as RenderedGraphNode[]);
-    //         setEdges(convertToFlowEdges(agent.data.graph.edges));
-    //     }
-    // }, [agent.data?.graph, setNodes, setEdges]);
+    useEffect(() => {
+        if (agent.data && nodes.length === 0 && edges.length === 0) {
+            setNodes(agent.data.graph.nodes as RenderedGraphNode[]);
+            setEdges(agent.data.graph.edges);
+        }
+    }, [agent.data]);
 
     const handleAddNode = (node: GraphNodeDefinition) => {
         const newNode: RenderedGraphNode = {
@@ -83,7 +56,10 @@ export function useViewAgent() {
             data: { label: node.name, definition: node },
             type: 'custom',
         };
-        setNodes(nds => [...nds, newNode]);
+        setNodes(nds => {
+            const nodes = [...nds, newNode];
+            return nodes;
+        });
     };
 
     const onConnect = useCallback(
@@ -97,12 +73,19 @@ export function useViewAgent() {
             const targetHandle =
                 targetNode?.data.definition.inputPorts[targetHandleLocalId as keyof typeof targetNode.data.definition.inputPorts];
             if (sourceHandle?.dataType !== targetHandle?.dataType) {
-                console.error('Source and target handle types do not match:', sourceHandle, targetHandle);
+                console.error('Source and target handle types do not match:', {
+                    sourceHandleId: sourceHandleLocalId,
+                    sourceNode,
+                    sourceHandle,
+                    targetHandleId: targetHandleLocalId,
+                    targetNode,
+                    targetHandle,
+                });
                 return;
             }
             const isTargetSignal = targetHandle?.type === 'signal';
-            setEdges(eds =>
-                addEdge(
+            setEdges(eds => {
+                const newEdges = addEdge(
                     {
                         ...connection,
                         type: 'custom',
@@ -114,8 +97,9 @@ export function useViewAgent() {
                         },
                     },
                     eds
-                )
-            );
+                );
+                return newEdges;
+            });
         },
         [setEdges, nodes]
     );
@@ -125,10 +109,17 @@ export function useViewAgent() {
         (deletedNodes: RenderedGraphNode[]) => {
             // Clean up any edges connected to the deleted nodes
             const deletedNodeIds = new Set(deletedNodes.map(node => node.id));
-            setEdges(edges => edges.filter(edge => !deletedNodeIds.has(edge.source) && !deletedNodeIds.has(edge.target)));
+            setEdges(edges => {
+                const newEdges = edges.filter(edge => !deletedNodeIds.has(edge.source) && !deletedNodeIds.has(edge.target));
+                return newEdges;
+            });
         },
-        [setEdges]
+        [setEdges, nodes]
     );
+
+    useEffect(() => {
+        saveGraphStateToDb(nodes, edges);
+    }, [nodes, edges]);
 
     const handleUpdateAgentName = (name: string) => {
         handleUpdateAgent({ name });

@@ -17,10 +17,10 @@ export interface AgentGraphRecord {
     }[];
     edges: {
         id: string;
-        sourceNode: string;
-        sourceHandle: string;
-        targetNode: string;
-        targetHandle: string;
+        source: string;
+        target: string;
+        sourceHandle?: string | null;
+        targetHandle?: string | null;
     }[];
 }
 

@@ -15,7 +15,7 @@ export class OnChatMessageNode extends NodeHandler {
             color: '#FFA500',
             inputPorts: {},
             outputPorts: {
-                userMessage: {
+                message: {
                     id: 'message',
                     type: 'data',
                     dataType: 'string',
