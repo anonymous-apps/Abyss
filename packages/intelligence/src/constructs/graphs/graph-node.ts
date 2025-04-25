@@ -2,6 +2,7 @@ import { GraphPortData } from './graph-port';
 
 export interface GraphNodeData {
     id: string;
+    icon: string;
     type: string;
     name: string;
     description: string;
@@ -12,6 +13,7 @@ export interface GraphNodeData {
 
 export class GraphNodeDefinition {
     public readonly id: string;
+    public readonly icon: string;
     public readonly type: string;
     public readonly name: string;
     public readonly description: string;
@@ -21,6 +23,7 @@ export class GraphNodeDefinition {
 
     constructor(data: GraphNodeData) {
         this.id = data.id;
+        this.icon = data.icon;
         this.type = data.type;
         this.name = data.name;
         this.description = data.description;

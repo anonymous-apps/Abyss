@@ -10,6 +10,7 @@ export class OnChatMessageNode extends NodeHandler {
     protected _getDefinition(): Omit<GraphNodeDefinition, 'id' | 'type'> {
         return {
             name: 'On Chat Message',
+            icon: 'chat',
             description: 'Triggered when a chat message is sent to a chat with this agent',
             color: '#000000',
             inputPorts: {},

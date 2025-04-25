@@ -1,23 +1,29 @@
-import { GraphNodeDefinition } from '@abyss/intelligence';
-import { Background, BackgroundVariant, Edge, Node, ReactFlow, ReactFlowProvider, useEdgesState, useNodesState } from '@xyflow/react';
+import { GraphNodeDefinition, Nodes } from '@abyss/intelligence';
+import { Background, BackgroundVariant, Edge, ReactFlow, ReactFlowProvider, useEdgesState, useNodesState } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { AgentNodeDrawer } from './graph-components/agent-node-drawer';
+import { CustomAgentGraphNode } from './graph-components/custom-node';
+import { RenderedGraphNode } from './graph-components/graph.types';
 
 export function ViewAgentGraphPage() {
     // Use ReactFlow hooks for controlled node and edge state
-    const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
+    const [nodes, setNodes, onNodesChange] = useNodesState<RenderedGraphNode>([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
 
     const handleAddNode = (node: GraphNodeDefinition) => {
-        const newNode = {
+        const newNode: RenderedGraphNode = {
             id: node.id,
             position: { x: 0, y: 0 },
-            data: { label: node.name },
-            // add type or other properties if needed
+            data: { label: node.name, definition: node },
+            type: 'custom',
         };
         setNodes(nds => [...nds, newNode]);
     };
+
+    useEffect(() => {
+        handleAddNode(Nodes.OnChatMessage.getDefinition());
+    }, []);
 
     return (
         <ReactFlowProvider>
@@ -31,6 +37,7 @@ export function ViewAgentGraphPage() {
                         onEdgesChange={onEdgesChange}
                         fitView
                         proOptions={{ hideAttribution: true }}
+                        nodeTypes={{ custom: CustomAgentGraphNode }}
                     >
                         <Background variant={BackgroundVariant.Dots} gap={12} size={1} className="bg-background-100" />
                     </ReactFlow>

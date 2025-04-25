@@ -11,9 +11,6 @@ export default defineConfig({
         electron([
             {
                 entry: 'server/main/index.ts',
-                onstart(options) {
-                    options.startup();
-                },
                 vite: {
                     build: {
                         outDir: 'dist-electron/main',
@@ -22,15 +19,11 @@ export default defineConfig({
                                 entryFileNames: '[name].mjs',
                             },
                         },
-                        watch: {},
                     },
                 },
             },
             {
                 entry: 'server/preload/index.ts',
-                onstart(options) {
-                    options.reload();
-                },
                 vite: {
                     build: {
                         outDir: 'dist-electron/preload',
@@ -40,7 +33,6 @@ export default defineConfig({
                                 entryFileNames: '[name].mjs',
                             },
                         },
-                        watch: {},
                     },
                 },
             },

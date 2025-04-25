@@ -10,6 +10,7 @@ export class DebugInputNode extends NodeHandler {
     protected _getDefinition(): Omit<GraphNodeDefinition, 'id' | 'type'> {
         return {
             name: 'Debug Input',
+            icon: 'debug',
             description: 'This node is used to debug the input of the node',
             color: '#000000',
             inputPorts: {},
