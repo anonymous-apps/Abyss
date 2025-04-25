@@ -10,6 +10,7 @@ export function CustomAgentGraphNode({ data }: { data: RenderedGraphNode['data']
     const { deleteElements } = useReactFlow();
 
     const Icon = IdsToIcons[data.definition.icon];
+    const color = data.definition.color;
 
     for (const input of Object.values(data.definition.inputPorts)) {
         leftHandles.push(
@@ -17,11 +18,10 @@ export function CustomAgentGraphNode({ data }: { data: RenderedGraphNode['data']
                 <div className="text-[8px] text-text-500 px-2 relative flex flex-row gap-1 justify-start">
                     {input.name} <pre className="opacity-70">({input.dataType})</pre>
                     <Handle
-                        className={`${
-                            input.type === 'signal'
-                                ? 'h-3 rounded-sm bg-primary-200 border-primary-500'
-                                : 'bg-background-200 border-background-900 '
-                        }`}
+                        className={`bg-background-200 ${input.type === 'signal' ? `h-3 rounded-sm` : ' border-background-900 '}`}
+                        style={{
+                            borderColor: input.type === 'signal' ? color : undefined,
+                        }}
                         type="target"
                         position={Position.Left}
                         id={data.definition.id + ':' + input.id}

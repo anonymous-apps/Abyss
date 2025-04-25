@@ -39,8 +39,7 @@ export default function CustomEdge({
     };
 
     const isSignal = data?.isSignal;
-    const baseColor = style.stroke || '#b1b1b7';
-    const effectColor = '#0ea5e9'; // tailwind primary-500 color
+    const targetColor = data?.targetColor! as string;
 
     return (
         <g>
@@ -58,7 +57,7 @@ export default function CustomEdge({
                             ...style,
                             cursor: 'pointer',
                             opacity: 0.75,
-                            stroke: 'var(--color-primary-300)',
+                            stroke: targetColor + '70',
                         }}
                     />
 
@@ -75,7 +74,7 @@ export default function CustomEdge({
                             cursor: 'pointer',
                             opacity: 0.75,
 
-                            stroke: 'var(--color-primary-500)',
+                            stroke: targetColor,
                             animation: `dashOffset ${3}s linear infinite`,
                         }}
                     />
@@ -96,7 +95,7 @@ export default function CustomEdge({
                 <path
                     d={edgePath}
                     fill="none"
-                    stroke={baseColor}
+                    stroke={'var(--color-background-700)'}
                     strokeWidth={style.strokeWidth || 2}
                     markerEnd={markerEnd}
                     style={{

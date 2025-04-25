@@ -106,7 +106,12 @@ export function useViewAgent() {
                     {
                         ...connection,
                         type: 'custom',
-                        data: { isSignal: isTargetSignal, sourceHandle, targetHandle },
+                        data: {
+                            isSignal: isTargetSignal,
+                            sourceHandle,
+                            targetHandle,
+                            targetColor: targetNode?.data.definition.color,
+                        },
                     },
                     eds
                 )
