@@ -6,14 +6,15 @@ import { handleInvokeNodejsTool } from './handle-invoke-nodejs-tool';
 import { handlerInvokeBuildNodejsTool } from './handler-build-nodejs-tool';
 export async function InvokeToolFromMessage(messageId: string) {
     const message = await MessageController.getOrThrowByRecordId(messageId);
-    if (!('tool' in message.content)) {
+    console.log('message', message);
+    if (!('toolRequest' in message.content)) {
         throw new Error('Message does not contain a tool');
     }
 
-    if (!message.references?.toolSourceId) {
-        throw new Error('Message does not contain a tool source id');
+    const tool = await ToolController.findByShortId(message.content.toolRequest.shortId);
+    if (!tool) {
+        throw new Error('Tool not found: ' + message.content.toolRequest.shortId);
     }
-    const tool = await ToolController.getOrThrowByRecordId(message.references.toolSourceId);
 
     if (tool.type === 'BUILD-NODE-TOOL') {
         if (tool.name === 'Propose NodeJs Tool') {

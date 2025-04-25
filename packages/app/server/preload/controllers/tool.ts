@@ -24,6 +24,10 @@ class _ToolController extends BaseDatabaseConnection<ToolRecord> {
             shortId: params.name.toLowerCase().replace(/ /g, '-') + '-' + crypto.randomUUID().substring(0, 4),
         });
     }
+
+    async findByShortId(shortId: string) {
+        return this.findFirst({ where: { shortId } });
+    }
 }
 
 export const ToolController = new _ToolController();
