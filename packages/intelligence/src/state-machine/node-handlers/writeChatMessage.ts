@@ -21,12 +21,12 @@ export class WriteChatMessageNode extends NodeHandler {
                     name: 'Message',
                     description: 'The message to add to the chat history',
                 },
-                chatId: {
-                    id: 'chatId',
+                chat: {
+                    id: 'chat',
                     type: 'data',
-                    dataType: 'string',
-                    name: 'Chat ID',
-                    description: 'The ID of the chat to add the message to',
+                    dataType: 'chat',
+                    name: 'Chat',
+                    description: 'The chat to add the message to',
                 },
             },
             outputPorts: {},

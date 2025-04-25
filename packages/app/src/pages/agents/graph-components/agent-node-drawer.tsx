@@ -25,6 +25,11 @@ export function AgentNodeDrawer({ onAddNode }: AgentNodeDrawerProps) {
                     icon={Sparkles}
                     onClick={() => onAddNode(Nodes.InvokeLanguageModel.getDefinition())}
                 />
+                <SidebarButton
+                    label="Write Chat Message"
+                    icon={MessageCircle}
+                    onClick={() => onAddNode(Nodes.WriteChatMessage.getDefinition())}
+                />
             </Sidebar>
         </div>
     );

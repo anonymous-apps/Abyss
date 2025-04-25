@@ -25,9 +25,16 @@ export class OnChatMessageNode extends NodeHandler {
                 thread: {
                     id: 'thread',
                     type: 'data',
-                    dataType: 'chat-thread',
+                    dataType: 'thread',
                     name: 'Thread',
                     description: 'A thread representing the chat history with the newly sent message',
+                },
+                chat: {
+                    id: 'chat',
+                    type: 'data',
+                    dataType: 'chat',
+                    name: 'Chat',
+                    description: 'The chat that the message was sent to',
                 },
             },
         };
