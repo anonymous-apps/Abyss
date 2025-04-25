@@ -10,9 +10,6 @@ model Agent {
   // Detailed description of the agent's capabilities
   description String
 
-  // ID of the chat model this agent uses
-  chatModelId String
-
-  // Prompt ID for system prompt
-  systemPromptId String?
+  // The agent graph as a JSON object
+  graph Json
 } 

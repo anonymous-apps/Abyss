@@ -3,8 +3,26 @@ import { BaseDatabaseConnection, BaseRecord } from './_base';
 export interface AgentRecord extends BaseRecord {
     name: string;
     description: string;
-    chatModelId: string;
-    systemPromptId?: string;
+    graph: AgentGraphRecord;
+}
+
+export interface AgentGraphRecord {
+    nodes: {
+        id: string;
+        type: string;
+        position: {
+            x: number;
+            y: number;
+        };
+        data: Record<string, string>;
+    }[];
+    edges: {
+        id: string;
+        sourceNode: string;
+        sourceHandle: string;
+        targetNode: string;
+        targetHandle: string;
+    }[];
 }
 
 class _AgentController extends BaseDatabaseConnection<AgentRecord> {

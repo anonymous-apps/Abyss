@@ -1,62 +1,29 @@
-import { GraphNodeDefinition, Nodes } from '@abyss/intelligence';
-import {
-    Background,
-    BackgroundVariant,
-    Connection,
-    Edge,
-    ReactFlow,
-    ReactFlowProvider,
-    addEdge,
-    useEdgesState,
-    useNodesState,
-} from '@xyflow/react';
+import { Background, BackgroundVariant, ReactFlow, ReactFlowProvider } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import React, { useCallback, useEffect } from 'react';
+import { Bot } from 'lucide-react';
+import React from 'react';
 import { AgentNodeDrawer } from './graph-components/agent-node-drawer';
 import { CustomAgentGraphNode } from './graph-components/custom-node';
-import { RenderedGraphNode } from './graph-components/graph.types';
+import { useViewAgent } from './view-agent-graph.hook';
 
 export function ViewAgentGraphPage() {
-    // Use ReactFlow hooks for controlled node and edge state
-    const [nodes, setNodes, onNodesChange] = useNodesState<RenderedGraphNode>([]);
-    const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
-
-    const handleAddNode = (node: GraphNodeDefinition) => {
-        const newNode: RenderedGraphNode = {
-            id: node.id,
-            position: { x: 0, y: 0 },
-            data: { label: node.name, definition: node },
-            type: 'custom',
-        };
-        setNodes(nds => [...nds, newNode]);
-    };
-
-    const onConnect = useCallback(
-        (connection: Connection) => {
-            setEdges(eds => addEdge(connection, eds));
-        },
-        [setEdges]
-    );
-
-    // Handle node deletion
-    const onNodesDelete = useCallback(
-        (deletedNodes: RenderedGraphNode[]) => {
-            // Clean up any edges connected to the deleted nodes
-            const deletedNodeIds = new Set(deletedNodes.map(node => node.id));
-            setEdges(edges => edges.filter(edge => !deletedNodeIds.has(edge.source) && !deletedNodeIds.has(edge.target)));
-        },
-        [setEdges]
-    );
-
-    useEffect(() => {
-        handleAddNode(Nodes.OnChatMessage.getDefinition());
-    }, []);
+    const { nodes, edges, onNodesChange, onEdgesChange, onConnect, onNodesDelete, handleAddNode, handleUpdateAgentName, agent } =
+        useViewAgent();
 
     return (
         <ReactFlowProvider>
             <div className="flex w-full h-full">
                 <AgentNodeDrawer onAddNode={handleAddNode} />
                 <div className="flex-1 h-full">
+                    <div className="h-[54px] w-full  bg-[#0e0e0e] border-b border-background-600 py-2 border-l pl-4 flex items-center gap-2">
+                        <Bot className="w-6 h-6 text-white" />
+                        <input
+                            value={agent.data?.name || ''}
+                            onChange={e => handleUpdateAgentName(e.target.value)}
+                            placeholder="My Amazing Agent"
+                            className="w-[200px] bg-transparent text-text-100 p-2 pl-2 text-white focus:outline-none text-lg"
+                        />
+                    </div>
                     <ReactFlow
                         nodes={nodes}
                         edges={edges}

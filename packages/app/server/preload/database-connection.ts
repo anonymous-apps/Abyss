@@ -4,7 +4,6 @@ import { createRequire } from 'module';
 import { v4 as uuidv4 } from 'uuid';
 import { PrismaBoostrapper } from './bootstrap/bootstrapData';
 import { AgentController } from './controllers/agent';
-import { AgentToolConnectionController } from './controllers/agent-tool-connection';
 import { ChatController } from './controllers/chat';
 import { DocumentController } from './controllers/document';
 import { MessageController } from './controllers/message';
@@ -130,7 +129,6 @@ const tableControllers = {
     renderedConversationThread: RenderedConversationThreadController.export(),
     chat: ChatController.export(),
     agent: AgentController.export(),
-    agentToolConnection: AgentToolConnectionController.export(),
     tool: ToolController.export(),
     toolInvocation: ToolInvocationController.export(),
     metric: MetricController.export(),

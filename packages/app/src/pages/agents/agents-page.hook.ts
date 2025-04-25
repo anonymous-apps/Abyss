@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { Database } from '../../main';
 import { useScanTableAgent, useScanTableAgentToolConnection } from '../../state/database-connection';
 
 export function useAgentsPage() {
@@ -10,8 +11,16 @@ export function useAgentsPage() {
         return toolConnections.data?.filter(toolConnection => toolConnection.agentId === agentId);
     };
 
-    const handleCreateAgent = () => {
-        navigate('/agents/create');
+    const handleCreateAgent = async () => {
+        const agent = await Database.table.agent.create({
+            name: 'New Agent',
+            description: 'New Agent',
+            graph: {
+                nodes: [],
+                edges: [],
+            },
+        });
+        navigate(`/agents/id/${agent.id}`);
     };
 
     return {
