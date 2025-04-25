@@ -1,7 +1,17 @@
 import { GraphNodeDefinition, Nodes } from '@abyss/intelligence';
-import { Background, BackgroundVariant, Edge, ReactFlow, ReactFlowProvider, useEdgesState, useNodesState } from '@xyflow/react';
+import {
+    Background,
+    BackgroundVariant,
+    Connection,
+    Edge,
+    ReactFlow,
+    ReactFlowProvider,
+    addEdge,
+    useEdgesState,
+    useNodesState,
+} from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { AgentNodeDrawer } from './graph-components/agent-node-drawer';
 import { CustomAgentGraphNode } from './graph-components/custom-node';
 import { RenderedGraphNode } from './graph-components/graph.types';
@@ -21,6 +31,14 @@ export function ViewAgentGraphPage() {
         setNodes(nds => [...nds, newNode]);
     };
 
+    const onConnect = useCallback(
+        (connection: Connection) => {
+            console.log('onConnect', connection);
+            setEdges(eds => addEdge(connection, eds));
+        },
+        [setEdges]
+    );
+
     useEffect(() => {
         handleAddNode(Nodes.OnChatMessage.getDefinition());
     }, []);
@@ -35,6 +53,7 @@ export function ViewAgentGraphPage() {
                         edges={edges}
                         onNodesChange={onNodesChange}
                         onEdgesChange={onEdgesChange}
+                        onConnect={onConnect}
                         fitView
                         proOptions={{ hideAttribution: true }}
                         nodeTypes={{ custom: CustomAgentGraphNode }}

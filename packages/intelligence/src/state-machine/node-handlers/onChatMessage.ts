@@ -12,7 +12,7 @@ export class OnChatMessageNode extends NodeHandler {
             name: 'On Chat Message',
             icon: 'chat',
             description: 'Triggered when a chat message is sent to a chat with this agent',
-            color: '#000000',
+            color: '#FFA500',
             inputPorts: {},
             outputPorts: {
                 userMessage: {

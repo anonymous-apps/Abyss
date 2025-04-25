@@ -1,7 +1,7 @@
 export interface GraphPortData {
     id: string;
     type: 'data' | 'signal';
-    dataType: 'string' | 'number' | 'boolean' | 'chat-thread';
+    dataType: 'string' | 'number' | 'boolean' | 'chat-thread' | 'language-model';
     name: string;
     description: string;
 }
@@ -9,7 +9,7 @@ export interface GraphPortData {
 export class GraphPort {
     public readonly id: string;
     public readonly type: 'data' | 'signal';
-    public readonly dataType: 'string' | 'number' | 'boolean' | 'chat-thread';
+    public readonly dataType: 'string' | 'number' | 'boolean' | 'chat-thread' | 'language-model';
     public readonly name: string;
     public readonly description: string;
 

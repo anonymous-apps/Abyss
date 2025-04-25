@@ -1,6 +1,6 @@
 import { GraphNodeDefinition, Nodes } from '@abyss/intelligence';
 import { Sidebar, SidebarButton, SidebarSection } from '@abyss/ui-components';
-import { MessageCircle } from 'lucide-react';
+import { Box, MessageCircle, Sparkles } from 'lucide-react';
 import React from 'react';
 
 interface AgentNodeDrawerProps {
@@ -16,6 +16,14 @@ export function AgentNodeDrawer({ onAddNode }: AgentNodeDrawerProps) {
                     label="On Chat Message"
                     icon={MessageCircle}
                     onClick={() => onAddNode(Nodes.OnChatMessage.getDefinition())}
+                />
+                <SidebarSection title="References" />
+                <SidebarButton label="Language Model" icon={Box} onClick={() => onAddNode(Nodes.InputLanguageModel.getDefinition())} />
+                <SidebarSection title="Actions" />
+                <SidebarButton
+                    label="Invoke Language Model"
+                    icon={Sparkles}
+                    onClick={() => onAddNode(Nodes.InvokeLanguageModel.getDefinition())}
                 />
             </Sidebar>
         </div>

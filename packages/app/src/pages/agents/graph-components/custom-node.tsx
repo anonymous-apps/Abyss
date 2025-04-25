@@ -1,39 +1,52 @@
 import { Handle, Position } from '@xyflow/react';
-import React, { useCallback } from 'react';
+import React from 'react';
 import { RenderedGraphNode } from './graph.types';
+import { IdsToIcons } from './ids-to-icons';
 
 export function CustomAgentGraphNode({ data }: { data: RenderedGraphNode['data'] }) {
-    const onChange = useCallback(evt => {
-        console.log(evt.target.value);
-    }, []);
-
     let leftHandles: React.ReactNode[] = [];
     let rightHandles: React.ReactNode[] = [];
-    console.log(data);
+
+    const Icon = IdsToIcons[data.definition.icon];
 
     for (const input of Object.values(data.definition.inputPorts)) {
-        leftHandles.push(<Handle key={input.id} type="source" position={Position.Left} id={input.id} />);
+        leftHandles.push(
+            <div className="flex flex-col gap-1 relative" key={input.id}>
+                <div className="text-[8px] text-background-800 px-2">{input.name}</div>
+                <Handle type="source" position={Position.Left} id={input.id} />
+            </div>
+        );
     }
 
     for (const output of Object.values(data.definition.outputPorts)) {
-        rightHandles.push(<Handle key={output.id} type="source" position={Position.Right} id={output.id} />);
+        rightHandles.push(
+            <div className="flex flex-col gap-1 relative" key={output.id}>
+                <div className="text-[8px] text-background-800 px-2">{output.name}</div>
+                <Handle type="source" position={Position.Right} id={output.id} />
+            </div>
+        );
     }
 
     return (
         <div className="bg-background-200">
             <div
-                className="border rounded-md p-2"
+                className="border rounded-md"
                 style={{
                     backgroundColor: data.definition.color + '20',
                     borderColor: data.definition.color,
                 }}
             >
-                {leftHandles}
-                <div className="text-sm font-bold">
-                    {data.definition.name}
-                    <div className="text-xs text-background-500">{data.definition.description}</div>
+                <div className="flex flex-col border-b gap-1 p-1 min-w-[300px]" style={{ borderColor: data.definition.color }}>
+                    <div className="text-xs flex items-center gap-2 ">
+                        <Icon className="w-4 h-4" color={data.definition.color} />
+                        <div className="">{data.definition.name}</div>
+                    </div>
+                    <div className="text-[8px] text-background-500 ml-6">{data.definition.description}</div>
                 </div>
-                {rightHandles}
+                <div className="flex flex-row gap-2 relative my-1 mt-2 w-full">
+                    <div className="flex flex-col gap-2 flex-1">{leftHandles}</div>
+                    <div className="flex flex-col gap-2 flex-1 text-right">{rightHandles}</div>
+                </div>
             </div>
         </div>
     );
