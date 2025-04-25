@@ -34,7 +34,18 @@ export function ViewAgentGraphPage() {
     const onConnect = useCallback(
         (connection: Connection) => {
             console.log('onConnect', connection);
-            setEdges(eds => addEdge(connection, eds));
+            // Add more detailed logging to debug the issue
+            console.log('Source node ID:', connection.source);
+            console.log('Source handle ID:', connection.sourceHandle);
+            console.log('Target node ID:', connection.target);
+            console.log('Target handle ID:', connection.targetHandle);
+
+            // Make sure both source and target handles exist before creating the edge
+            if (connection.source && connection.target) {
+                setEdges(eds => addEdge(connection, eds));
+            } else {
+                console.error('Cannot create edge: missing source or target');
+            }
         },
         [setEdges]
     );
