@@ -16,7 +16,12 @@ export function CustomAgentGraphNode({ data }: { data: RenderedGraphNode['data']
             <div className="flex flex-col gap-1 relative" key={input.id}>
                 <div className="text-[8px] text-text-500 px-2 relative flex flex-row gap-1 justify-start">
                     {input.name} <pre className="opacity-70">({input.dataType})</pre>
-                    <Handle type="target" position={Position.Left} id={data.definition.id + '-' + input.id} />
+                    <Handle
+                        className={` ${input.type === 'signal' ? 'h-3 rounded-sm bg-primary-500' : 'bg-background-600'}`}
+                        type="target"
+                        position={Position.Left}
+                        id={data.definition.id + ':' + input.id}
+                    />
                 </div>
                 <div className="text-[6px] text-text-500 px-2">{input.description}</div>
             </div>
@@ -28,7 +33,7 @@ export function CustomAgentGraphNode({ data }: { data: RenderedGraphNode['data']
             <div className="flex flex-col gap-1 relative" key={output.id}>
                 <div className="text-[8px] text-text-500 px-2 flex flex-row gap-1 justify-end relative">
                     {output.name} <pre className="opacity-70">({output.dataType})</pre>
-                    <Handle type="source" position={Position.Right} id={data.definition.id + '-' + output.id} />
+                    <Handle type="source" position={Position.Right} id={data.definition.id + ':' + output.id} />
                 </div>
                 <div className="text-[6px] text-text-500 px-2">{output.description}</div>
             </div>
@@ -45,10 +50,10 @@ export function CustomAgentGraphNode({ data }: { data: RenderedGraphNode['data']
                 className="border rounded-md"
                 style={{
                     backgroundColor: data.definition.color + '10',
-                    borderColor: data.definition.color,
+                    borderColor: data.definition.color + '70',
                 }}
             >
-                <div className="flex flex-col border-b gap-1 p-1 min-w-[300px]" style={{ borderColor: data.definition.color }}>
+                <div className="flex flex-col border-b gap-1 p-1 min-w-[300px]" style={{ borderColor: data.definition.color + '70' }}>
                     <div className="text-xs flex items-center justify-between">
                         <div className="flex items-center gap-2">
                             <Icon className="w-4 h-4" color={data.definition.color} />

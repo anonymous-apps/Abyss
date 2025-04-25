@@ -1,12 +1,9 @@
-import { AgentController } from '../../controllers/agent';
-import { AgentToolConnectionController } from '../../controllers/agent-tool-connection';
 import { ChatController } from '../../controllers/chat';
 import { MessageController } from '../../controllers/message';
 import { MessageThreadController } from '../../controllers/message-thread';
 import { MetricController } from '../../controllers/metric';
 import { ModelConnectionsController } from '../../controllers/model-connections';
 import { AiLabelChat } from '../label-chat';
-import { handlerAskAgentToRespondToThread } from './handler-ask-agent';
 import { handlerAskRawModelToRespondToThread } from './handler-ask-model';
 export async function AskAiToRespondToThread(chatId: string, sourceId: string) {
     const chat = await ChatController.getOrThrowByRecordId(chatId);
@@ -37,27 +34,6 @@ export async function AskAiToRespondToThread(chatId: string, sourceId: string) {
     }
 
     if (type === 'agent') {
-        const agent = await AgentController.getOrThrowByRecordId(sourceId);
-        const model = await ModelConnectionsController.getOrThrowByRecordId(agent.chatModelId);
-        const toolConnections = await AgentToolConnectionController.findByAgentId(agent.id);
-
-        if (!chat.name) {
-            void AiLabelChat({ chat, thread, messages, connection: model });
-        }
-
-        return MetricController.withMetrics(
-            'ask-agent',
-            () => handlerAskAgentToRespondToThread({ chat, thread, messages, connection: model, agent, toolConnections }),
-            {
-                modelId: model.id,
-                modelName: model.name,
-                agentName: agent.name,
-                provider: model.provider,
-                chatId,
-                threadId: thread.id,
-                connectionId: model.id,
-            }
-        );
     }
 
     throw new Error('Unsupported source type: ' + type);
