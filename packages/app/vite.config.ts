@@ -1,8 +1,8 @@
-import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { join } from 'path';
+import { defineConfig } from 'vite';
 import electron from 'vite-plugin-electron';
 import renderer from 'vite-plugin-electron-renderer';
-import { join } from 'path';
 
 export default defineConfig({
     base: './',
@@ -12,6 +12,9 @@ export default defineConfig({
             {
                 // Main process entry point
                 entry: 'server/main/index.ts',
+                onstart(options) {
+                    options.startup();
+                },
                 vite: {
                     build: {
                         outDir: 'dist-electron/main',
@@ -20,12 +23,16 @@ export default defineConfig({
                                 entryFileNames: '[name].mjs',
                             },
                         },
+                        watch: {},
                     },
                 },
             },
             {
                 // Preload scripts
                 entry: 'server/preload/index.ts',
+                onstart(options) {
+                    options.reload();
+                },
                 vite: {
                     build: {
                         outDir: 'dist-electron/preload',
@@ -35,6 +42,7 @@ export default defineConfig({
                                 entryFileNames: '[name].mjs',
                             },
                         },
+                        watch: {},
                     },
                 },
             },

@@ -38,3 +38,4 @@ export async function InvokeToolFromMessage(messageId: string) {
 
     throw new Error('Unsupported tool type: ' + tool.type);
 }
+``;
