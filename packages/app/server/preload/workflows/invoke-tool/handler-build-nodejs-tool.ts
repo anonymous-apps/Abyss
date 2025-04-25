@@ -1,7 +1,8 @@
+import { ToolRequestMessagePartial } from '@abyss/intelligence';
 import { randomUUID } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
-import { MessageController, MessageRecord, MessageToolCall } from '../../controllers/message';
+import { MessageController, MessageRecord } from '../../controllers/message';
 import { TextLogController } from '../../controllers/text-log';
 import { ToolController } from '../../controllers/tool';
 import { ToolInvocationController } from '../../controllers/tool-invocation';
@@ -14,8 +15,8 @@ if (!fs.existsSync(userDataPath)) {
 
 export async function handlerInvokeBuildNodejsTool(input: InvokeBuildNodejsToolInput) {
     const { message, tool } = input;
-    const toolCall = message as MessageRecord<MessageToolCall>;
-    const parameters = toolCall.content.tool.parameters;
+    const toolCall = message as MessageRecord<ToolRequestMessagePartial>;
+    const parameters = toolCall.content.toolRequest.args;
 
     const workspacePath = path.join(userDataPath, 'tool-workspaces', randomUUID());
     fs.mkdirSync(workspacePath, { recursive: true });
@@ -35,9 +36,9 @@ export async function handlerInvokeBuildNodejsTool(input: InvokeBuildNodejsToolI
     await MessageController.update(toolCall.id, {
         content: {
             ...toolCall.content,
-            tool: {
-                ...toolCall.content.tool,
-                invocationId: toolInvocation.id,
+            toolRequest: {
+                ...toolCall.content.toolRequest,
+                callId: toolInvocation.id,
             },
         },
     });

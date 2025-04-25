@@ -1,4 +1,5 @@
-import { MessageController, MessageRecord, MessageToolCall } from '../../controllers/message';
+import { ToolRequestMessagePartial } from '@abyss/intelligence';
+import { MessageController, MessageRecord } from '../../controllers/message';
 import { TextLogController } from '../../controllers/text-log';
 import { ToolInvocationController } from '../../controllers/tool-invocation';
 import { InvokeNodejsToolInput } from './types';
@@ -6,8 +7,8 @@ import { runCommandAtPath } from './utils';
 
 export async function handleInvokeNodejsTool(input: InvokeNodejsToolInput) {
     const { message, tool } = input;
-    const toolCall = message as MessageRecord<MessageToolCall>;
-    const parameters = toolCall.content.tool.parameters;
+    const toolCall = message as MessageRecord<ToolRequestMessagePartial>;
+    const parameters = toolCall.content.toolRequest.args;
 
     const log = await TextLogController.empty();
 
@@ -21,9 +22,9 @@ export async function handleInvokeNodejsTool(input: InvokeNodejsToolInput) {
     await MessageController.update(toolCall.id, {
         content: {
             ...toolCall.content,
-            tool: {
-                ...toolCall.content.tool,
-                invocationId: toolInvocation.id,
+            toolRequest: {
+                ...toolCall.content.toolRequest,
+                callId: toolInvocation.id,
             },
         },
     });

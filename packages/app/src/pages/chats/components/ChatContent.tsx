@@ -1,13 +1,14 @@
+import {
+    ChatMessagePartial,
+    TextMessagePartial,
+    ToolDefinitionAddedMessagePartial,
+    ToolDefinitionRemovedMessagePartial,
+    ToolRequestMessagePartial,
+} from '@abyss/intelligence';
 import { ChatMessageSystemEvent, ChatMessageSystemText, ChatMessageText, ChatToolCall } from '@abyss/ui-components';
 import { MinusIcon, PlusIcon } from 'lucide-react';
 import React from 'react';
-import {
-    MessageRecord,
-    MessageText,
-    MessageToolCall,
-    MessageToolDefinitionAdded,
-    MessageToolDefinitionRemoved,
-} from '../../../../server/preload/controllers/message';
+import { MessageRecord } from '../../../../server/preload/controllers/message';
 import { useActionItems } from '../../../library/references';
 import { Database } from '../../../main';
 import { useTableRecordTextLog, useTableRecordToolInvocation } from '../../../state/database-connection';
@@ -25,25 +26,25 @@ export function ChatHistoryRenderer({ messages }: { messages?: MessageRecord[] }
 
         if (message.sourceId === 'USER') {
             if ('text' in message.content) {
-                elements.push(<UserMessageSection key={message.id} message={message as MessageRecord<MessageText>} />);
+                elements.push(<UserMessageSection key={message.id} message={message as MessageRecord<TextMessagePartial>} />);
             } else {
                 console.error('Unknown user message type', message);
             }
         } else if (message.sourceId === 'SYSTEM') {
             if ('text' in message.content) {
-                elements.push(<SystemTextMessageSection key={message.id} message={message as MessageRecord<MessageText>} />);
+                elements.push(<SystemTextMessageSection key={message.id} message={message as MessageRecord<TextMessagePartial>} />);
             } else if ('toolDefinitionAdded' in message.content) {
                 elements.push(
                     <SystemToolDefinitionAddedMessageSection
                         key={message.id}
-                        message={message as MessageRecord<MessageToolDefinitionAdded>}
+                        message={message as MessageRecord<ToolDefinitionAddedMessagePartial>}
                     />
                 );
             } else if ('toolDefinitionRemoved' in message.content) {
                 elements.push(
                     <SystemToolDefinitionRemovedMessageSection
                         key={message.id}
-                        message={message as MessageRecord<MessageToolDefinitionRemoved>}
+                        message={message as MessageRecord<ToolDefinitionRemovedMessagePartial>}
                     />
                 );
             } else {
@@ -51,9 +52,9 @@ export function ChatHistoryRenderer({ messages }: { messages?: MessageRecord[] }
             }
         } else {
             if ('text' in message.content) {
-                elements.push(<AiMessageTextSection key={message.id} message={message as MessageRecord<MessageText>} />);
-            } else if ('tool' in message.content) {
-                elements.push(<AiToolMessageSection key={message.id} message={message as MessageRecord<MessageToolCall>} />);
+                elements.push(<AiMessageTextSection key={message.id} message={message as MessageRecord<TextMessagePartial>} />);
+            } else if ('toolRequest' in message.content) {
+                elements.push(<AiToolMessageSection key={message.id} message={message as MessageRecord<ToolRequestMessagePartial>} />);
             } else {
                 console.error('Unknown ai message type', message);
             }
@@ -63,11 +64,15 @@ export function ChatHistoryRenderer({ messages }: { messages?: MessageRecord[] }
     return <div className="flex flex-col gap-2">{elements}</div>;
 }
 
-function SystemTextMessageSection({ message }: { message: MessageRecord<MessageText> }) {
-    return <ChatMessageSystemText text={message.content.text} />;
+function SystemTextMessageSection({ message }: { message: MessageRecord<ChatMessagePartial> }) {
+    if ('text' in message.content) {
+        return <ChatMessageSystemText text={message.content.text.content} />;
+    } else {
+        console.error('Unknown system text message type', message);
+    }
 }
 
-function SystemToolDefinitionAddedMessageSection({ message }: { message: MessageRecord<MessageToolDefinitionAdded> }) {
+function SystemToolDefinitionAddedMessageSection({ message }: { message: MessageRecord<ToolDefinitionAddedMessagePartial> }) {
     return (
         <ChatMessageSystemEvent
             icon={PlusIcon}
@@ -76,7 +81,7 @@ function SystemToolDefinitionAddedMessageSection({ message }: { message: Message
     );
 }
 
-function SystemToolDefinitionRemovedMessageSection({ message }: { message: MessageRecord<MessageToolDefinitionRemoved> }) {
+function SystemToolDefinitionRemovedMessageSection({ message }: { message: MessageRecord<ToolDefinitionRemovedMessagePartial> }) {
     return (
         <ChatMessageSystemEvent
             icon={MinusIcon}
@@ -85,26 +90,26 @@ function SystemToolDefinitionRemovedMessageSection({ message }: { message: Messa
     );
 }
 
-function UserMessageSection({ message }: { message: MessageRecord<MessageText> }) {
+function UserMessageSection({ message }: { message: MessageRecord<TextMessagePartial> }) {
     const actionItems = useActionItems(message);
-    return <ChatMessageText text={message.content.text} actionItems={actionItems} />;
+    return <ChatMessageText text={message.content.text.content} actionItems={actionItems} />;
 }
 
-function AiMessageTextSection({ message }: { message: MessageRecord<MessageText> }) {
+function AiMessageTextSection({ message }: { message: MessageRecord<TextMessagePartial> }) {
     const actionItems = useActionItems(message);
-    return <ChatMessageText text={message.content.text} actionItems={actionItems} />;
+    return <ChatMessageText text={message.content.text.content} actionItems={actionItems} />;
 }
 
-function AiToolMessageSection({ message }: { message: MessageRecord<MessageToolCall> }) {
-    const invocation = useTableRecordToolInvocation(message.content.tool.invocationId);
+function AiToolMessageSection({ message }: { message: MessageRecord<ToolRequestMessagePartial> }) {
+    const invocation = useTableRecordToolInvocation(message.content.toolRequest.callId);
     const textOutput = useTableRecordTextLog(invocation?.data?.textLogId);
     const textOutputData = textOutput?.data;
 
     return (
         <ChatToolCall
-            toolName={message.content.tool.name}
+            toolName={message.content.toolRequest.name}
             status={invocation?.data?.status || 'idle'}
-            inputData={message.content.tool.parameters}
+            inputData={message.content.toolRequest.args}
             outputText={textOutputData?.text}
             onInvoke={() => {
                 Database.workflows.InvokeToolFromMessage(message.id);

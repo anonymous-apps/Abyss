@@ -29,7 +29,7 @@ export async function handlerAskAgentToRespondToThread(input: AskAgentToRespondT
         // Compute delta messages and add them to the thread
         const deltaMessages = thread.setCurrentTools(toolDefinitions);
         if (deltaMessages.messages.length > 0) {
-            await MessageController.addManyToThread(input.thread.id, input.agent.id, deltaMessages.messages);
+            await MessageController.addManyToThread(input.thread.id, 'SYSTEM', deltaMessages.messages);
         }
 
         // Generate the response

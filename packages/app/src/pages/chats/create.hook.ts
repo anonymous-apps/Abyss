@@ -50,13 +50,23 @@ export function useChatCreate() {
         if (systemPrompt) {
             await Database.table.messageThread.addMessage(chatRecord.threadId, {
                 sourceId: 'SYSTEM',
-                content: { text: systemPrompt },
+                content: {
+                    type: 'text',
+                    text: {
+                        content: systemPrompt,
+                    },
+                },
             });
         }
 
         await Database.table.messageThread.addMessage(chatRecord.threadId, {
             sourceId: 'USER',
-            content: { text: message },
+            content: {
+                type: 'text',
+                text: {
+                    content: message,
+                },
+            },
         });
 
         Database.workflows.AskAiToRespondToThread(chatRecord.id, sourceId);

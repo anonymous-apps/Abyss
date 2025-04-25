@@ -1,13 +1,14 @@
+import { ToolRequestMessagePartial } from '@abyss/intelligence';
 import { DocumentController } from '../../controllers/document';
-import { MessageController, MessageRecord, MessageToolCall } from '../../controllers/message';
+import { MessageController, MessageRecord } from '../../controllers/message';
 import { TextLogController } from '../../controllers/text-log';
 import { ToolInvocationController } from '../../controllers/tool-invocation';
 import { InvokeDocumentWriterToolInput } from './types';
 
 export async function handleInvokeDocumentWriterTool(input: InvokeDocumentWriterToolInput) {
     const { message, tool } = input;
-    const toolCall = message as MessageRecord<MessageToolCall>;
-    const parameters = toolCall.content.tool.parameters;
+    const toolCall = message as MessageRecord<ToolRequestMessagePartial>;
+    const parameters = toolCall.content.toolRequest.args;
 
     // Setup call
     const log = await TextLogController.empty();
@@ -22,9 +23,9 @@ export async function handleInvokeDocumentWriterTool(input: InvokeDocumentWriter
     await MessageController.update(toolCall.id, {
         content: {
             ...toolCall.content,
-            tool: {
-                ...toolCall.content.tool,
-                invocationId: toolInvocation.id,
+            toolRequest: {
+                ...toolCall.content.toolRequest,
+                callId: toolInvocation.id,
             },
         },
     });

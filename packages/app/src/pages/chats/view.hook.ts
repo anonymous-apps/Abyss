@@ -32,7 +32,12 @@ export function useChatView() {
             if (chat.chat && chat.chat.id && chat.thread && chat.thread.id && message.trim()) {
                 await Database.table.messageThread.addMessage(chat.thread.id, {
                     sourceId: 'USER',
-                    content: { text: message },
+                    content: {
+                        type: 'text',
+                        text: {
+                            content: message,
+                        },
+                    },
                 });
                 setMessage('');
                 await Database.workflows.AskAiToRespondToThread(chat.chat.id, sourceId);
