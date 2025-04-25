@@ -1,5 +1,5 @@
-import { parseString } from '../../parser/parser';
 import { Log } from '../../utils/logs';
+import { parseString } from '../../utils/parser/parser';
 import { buildToolUsePrompt } from './prompts';
 import { AskWithToolCallsOptions } from './types';
 

@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
-import { ChatMessagePartial } from '../constructs';
-import { Log } from '../utils/logs';
+import { ChatMessagePartial } from '../../constructs';
+import { Log } from '../logs';
 
 // Helper to parse the inner content of a tool tag into an args object or return raw string
 function parseXmlContent(xmlContent: string): Record<string, any> | string {
