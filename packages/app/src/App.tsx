@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Routes } from 'react-router';
 import { HeaderBar } from './library/header-bar';
 import { AgentsPage } from './pages/agents/agents-page.page';
 import { CreateAgentPage } from './pages/agents/create-agent.page';
-import { ViewAgentPage } from './pages/agents/view-agent.page';
+import { ViewAgentGraphPage } from './pages/agents/view-agent-graph';
 import { ChatCreatePage } from './pages/chats/create.page';
 import { ChatMainPage } from './pages/chats/main.page';
 import { ChatViewPage } from './pages/chats/view.page';
@@ -55,7 +55,7 @@ export function App() {
                         <Route path="/tools/id/:id" element={<ToolViewPage />} />
                         <Route path="/agents" element={<AgentsPage />} />
                         <Route path="/agents/create" element={<CreateAgentPage />} />
-                        <Route path="/agents/id/:id" element={<ViewAgentPage />} />
+                        <Route path="/agents/id/:id" element={<ViewAgentGraphPage />} />
                         <Route path="/prompts" element={<PromptsPage />} />
                         <Route path="/prompts/create" element={<CreatePromptPage />} />
                         <Route path="/prompts/id/:id" element={<ViewPromptPage />} />

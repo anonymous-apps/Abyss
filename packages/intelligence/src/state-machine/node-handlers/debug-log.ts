@@ -1,6 +1,6 @@
 import { GraphNodeDefinition } from '../../constructs/graphs/graph-node';
+import { NodeHandler } from '../node-handler';
 import { NodeExecutionResult, ResolveNodeData } from '../types';
-import { NodeHandler } from './node-handler';
 
 export class DebugLogNode extends NodeHandler {
     constructor() {
@@ -10,6 +10,7 @@ export class DebugLogNode extends NodeHandler {
     protected _getDefinition(): Omit<GraphNodeDefinition, 'id' | 'type'> {
         return {
             name: 'Debug Log',
+            description: 'This node is used to debug the log of the node',
             color: '#000000',
             inputPorts: {
                 logInput: {
@@ -17,6 +18,7 @@ export class DebugLogNode extends NodeHandler {
                     type: 'signal',
                     dataType: 'string',
                     name: 'Message',
+                    description: 'The message to log',
                 },
             },
             outputPorts: {},

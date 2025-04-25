@@ -1,10 +1,10 @@
-import { NodeHandler } from './node-handlers/node-handler';
+import { NodeHandler } from './node-handler';
 import { NodeExecutionResult, ResolveNodeData } from './types';
 
 export async function resolveNode(data: ResolveNodeData): Promise<NodeExecutionResult> {
     const inputPorts = data.node.inputPorts;
 
-    inputPorts.forEach(inputPort => {
+    Object.entries(inputPorts).forEach(([key, inputPort]) => {
         const input = data.portData.find(p => p.portId === inputPort.id);
         if (!input) {
             throw new Error(`Port ${inputPort.id} didnt have any input data`);

@@ -9,6 +9,7 @@ export function AgentsPage() {
     return (
         <PageCrumbed
             title="Agents"
+            subtitle="Agents are built through a node based orchestrated UI, allowing for complex workflows to be created seamlessly."
             breadcrumbs={[
                 { name: 'Home', onClick: () => navigate('/') },
                 { name: 'Agents', onClick: () => navigate('/agents') },

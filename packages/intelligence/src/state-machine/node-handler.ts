@@ -1,6 +1,6 @@
-import { GraphNodeDefinition } from '../../constructs/graphs/graph-node';
-import { randomId } from '../../utils/ids';
-import { NodeExecutionResult, ResolveNodeData } from '../types';
+import { GraphNodeDefinition } from '../constructs/graphs/graph-node';
+import { randomId } from '../utils/ids';
+import { NodeExecutionResult, ResolveNodeData } from './types';
 
 export abstract class NodeHandler {
     private id: string;

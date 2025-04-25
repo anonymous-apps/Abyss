@@ -1,7 +1,7 @@
 import { GraphNodeDefinition } from '../constructs/graphs/graph-node';
 import { StateGraph } from '../constructs/graphs/state-graph';
+import { NodeHandler } from './node-handler';
 import './node-handlers';
-import { NodeHandler } from './node-handlers/node-handler';
 import { PortTriggerData } from './types';
 import { StateMachineEvent } from './types.events';
 
