@@ -14,7 +14,6 @@ export interface AgentGraphRecord {
             x: number;
             y: number;
         };
-        data: Record<string, string>;
     }[];
     edges: {
         id: string;

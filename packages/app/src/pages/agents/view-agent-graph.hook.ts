@@ -1,6 +1,7 @@
 import { GraphNodeDefinition } from '@abyss/intelligence';
 import { Connection, Edge, addEdge, useEdgesState, useNodesState } from '@xyflow/react';
-import { useCallback } from 'react';
+import debounce from 'lodash.debounce';
+import { useCallback, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Database } from '../../main';
 import { useTableRecordAgent } from '../../state/database-connection';
@@ -25,6 +26,56 @@ export function useViewAgent() {
 
     const [nodes, setNodes, onNodesChange] = useNodesState<RenderedGraphNode>([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
+
+    // Convert XYFlow Edge format to AgentGraphRecord edge format
+    const convertToDbEdges = (flowEdges: Edge[]) => {
+        return flowEdges.map(edge => ({
+            id: edge.id,
+            sourceNode: edge.source,
+            sourceHandle: edge.sourceHandle || '',
+            targetNode: edge.target,
+            targetHandle: edge.targetHandle || '',
+        }));
+    };
+
+    // Convert AgentGraphRecord edge format to XYFlow Edge format
+    const convertToFlowEdges = (dbEdges: any[]) => {
+        return dbEdges.map(edge => ({
+            id: edge.id,
+            source: edge.sourceNode,
+            sourceHandle: edge.sourceHandle,
+            target: edge.targetNode,
+            targetHandle: edge.targetHandle,
+        }));
+    };
+
+    // Create a debounced save function with 1 second delay
+    const saveGraphStateToDb = useCallback(
+        debounce((currentNodes: RenderedGraphNode[], currentEdges: Edge[]) => {
+            if (agent.data && id) {
+                handleUpdateAgent({
+                    graph: {
+                        nodes: currentNodes,
+                        edges: convertToDbEdges(currentEdges),
+                    },
+                });
+            }
+        }, 1000),
+        [agent.data, id]
+    );
+
+    // Save graph state when nodes or edges change
+    useEffect(() => {
+        saveGraphStateToDb(nodes, edges);
+    }, [nodes, edges, saveGraphStateToDb]);
+
+    // Load saved graph state on initial load
+    useEffect(() => {
+        if (agent.data?.graph?.nodes && agent.data?.graph?.edges) {
+            setNodes(agent.data.graph.nodes as RenderedGraphNode[]);
+            setEdges(convertToFlowEdges(agent.data.graph.edges));
+        }
+    }, [agent.data?.graph, setNodes, setEdges]);
 
     const handleAddNode = (node: GraphNodeDefinition) => {
         const newNode: RenderedGraphNode = {
