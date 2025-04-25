@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { StateGraph } from '../../constructs/graphs/state-graph';
+import { StateGraph } from '../graphs-objects/state-graph';
 import { Nodes } from '../node-handlers';
 import { StateMachineExecution } from '../state-machine-execution';
 

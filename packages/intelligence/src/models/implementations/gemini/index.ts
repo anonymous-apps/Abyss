@@ -1,4 +1,4 @@
-import { ChatThread } from '../../../constructs/chat-thread/chat-thread';
+import { Thread } from '../../../constructs/thread/thread';
 import { Log } from '../../../utils/logs';
 import { LanguageModel } from '../../language-model';
 import { LanguageModelChatResult } from '../../types';
@@ -40,7 +40,7 @@ export class GeminiLanguageModel extends LanguageModel {
         this.enableImageGeneration = props.enableImageGeneration || true;
     }
 
-    protected async _invoke(thread: ChatThread): Promise<LanguageModelChatResult> {
+    protected async _invoke(thread: Thread): Promise<LanguageModelChatResult> {
         const contents = buildGeminiContents(thread);
         const modelName = this.getName();
         const startTime = Date.now();

@@ -1,4 +1,4 @@
-import { ChatThread } from '../../../constructs/chat-thread/chat-thread';
+import { Thread } from '../../../constructs/thread/thread';
 import { createXmlFromObject } from '../../../utils/object-to-xml/object-to-xml';
 import { buildToolDefinitionPrompt, buildToolPermissionRemovedPrompt } from '../prompts';
 
@@ -18,7 +18,7 @@ export interface GeminiContent {
  * @param thread - The chat thread to convert
  * @returns Array of Gemini-formatted content objects
  */
-export function buildGeminiContents(thread: ChatThread): GeminiContent[] {
+export function buildGeminiContents(thread: Thread): GeminiContent[] {
     const turns = thread.getTurns();
     const contents: GeminiContent[] = [];
 

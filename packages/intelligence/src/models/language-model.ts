@@ -1,4 +1,4 @@
-import { ChatThread } from '../constructs/chat-thread';
+import { Thread } from '../constructs/thread';
 import { Log } from '../utils/logs';
 import { LanguageModelChatResult } from './types';
 
@@ -49,7 +49,7 @@ export abstract class LanguageModel {
      * @param thread The chat thread to respond to
      * @returns A Promise resolving to the model's response
      */
-    public async invoke(thread: ChatThread): Promise<LanguageModelChatResult> {
+    public async invoke(thread: Thread): Promise<LanguageModelChatResult> {
         try {
             Log.debug(this.getName(), `Invoking model`);
 
@@ -70,5 +70,5 @@ export abstract class LanguageModel {
      * @param thread The chat thread to respond to
      * @returns A Promise resolving to a LanguageModelChatResult
      */
-    protected abstract _invoke(thread: ChatThread): Promise<LanguageModelChatResult>;
+    protected abstract _invoke(thread: Thread): Promise<LanguageModelChatResult>;
 }

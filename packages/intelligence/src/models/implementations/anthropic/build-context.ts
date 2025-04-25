@@ -1,4 +1,4 @@
-import { ChatThread } from '../../../constructs/chat-thread/chat-thread';
+import { Thread } from '../../../constructs/thread/thread';
 import { createXmlFromObject } from '../../../utils/object-to-xml/object-to-xml';
 import { buildToolDefinitionPrompt, buildToolPermissionRemovedPrompt } from '../prompts';
 
@@ -24,7 +24,7 @@ export interface AnthropicContent {
  * @param enableVision - Whether vision capabilities are enabled
  * @returns Array of Anthropic-formatted messages
  */
-export function buildAnthropicMessages(thread: ChatThread, enableVision: boolean): AnthropicMessage[] {
+export function buildAnthropicMessages(thread: Thread, enableVision: boolean): AnthropicMessage[] {
     const turns = thread.getTurns();
     const messages: AnthropicMessage[] = [];
 

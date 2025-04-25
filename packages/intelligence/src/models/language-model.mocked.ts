@@ -1,4 +1,4 @@
-import { ChatThread } from '../constructs/chat-thread';
+import { Thread } from '../constructs/thread';
 import { LanguageModel } from './language-model';
 import { LanguageModelChatResult } from './types';
 
@@ -6,7 +6,7 @@ import { LanguageModelChatResult } from './types';
  * A mocked implementation of the LanguageModel for testing
  */
 export class MockedLanguageModel extends LanguageModel {
-    private responseFunction: (thread: ChatThread) => Promise<LanguageModelChatResult> | LanguageModelChatResult;
+    private responseFunction: (thread: Thread) => Promise<LanguageModelChatResult> | LanguageModelChatResult;
     /**
      * Creates a new mocked language model instance
      *
@@ -15,7 +15,7 @@ export class MockedLanguageModel extends LanguageModel {
      * @param id The specific model identifier (default: "mocked-model")
      */
     constructor(
-        responseFunction: (thread: ChatThread) => Promise<LanguageModelChatResult> | LanguageModelChatResult,
+        responseFunction: (thread: Thread) => Promise<LanguageModelChatResult> | LanguageModelChatResult,
         provider = 'mock',
         id = 'mocked-model'
     ) {
@@ -28,7 +28,7 @@ export class MockedLanguageModel extends LanguageModel {
      *
      * @param responseFunction Function that maps input thread to output thread
      */
-    public setResponseFunction(responseFunction: (thread: ChatThread) => Promise<LanguageModelChatResult> | LanguageModelChatResult): void {
+    public setResponseFunction(responseFunction: (thread: Thread) => Promise<LanguageModelChatResult> | LanguageModelChatResult): void {
         this.responseFunction = responseFunction;
     }
 
@@ -39,7 +39,7 @@ export class MockedLanguageModel extends LanguageModel {
      * @param thread The chat thread to respond to
      * @returns A Promise resolving to the model's response
      */
-    public async invoke(thread: ChatThread): Promise<LanguageModelChatResult> {
+    public async invoke(thread: Thread): Promise<LanguageModelChatResult> {
         return this.responseFunction(thread);
     }
 
@@ -50,7 +50,7 @@ export class MockedLanguageModel extends LanguageModel {
      * @param thread The chat thread to respond to
      * @returns A Promise resolving to an AsyncStream of string chunks
      */
-    protected async _invoke(thread: ChatThread): Promise<LanguageModelChatResult> {
+    protected async _invoke(thread: Thread): Promise<LanguageModelChatResult> {
         return {
             inputContext: [],
             response: '',

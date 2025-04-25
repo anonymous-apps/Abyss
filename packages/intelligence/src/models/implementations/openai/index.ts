@@ -1,4 +1,4 @@
-import { ChatThread } from '../../../constructs/chat-thread/chat-thread';
+import { Thread } from '../../../constructs/thread/thread';
 import { Log } from '../../../utils/logs';
 import { LanguageModel } from '../../language-model';
 import { LanguageModelChatResult } from '../../types';
@@ -32,7 +32,7 @@ export class OpenAILanguageModel extends LanguageModel {
         this.modelId = props.modelId || 'gpt-4o';
     }
 
-    protected async _invoke(thread: ChatThread): Promise<LanguageModelChatResult> {
+    protected async _invoke(thread: Thread): Promise<LanguageModelChatResult> {
         const messages = buildOpenAIMessages(thread);
         const modelName = this.getName();
         const startTime = Date.now();

@@ -1,5 +1,5 @@
-import { GraphNodeDefinition } from '../constructs/graphs/graph-node';
-import { StateGraph } from '../constructs/graphs/state-graph';
+import { GraphNodeDefinition } from './graphs-objects/graph-node';
+import { StateGraph } from './graphs-objects/state-graph';
 import { NodeHandler } from './node-handler';
 import './node-handlers';
 import { PortTriggerData } from './types';

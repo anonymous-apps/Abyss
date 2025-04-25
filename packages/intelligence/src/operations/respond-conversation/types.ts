@@ -1,8 +1,8 @@
-import { ChatThread } from '../../constructs';
+import { Thread } from '../../constructs';
 import { LanguageModel } from '../../models/language-model';
 export interface AskWithToolCallsOptions {
     model: LanguageModel;
-    thread: ChatThread;
+    thread: Thread;
 }
 
 export interface ToolDefinition {

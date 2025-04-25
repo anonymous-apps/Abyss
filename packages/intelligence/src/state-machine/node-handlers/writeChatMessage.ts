@@ -1,4 +1,4 @@
-import { GraphNodeDefinition } from '../../constructs/graphs/graph-node';
+import { GraphNodeDefinition } from '../graphs-objects/graph-node';
 import { NodeHandler } from '../node-handler';
 import { NodeExecutionResult, ResolveNodeData } from '../types';
 

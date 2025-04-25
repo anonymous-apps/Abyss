@@ -1,4 +1,4 @@
-import { GraphNodeDefinition } from '../constructs/graphs/graph-node';
+import { GraphNodeDefinition } from './graphs-objects/graph-node';
 import { StateMachineExecution } from './state-machine-execution';
 
 export interface PortTriggerData {

@@ -48,7 +48,7 @@ export type ToolResponseMessagePartial = {
     };
 };
 
-export type ChatMessagePartial =
+export type ThreadMessagePartial =
     | TextMessagePartial
     | ImageMessagePartial
     | ToolRequestMessagePartial
@@ -56,11 +56,12 @@ export type ChatMessagePartial =
     | ToolDefinitionAddedMessagePartial
     | ToolDefinitionRemovedMessagePartial;
 
-export interface ChatTurn {
+export interface ThreadTurn {
     sender: MessageSender;
-    partials: ChatMessagePartial[];
+    partials: ThreadMessagePartial[];
 }
 
-export interface ChatContextProps {
-    turns?: ChatTurn[];
+export interface ThreadProps {
+    id: string;
+    turns: ThreadTurn[];
 }

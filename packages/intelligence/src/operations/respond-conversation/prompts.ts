@@ -1,11 +1,11 @@
-import { ChatThread } from '../../constructs/chat-thread/chat-thread';
+import { Thread } from '../../constructs/thread/thread';
 import { ToolDefinition } from './types';
 
 export function getIdForTool(tool: ToolDefinition) {
     return tool.id.toLowerCase().replace(/ /g, '-');
 }
 
-export function buildToolUsePrompt(thread: ChatThread, tools: ToolDefinition[]) {
+export function buildToolUsePrompt(thread: Thread, tools: ToolDefinition[]) {
     // If there are no tools, return the thread as is and dont add any tool use details
     if (tools.length === 0) {
         return thread;

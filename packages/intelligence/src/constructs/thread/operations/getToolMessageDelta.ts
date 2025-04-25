@@ -1,13 +1,13 @@
 import { ToolDefinition } from '../../../operations/respond-conversation/types';
-import { ChatThread } from '../chat-thread';
-import { ChatMessagePartial } from '../types';
+import { Thread } from '../thread';
+import { ThreadMessagePartial } from '../types';
 import { getExposedToolsInThread } from './getExposedToolsInThread';
 
-export function getToolMessageDelta(thread: ChatThread, expectedTools: ToolDefinition[]) {
+export async function getToolMessageDelta(thread: Thread, expectedTools: ToolDefinition[]) {
     const currentTools = getExposedToolsInThread(thread);
     const addedTools = expectedTools.filter(tool => !currentTools.find(t => t.id === tool.id));
     const removedTools = currentTools.filter(tool => !expectedTools.find(t => t.id === tool.id));
-    let partials: ChatMessagePartial[] = [];
+    let partials: ThreadMessagePartial[] = [];
     if (removedTools.length > 0) {
         partials.push({
             type: 'toolDefinitionRemoved',
@@ -27,7 +27,7 @@ export function getToolMessageDelta(thread: ChatThread, expectedTools: ToolDefin
         };
     }
     return {
-        newThread: thread.addTurn({ sender: 'system', partials }),
+        newThread: await thread.addTurn({ sender: 'system', partials }),
         messages: partials,
     };
 }

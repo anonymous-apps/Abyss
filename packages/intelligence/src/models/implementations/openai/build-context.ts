@@ -1,4 +1,4 @@
-import { ChatThread } from '../../../constructs/chat-thread/chat-thread';
+import { Thread } from '../../../constructs/thread/thread';
 import { createXmlFromObject } from '../../../utils/object-to-xml/object-to-xml';
 import { buildToolDefinitionPrompt, buildToolPermissionRemovedPrompt } from '../prompts';
 export interface OpenAIMessage {
@@ -13,7 +13,7 @@ export interface OpenAIMessage {
  * @param enableVision - Whether vision capabilities are enabled
  * @returns Array of OpenAI-formatted messages
  */
-export function buildOpenAIMessages(thread: ChatThread): OpenAIMessage[] {
+export function buildOpenAIMessages(thread: Thread): OpenAIMessage[] {
     const turns = thread.getTurns();
     const messages: OpenAIMessage[] = [];
 

@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { ChatMessagePartial } from '../../constructs';
+import { ThreadMessagePartial } from '../../constructs';
 import { Log } from '../logs';
 
 // Helper to parse the inner content of a tool tag into an args object or return raw string
@@ -140,8 +140,8 @@ function findMatchingEndTag(str: string, tagName: string, startIndex: number): n
 }
 
 // Main parsing function to split string into text and tool call messages
-export function parseString(input: string): ChatMessagePartial[] {
-    const result: ChatMessagePartial[] = [];
+export function parseString(input: string): ThreadMessagePartial[] {
+    const result: ThreadMessagePartial[] = [];
     let currentPos = 0;
 
     while (currentPos < input.length) {

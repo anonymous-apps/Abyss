@@ -1,7 +1,7 @@
 import { ToolDefinition } from '../../../operations/respond-conversation/types';
-import { ChatThread } from '../chat-thread';
+import { Thread } from '../thread';
 
-export function getExposedToolsInThread(thread: ChatThread): ToolDefinition[] {
+export function getExposedToolsInThread(thread: Thread): ToolDefinition[] {
     let tools: Record<string, ToolDefinition> = {};
     for (const turn of thread.getTurns()) {
         for (const partial of turn.partials) {
