@@ -23,7 +23,7 @@ export class InvokeLanguageModelNode extends NodeHandler {
                 },
                 thread: {
                     id: 'thread',
-                    type: 'data',
+                    type: 'signal',
                     dataType: 'chat-thread',
                     name: 'Thread',
                     description: 'A thread',
