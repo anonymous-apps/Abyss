@@ -1,5 +1,5 @@
-import { Thread } from '../../thread';
-import { InvokeAnthropic } from '../implementations/anthropic';
+import { Thread } from '../../thread/thread';
+import { InvokeAnthropic } from '../implementations/anthropic/handler';
 import { Intelligence } from '../intelligence';
 import { AIProviderAnthropic } from '../types';
 
