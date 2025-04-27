@@ -1,4 +1,4 @@
-import { describe, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { Chat, Graph, Intelligence } from '../../constructs';
 import { MockedDataInterface } from '../../constructs/data-interface.mock';
 import { Nodes } from '../../state-machine';
@@ -70,6 +70,14 @@ describe('invokeGraph', () => {
                 type: 'onUserChat',
                 chatId: chat.id,
             },
+        });
+
+        const chatThread = await chat.getThread();
+        expect(chatThread.getLastTurn().partials[0]).toEqual({
+            text: {
+                content: 'Hello, world!',
+            },
+            type: 'text',
         });
     });
 });

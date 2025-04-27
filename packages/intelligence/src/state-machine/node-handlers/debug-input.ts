@@ -4,7 +4,7 @@ import { NodeExecutionResult, ResolveNodeData } from '../types';
 
 export class DebugInputNode extends NodeHandler {
     constructor() {
-        super('debug-input');
+        super('debug-input', 'trigger');
     }
 
     protected _getDefinition(): Omit<GraphNodeDefinition, 'id' | 'type'> {

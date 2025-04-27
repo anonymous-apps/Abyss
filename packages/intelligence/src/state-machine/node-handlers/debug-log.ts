@@ -4,7 +4,7 @@ import { NodeExecutionResult, ResolveNodeData } from '../types';
 
 export class DebugLogNode extends NodeHandler {
     constructor() {
-        super('debug-log');
+        super('debug-log', 'dynamic');
     }
 
     protected _getDefinition(): Omit<GraphNodeDefinition, 'id' | 'type'> {
@@ -31,7 +31,6 @@ export class DebugLogNode extends NodeHandler {
         if (!logInput) {
             throw new Error('Log input port not found');
         }
-        console.log(logInput.inputValue);
         return Promise.resolve({
             portData: [],
         });

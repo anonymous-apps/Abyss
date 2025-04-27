@@ -43,8 +43,6 @@ export class StateMachineExecution {
         }
         this.portValues[nodeId][portId] = value;
 
-        console.log(`Set port ${portId} of node ${nodeId} to ${value.inputValue}`);
-
         // If the port is connected to another node, set the value of that port
         const connection = this._getConnectionOutofPort(nodeId, portId);
         if (connection) {
@@ -58,7 +56,6 @@ export class StateMachineExecution {
 
         // If this port is an input signal, add the node to the evaluation queue
         const node = this.graph.getNode(nodeId);
-        console.log(`Node ${nodeId} port ${portId} is ${node?.inputPorts[portId]?.type}`);
         if (node?.inputPorts[portId]?.type === 'signal') {
             this._addEvaluationQueue(nodeId);
         }
