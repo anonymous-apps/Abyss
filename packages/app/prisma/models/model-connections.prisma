@@ -1,19 +1,15 @@
 model ModelConnections {
   id         String   @id 
-  references Json?    
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
   // Display name of the model connection
   name       String
-
-  // Detailed description of the model's purpose and capabilities
   description String
 
-  // Provider of the model (e.g., 'OpenAI', 'Anthropic', 'Local')
+  // Provider info
+  type       String
   provider   String
-
-  // Specific model identifier from the provider
   modelId    String
 
   // Additional configuration data stored as JSON

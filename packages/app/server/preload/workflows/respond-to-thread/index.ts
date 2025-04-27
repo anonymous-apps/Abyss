@@ -1,8 +1,8 @@
 import { ChatController } from '../../controllers/chat';
 import { MessageController } from '../../controllers/message';
-import { MessageThreadController } from '../../controllers/message-thread';
 import { MetricController } from '../../controllers/metric';
 import { ModelConnectionsController } from '../../controllers/model-connections';
+import { MessageThreadController } from '../../controllers/thread';
 import { AiLabelChat } from '../label-chat';
 import { handlerAskRawModelToRespondToThread } from './handler-ask-model';
 export async function AskAiToRespondToThread(chatId: string, sourceId: string) {

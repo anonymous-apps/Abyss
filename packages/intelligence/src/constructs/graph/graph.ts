@@ -6,6 +6,7 @@ import { GraphProps } from './types';
 
 export class Graph extends DatabaseObject {
     public readonly name: string;
+    public readonly description: string;
     private nodes: GraphNodeDefinition[];
     private connections: GraphConnection[];
     private nodeParameters: Record<string, Record<string, any>>;
@@ -24,6 +25,7 @@ export class Graph extends DatabaseObject {
     private constructor(db: DataInterface, props: GraphProps) {
         super('graph', db, props.id);
         this.name = props.name || '';
+        this.description = props.description || '';
         this.nodes = props.nodes ?? [];
         this.connections = props.connections ?? [];
         this.nodeParameters = props.nodeParameters ?? {};

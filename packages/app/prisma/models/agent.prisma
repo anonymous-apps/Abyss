@@ -1,15 +1,14 @@
 model Agent {
   id         String   @id 
-  references Json?    
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
   // Display name of the agent
   name       String
-
-  // Detailed description of the agent's capabilities
   description String
 
   // The agent graph as a JSON object
-  graph Json
+  nodes Json
+  connections Json  
+  nodeParameters Json
 } 

@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { ThreadMessagePartial } from '../../constructs';
+import { ThreadMessagePartial } from '../../constructs/thread/types';
 import { Log } from '../logs';
 
 // Helper to parse the inner content of a tool tag into an args object or return raw string

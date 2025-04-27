@@ -6,6 +6,8 @@ type AIProviderBaseProps = {
 };
 
 export interface AIProviderGemini extends AIProviderBaseProps {
+    name: string;
+    description: string;
     type: 'gemini';
     provider: string;
     modelId: string;
@@ -15,6 +17,8 @@ export interface AIProviderGemini extends AIProviderBaseProps {
 }
 
 export interface AIProviderOpenAI extends AIProviderBaseProps {
+    name: string;
+    description: string;
     type: 'openai';
     provider: string;
     modelId: string;
@@ -24,6 +28,8 @@ export interface AIProviderOpenAI extends AIProviderBaseProps {
 }
 
 export interface AIProviderAnthropic extends AIProviderBaseProps {
+    name: string;
+    description: string;
     type: 'anthropic';
     provider: string;
     modelId: string;
@@ -33,6 +39,8 @@ export interface AIProviderAnthropic extends AIProviderBaseProps {
 }
 
 export interface AIProviderStatic extends AIProviderBaseProps {
+    name: string;
+    description: string;
     type: 'static';
     provider: string;
     modelId: string;

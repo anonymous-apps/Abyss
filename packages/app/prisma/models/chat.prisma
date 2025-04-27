@@ -1,6 +1,5 @@
 model Chat {
   id         String   @id 
-  references Json?    
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
@@ -9,4 +8,7 @@ model Chat {
 
   // ID of the associated message thread
   threadId   String?
+
+  // The participant in the chat
+  participant String
 } 

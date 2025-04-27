@@ -7,7 +7,7 @@ export interface MessageThreadRecord extends BaseRecord {
 
 class _MessageThreadController extends BaseDatabaseConnection<MessageThreadRecord> {
     constructor() {
-        super('messageThread', 'A collection representing a list of messages between a user and a model');
+        super('thread', 'A collection representing a list of messages between a user and a model');
     }
 
     async addMessage(

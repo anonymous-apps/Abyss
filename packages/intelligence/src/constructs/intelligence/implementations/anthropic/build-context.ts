@@ -1,5 +1,5 @@
 import { Log } from '../../../../utils/logs';
-import { Thread } from '../../../thread';
+import { Thread } from '../../../thread/thread';
 import { AnthropicContent, AnthropicMessage } from './types';
 
 export function buildAnthropicMessages(thread: Thread): AnthropicMessage[] {

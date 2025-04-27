@@ -4,6 +4,7 @@ import { GraphNodeDefinition } from '../../state-machine/graphs-objects/graph-no
 export interface GraphProps {
     id?: string;
     name?: string;
+    description?: string;
     nodes?: GraphNodeDefinition[];
     connections?: GraphConnection[];
     nodeParameters?: Record<string, Record<string, any>>;

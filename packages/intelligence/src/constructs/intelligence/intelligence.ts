@@ -23,7 +23,7 @@ export class Intelligence<T extends IntelligenceProps = IntelligenceProps> exten
         this.props = props;
     }
 
-    async invokeAgainstThread(thread: Thread) {
+    async invokeAgainstThread(thread: Thread): Promise<any> {
         return invokeProviderAgainstThread(this, thread);
     }
 }

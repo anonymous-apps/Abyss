@@ -1,9 +1,9 @@
 import { Operations, ToolRequestMessagePartial } from '@abyss/intelligence';
 import { ChatController, ChatRecord } from '../../controllers/chat';
 import { MessageRecord } from '../../controllers/message';
-import { MessageThreadRecord } from '../../controllers/message-thread';
 import { MetricController } from '../../controllers/metric';
 import { ModelConnectionsRecord } from '../../controllers/model-connections';
+import { MessageThreadRecord } from '../../controllers/thread';
 import { buildIntelegence, buildThread } from '../utils';
 export interface AiLabelChatInput {
     chat: ChatRecord;

@@ -1,9 +1,9 @@
 import { Operations } from '@abyss/intelligence';
 import { MessageController } from '../../controllers/message';
-import { MessageThreadController } from '../../controllers/message-thread';
 import { MetricController } from '../../controllers/metric';
 import { ModelInvokeController } from '../../controllers/model-invoke';
 import { RenderedConversationThreadController } from '../../controllers/rendered-conversation-thread';
+import { MessageThreadController } from '../../controllers/thread';
 import { buildIntelegence, buildThread } from '../utils';
 import { AskRawModelToRespondToThreadInput } from './types';
 

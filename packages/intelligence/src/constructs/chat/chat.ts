@@ -4,10 +4,11 @@ import { Thread } from '../thread/thread';
 import { ChatProps, ChatPropsWithThread } from './types';
 
 export class Chat extends DatabaseObject {
-    private threadId: string;
     public readonly name: string;
+    public readonly participant: string;
+    private threadId: string;
 
-    public static async new(db: DataInterface, props: ChatProps = {}): Promise<Chat> {
+    public static async new(db: DataInterface, props: ChatProps): Promise<Chat> {
         if (!props.threadId) {
             const thread = await Thread.new(db);
             props.threadId = thread.id;
@@ -26,6 +27,7 @@ export class Chat extends DatabaseObject {
         super('chat', db, props.id);
         this.threadId = props.threadId;
         this.name = props.name || '';
+        this.participant = props.participant || '';
     }
 
     //
