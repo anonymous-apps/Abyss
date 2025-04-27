@@ -1,14 +1,11 @@
-import { ToolDefinition } from '../../operations/invoke-graph/types';
 import { DataInterface } from '../data-interface';
 import { DatabaseObject } from '../data-interface.types';
-import { getExposedToolsInThread } from './operations/getExposedToolsInThread';
-import { getToolMessageDelta } from './operations/getToolMessageDelta';
 import { MessageSender, ThreadMessagePartial, ThreadProps, ThreadTurn } from './types';
 
 export class Thread extends DatabaseObject {
     private readonly turns: ThreadTurn[];
 
-    public static async new(db: DataInterface, props?: ThreadProps): Promise<Thread> {
+    public static async new(db: DataInterface, props: ThreadProps = {}): Promise<Thread> {
         const thread = new Thread(db, props);
         await db.saveThread(thread);
         return thread;
@@ -21,7 +18,7 @@ export class Thread extends DatabaseObject {
 
     private constructor(db: DataInterface, props?: ThreadProps) {
         super('thread', db, props?.id);
-        this.turns = props?.turns || [];
+        this.turns = props?.turns ?? [];
     }
 
     //
@@ -71,18 +68,5 @@ export class Thread extends DatabaseObject {
             return this.addTurn({ sender, partials });
         }
         return this.partialToTurn(...partials);
-    }
-
-    //
-    // Operations
-    //
-
-    public getListOfCurrentTools(): ToolDefinition[] {
-        return getExposedToolsInThread(this);
-    }
-
-    public async setCurrentTools(expectedTools: ToolDefinition[]): Promise<Thread> {
-        const { newThread, messages } = await getToolMessageDelta(this, expectedTools);
-        return newThread;
     }
 }

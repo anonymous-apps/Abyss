@@ -1,32 +1,9 @@
-import { ToolDefinition } from '../../operations/invoke-graph/types';
-
 export type MessageSender = 'user' | 'bot' | 'system';
-
-export type ToolDefinitionAddedMessagePartial = {
-    type: 'toolDefinitionAdded';
-    toolDefinitionAdded: {
-        toolDefinitions: ToolDefinition[];
-    };
-};
-
-export type ToolDefinitionRemovedMessagePartial = {
-    type: 'toolDefinitionRemoved';
-    toolDefinitionRemoved: {
-        toolDefinitions: ToolDefinition[];
-    };
-};
 
 export type TextMessagePartial = {
     type: 'text';
     text: {
         content: string;
-    };
-};
-
-export type ImageMessagePartial = {
-    type: 'image';
-    image: {
-        base64Data: string;
     };
 };
 
@@ -48,13 +25,7 @@ export type ToolResponseMessagePartial = {
     };
 };
 
-export type ThreadMessagePartial =
-    | TextMessagePartial
-    | ImageMessagePartial
-    | ToolRequestMessagePartial
-    | ToolResponseMessagePartial
-    | ToolDefinitionAddedMessagePartial
-    | ToolDefinitionRemovedMessagePartial;
+export type ThreadMessagePartial = TextMessagePartial | ToolRequestMessagePartial | ToolResponseMessagePartial;
 
 export interface ThreadTurn {
     sender: MessageSender;
@@ -62,6 +33,6 @@ export interface ThreadTurn {
 }
 
 export interface ThreadProps {
-    id: string;
-    turns: ThreadTurn[];
+    id?: string;
+    turns?: ThreadTurn[];
 }

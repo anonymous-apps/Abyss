@@ -1,7 +1,7 @@
 import { DebugInputNode } from './debug-input';
 import { DebugLogNode } from './debug-log';
-import { InputLanguageModelNode } from './inputLanguageModel';
-import { InvokeLanguageModelNode } from './InvokeLanguageModel';
+import { InputLanguageModelNode } from './inputChatMode';
+import { InvokeLanguageModelNode } from './InvokeChatModel';
 import { OnChatMessageNode } from './onChatMessage';
 import { WriteChatMessageNode } from './writeChatMessage';
 

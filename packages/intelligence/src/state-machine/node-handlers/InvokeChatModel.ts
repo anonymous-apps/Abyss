@@ -1,10 +1,11 @@
+import { Intelligence, Thread } from '../../constructs';
 import { GraphNodeDefinition } from '../graphs-objects/graph-node';
 import { NodeHandler } from '../node-handler';
 import { NodeExecutionResult, ResolveNodeData } from '../types';
 
 export class InvokeLanguageModelNode extends NodeHandler {
     constructor() {
-        super('invoke-language-model');
+        super('invoke-language-model', 'dynamic');
     }
 
     protected _getDefinition(): Omit<GraphNodeDefinition, 'id' | 'type'> {
@@ -14,12 +15,12 @@ export class InvokeLanguageModelNode extends NodeHandler {
             description: 'Invoke a language model',
             color: '#800080',
             inputPorts: {
-                languageModel: {
-                    id: 'languageModel',
+                chatModel: {
+                    id: 'chatModel',
                     type: 'data',
-                    dataType: 'language-model',
-                    name: 'Language Model',
-                    description: 'A language model',
+                    dataType: 'chat-model',
+                    name: 'Chat Model',
+                    description: 'A chat model',
                 },
                 thread: {
                     id: 'thread',
@@ -49,8 +50,29 @@ export class InvokeLanguageModelNode extends NodeHandler {
     }
 
     protected async _resolve(data: ResolveNodeData): Promise<NodeExecutionResult> {
+        const inputLanguageModel = data.resolvePort<Intelligence>('chatModel');
+        const thread = data.resolvePort<Thread>('thread');
+        const result = await inputLanguageModel.invokeAgainstThread(thread);
+        const outThread = await thread.addPartialWithSender('bot', {
+            type: 'text',
+            text: {
+                content: result.response,
+            },
+        });
+
         return {
-            portData: [],
+            portData: [
+                {
+                    portId: 'rawResponse',
+                    dataType: 'string',
+                    inputValue: result?.response,
+                },
+                {
+                    portId: 'newThread',
+                    dataType: 'thread',
+                    inputValue: outThread,
+                },
+            ],
         };
     }
 }

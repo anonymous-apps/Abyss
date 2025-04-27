@@ -1,4 +1,5 @@
-import { Thread, ThreadMessagePartial } from '../thread';
+import { Thread } from '../thread/thread';
+import { ThreadMessagePartial } from '../thread/types';
 
 type AIProviderBaseProps = {
     id: string;
@@ -31,7 +32,15 @@ export interface AIProviderAnthropic extends AIProviderBaseProps {
     };
 }
 
-export type IntelligenceProps = AIProviderGemini | AIProviderOpenAI | AIProviderAnthropic;
+export interface AIProviderStatic extends AIProviderBaseProps {
+    type: 'static';
+    provider: string;
+    modelId: string;
+    data: {
+        response: string;
+    };
+}
+export type IntelligenceProps = AIProviderGemini | AIProviderOpenAI | AIProviderAnthropic | AIProviderStatic;
 
 export interface InvokeModelChatResult {
     inputRaw: any;

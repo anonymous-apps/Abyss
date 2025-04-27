@@ -1,4 +1,4 @@
-import { Thread } from '../../../thread';
+import { Thread } from '../../../thread/thread';
 import { Intelligence } from '../../intelligence';
 import { AIProviderAnthropic } from '../../types';
 

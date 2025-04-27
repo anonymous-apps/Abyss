@@ -1,10 +1,10 @@
-import { GraphNodeDefinition } from '../..';
-
-import { GraphConnection } from '../..';
+import { GraphConnection } from '../../state-machine/graphs-objects/graph-connection';
+import { GraphNodeDefinition } from '../../state-machine/graphs-objects/graph-node';
 
 export interface GraphProps {
-    id: string;
-    name: string;
-    nodes: GraphNodeDefinition[];
-    connections: GraphConnection[];
+    id?: string;
+    name?: string;
+    nodes?: GraphNodeDefinition[];
+    connections?: GraphConnection[];
+    nodeParameters?: Record<string, Record<string, any>>;
 }

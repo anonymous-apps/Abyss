@@ -1,10 +1,11 @@
+import { Chat } from '../../constructs';
 import { GraphNodeDefinition } from '../graphs-objects/graph-node';
 import { NodeHandler } from '../node-handler';
 import { NodeExecutionResult, ResolveNodeData } from '../types';
 
 export class WriteChatMessageNode extends NodeHandler {
     constructor() {
-        super('write-chat-message');
+        super('write-chat-message', 'dynamic');
     }
 
     protected _getDefinition(): Omit<GraphNodeDefinition, 'id' | 'type'> {
@@ -34,6 +35,17 @@ export class WriteChatMessageNode extends NodeHandler {
     }
 
     protected async _resolve(data: ResolveNodeData): Promise<NodeExecutionResult> {
+        const message = data.resolvePort<string>('message');
+        const chat = data.resolvePort<Chat>('chat');
+        const thread = await chat.getThread();
+        const outThread = await thread.addPartialWithSender('user', {
+            type: 'text',
+            text: {
+                content: message,
+            },
+        });
+        await chat.updateThread(outThread.id);
+
         return {
             portData: [],
         };

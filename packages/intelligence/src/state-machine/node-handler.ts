@@ -4,10 +4,12 @@ import { NodeExecutionResult, ResolveNodeData } from './types';
 
 export abstract class NodeHandler {
     private id: string;
+    private type: 'static' | 'trigger' | 'dynamic';
     private static registry: Record<string, NodeHandler> = {};
 
-    constructor(id: string) {
+    constructor(id: string, type: 'static' | 'trigger' | 'dynamic') {
         this.id = id;
+        this.type = type;
         NodeHandler.registry[id] = this;
     }
 
@@ -16,6 +18,10 @@ export abstract class NodeHandler {
             throw new Error(`No handler found for node type ${node.type}`);
         }
         return NodeHandler.registry[node.type];
+    }
+
+    static isStaticData(node: GraphNodeDefinition): boolean {
+        return NodeHandler.getHandler(node).type === 'static';
     }
 
     // Definition

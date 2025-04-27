@@ -1,6 +1,6 @@
 import { DataInterface } from '../data-interface';
 import { DatabaseObject } from '../data-interface.types';
-import { Thread } from '../thread';
+import { Thread } from '../thread/thread';
 import { invokeProviderAgainstThread } from './operations/invokeProviderOnThread';
 import { IntelligenceProps } from './types';
 

@@ -9,19 +9,22 @@ export interface NodeResolutionBeganEvent {
     type: 'node-resolution-began';
     executionId: string;
     nodeId: string;
-    inputs: PortTriggerData[];
+    nodeType: string;
+    inputs: PortTriggerData<any>[];
 }
 
 export interface NodeResolutionCompletedEvent {
     type: 'node-resolution-completed';
     executionId: string;
     nodeId: string;
-    outputs: PortTriggerData[];
+    nodeType: string;
+    outputs: PortTriggerData<any>[];
 }
 
 export interface NodeResolutionFailedEvent {
     type: 'node-resolution-failed';
     executionId: string;
+    nodeType: string;
     nodeId: string;
     error: string;
     stack: string | undefined;

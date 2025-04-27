@@ -1,14 +1,18 @@
 import { DataInterface } from '../data-interface';
 import { DatabaseObject } from '../data-interface.types';
 import { Thread } from '../thread/thread';
-import { ChatProps } from './types';
+import { ChatProps, ChatPropsWithThread } from './types';
 
 export class Chat extends DatabaseObject {
     private threadId: string;
     public readonly name: string;
 
-    public static async new(db: DataInterface, props: ChatProps): Promise<Chat> {
-        const chat = new Chat(db, props);
+    public static async new(db: DataInterface, props: ChatProps = {}): Promise<Chat> {
+        if (!props.threadId) {
+            const thread = await Thread.new(db);
+            props.threadId = thread.id;
+        }
+        const chat = new Chat(db, props as ChatPropsWithThread);
         await db.saveChat(chat);
         return chat;
     }
@@ -18,10 +22,10 @@ export class Chat extends DatabaseObject {
         return chat;
     }
 
-    private constructor(db: DataInterface, props: ChatProps) {
+    private constructor(db: DataInterface, props: ChatPropsWithThread) {
         super('chat', db, props.id);
         this.threadId = props.threadId;
-        this.name = props.name;
+        this.name = props.name || '';
     }
 
     //

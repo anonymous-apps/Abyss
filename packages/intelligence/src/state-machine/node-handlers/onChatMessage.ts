@@ -4,7 +4,7 @@ import { NodeExecutionResult, ResolveNodeData } from '../types';
 
 export class OnChatMessageNode extends NodeHandler {
     constructor() {
-        super('on-chat-message');
+        super('on-chat-message', 'trigger');
     }
 
     protected _getDefinition(): Omit<GraphNodeDefinition, 'id' | 'type'> {
@@ -35,7 +35,7 @@ export class OnChatMessageNode extends NodeHandler {
 
     protected async _resolve(data: ResolveNodeData): Promise<NodeExecutionResult> {
         return {
-            portData: [],
+            portData: data.portData,
         };
     }
 }

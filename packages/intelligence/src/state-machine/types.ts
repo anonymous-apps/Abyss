@@ -1,25 +1,26 @@
-import { Intelligence } from '../constructs';
-import { Chat } from '../constructs/chat/chat';
-import { Thread } from '../constructs/thread/thread';
+import { DataInterface } from '../constructs';
 import { GraphNodeDefinition } from './graphs-objects/graph-node';
 import { StateMachineExecution } from './state-machine-execution';
 
-export type PortDataType = 'string' | 'number' | 'boolean' | 'thread' | 'intelligence' | 'chat';
+export type PortDataType = 'string' | 'number' | 'boolean' | 'thread' | 'chat-model' | 'chat';
 
-export interface PortTriggerData {
+export interface PortTriggerData<T> {
     portId: string;
     dataType: PortDataType;
-    inputValue: string | number | boolean | Thread | Intelligence | Chat;
+    inputValue: T;
 }
 
 export interface ResolveNodeData {
     execution: StateMachineExecution;
     node: GraphNodeDefinition;
-    portData: PortTriggerData[];
+    portData: PortTriggerData<any>[];
+    resolvePort<T>(portId: string): T;
+    parameters: Record<string, any>;
+    db: DataInterface;
 }
 
 export interface NodeExecutionResult {
-    portData: PortTriggerData[];
+    portData: PortTriggerData<any>[];
 }
 
 export interface GraphInputEventOnUserChat {

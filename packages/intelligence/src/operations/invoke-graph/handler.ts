@@ -1,24 +1,21 @@
 import { PortTriggerData, StateMachineExecution } from '../../state-machine';
-import { StateGraph } from '../../state-machine/graphs-objects/state-graph';
-import { Log } from '../../utils/logs';
 import { InvokeGraphParams } from './types';
 
-export async function invokeGraph(options: InvokeGraphParams) {
+export async function invokeGraphHandler(options: InvokeGraphParams) {
     const { db, graphId, input } = options;
-    Log.log('invokeGraph', `Invoking graph ${graphId}`);
 
     // Load the data
     const graph = await db.loadGraph(graphId);
 
     // Build the port trigger values
-    const triggerValues: PortTriggerData[] = [];
+    const triggerValues: PortTriggerData<any>[] = [];
     let inputNodeId: string | undefined;
     for (const node of graph.getNodes()) {
         if (node.type === 'on-chat-message' && options.input.type === 'onUserChat') {
             const chat = await db.loadChat(input.chatId);
             const thread = await chat.getThread();
             inputNodeId = node.id;
-            const ports = node.inputPorts;
+            const ports = node.outputPorts;
             for (const port of Object.values(ports)) {
                 if (port.dataType === 'thread') {
                     triggerValues.push({
@@ -44,7 +41,8 @@ export async function invokeGraph(options: InvokeGraphParams) {
     }
 
     // Execute
-    const stateGraph = new StateGraph(graph.getNodes(), graph.getConnections());
-    const execution = new StateMachineExecution(graphId, stateGraph);
+    const execution = new StateMachineExecution(graphId, db, graph);
     await execution.invoke(inputNodeId, triggerValues);
+
+    console.dir(execution.getEvents(), { depth: 3 });
 }
