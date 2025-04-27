@@ -1,4 +1,4 @@
-import { ToolDefinition } from '../../operations/respond-conversation/types';
+import { ToolDefinition } from '../../operations/invoke-graph/types';
 import { DataInterface } from '../data-interface';
 import { DatabaseObject } from '../data-interface.types';
 import { getExposedToolsInThread } from './operations/getExposedToolsInThread';

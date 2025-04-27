@@ -1,4 +1,4 @@
-import { ToolDefinition } from '../../../operations/respond-conversation/types';
+import { ToolDefinition } from '../../../operations/invoke-graph/types';
 import { Thread } from '../thread';
 
 export function getExposedToolsInThread(thread: Thread): ToolDefinition[] {

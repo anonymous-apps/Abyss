@@ -1,20 +1,29 @@
 import { GraphConnection } from './graph-connection';
 import { GraphNodeDefinition } from './graph-node';
 
-interface StateGraphData {}
-
 export class StateGraph {
     private nodes: Record<string, GraphNodeDefinition> = {};
     private connectionsByNodeId: Record<string, Record<string, GraphConnection>> = {};
 
-    constructor() {}
+    constructor(nodes: GraphNodeDefinition[] = [], connections: GraphConnection[] = []) {
+        this.addNodes(nodes);
+        this.addConnections(connections);
+    }
 
     //
     // Building
     //
 
+    public addNodes(nodes: GraphNodeDefinition[]) {
+        nodes.forEach(node => this.addNode(node));
+    }
+
     public addNode(node: GraphNodeDefinition) {
         this.nodes[node.id] = node;
+    }
+
+    public addConnections(connections: GraphConnection[]) {
+        connections.forEach(connection => this.addConnection(connection));
     }
 
     public addConnection(connection: GraphConnection) {

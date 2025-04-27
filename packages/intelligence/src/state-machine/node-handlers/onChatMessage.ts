@@ -15,19 +15,12 @@ export class OnChatMessageNode extends NodeHandler {
             color: '#FFA500',
             inputPorts: {},
             outputPorts: {
-                message: {
-                    id: 'message',
-                    type: 'data',
-                    dataType: 'string',
-                    name: 'Message',
-                    description: 'The message raw sent to the agent chat',
-                },
                 thread: {
                     id: 'thread',
                     type: 'data',
                     dataType: 'thread',
                     name: 'Thread',
-                    description: 'A thread representing the chat history with the newly sent message',
+                    description: 'A thread representing the chat history with the newly sent user message',
                 },
                 chat: {
                     id: 'chat',

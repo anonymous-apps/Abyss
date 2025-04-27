@@ -1,5 +1,7 @@
+import { Chat } from './chat/chat';
 import { DataInterface } from './data-interface';
-import { Thread } from './thread';
+import { Graph } from './graph/graph';
+import { Thread } from './thread/thread';
 
 export class MockedDataInterface extends DataInterface {
     private _records: Record<string, any> = {};
@@ -12,11 +14,27 @@ export class MockedDataInterface extends DataInterface {
         return this._records[id];
     }
 
+    public async saveChat(chat: Chat) {
+        this._records[chat.id] = chat;
+    }
+
+    public async loadChat(id: string) {
+        return this._records[id];
+    }
+
     public async saveIntelligence(intelligence: any) {
         this._records[intelligence.id] = intelligence;
     }
 
     public async loadIntelligence(id: string) {
+        return this._records[id];
+    }
+
+    public async saveGraph(graph: Graph) {
+        this._records[graph.id] = graph;
+    }
+
+    public async loadGraph(id: string) {
         return this._records[id];
     }
 }

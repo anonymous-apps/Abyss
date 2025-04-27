@@ -1,7 +1,9 @@
+import { PortDataType } from '../types';
+
 export interface GraphPortData {
     id: string;
     type: 'data' | 'signal';
-    dataType: 'string' | 'number' | 'boolean' | 'thread' | 'language-model' | 'chat';
+    dataType: PortDataType;
     name: string;
     description: string;
 }
@@ -9,7 +11,7 @@ export interface GraphPortData {
 export class GraphPort {
     public readonly id: string;
     public readonly type: 'data' | 'signal';
-    public readonly dataType: 'string' | 'number' | 'boolean' | 'thread' | 'language-model' | 'chat';
+    public readonly dataType: PortDataType;
     public readonly name: string;
     public readonly description: string;
 
