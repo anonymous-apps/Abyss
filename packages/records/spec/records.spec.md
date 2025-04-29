@@ -54,10 +54,10 @@ If you are adding a new record type, please add it to the /src/prisma.type.ts fi
 
 Every record type, extend `BaseRecordProps` which has id, createdAt, updatedAt. Below defines only the properties of the record.
 
-### document
+### textDocument
 
 ```ts
-export interface Document extends BaseRecordProps {
+export interface TextDocument extends BaseRecordProps {
     // Title of this document
     title: string;
 
