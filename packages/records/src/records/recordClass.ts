@@ -7,7 +7,7 @@ export interface BaseRecordProps {
 }
 
 export abstract class RecordClass<T extends BaseRecordProps> {
-    protected readonly controller: RecordController<T>;
+    public readonly controller: RecordController<T>;
 
     public id: string;
     public createdAt: Date;

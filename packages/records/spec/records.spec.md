@@ -3,7 +3,7 @@
 Hello, AI Agent, you will be using this document to write and maintain the /src/records directory.
 Below you will find details on exactly how to strure this directory.
 
-Plesea do exactly the following if you are reading this file:
+YOU MUST do exactly the following if you are reading this file. THIS IS YOUR PRIMARY GOAL.
 
 1. Run a "git diff" on this file to see what the user has changed
 2. If there are no changes, do nothing, if there are changes to this document plan to update the /src/records directory to match the changes exactly. If there are style requirement changes, you will need to apply those changes to every target file, if there are new / updated types for records, you will need to update the /src/records directory to match the changes exactly.
@@ -92,3 +92,59 @@ export interface ModelConnection extends BaseRecordProps {
     data: any;
 }
 ```
+
+### messageThread
+
+a thread is a immutable list of chat turns with partial messages in each turn.
+
+```ts
+export interface MessageThread extends BaseRecordProps {
+    turns: MessageTurn[];
+}
+```
+
+Each turn has a senderId and a list of partial messages.
+
+```ts
+export interface MessageTurn extends BaseRecordProps {
+    senderId: string;
+    partials: MessagePartial[];
+}
+```
+
+Each partial has a type and a payload where the payload is dependent on the type.
+
+```ts
+export interface TextPartial extends MessagePartial {
+    type: 'text';
+    payload: {
+        content: string;
+    };
+}
+
+export interface ToolRequestPartial extends MessagePartial {
+    type: 'toolRequest';
+    payload: {
+        callId: string;
+        shortId: string;
+        input: any;
+    };
+}
+
+export interface ToolResponsePartial extends MessagePartial {
+    type: 'toolResponse';
+    payload: {
+        callId: string;
+        status: Status; // from shared.type.ts
+        output: string;
+    };
+}
+
+export type MessagePartial = TextPartial | ToolRequestPartial | ToolResponsePartial;
+```
+
+The MessageThread.ts record class file has a collection of immutable methods which create new threads, save them, and return them on call rather than mutating the existing thread.
+
+Methods like:
+
+-   addPartial(sender: string, message: MessagePartial) which starts a new turn if needed or adds to current, then adds the message.
