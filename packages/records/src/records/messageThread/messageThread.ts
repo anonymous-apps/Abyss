@@ -10,15 +10,9 @@ export class MessageThreadRecord extends RecordClass<MessageThread> {
         this.turns = data.turns;
     }
 
-    /**
-     * Adds a new partial message to the thread, creating a new turn if needed.
-     * This is an immutable operation that returns a new MessageThreadRecord.
-     */
-    async addPartial(senderId: string, message: MessagePartial): Promise<MessageThreadRecord> {
+    async addPartial(senderId: string, ...messages: MessagePartial[]): Promise<MessageThreadRecord> {
         const currentTurn = this.turns[this.turns.length - 1];
 
-        // If there's no current turn or the current turn has a different sender,
-        // create a new turn
         const newTurns = [...this.turns];
         if (!currentTurn || currentTurn.senderId !== senderId) {
             newTurns.push({
@@ -26,14 +20,13 @@ export class MessageThreadRecord extends RecordClass<MessageThread> {
                 createdAt: new Date(),
                 updatedAt: new Date(),
                 senderId,
-                partials: [message],
+                partials: messages,
             });
         } else {
-            // Add to existing turn
             newTurns[newTurns.length - 1] = {
                 ...currentTurn,
                 updatedAt: new Date(),
-                partials: [...currentTurn.partials, message],
+                partials: [...currentTurn.partials, ...messages],
             };
         }
 

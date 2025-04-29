@@ -148,3 +148,16 @@ The MessageThread.ts record class file has a collection of immutable methods whi
 Methods like:
 
 -   addPartial(sender: string, message: MessagePartial) which starts a new turn if needed or adds to current, then adds the message.
+
+### chatThread
+
+A chat thread is a wrapper around a thread but with details on who we are chatting with.
+
+```ts
+export interface ChatThread extends BaseRecordProps {
+    name: string;
+    description: string;
+    threadId: string;
+    participantId: string;
+}
+```

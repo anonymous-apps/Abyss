@@ -1,0 +1,9 @@
+model chatThread {
+    id            String   @id @default(uuid())
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
+    name          String
+    description   String
+    threadId      String
+    participantId String
+} 

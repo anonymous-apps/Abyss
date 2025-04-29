@@ -1,4 +1,5 @@
 import { PrismaConnection } from './prisma';
+import { ChatThreadController } from './records/chatThread/chatThread.controller';
 import { MessageThreadController } from './records/messageThread/messageThread.controller';
 import { ModelConnectionController } from './records/modelConnection/modelConnection.controller';
 import { TextDocumentController } from './records/textDocument/textDocument.controller';
@@ -7,6 +8,7 @@ export interface TableReferences {
     textDocument: TextDocumentController;
     modelConnection: ModelConnectionController;
     messageThread: MessageThreadController;
+    chatThread: ChatThreadController;
 }
 
 export function buildTableReferences(connection: PrismaConnection): TableReferences {
@@ -14,5 +16,6 @@ export function buildTableReferences(connection: PrismaConnection): TableReferen
         textDocument: new TextDocumentController(connection),
         modelConnection: new ModelConnectionController(connection),
         messageThread: new MessageThreadController(connection),
+        chatThread: new ChatThreadController(connection),
     };
 }
