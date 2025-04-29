@@ -1,6 +1,6 @@
-import { GraphNodeDefinition } from '../graphs-objects/graph-node';
 import { NodeHandler } from '../node-handler';
-import { NodeExecutionResult, ResolveNodeData } from '../types';
+import { GraphNodeDefinition } from '../object-definitions/graph-node';
+import { NodeExecutionResult, ResolveNodeData } from '../type-base.type';
 
 export class DebugInputNode extends NodeHandler {
     constructor() {

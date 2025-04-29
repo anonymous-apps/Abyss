@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { Chat, Graph, Intelligence } from '../../constructs';
 import { MockedDataInterface } from '../../constructs/data-interface.mock';
 import { Nodes } from '../../state-machine';
-import { GraphConnection } from '../../state-machine/graphs-objects/graph-connection';
+import { GraphConnection } from '../../state-machine/object-definitions/graph-connection';
 import { invokeGraphHandler } from './handler';
 
 describe('invokeGraph', () => {

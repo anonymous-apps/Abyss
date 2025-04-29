@@ -1,9 +1,8 @@
-import { DataInterface, Graph } from '../constructs';
-import { GraphNodeDefinition } from './graphs-objects/graph-node';
 import { NodeHandler } from './node-handler';
 import './node-handlers';
-import { PortTriggerData } from './types';
-import { StateMachineEvent } from './types.events';
+import { GraphNodeDefinition } from './object-definitions/graph-node';
+import { PortTriggerData } from './type-base.type';
+import { StateMachineEvent } from './type-events.type.ts';
 
 export class StateMachineExecution {
     private static maxInvokeCount = 100;
@@ -81,7 +80,6 @@ export class StateMachineExecution {
         return Object.values(node?.inputPorts ?? {}).every(p => this.portValues[nodeId]?.[p.id]);
     }
 
-    // Start this graph by triggering an input node
     public async invoke(inputNode: string, portData: PortTriggerData<any>[]) {
         this.addEvent({ type: 'execution-began', executionId: this.executionId });
         try {

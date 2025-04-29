@@ -16,7 +16,7 @@ export interface AgentGraphEdge extends BaseRecordProps {
     targetPortId: string;
 }
 
-export interface AgentGraph extends BaseRecordProps {
+export interface AgentGraphType extends BaseRecordProps {
     name: string;
     description: string;
     nodes: AgentGraphNode[];

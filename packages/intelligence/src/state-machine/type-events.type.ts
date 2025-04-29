@@ -1,4 +1,4 @@
-import { PortTriggerData } from './types';
+import { PortTriggerData } from './type-base.type';
 
 export interface ExecutionBeganEvent {
     type: 'execution-began';

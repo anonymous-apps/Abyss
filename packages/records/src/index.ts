@@ -1,4 +1,7 @@
 export { PrismaConnection } from './prisma';
+export * from './records/agentGraph/agentGraph';
+export * from './records/agentGraph/agentGraph.controller';
+export * from './records/agentGraph/agentGraph.type';
 export * from './records/chatThread/chatThread';
 export * from './records/chatThread/chatThread.controller';
 export * from './records/chatThread/chatThread.type';

@@ -1,14 +1,14 @@
 import { RecordClass } from '../recordClass';
 import { ChatThreadController } from './chatThread.controller';
-import { ChatThread } from './chatThread.type';
+import { ChatThreadType } from './chatThread.type';
 
-export class ChatThreadClass extends RecordClass<ChatThread> {
+export class ChatThreadRecord extends RecordClass<ChatThreadType> {
     public name: string;
     public description: string;
     public threadId: string;
     public participantId: string;
 
-    constructor(controller: ChatThreadController, data: ChatThread) {
+    constructor(controller: ChatThreadController, data: ChatThreadType) {
         super(controller, data);
         this.name = data.name;
         this.description = data.description;

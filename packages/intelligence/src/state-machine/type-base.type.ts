@@ -1,8 +1,6 @@
-import { DataInterface } from '../constructs';
-import { GraphNodeDefinition } from './graphs-objects/graph-node';
+import { DataInterface } from '../../dist/constructs/data-interface';
 import { StateMachineExecution } from './state-machine-execution';
-
-export type PortDataType = 'string' | 'number' | 'boolean' | 'thread' | 'chat-model' | 'chat';
+import { GraphNodeDefinition, PortDataType } from './type-definition.type';
 
 export interface PortTriggerData<T> {
     portId: string;
@@ -22,10 +20,3 @@ export interface ResolveNodeData {
 export interface NodeExecutionResult {
     portData: PortTriggerData<any>[];
 }
-
-export interface GraphInputEventOnUserChat {
-    type: 'onUserChat';
-    chatId: string;
-}
-
-export type GraphInputEvent = GraphInputEventOnUserChat;

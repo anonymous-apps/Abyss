@@ -1,8 +1,8 @@
 import { RecordClass } from '../recordClass';
 import { RecordController } from '../recordController';
-import { AgentGraphEdge, AgentGraphNode, AgentGraph as AgentGraphType } from './agentGraph.type';
+import { AgentGraphEdge, AgentGraphNode, AgentGraphType } from './agentGraph.type';
 
-export class AgentGraph extends RecordClass<AgentGraphType> {
+export class AgentGraphRecord extends RecordClass<AgentGraphType> {
     public name: string;
     public description: string;
     public nodes: AgentGraphNode[];
@@ -32,7 +32,7 @@ export class AgentGraph extends RecordClass<AgentGraphType> {
         return this.edges.find(edge => edge.sourceNodeId === nodeId && edge.sourcePortId === portId);
     }
 
-    public async setNodeParameters(nodeId: string, parameters: Record<string, any>): Promise<AgentGraph> {
+    public async setNodeParameters(nodeId: string, parameters: Record<string, any>): Promise<AgentGraphRecord> {
         const node = this.getNode(nodeId);
         if (!node) {
             throw new Error(`Node with id ${nodeId} not found`);
@@ -42,7 +42,7 @@ export class AgentGraph extends RecordClass<AgentGraphType> {
         return this;
     }
 
-    public async setNodePosition(nodeId: string, position: { x: number; y: number }): Promise<AgentGraph> {
+    public async setNodePosition(nodeId: string, position: { x: number; y: number }): Promise<AgentGraphRecord> {
         const node = this.getNode(nodeId);
         if (!node) {
             throw new Error(`Node with id ${nodeId} not found`);
@@ -52,13 +52,13 @@ export class AgentGraph extends RecordClass<AgentGraphType> {
         return this;
     }
 
-    public async setNodes(nodes: AgentGraphNode[]): Promise<AgentGraph> {
+    public async setNodes(nodes: AgentGraphNode[]): Promise<AgentGraphRecord> {
         this.nodes = nodes;
         await this.save();
         return this;
     }
 
-    public async setConnections(connections: AgentGraphEdge[]): Promise<AgentGraph> {
+    public async setConnections(connections: AgentGraphEdge[]): Promise<AgentGraphRecord> {
         this.edges = connections;
         await this.save();
         return this;
