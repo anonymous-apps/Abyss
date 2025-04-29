@@ -18,4 +18,4 @@ prisma format --schema=./prisma/schema.prisma
 prisma generate --schema=./prisma/schema.prisma
 
 # Migrate the database
-prisma migrate dev --schema=./prisma/schema.prisma
+prisma migrate dev --schema=./prisma/schema.prisma -n "$(date +%s)_$(openssl rand -hex 4)"
