@@ -1,4 +1,6 @@
 import { PrismaConnection } from '@abyss/records';
 import { contextBridge } from 'electron';
 
-contextBridge.exposeInMainWorld('sqlite', new PrismaConnection());
+export const connection = new PrismaConnection();
+
+contextBridge.exposeInMainWorld('abyss-sqlite', connection.export());

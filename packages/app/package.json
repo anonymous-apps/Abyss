@@ -17,9 +17,9 @@
         "bump": "npm version patch"
     },
     "dependencies": {
-        "@abyss/intelligence": "@abyss/intelligence",
-        "@abyss/records": "@abyss/records",
-        "@abyss/ui-components": "@abyss/ui-components",
+        "@abyss/intelligence": "^0.0.1",
+        "@abyss/records": "^0.0.2",
+        "@abyss/ui-components": "^0.0.1",
         "@xyflow/react": "^12.6.0",
         "axios": "^1.8.4",
         "date-fns": "^4.1.0",

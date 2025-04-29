@@ -1,6 +1,6 @@
 import { app, BrowserWindow, IpcMain, IpcMainInvokeEvent } from 'electron';
 import { setupAutoUpdater } from './handlers/auto-update';
-
+import { setupDatabaseConnectionHandlers } from './handlers/database-connection';
 export class AppController {
     private mainWindow: BrowserWindow | null;
     private ipcMain: IpcMain | null;
@@ -34,12 +34,15 @@ export class AppController {
         this.ipcMain?.handle(channel, handler);
     }
 
-    public setupAutoUpdater() {
+    public setupAutoUpdaterHandlers() {
         setupAutoUpdater(this);
     }
 
     public setupAppInfoHandlers() {
-        // Use Electron's built-in getVersion method instead of reading package.json
         this.addIpcHandler('get-app-version', () => app.getVersion());
+    }
+
+    public setupDatabaseConnectionHandlers() {
+        setupDatabaseConnectionHandlers(this);
     }
 }

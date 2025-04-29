@@ -132,4 +132,41 @@ export class PrismaConnection {
     public notifyRecord(table: keyof TableReferences, record: any) {
         this.notifySubscribers(table, record, false);
     }
+
+    // This is very hacky, but it allows the electron render process to directly call methods on the PrismaConnection instance
+    // This means that the UI (and not just the main process) can directly subscribe to and update table records
+    // Not ideal, but it works for now and would slow down development speed if this is changed
+    // TODO: Find a better solution in the future
+    export(): this {
+        const exportedMethods: Record<string, any> = {};
+
+        // First, include own properties (if any are functions)
+        Object.getOwnPropertyNames(this)
+            .filter(name => name !== 'constructor' && name !== 'export')
+            .forEach(name => {
+                const property = this[name as keyof this];
+                if (typeof property === 'function') {
+                    exportedMethods[name] = property.bind(this);
+                }
+            });
+
+        // Then, traverse the prototype chain to get inherited methods
+        let proto = Object.getPrototypeOf(this);
+        while (proto && proto !== Object.prototype) {
+            Object.getOwnPropertyNames(proto)
+                .filter(name => name !== 'constructor' && name !== 'export')
+                .forEach(name => {
+                    // Only add if not already added (i.e. not overridden in the instance)
+                    if (!(name in exportedMethods)) {
+                        const descriptor = Object.getOwnPropertyDescriptor(proto, name);
+                        if (descriptor && typeof descriptor.value === 'function') {
+                            exportedMethods[name] = descriptor.value.bind(this);
+                        }
+                    }
+                });
+            proto = Object.getPrototypeOf(proto);
+        }
+
+        return exportedMethods as unknown as this;
+    }
 }

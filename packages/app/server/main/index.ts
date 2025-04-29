@@ -52,10 +52,15 @@ async function createWindow() {
         visualEffectState: 'active', // Ensures the effect is always active
     });
 
+    if (process.env.NODE_ENV === 'development') {
+        window.webContents.openDevTools();
+    }
+
     appController.setMainWindow(window);
     appController.setIpcMain(ipcMain);
-    appController.setupAutoUpdater();
+    appController.setupAutoUpdaterHandlers();
     appController.setupAppInfoHandlers();
+    appController.setupDatabaseConnectionHandlers();
     window.setWindowButtonVisibility(false);
 
     if (url) {

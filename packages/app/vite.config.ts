@@ -15,6 +15,7 @@ export default defineConfig({
                     build: {
                         outDir: 'dist-electron/main',
                         rollupOptions: {
+                            external: ['@abyss/intelligence', '@abyss/records'],
                             output: {
                                 entryFileNames: '[name].mjs',
                             },
@@ -28,7 +29,7 @@ export default defineConfig({
                     build: {
                         outDir: 'dist-electron/preload',
                         rollupOptions: {
-                            external: ['@abyss/intelligence'],
+                            external: ['@abyss/intelligence', '@abyss/records'],
                             output: {
                                 entryFileNames: '[name].mjs',
                             },
