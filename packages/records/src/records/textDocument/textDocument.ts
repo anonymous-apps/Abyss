@@ -2,7 +2,7 @@ import { RecordClass } from '../recordClass';
 import { TextDocumentController } from './textDocument.controller';
 import { TextDocument as TextDocumentType } from './textDocument.type';
 
-export class TextDocument extends RecordClass<TextDocumentType> {
+export class TextDocumentRecord extends RecordClass<TextDocumentType> {
     public title: string;
     public type: 'markdown';
     public content: string;

@@ -1,0 +1,12 @@
+model modelConnection {
+    id          String   @id @default(uuid())
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    name        String
+    description String
+    accessFormat String
+    providerId  String
+    modelId     String
+    data        Json
+} 

@@ -46,7 +46,7 @@ If you are adding a new record type, please add it to the /src/prisma.type.ts fi
 /src/records/[record]/[record].ts
 
 -   This is the main class created in memory for the record when loaded from the database.
--   It should extend RecordClass<RecordType>
+-   It should extend RecordClass<RecordType> and have public properties for each column in the record outside of the shared base properties.
 -   It should make use of inherited methods, ideally NO new methods are added here.
 -   Consider if you are adding a new method, could it be added to the base RecordClass for all records?
 
@@ -70,5 +70,25 @@ export interface TextDocument extends BaseRecordProps {
     // We want a way to track versions, we will do this by linking to the previous document and next document in a linked list
     previousId: string | null;
     nextId: string | null;
+}
+```
+
+### modelConnection
+
+```ts
+export interface ModelConnection extends BaseRecordProps {
+    // Name of the connection and description
+    name: string;
+    description: string;
+
+    // Format for accessing the model, determines api call structure
+    accessFormat: 'gemini' | 'openai' | 'anthropic';
+
+    // ID of the provider and model
+    providerId: string;
+    modelId: string;
+
+    // Additional data for the connection stored as JSON
+    data: any;
 }
 ```
