@@ -1,13 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import path from 'path';
-import { DocumentController } from './records/document/document.controller';
-import { ModelConnectionController } from './records/modelConnection/modelConnection.controller';
+import { buildTableReferences, TableReferences } from './prisma.type';
 import { randomId } from './utils/ids';
-
-export interface TableReferences {
-    document: DocumentController;
-    modelConnection: ModelConnectionController;
-}
 
 export class PrismaConnection {
     // The Prisma client
@@ -23,14 +17,11 @@ export class PrismaConnection {
                 },
             },
         });
-        this.table = {
-            document: new DocumentController(this),
-            modelConnection: new ModelConnectionController(this),
-        };
+        this.table = buildTableReferences(this);
     }
 
     public _reference(table: string) {
-        return this.client[table as keyof TableReferences];
+        return this.client[table as any];
     }
 
     // Connection subscriptions - hierarchical structure

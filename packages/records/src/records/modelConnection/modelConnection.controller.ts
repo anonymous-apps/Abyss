@@ -4,6 +4,6 @@ import { ModelConnection } from './modelConnection.type';
 
 export class ModelConnectionController extends RecordController<ModelConnection> {
     constructor(connection: PrismaConnection) {
-        super('ModelConnection', connection);
+        super('modelConnection', connection);
     }
 }

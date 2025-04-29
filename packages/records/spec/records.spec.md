@@ -9,7 +9,6 @@ Plesea do exactly the following if you are reading this file:
 2. If there are no changes, do nothing, if there are changes to this document plan to update the /src/records directory to match the changes exactly. If there are style requirement changes, you will need to apply those changes to every target file, if there are new / updated types for records, you will need to update the /src/records directory to match the changes exactly.
 3. Before you begin, set out a plan. For this, create a new file called ./plan.md which is a checklist of each change you need to make. Use this file to track your progress. There may be multiple changes to make, so make sure to check the plan.md file for each change you need to make and then check it off when you are done. If you find out there are more changes, add them to the list. Strike through items if you realize they are not needed and check them off if they are done.
 4. Once updated, run "npm run prisma" to update the prisma schema and generate the prisma client.
-5. Finally, run "git commit -am " with a message that describes the changes you made as your final task.
 
 ## Style and structure
 
@@ -41,6 +40,8 @@ export class XXXController extends RecordController<XXXXX> {
 -   Should be exactly the same as the typescript type.
 -   This will be joined together into a larger schema automatically.
 -   I dont want columns referencing eachother or anything fancy, for references use OtherRecordId : string for definitions rather than something like OtherRecord : MyOtherRecord
+
+If you are adding a new record type, please add it to the /src/prisma.type.ts file so that the table references are updated. You may get type errors until you do this. Table names are all lowercase camelCase.
 
 ## Record Types
 
