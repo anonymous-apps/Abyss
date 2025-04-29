@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Database } from '../main';
-import { useDatabaseTableSubscription } from './database-connection';
+import { useDatabaseTableQuery } from './database-connection';
 
 export async function applyTheme() {
     const userSettings = await Database.table.userSettings.get();
@@ -8,7 +8,7 @@ export async function applyTheme() {
 }
 
 export async function useTheme() {
-    const userSettings = useDatabaseTableSubscription('UserSettings', db => db.table.userSettings.get());
+    const userSettings = useDatabaseTableQuery('UserSettings', db => db.table.userSettings.get());
     useEffect(() => {
         document.documentElement.setAttribute('data-theme', userSettings.data?.theme || 'etherial');
     }, [userSettings.data?.theme]);

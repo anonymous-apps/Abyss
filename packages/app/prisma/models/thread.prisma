@@ -1,8 +1,0 @@
-model Thread {
-  id         String   @id 
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  // The turns in the thread
-  turns Json
-} 

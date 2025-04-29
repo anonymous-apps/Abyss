@@ -1,29 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router';
 import { HeaderBar } from './library/header-bar';
-import { AgentsPage } from './pages/agents/agents-page.page';
-import { ViewAgentGraphPage } from './pages/agents/view-agent-graph';
-import { ChatCreatePage } from './pages/chats/create.page';
-import { ChatMainPage } from './pages/chats/main.page';
-import { ChatViewPage } from './pages/chats/view.page';
-import { ListTablesPage } from './pages/database/database.page';
-import { ViewTableRecordPage } from './pages/database/record.page';
-import { ViewTablePage } from './pages/database/table.page';
-import { DocumentsPage } from './pages/documents/documents-page.page';
-import { ViewDocumentPage } from './pages/documents/view-document.page';
 import { MainPage } from './pages/main/main';
-import { MetricsChartPage } from './pages/metrics/metrics-chart.page';
-import { MetricsPage } from './pages/metrics/metrics.page';
-import { ModelProfileCreatePage } from './pages/models/create.page';
-import { ModelProfileMainPage } from './pages/models/main.page';
-import { ModelProfileViewPage } from './pages/models/view.page';
-import { CreatePromptPage } from './pages/prompts/create-prompt.page';
-import { PromptsPage } from './pages/prompts/prompts-page.page';
-import { ViewPromptPage } from './pages/prompts/view-prompt.page';
-import { SettingsPage } from './pages/settings/settings.page';
-import { ToolsPage } from './pages/tool/tools.page';
-import { ToolViewPage } from './pages/tool/view.page';
-import { WithAppSidebar } from './pages/withSidebar';
 import { useTheme } from './state/theme-state';
 
 export function App() {
@@ -36,7 +14,7 @@ export function App() {
                 <HeaderBar />
                 <Routes>
                     <Route path="/" element={<MainPage />} />
-                    <Route path="/" element={<WithAppSidebar />}>
+                    {/* <Route path="/" element={<WithAppSidebar />}>
                         <Route path="/settings" element={<SettingsPage />} />
                         <Route path="/models" element={<ModelProfileMainPage />} />
                         <Route path="/models/create" element={<ModelProfileCreatePage />} />
@@ -59,7 +37,7 @@ export function App() {
                         <Route path="/prompts/id/:id" element={<ViewPromptPage />} />
                         <Route path="/documents" element={<DocumentsPage />} />
                         <Route path="/documents/id/:id" element={<ViewDocumentPage />} />
-                    </Route>
+                    </Route> */}
                     <Route path="*" element={<MainPage />} />
                 </Routes>
             </BrowserRouter>

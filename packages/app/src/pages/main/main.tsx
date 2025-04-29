@@ -2,25 +2,16 @@ import { IconOption } from '@abyss/ui-components';
 import { Box, DatabaseIcon, MessageCircle, Play, Settings } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { Logo } from '../../library/logos';
-import { Database } from '../../main';
-import { useTableRecordUserSettings } from '../../state/database-connection';
+import { useSettings } from '../../state/database-access-utils';
 import { useSidebarFadeStore } from '../../state/sidebar-fade';
+
 export function MainPage() {
     const navigate = useNavigate();
+    const settings = useSettings();
 
     const [sidebarWidth, setSidebarWidth] = useState('40vw');
     const [contentOpacity, setContentOpacity] = useState(1);
     const { setSidebarFadeable } = useSidebarFadeStore();
-    const userSettings = useTableRecordUserSettings();
-    const [bootstrapped, setBootstrapped] = useState(false);
-
-    useEffect(() => {
-        if (!userSettings.loading && userSettings.data && !userSettings.data.bootstrapped && !bootstrapped) {
-            Database.bootstrap.bootstrapping.bootstrapDB();
-            setBootstrapped(true);
-        }
-    }, [bootstrapped, userSettings.loading]);
 
     useEffect(() => {
         setSidebarFadeable(true);
@@ -35,7 +26,7 @@ export function MainPage() {
     };
 
     //@ts-ignore
-    const logoPath = window.fs.assetPath('logo.png');
+    // const logoPath = window.fs.assetPath('logo.png');
 
     return (
         <div className="flex h-screen">
@@ -43,7 +34,6 @@ export function MainPage() {
                 className="flex flex-col items-center justify-center transition-all duration-[1s] display-font"
                 style={{ width: sidebarWidth, opacity: contentOpacity }}
             >
-                <Logo logo="abyss" size={250} />
                 <div
                     className="text-4xl font-bold text-center transition-all duration-[1s] text-text-300"
                     style={{ opacity: contentOpacity }}

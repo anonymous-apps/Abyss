@@ -3,7 +3,6 @@ import fs from 'node:fs';
 import path, { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { AppController } from './app-controller';
-import { runMigrations } from './handlers/prisma';
 
 // Setup __filename and __dirname for ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -73,13 +72,6 @@ if (!app.requestSingleInstanceLock()) {
 }
 
 app.whenReady().then(async () => {
-    try {
-        await runMigrations();
-    } catch (error) {
-        console.error('Migrations failed:', error);
-        app.quit();
-        return;
-    }
     createWindow();
 });
 

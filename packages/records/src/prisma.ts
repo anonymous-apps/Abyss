@@ -46,6 +46,7 @@ export class PrismaConnection {
         }
 
         this.subscriptions[table][recordId]![identifier] = callback;
+        this.table[table].get(recordId).then(record => callback(record));
 
         return () => {
             delete this.subscriptions[table][recordId]![identifier];

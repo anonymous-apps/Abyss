@@ -1,5 +1,3 @@
-import { GraphPortData } from '../../dist/state-machine/graphs-objects/graph-port';
-
 export type PortDataType = 'string' | 'number' | 'boolean' | 'thread' | 'chat-model' | 'chat';
 
 export interface GraphPortDefinition {
@@ -17,6 +15,6 @@ export interface GraphNodeDefinition {
     name: string;
     description: string;
     color: string;
-    inputPorts: Record<string, GraphPortData>;
-    outputPorts: Record<string, GraphPortData>;
+    inputPorts: Record<string, GraphPortDefinition>;
+    outputPorts: Record<string, GraphPortDefinition>;
 }

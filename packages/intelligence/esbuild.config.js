@@ -11,16 +11,7 @@ const commonConfig = {
     outfile: 'dist/index.js',
     sourcemap: true,
     minify: process.env.NODE_ENV === 'production',
-    external: [
-        '@aws-sdk/client-bedrock-runtime',
-        '@aws-sdk/client-dynamodb',
-        '@aws-sdk/client-s3',
-        '@aws-sdk/lib-dynamodb',
-        'dotenv',
-        'uuid',
-        'zod',
-        'axios',
-    ],
+    external: [],
 };
 
 if (require.main === module) {
