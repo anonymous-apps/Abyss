@@ -2,6 +2,7 @@ import { IconOption } from '@abyss/ui-components';
 import { Box, DatabaseIcon, MessageCircle, Play, Settings } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
+import { AbyssAnimation } from '../../library/abyss-animation';
 import { useSettings } from '../../state/database-access-utils';
 import { useSidebarFadeStore } from '../../state/sidebar-fade';
 
@@ -31,15 +32,18 @@ export function MainPage() {
     return (
         <div className="flex h-screen">
             <div
-                className="flex flex-col items-center justify-center transition-all duration-[1s] display-font"
+                className="flex flex-col items-center justify-center transition-all duration-[1s] display-font relative"
                 style={{ width: sidebarWidth, opacity: contentOpacity }}
             >
-                <div
-                    className="text-4xl font-bold text-center transition-all duration-[1s] text-text-300"
-                    style={{ opacity: contentOpacity }}
-                >
-                    Abyss
+                <div className="text-5xl text-center w-full transition-all duration-[1s] absolute top-0 left-0 h-full flex items-center justify-center">
+                    <div className="absolute text-white blur-[4px] opacity-70" style={{ opacity: contentOpacity * 0.7, fontWeight: 900 }}>
+                        Abyss
+                    </div>
+                    <div className="text-text-300 relative" style={{ opacity: contentOpacity, fontWeight: 900 }}>
+                        Abyss
+                    </div>
                 </div>
+                <AbyssAnimation />
             </div>
 
             <div
