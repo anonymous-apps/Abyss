@@ -1,0 +1,21 @@
+model Document {
+
+    // Default fields
+    id         String   @id
+    createdAt  DateTime @default(now())
+    updatedAt  DateTime @updatedAt
+
+    // Previous versions of the document
+    previousId String?
+    nextId     String?
+
+    // Type of the document
+    type       String
+
+    // Title of the document
+    title      String
+
+    // Text of the document
+    text       String
+    
+}
