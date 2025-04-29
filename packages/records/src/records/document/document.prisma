@@ -15,7 +15,7 @@ model Document {
     // Title of the document
     title      String
 
-    // Text of the document
-    text       String
+    // Content of the document
+    content    String
     
 }

@@ -56,7 +56,7 @@ export interface Document extends BaseRecordProps {
     type: 'markdown';
 
     // Raw content of this document
-    text: string;
+    content: string;
 
     // We want a way to track versions, we will do this by linking to the previous document and next document in a linked list
     previousId: string | null;

@@ -5,5 +5,5 @@ export interface RecordDocument extends BaseRecordProps {
     nextId: string | null;
     type: 'markdown';
     title: string;
-    text: string;
+    content: string;
 }
