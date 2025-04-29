@@ -1,0 +1,19 @@
+model ModelConnection {
+    id          String   @id @default(uuid())
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    // Name of the connection and description
+    name        String
+    description String
+
+    // Format for accessing the model, determines api call structure
+    accessFormat String
+
+    // ID of the provider and model
+    providerId  String
+    modelId     String
+
+    // Additional data for the connection stored as JSON
+    data        Json
+} 
