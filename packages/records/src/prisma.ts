@@ -21,7 +21,7 @@ export class PrismaConnection {
     }
 
     public _reference(table: string) {
-        return this.client[table as any];
+        return this.client[table as 'document'];
     }
 
     // Connection subscriptions - hierarchical structure

@@ -1,4 +1,4 @@
-import { BaseRecordProps } from '../recordController';
+import { BaseRecordProps } from '../recordClass';
 
 export interface RecordDocument extends BaseRecordProps {
     previousId: string | null;

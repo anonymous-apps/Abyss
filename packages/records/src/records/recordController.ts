@@ -1,21 +1,19 @@
-import { PrismaConnection, TableReferences } from '../prisma';
+import { PrismaConnection } from '../prisma';
+import { TableReferences } from '../prisma.type';
 import { generateId } from '../utils/ids';
-
-export interface BaseRecordProps {
-    id: string;
-    createdAt: Date;
-    updatedAt: Date;
-}
+import { BaseRecordProps } from './recordClass';
 
 export abstract class RecordController<T extends BaseRecordProps> {
     protected readonly recordType: keyof TableReferences;
     protected readonly connection: PrismaConnection;
     protected readonly table: ReturnType<PrismaConnection['_reference']>;
+    protected readonly factory: (data: any) => T;
 
-    public constructor(type: keyof TableReferences, connection: PrismaConnection) {
+    public constructor(type: keyof TableReferences, connection: PrismaConnection, factory: (data: any) => T) {
         this.recordType = type;
         this.connection = connection;
         this.table = this.connection._reference(type);
+        this.factory = factory;
     }
 
     //
@@ -30,7 +28,7 @@ export abstract class RecordController<T extends BaseRecordProps> {
             },
         });
         this.connection.notifyRecord(this.recordType, result);
-        return result as unknown as T;
+        return this.factory(result);
     }
 
     async purge(): Promise<void> {
@@ -44,7 +42,7 @@ export abstract class RecordController<T extends BaseRecordProps> {
             data: data as any,
         });
         this.connection.notifyRecord(this.recordType, result);
-        return result as unknown as T;
+        return this.factory(result);
     }
 
     async delete(id: string): Promise<void> {
@@ -58,12 +56,12 @@ export abstract class RecordController<T extends BaseRecordProps> {
 
     async scan(): Promise<T[]> {
         const result = await this.table.findMany({ orderBy: { createdAt: 'desc' } });
-        return result as unknown as T[];
+        return result.map(this.factory);
     }
 
     async get(id: string): Promise<T | null> {
         const result = await this.table.findUnique({ where: { id } });
-        return result as unknown as T | null;
+        return result ? this.factory(result) : null;
     }
 
     async exists(id: string): Promise<boolean> {

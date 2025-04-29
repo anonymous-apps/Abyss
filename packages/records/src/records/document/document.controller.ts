@@ -1,9 +1,9 @@
 import { PrismaConnection } from '../../prisma';
 import { RecordController } from '../recordController';
-import { RecordDocument } from './document.type';
+import { Document } from './document';
 
-export class DocumentController extends RecordController<RecordDocument> {
+export class DocumentController extends RecordController<Document> {
     public constructor(connection: PrismaConnection) {
-        super('document', connection);
+        super('document', connection, data => new Document(this, data));
     }
 }
