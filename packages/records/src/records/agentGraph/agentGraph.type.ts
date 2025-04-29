@@ -1,6 +1,7 @@
 import { BaseRecordProps } from '../recordClass';
 
-export interface AgentGraphNode extends BaseRecordProps {
+export interface AgentGraphNode {
+    id: string;
     nodeId: string;
     position: {
         x: number;
@@ -9,7 +10,8 @@ export interface AgentGraphNode extends BaseRecordProps {
     parameters: any;
 }
 
-export interface AgentGraphEdge extends BaseRecordProps {
+export interface AgentGraphEdge {
+    id: string;
     sourceNodeId: string;
     sourcePortId: string;
     targetNodeId: string;

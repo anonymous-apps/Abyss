@@ -1,3 +1,4 @@
+import { PrismaConnection } from '@abyss/records';
 import { StateMachineExecution } from './state-machine-execution';
 import { GraphNodeDefinition, PortDataType } from './type-definition.type';
 
@@ -13,6 +14,7 @@ export interface ResolveNodeData {
     portData: PortTriggerData<any>[];
     resolvePort<T>(portId: string): T;
     parameters: Record<string, any>;
+    database: PrismaConnection;
 }
 
 export interface NodeExecutionResult {

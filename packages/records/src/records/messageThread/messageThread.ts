@@ -1,13 +1,12 @@
 import { RecordClass } from '../recordClass';
 import { MessageThreadController } from './messageThread.controller';
-import { MessagePartial, MessageThread, MessageTurn } from './messageThread.type';
+import { MessagePartial, MessageThreadType, MessageTurn } from './messageThread.type';
 
-export class MessageThreadRecord extends RecordClass<MessageThread> {
+export class MessageThreadRecord extends RecordClass<MessageThreadType> {
     public static HUMAN = 'human';
+    public turns: MessageTurn[];
 
-    turns: MessageTurn[];
-
-    constructor(controller: MessageThreadController, data: MessageThread) {
+    constructor(controller: MessageThreadController, data: MessageThreadType) {
         super(controller, data);
         this.turns = data.turns;
     }
@@ -32,9 +31,9 @@ export class MessageThreadRecord extends RecordClass<MessageThread> {
             };
         }
 
-        const record = await this.controller.create({
+        const data = await this.controller.create({
             turns: newTurns,
         });
-        return new MessageThreadRecord(this.controller, record);
+        return data as unknown as MessageThreadRecord;
     }
 }

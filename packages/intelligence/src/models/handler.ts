@@ -1,8 +1,8 @@
-import { MessageThreadRecord, ModelConnection } from '@abyss/records';
+import { MessageThreadRecord, ModelConnectionRecord } from '@abyss/records';
 import { InvokeAnthropic } from './implementations/anthropic/handler';
 import { InvokeStatic } from './implementations/static/handler';
 
-export async function invokeModelAgainstThread(connection: ModelConnection, thread: MessageThreadRecord) {
+export async function invokeModelAgainstThread(connection: ModelConnectionRecord, thread: MessageThreadRecord) {
     if (connection.accessFormat === 'anthropic') {
         return InvokeAnthropic({
             thread,

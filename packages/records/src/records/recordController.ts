@@ -1,15 +1,15 @@
 import { PrismaConnection } from '../prisma';
 import { TableReferences } from '../prisma.type';
 import { generateId } from '../utils/ids';
-import { BaseRecordProps } from './recordClass';
+import { BaseRecordProps, RecordClass } from './recordClass';
 
-export abstract class RecordController<T extends BaseRecordProps> {
+export abstract class RecordController<T extends BaseRecordProps, R extends RecordClass<T>> {
     protected readonly recordType: keyof TableReferences;
     protected readonly connection: PrismaConnection;
     protected readonly table: ReturnType<PrismaConnection['_reference']>;
-    protected readonly factory: (data: any) => T;
+    protected readonly factory: (data: any) => R;
 
-    public constructor(type: keyof TableReferences, connection: PrismaConnection, factory: (data: any) => T) {
+    public constructor(type: keyof TableReferences, connection: PrismaConnection, factory: (data: any) => R) {
         this.recordType = type;
         this.connection = connection;
         this.table = this.connection._reference(type);
@@ -20,7 +20,7 @@ export abstract class RecordController<T extends BaseRecordProps> {
     // Mutators
     //
 
-    async create(data: Omit<T, 'id' | 'createdAt' | 'updatedAt'>): Promise<T> {
+    async create(data: Omit<T, 'id' | 'createdAt' | 'updatedAt'>): Promise<R> {
         const result = await this.table.create({
             data: {
                 ...(data as any),
@@ -36,13 +36,12 @@ export abstract class RecordController<T extends BaseRecordProps> {
         this.connection.notifyTable(this.recordType);
     }
 
-    async update(id: string, data: Partial<Omit<T, 'id' | 'createdAt' | 'updatedAt'>>): Promise<T> {
+    async update(id: string, data: Partial<Omit<T, 'id' | 'createdAt' | 'updatedAt'>>): Promise<void> {
         const result = await this.table.update({
             where: { id },
             data: data as any,
         });
         this.connection.notifyRecord(this.recordType, result);
-        return this.factory(result);
     }
 
     async delete(id: string): Promise<void> {
@@ -54,17 +53,17 @@ export abstract class RecordController<T extends BaseRecordProps> {
     // Getters
     //
 
-    async scan(): Promise<T[]> {
+    async scan(): Promise<R[]> {
         const result = await this.table.findMany({ orderBy: { createdAt: 'desc' } });
         return result.map(this.factory);
     }
 
-    async get(id: string): Promise<T | null> {
+    async get(id: string): Promise<R | null> {
         const result = await this.table.findUnique({ where: { id } });
         return result ? this.factory(result) : null;
     }
 
-    async getOrThrow(id: string): Promise<T> {
+    async getOrThrow(id: string): Promise<R> {
         const result = await this.table.findUnique({ where: { id } });
         if (!result) {
             throw new Error(`Record ${this.recordType} with id ${id} not found`);

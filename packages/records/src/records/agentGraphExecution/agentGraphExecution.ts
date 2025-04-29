@@ -1,3 +1,4 @@
+import { safeSerialize } from '../../utils/serialization';
 import { RecordClass } from '../recordClass';
 import { Status } from '../shared.type';
 import { AgentGraphExecutionController } from './agentGraphExecution.controller';
@@ -40,7 +41,7 @@ export class AgentGraphExecutionRecord extends RecordClass<AgentGraphExecutionTy
             executionId: this.id,
             nodeId,
             nodeType,
-            inputs,
+            inputs: safeSerialize(inputs),
             timestamp: new Date(),
         });
         await this.save();
@@ -52,7 +53,7 @@ export class AgentGraphExecutionRecord extends RecordClass<AgentGraphExecutionTy
             executionId: this.id,
             nodeId,
             nodeType,
-            outputs,
+            outputs: safeSerialize(outputs),
             timestamp: new Date(),
         });
         await this.save();
@@ -64,8 +65,8 @@ export class AgentGraphExecutionRecord extends RecordClass<AgentGraphExecutionTy
             executionId: this.id,
             nodeId,
             nodeType,
-            error,
-            stack,
+            error: safeSerialize(error),
+            stack: safeSerialize(stack),
             timestamp: new Date(),
         });
         await this.save();
@@ -87,8 +88,8 @@ export class AgentGraphExecutionRecord extends RecordClass<AgentGraphExecutionTy
         this.events.push({
             type: 'execution-failed',
             executionId: this.id,
-            error,
-            stack,
+            error: safeSerialize(error),
+            stack: safeSerialize(stack),
         });
         await this.save();
     }

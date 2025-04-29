@@ -1,5 +1,4 @@
 import { NodeHandler } from '../node-handler';
-import { NodeExecutionResult, ResolveNodeData } from '../type-base.type';
 import { GraphNodeDefinition } from '../type-definition.type';
 
 export class OnChatMessageNode extends NodeHandler {
@@ -30,12 +29,6 @@ export class OnChatMessageNode extends NodeHandler {
                     description: 'The chat that the message was sent to',
                 },
             },
-        };
-    }
-
-    protected async _resolve(data: ResolveNodeData): Promise<NodeExecutionResult> {
-        return {
-            portData: data.portData,
         };
     }
 }

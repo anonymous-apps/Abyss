@@ -15,4 +15,9 @@ export class ChatThreadRecord extends RecordClass<ChatThreadType> {
         this.threadId = data.threadId;
         this.participantId = data.participantId;
     }
+
+    public async setThreadId(threadId: string) {
+        this.threadId = threadId;
+        await this.save();
+    }
 }

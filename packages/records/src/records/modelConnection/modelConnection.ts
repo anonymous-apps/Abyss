@@ -1,8 +1,8 @@
 import { RecordClass } from '../recordClass';
 import { ModelConnectionController } from './modelConnection.controller';
-import { ModelConnection, ModelConnectionAccessFormat } from './modelConnection.type';
+import { ModelConnectionAccessFormat, ModelConnectionType } from './modelConnection.type';
 
-export class ModelConnectionRecord extends RecordClass<ModelConnection> {
+export class ModelConnectionRecord extends RecordClass<ModelConnectionType> {
     public name: string;
     public description: string;
     public accessFormat: ModelConnectionAccessFormat;
@@ -10,7 +10,7 @@ export class ModelConnectionRecord extends RecordClass<ModelConnection> {
     public modelId: string;
     public data: any;
 
-    constructor(controller: ModelConnectionController, data: ModelConnection) {
+    constructor(controller: ModelConnectionController, data: ModelConnectionType) {
         super(controller, data);
         this.name = data.name;
         this.description = data.description;

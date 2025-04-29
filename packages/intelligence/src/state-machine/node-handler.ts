@@ -13,6 +13,10 @@ export abstract class NodeHandler {
         NodeHandler.registry[id] = this;
     }
 
+    public static getById(id: string): NodeHandler {
+        return NodeHandler.registry[id];
+    }
+
     // Definition
     public getDefinition(id: string = randomId()): GraphNodeDefinition {
         return {
@@ -39,5 +43,7 @@ export abstract class NodeHandler {
     async resolve(data: ResolveNodeData): Promise<NodeExecutionResult> {
         return this._resolve(data);
     }
-    protected abstract _resolve(data: ResolveNodeData): Promise<NodeExecutionResult>;
+    protected _resolve(data: ResolveNodeData): Promise<NodeExecutionResult> {
+        throw new Error('Not implemented');
+    }
 }

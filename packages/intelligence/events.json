@@ -1,0 +1,128 @@
+[
+  {
+    "type": "execution-began",
+    "executionId": "544ad243-03f3-4362-8c4b-1271a3623b83"
+  },
+  {
+    "type": "node-resolution-began",
+    "executionId": "544ad243-03f3-4362-8c4b-1271a3623b83",
+    "nodeId": "inputChatModel",
+    "nodeType": "input-language-model",
+    "inputs": {},
+    "timestamp": "2025-04-29T20:19:51.761Z"
+  },
+  {
+    "type": "node-resolution-completed",
+    "executionId": "544ad243-03f3-4362-8c4b-1271a3623b83",
+    "nodeId": "inputChatModel",
+    "nodeType": "input-language-model",
+    "outputs": {
+      "chatModel": {
+        "controller": {
+          "recordType": "modelConnection",
+          "connection": "MAX_DEPTH_REACHED",
+          "table": "MAX_DEPTH_REACHED",
+          "factory": "FUNCTION"
+        },
+        "id": "modelConnection::WS3FWY393mKVZKdnjTPi",
+        "createdAt": "2025-04-29T20:19:51.756Z",
+        "updatedAt": "2025-04-29T20:19:51.756Z",
+        "name": "test",
+        "description": "test",
+        "accessFormat": "static",
+        "providerId": "test",
+        "modelId": "test",
+        "data": {
+          "response": "test"
+        }
+      }
+    },
+    "timestamp": "2025-04-29T20:19:51.763Z"
+  },
+  {
+    "type": "node-resolution-began",
+    "executionId": "544ad243-03f3-4362-8c4b-1271a3623b83",
+    "nodeId": "invokeChatModel",
+    "nodeType": "invoke-language-model",
+    "inputs": {
+      "chatModel": {
+        "controller": {
+          "recordType": "modelConnection",
+          "connection": "MAX_DEPTH_REACHED",
+          "table": "MAX_DEPTH_REACHED",
+          "factory": "FUNCTION"
+        },
+        "id": "modelConnection::WS3FWY393mKVZKdnjTPi",
+        "createdAt": "2025-04-29T20:19:51.756Z",
+        "updatedAt": "2025-04-29T20:19:51.756Z",
+        "name": "test",
+        "description": "test",
+        "accessFormat": "static",
+        "providerId": "test",
+        "modelId": "test",
+        "data": {
+          "response": "test"
+        }
+      },
+      "thread": {
+        "controller": {
+          "recordType": "messageThread",
+          "connection": "MAX_DEPTH_REACHED",
+          "table": "MAX_DEPTH_REACHED",
+          "factory": "FUNCTION"
+        },
+        "id": "968b9f18-d60a-4268-82fb-d9b1e0c92e11",
+        "createdAt": "2025-04-29T20:19:51.759Z",
+        "updatedAt": "2025-04-29T20:19:51.759Z",
+        "turns": {}
+      }
+    },
+    "timestamp": "2025-04-29T20:19:51.764Z"
+  },
+  {
+    "type": "node-resolution-failed",
+    "executionId": "544ad243-03f3-4362-8c4b-1271a3623b83",
+    "nodeId": "invokeChatModel",
+    "nodeType": "invoke-language-model",
+    "error": "Cannot read properties of undefined (reading 'type')",
+    "stack": "TypeError: Cannot read properties of undefined (reading 'type')\n    at InvokeLanguageModelNode.isSignalPort (/Users/aerrobert/Documents/projects/abyss/packages/intelligence/src/state-machine/node-handler.ts:31:55)\n    at StateMachineExecution._setPortValue (/Users/aerrobert/Documents/projects/abyss/packages/intelligence/src/state-machine/state-machine-execution.ts:49:29)\n    at /Users/aerrobert/Documents/projects/abyss/packages/intelligence/src/state-machine/state-machine-execution.ts:202:43\n    at Array.forEach (<anonymous>)\n    at StateMachineExecution._resolveNode (/Users/aerrobert/Documents/projects/abyss/packages/intelligence/src/state-machine/state-machine-execution.ts:202:25)\n    at StateMachineExecution._progressEvaluationQueue (/Users/aerrobert/Documents/projects/abyss/packages/intelligence/src/state-machine/state-machine-execution.ts:174:28)\n    at StateMachineExecution._invoke (/Users/aerrobert/Documents/projects/abyss/packages/intelligence/src/state-machine/state-machine-execution.ts:125:9)\n    at StateMachineExecution.invoke (/Users/aerrobert/Documents/projects/abyss/packages/intelligence/src/state-machine/state-machine-execution.ts:106:13)\n    at /Users/aerrobert/Documents/projects/abyss/packages/intelligence/src/operations/invoke-graph/handler.test.ts:103:24\n    at file:///Users/aerrobert/Documents/projects/abyss/node_modules/@vitest/runner/dist/index.js:595:20",
+    "timestamp": "2025-04-29T20:19:51.767Z"
+  },
+  {
+    "type": "node-resolution-began",
+    "executionId": "544ad243-03f3-4362-8c4b-1271a3623b83",
+    "nodeId": "writeChatMessage",
+    "nodeType": "write-chat-message",
+    "inputs": {
+      "chat": {
+        "controller": {
+          "recordType": "chatThread",
+          "connection": "MAX_DEPTH_REACHED",
+          "table": "MAX_DEPTH_REACHED",
+          "factory": "FUNCTION"
+        },
+        "id": "8236e755-5afa-4922-929f-5629211ab7c5",
+        "createdAt": "2025-04-29T20:19:51.759Z",
+        "updatedAt": "2025-04-29T20:19:51.759Z",
+        "name": "New Chat Thread",
+        "description": "New Chat Thread",
+        "threadId": "968b9f18-d60a-4268-82fb-d9b1e0c92e11",
+        "participantId": "agentGraph::pz6APEorQcVHJIbGtitY"
+      },
+      "message": "test"
+    },
+    "timestamp": "2025-04-29T20:19:51.768Z"
+  },
+  {
+    "type": "node-resolution-completed",
+    "executionId": "544ad243-03f3-4362-8c4b-1271a3623b83",
+    "nodeId": "writeChatMessage",
+    "nodeType": "write-chat-message",
+    "outputs": {},
+    "timestamp": "2025-04-29T20:19:51.770Z"
+  },
+  {
+    "type": "execution-completed",
+    "executionId": "544ad243-03f3-4362-8c4b-1271a3623b83"
+  }
+]

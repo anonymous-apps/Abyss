@@ -1,5 +1,5 @@
-import { ModelConnection } from '@abyss/records';
-import { MessageThread } from '@abyss/records/prisma/prisma';
+import { MessageThreadRecord, ModelConnectionRecord } from '@abyss/records';
+import { invokeModelAgainstThread } from '../../models/handler';
 import { NodeHandler } from '../node-handler';
 import { NodeExecutionResult, ResolveNodeData } from '../type-base.type';
 import { GraphNodeDefinition } from '../type-definition.type';
@@ -51,13 +51,13 @@ export class InvokeLanguageModelNode extends NodeHandler {
     }
 
     protected async _resolve(data: ResolveNodeData): Promise<NodeExecutionResult> {
-        const inputLanguageModel = data.resolvePort<ModelConnection>('chatModel');
-        const thread = data.resolvePort<MessageThread>('thread');
-        const result = await inputLanguageModel.invokeAgainstThread(thread);
-        const outThread = await thread.addPartialWithSender('bot', {
+        const inputLanguageModel = data.resolvePort<ModelConnectionRecord>('chatModel');
+        const thread = data.resolvePort<MessageThreadRecord>('thread');
+        const result = await invokeModelAgainstThread(inputLanguageModel, thread);
+        const outThread = await thread.addPartial('bot', {
             type: 'text',
-            text: {
-                content: result.response,
+            payload: {
+                content: result.outputString,
             },
         });
 
@@ -66,7 +66,7 @@ export class InvokeLanguageModelNode extends NodeHandler {
                 {
                     portId: 'rawResponse',
                     dataType: 'string',
-                    inputValue: result?.response,
+                    inputValue: result.outputRaw,
                 },
                 {
                     portId: 'newThread',

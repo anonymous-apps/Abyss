@@ -1,6 +1,6 @@
 import { RecordClass } from '../recordClass';
 import { TextDocumentController } from './textDocument.controller';
-import { TextDocument as TextDocumentType } from './textDocument.type';
+import { TextDocumentType } from './textDocument.type';
 
 export class TextDocumentRecord extends RecordClass<TextDocumentType> {
     public title: string;

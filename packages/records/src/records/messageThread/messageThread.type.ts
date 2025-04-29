@@ -1,7 +1,7 @@
 import { BaseRecordProps } from '../recordClass';
 import { Status } from '../shared.type';
 
-export interface MessageThread extends BaseRecordProps {
+export interface MessageThreadType extends BaseRecordProps {
     turns: MessageTurn[];
 }
 

@@ -37,14 +37,15 @@ export class WriteChatMessageNode extends NodeHandler {
     protected async _resolve(data: ResolveNodeData): Promise<NodeExecutionResult> {
         const message = data.resolvePort<string>('message');
         const chat = data.resolvePort<ChatThreadRecord>('chat');
-        const thread = await chat.getThread();
-        const outThread = await thread.addPartialWithSender('user', {
+        const thread = await data.database.table.messageThread.getOrThrow(chat.threadId);
+
+        const outThread = await thread.addPartial('user', {
             type: 'text',
-            text: {
+            payload: {
                 content: message,
             },
         });
-        await chat.updateThread(outThread.id);
+        await chat.setThreadId(outThread.id);
 
         return {
             portData: [],
