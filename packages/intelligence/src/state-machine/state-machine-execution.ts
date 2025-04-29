@@ -1,8 +1,10 @@
+import { AgentGraphRecord } from '@abyss/records';
 import { NodeHandler } from './node-handler';
 import './node-handlers';
-import { GraphNodeDefinition } from './object-definitions/graph-node';
+import { Nodes } from './node-handlers';
 import { PortTriggerData } from './type-base.type';
-import { StateMachineEvent } from './type-events.type.ts';
+import { GraphNodeDefinition } from './type-definition.type';
+import { StateMachineEvent } from './type-events.type';
 
 export class StateMachineExecution {
     private static maxInvokeCount = 100;
@@ -10,8 +12,7 @@ export class StateMachineExecution {
     private executionId: string;
 
     // References
-    private graph: Graph;
-    private db: DataInterface;
+    private graph: AgentGraphRecord;
 
     // Execution
     private evaluationQueue: string[] = [];
@@ -19,10 +20,9 @@ export class StateMachineExecution {
     private portValues: Record<string, Record<string, PortTriggerData<any>>> = {};
     private staticNodesEvaluated: Set<string> = new Set();
 
-    constructor(id: string, db: DataInterface, graph: Graph) {
+    constructor(id: string, graph: AgentGraphRecord) {
         this.executionId = id;
         this.graph = graph;
-        this.db = db;
     }
 
     // Events
@@ -30,6 +30,7 @@ export class StateMachineExecution {
     public getEvents() {
         return this.events;
     }
+
     public addEvent(event: StateMachineEvent) {
         this.events.push(event);
     }
@@ -55,7 +56,8 @@ export class StateMachineExecution {
 
         // If this port is an input signal, add the node to the evaluation queue
         const node = this.graph.getNode(nodeId);
-        if (node?.inputPorts[portId]?.type === 'signal') {
+        const nodeDefinition = Nodes[node?.nodeId as keyof typeof Nodes];
+        if (nodeDefinition?.isSignalPort(portId)) {
             this._addEvaluationQueue(nodeId);
         }
     }

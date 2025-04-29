@@ -190,3 +190,17 @@ export interface AgentGraphEdge extends BaseRecordProps {
     targetPortId: string;
 }
 ```
+
+### agentGraphExecution
+
+An agent graph execution is a record of a previous agent graph execution.
+
+```ts
+export interface AgentGraphExecution extends BaseRecordProps {
+    agentGraphId: string;
+    status: Status; // from shared.type.ts
+    events: Json; // array of events
+    startTime: Date;
+    endTime: Date;
+}
+```

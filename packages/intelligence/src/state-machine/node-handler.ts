@@ -1,6 +1,6 @@
 import { randomId } from '../utils/ids';
-import { GraphNodeDefinition } from './object-definitions/graph-node';
 import { NodeExecutionResult, ResolveNodeData } from './type-base.type';
+import { GraphNodeDefinition } from './type-definition.type';
 
 export abstract class NodeHandler {
     private id: string;
@@ -33,6 +33,10 @@ export abstract class NodeHandler {
         };
     }
     protected abstract _getDefinition(): Omit<GraphNodeDefinition, 'id' | 'type'>;
+
+    public isSignalPort(portId: string): boolean {
+        return this._getDefinition().inputPorts[portId].type === 'signal';
+    }
 
     // Resolution
     async resolve(data: ResolveNodeData): Promise<NodeExecutionResult> {
