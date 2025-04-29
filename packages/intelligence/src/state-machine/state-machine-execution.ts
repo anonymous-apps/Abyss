@@ -1,38 +1,25 @@
-import { AgentGraphRecord } from '@abyss/records';
+import { AgentGraphExecutionRecord, AgentGraphRecord } from '@abyss/records';
 import { NodeHandler } from './node-handler';
 import './node-handlers';
 import { Nodes } from './node-handlers';
 import { PortTriggerData } from './type-base.type';
-import { GraphNodeDefinition } from './type-definition.type';
-import { StateMachineEvent } from './type-events.type';
 
 export class StateMachineExecution {
     private static maxInvokeCount = 100;
     private invokeCount = 0;
-    private executionId: string;
 
     // References
     private graph: AgentGraphRecord;
+    private executionRecord: AgentGraphExecutionRecord;
 
     // Execution
     private evaluationQueue: string[] = [];
-    private events: StateMachineEvent[] = [];
     private portValues: Record<string, Record<string, PortTriggerData<any>>> = {};
     private staticNodesEvaluated: Set<string> = new Set();
 
-    constructor(id: string, graph: AgentGraphRecord) {
-        this.executionId = id;
+    constructor(graph: AgentGraphRecord, executionRecord: AgentGraphExecutionRecord) {
         this.graph = graph;
-    }
-
-    // Events
-
-    public getEvents() {
-        return this.events;
-    }
-
-    public addEvent(event: StateMachineEvent) {
-        this.events.push(event);
+        this.executionRecord = executionRecord;
     }
 
     // Private utilites
@@ -73,33 +60,46 @@ export class StateMachineExecution {
         return Object.values(this.portValues[nodeId] ?? {});
     }
 
+    private _getPortMap(portData: PortTriggerData<any>[]) {
+        return portData.reduce((acc, p) => {
+            acc[p.portId] = p.inputValue;
+            return acc;
+        }, {} as Record<string, any>);
+    }
+
     private _getConnectionOutofPort(nodeId: string, portId: string) {
         return this.graph.getConnection(nodeId, portId);
     }
 
     private _doesNodeHaveAllPortsResolved(nodeId: string) {
         const node = this.graph.getNode(nodeId);
-        return Object.values(node?.inputPorts ?? {}).every(p => this.portValues[nodeId]?.[p.id]);
+        const nodeDefinition = Nodes[node?.nodeId as keyof typeof Nodes];
+        return nodeDefinition?.getAllPortIds().every(p => this.portValues[nodeId]?.[p]);
     }
 
+    private _getNodeDefinition(nodeId: string) {
+        const node = this.graph.getNode(nodeId);
+        return Nodes[node?.nodeId as keyof typeof Nodes];
+    }
+
+    // Invoke
+
     public async invoke(inputNode: string, portData: PortTriggerData<any>[]) {
-        this.addEvent({ type: 'execution-began', executionId: this.executionId });
         try {
+            await this.executionRecord.beginExecution();
             await this._evaluateStaticNodes();
             await this._invoke(inputNode, portData);
-            this.addEvent({ type: 'execution-completed', executionId: this.executionId });
+            await this.executionRecord.completeExecution();
         } catch (error) {
-            this.addEvent({
-                type: 'execution-failed',
-                executionId: this.executionId,
-                error: error instanceof Error ? error.message : 'Unknown error',
-                stack: error instanceof Error ? error.stack : undefined,
-            });
+            await this.executionRecord.failExecution(
+                error instanceof Error ? error.message : 'Unknown error',
+                error instanceof Error ? error.stack : undefined
+            );
         }
     }
 
     private async _evaluateStaticNodes() {
-        const staticNodes = this.graph.getNodes().filter(n => NodeHandler.isStaticData(n));
+        const staticNodes = this.graph.getNodes().filter(n => this._getNodeDefinition(n.id).isStaticData());
         let didEvaluate = true;
         while (didEvaluate) {
             didEvaluate = false;
@@ -139,30 +139,27 @@ export class StateMachineExecution {
         }
 
         try {
-            this.addEvent({
-                type: 'node-resolution-began',
-                executionId: this.executionId,
-                nodeId: nodeId,
-                nodeType: node.type,
-                inputs: this._getPortDataForNode(nodeId),
-            });
-            const result = await this._resolveNode(node, this._getPortDataForNode(nodeId));
-            this.addEvent({
-                type: 'node-resolution-completed',
-                executionId: this.executionId,
-                nodeId: nodeId,
-                nodeType: node.type,
-                outputs: result.portData,
-            });
+            // Get port data
+            const ports = this._getPortDataForNode(nodeId);
+            const portMap = this._getPortMap(ports);
+            const definition = this._getNodeDefinition(nodeId);
+
+            // Begin node resolution
+            await this.executionRecord.beginNodeResolution(nodeId, node.nodeId, portMap);
+
+            // Resolve node
+            const result = await this._resolveNode(nodeId, definition, ports);
+
+            // Complete node resolution
+            const outputMap = this._getPortMap(result.portData);
+            await this.executionRecord.completeNodeResolution(nodeId, node.nodeId, outputMap);
         } catch (error) {
-            this.addEvent({
-                type: 'node-resolution-failed',
-                executionId: this.executionId,
-                nodeId: nodeId,
-                nodeType: node.type,
-                error: error instanceof Error ? error.message : 'Unknown error',
-                stack: error instanceof Error ? error.stack : undefined,
-            });
+            await this.executionRecord.failNodeResolution(
+                nodeId,
+                node.nodeId,
+                error instanceof Error ? error.message : 'Unknown error',
+                error instanceof Error ? error.stack : undefined
+            );
         }
 
         if (this.evaluationQueue.length > 0) {
@@ -170,17 +167,15 @@ export class StateMachineExecution {
         }
     }
 
-    private async _resolveNode(node: GraphNodeDefinition, portData: PortTriggerData<any>[]) {
-        const handler = NodeHandler.getHandler(node);
-        const result = await handler.resolve({
+    private async _resolveNode(nodeId: string, node: NodeHandler, portData: PortTriggerData<any>[]) {
+        const result = await node.resolve({
             execution: this,
-            node: node,
+            node: node.getDefinition(),
             portData: portData,
             resolvePort: (id: string) => portData.find(p => p.portId === id)?.inputValue,
-            parameters: this.graph.getParametersForNode(node.id),
-            db: this.db,
+            parameters: this.graph.getNode(nodeId)?.parameters ?? {},
         });
-        result.portData.forEach(p => this._setPortValue(node.id, p.portId, p));
+        result.portData.forEach(p => this._setPortValue(nodeId, p.portId, p));
         return result;
     }
 }

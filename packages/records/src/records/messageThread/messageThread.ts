@@ -3,6 +3,8 @@ import { MessageThreadController } from './messageThread.controller';
 import { MessagePartial, MessageThread, MessageTurn } from './messageThread.type';
 
 export class MessageThreadRecord extends RecordClass<MessageThread> {
+    public static HUMAN = 'human';
+
     turns: MessageTurn[];
 
     constructor(controller: MessageThreadController, data: MessageThread) {

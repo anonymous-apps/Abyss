@@ -1,11 +1,11 @@
 import { RecordClass } from '../recordClass';
 import { ModelConnectionController } from './modelConnection.controller';
-import { ModelConnection } from './modelConnection.type';
+import { ModelConnection, ModelConnectionAccessFormat } from './modelConnection.type';
 
 export class ModelConnectionRecord extends RecordClass<ModelConnection> {
     public name: string;
     public description: string;
-    public accessFormat: 'gemini' | 'openai' | 'anthropic';
+    public accessFormat: ModelConnectionAccessFormat;
     public providerId: string;
     public modelId: string;
     public data: any;

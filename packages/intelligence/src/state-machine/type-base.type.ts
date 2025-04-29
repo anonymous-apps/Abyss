@@ -1,4 +1,3 @@
-import { DataInterface } from '../../dist/constructs/data-interface';
 import { StateMachineExecution } from './state-machine-execution';
 import { GraphNodeDefinition, PortDataType } from './type-definition.type';
 
@@ -14,7 +13,6 @@ export interface ResolveNodeData {
     portData: PortTriggerData<any>[];
     resolvePort<T>(portId: string): T;
     parameters: Record<string, any>;
-    db: DataInterface;
 }
 
 export interface NodeExecutionResult {

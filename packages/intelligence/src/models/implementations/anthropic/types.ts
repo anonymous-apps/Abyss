@@ -1,6 +1,10 @@
-import { Thread } from '../../../thread/thread';
-import { Intelligence } from '../../intelligence';
-import { AIProviderAnthropic } from '../../types';
+import { MessageThreadRecord } from '@abyss/records';
+
+export interface InvokeAnthropicProps {
+    thread: MessageThreadRecord;
+    modelId: string;
+    apiKey: string;
+}
 
 export interface AnthropicResponse {
     content: Array<{
@@ -10,11 +14,6 @@ export interface AnthropicResponse {
         input_tokens: number;
         output_tokens: number;
     };
-}
-
-export interface AnthropicLanguageModelOptions {
-    thread: Thread;
-    intelligence: Intelligence<AIProviderAnthropic>;
 }
 
 export interface AnthropicMessage {

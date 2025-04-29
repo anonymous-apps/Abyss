@@ -1,11 +1,11 @@
-import { PrismaClient } from '@prisma/client';
 import path from 'path';
+import { PrismaClient } from '../prisma/prisma';
 import { buildTableReferences, TableReferences } from './prisma.type';
 import { randomId } from './utils/ids';
 
 export class PrismaConnection {
     // The Prisma client
-    private client: PrismaClient;
+    public readonly client: PrismaClient;
     public readonly table: TableReferences;
 
     constructor({ url }: { url?: string } = {}) {

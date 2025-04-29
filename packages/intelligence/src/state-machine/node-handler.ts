@@ -13,17 +13,6 @@ export abstract class NodeHandler {
         NodeHandler.registry[id] = this;
     }
 
-    static getHandler(node: GraphNodeDefinition): NodeHandler {
-        if (!NodeHandler.registry[node.type]) {
-            throw new Error(`No handler found for node type ${node.type}`);
-        }
-        return NodeHandler.registry[node.type];
-    }
-
-    static isStaticData(node: GraphNodeDefinition): boolean {
-        return NodeHandler.getHandler(node).type === 'static';
-    }
-
     // Definition
     public getDefinition(id: string = randomId()): GraphNodeDefinition {
         return {
@@ -36,6 +25,14 @@ export abstract class NodeHandler {
 
     public isSignalPort(portId: string): boolean {
         return this._getDefinition().inputPorts[portId].type === 'signal';
+    }
+
+    public isStaticData(): boolean {
+        return this.type === 'static';
+    }
+
+    public getAllPortIds(): string[] {
+        return Object.keys(this._getDefinition().inputPorts);
     }
 
     // Resolution

@@ -1,37 +1,44 @@
-import { PortTriggerData, StateMachineExecution } from '../../state-machine';
+import { Nodes, PortTriggerData, StateMachineExecution } from '../../state-machine';
 import { InvokeGraphParams } from './types';
 
 export async function invokeGraphHandler(options: InvokeGraphParams) {
-    const { db, graphId, input } = options;
+    const { database, graphId, input } = options;
 
     // Load the data
-    const graph = await db.loadGraph(graphId);
+    const graph = await database.table.agentGraph.getOrThrow(graphId);
+    const graphExecution = await database.table.agentGraphExecution.new(graphId);
 
-    // Build the port trigger values
+    // Port data
     const triggerValues: PortTriggerData<any>[] = [];
     let inputNodeId: string | undefined;
-    for (const node of graph.getNodes()) {
-        if (node.type === 'on-chat-message' && options.input.type === 'onUserChat') {
-            const chat = await db.loadChat(input.chatId);
-            const thread = await chat.getThread();
-            inputNodeId = node.id;
-            const ports = node.outputPorts;
-            for (const port of Object.values(ports)) {
-                if (port.dataType === 'thread') {
-                    triggerValues.push({
-                        portId: port.id,
-                        dataType: port.dataType,
-                        inputValue: thread,
-                    });
-                }
-                if (port.dataType === 'chat') {
-                    triggerValues.push({
-                        portId: port.id,
-                        dataType: port.dataType,
-                        inputValue: chat,
-                    });
-                }
-            }
+
+    // Find the event node we want to trigger
+    const onChatMessageNode = graph.nodes.find(node => node.nodeId === 'on-chat-message');
+
+    if (onChatMessageNode && input.type === 'onUserChat') {
+        inputNodeId = onChatMessageNode.id;
+
+        const chat = await database.table.chatThread.getOrThrow(input.chatId);
+        const thread = await database.table.messageThread.getOrThrow(chat.threadId);
+        const definition = Nodes.OnChatMessage.getDefinition();
+        const ports = Object.values(definition.outputPorts);
+
+        const threadPort = ports.find(port => port.dataType === 'thread');
+        const chatPort = ports.find(port => port.dataType === 'chat');
+
+        if (threadPort) {
+            triggerValues.push({
+                portId: threadPort.id,
+                dataType: threadPort.dataType,
+                inputValue: thread,
+            });
+        }
+        if (chatPort) {
+            triggerValues.push({
+                portId: chatPort.id,
+                dataType: chatPort.dataType,
+                inputValue: chat,
+            });
         }
     }
 
@@ -41,6 +48,6 @@ export async function invokeGraphHandler(options: InvokeGraphParams) {
     }
 
     // Execute
-    const execution = new StateMachineExecution(graphId, db, graph);
+    const execution = new StateMachineExecution(graph, graphExecution);
     await execution.invoke(inputNodeId, triggerValues);
 }

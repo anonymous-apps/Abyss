@@ -1,11 +1,12 @@
-import { Log } from '../../../../utils/logs';
+import { Log } from '../../../utils/logs';
+import { InvokeModelInternalResult } from '../../types';
 import { buildAnthropicMessages } from './build-context';
-import { AnthropicLanguageModelOptions, AnthropicResponse } from './types';
+import { AnthropicResponse, InvokeAnthropicProps } from './types';
 
-export async function InvokeAnthropic(props: AnthropicLanguageModelOptions) {
+export async function InvokeAnthropic(props: InvokeAnthropicProps): Promise<InvokeModelInternalResult> {
     const messages = buildAnthropicMessages(props.thread);
-    const modelId = props.intelligence.props.modelId;
-    const apiKey = props.intelligence.props.data.apiKey;
+    const modelId = props.modelId;
+    const apiKey = props.apiKey;
 
     try {
         const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -45,8 +46,9 @@ export async function InvokeAnthropic(props: AnthropicLanguageModelOptions) {
 
         // Return the result
         return {
-            inputContext: messages,
-            response: responseText,
+            inputRaw: messages,
+            outputRaw: responseText,
+            outputString: responseText,
             metrics: metrics,
         };
     } catch (error) {

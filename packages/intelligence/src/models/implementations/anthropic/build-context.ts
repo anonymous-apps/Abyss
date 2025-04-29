@@ -1,18 +1,18 @@
-import { Log } from '../../../../utils/logs';
-import { Thread } from '../../../thread/thread';
+import { MessageThreadRecord } from '@abyss/records';
+import { Log } from '../../../utils/logs';
 import { AnthropicContent, AnthropicMessage } from './types';
 
-export function buildAnthropicMessages(thread: Thread): AnthropicMessage[] {
-    const turns = thread.getTurns();
+export function buildAnthropicMessages(thread: MessageThreadRecord): AnthropicMessage[] {
+    const turns = thread.turns;
     const messages: AnthropicMessage[] = [];
 
     for (const turn of turns) {
-        const role = turn.sender === 'bot' ? 'assistant' : 'user';
+        const role = turn.senderId === MessageThreadRecord.HUMAN ? 'user' : 'assistant';
         const content: AnthropicContent[] = [];
 
         for (const partial of turn.partials) {
             if (partial.type === 'text') {
-                content.push({ type: 'text', text: partial.text.content });
+                content.push({ type: 'text', text: partial.payload.content });
             } else {
                 Log.warn('AnthropicSerializer', `Cant serialize partial: ${partial.type} as anthropic doesnt support it currently`);
             }

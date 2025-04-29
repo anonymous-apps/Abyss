@@ -1,8 +1,8 @@
-import { DataInterface } from '../../constructs';
-import { GraphInputEvent } from '../../state-machine';
+import { PrismaConnection } from '@abyss/records';
+import { GraphInputEvent } from '../../state-machine/type-input.type';
 
 export interface InvokeGraphParams {
-    db: DataInterface;
     graphId: string;
     input: GraphInputEvent;
+    database: PrismaConnection;
 }

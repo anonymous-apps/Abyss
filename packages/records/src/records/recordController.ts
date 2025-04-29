@@ -64,6 +64,14 @@ export abstract class RecordController<T extends BaseRecordProps> {
         return result ? this.factory(result) : null;
     }
 
+    async getOrThrow(id: string): Promise<T> {
+        const result = await this.table.findUnique({ where: { id } });
+        if (!result) {
+            throw new Error(`Record ${this.recordType} with id ${id} not found`);
+        }
+        return this.factory(result);
+    }
+
     async exists(id: string): Promise<boolean> {
         const result = await this.table.findUnique({ where: { id } });
         return !!result;

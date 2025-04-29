@@ -14,9 +14,8 @@
         "esbuild": "^0.20.1",
         "prisma": "^6.4.1",
         "typescript": "^4.2.4",
-        "vitest": "^3.0.9"
-    },
-    "dependencies": {
+        "vitest": "^3.0.9",
         "@prisma/client": "^6.7.0"
-    }
+    },
+    "dependencies": {}
 }
