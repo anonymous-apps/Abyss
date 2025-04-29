@@ -1,0 +1,5 @@
+model Settings {
+    id        String   @id
+    lastPage String
+    theme String
+} 

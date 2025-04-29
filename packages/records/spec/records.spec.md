@@ -5,50 +5,11 @@ Below you will find details on exactly how to strure this directory.
 
 YOU MUST do exactly the following if you are reading this file. THIS IS YOUR PRIMARY GOAL.
 
-1. Run a "git diff" on this file to see what the user has changed
-2. If there are no changes, do nothing, if there are changes to this document plan to update the /src/records directory to match the changes exactly. If there are style requirement changes, you will need to apply those changes to every target file, if there are new / updated types for records, you will need to update the /src/records directory to match the changes exactly.
-3. Before you begin, set out a plan. For this, create a new file called ./plan.md which is a checklist of each change you need to make. Use this file to track your progress. There may be multiple changes to make, so make sure to check the plan.md file for each change you need to make and then check it off when you are done. If you find out there are more changes, add them to the list. Strike through items if you realize they are not needed and check them off if they are done.
-4. Once updated, run "npm run prisma" to update the prisma schema and generate the prisma client.
-
-## Style and structure
-
-/src/records/recordController.ts
-
--   Exposes a base set of methods that are common to all records.
--   Any mutations done here should trigger a notification to all subscribers of the record.
-
-/src/records/[record]/[record].controller.ts
-
-```ts
-export class XXXController extends RecordController<XXXXX> {
-```
-
--   Extends the base record controller with table-specific methods.
--   Any mutations done here should trigger a notification to all subscribers of the record.
--   Ideally this has NO methods. For almost every case, the base controller should be sufficient.
--   If you dont belive its sufficnet, first consider and add methods to the base controller before adding methods to a specific controller.
-
-/src/records/[record]/[record].type.ts
-
--   Defines the typescript type for the record.
--   This type should be exported for use in other files.
--   Should match the prisma schema exactly.
-
-/src/records/[record]/[record].document.prisma
-
--   Contains the prisma schema for the record.
--   Should be exactly the same as the typescript type.
--   This will be joined together into a larger schema automatically.
--   I dont want columns referencing eachother or anything fancy, for references use OtherRecordId : string for definitions rather than something like OtherRecord : MyOtherRecord
-
-If you are adding a new record type, please add it to the /src/prisma.type.ts file so that the table references are updated. You may get type errors until you do this. Table names are all lowercase camelCase.
-
-/src/records/[record]/[record].ts
-
--   This is the main class created in memory for the record when loaded from the database.
--   It should extend RecordClass<RecordType> and have public properties for each column in the record outside of the shared base properties.
--   It should make use of inherited methods, ideally NO new methods are added here.
--   Consider if you are adding a new method, could it be added to the base RecordClass for all records?
+1. Run a "git diff" on this file to see what the user has changed, if you dont do this, how can you know what to update?
+2. Open a few of the existing files in /records and make sure you understand the existing structure.
+3. If there are no changes from git diff, do nothing, if there are changes to this document plan to update the /src/records directory to match the changes exactly. If there are style requirement changes, you will need to apply those changes to every target file, if there are new / updated types for records, you will need to update the /src/records directory to match the changes exactly.
+4. Before you begin, set out a plan. For this, create a new file called ./plan.md which is a checklist of each change you need to make. Use this file to track your progress. There may be multiple changes to make, so make sure to check the plan.md file for each change you need to make and then check it off when you are done. If you find out there are more changes, add them to the list. Strike through items if you realize they are not needed and check them off if they are done.
+5. Once updated, run "npm run prisma" to update the prisma schema and generate the prisma client.
 
 ## Record Types
 
@@ -202,5 +163,28 @@ export interface AgentGraphExecution extends BaseRecordProps {
     events: Json; // array of events
     startTime: Date;
     endTime: Date;
+}
+```
+
+### metric
+
+A metric is a record of a numerical measurement with optional dimensions.
+
+```ts
+export interface Metric extends BaseRecordProps {
+    name: string;
+    dimensions: Record<string, string>;
+    value: number;
+}
+```
+
+### settings
+
+A settings is a record of a set of key value pairs.
+
+```ts
+export interface Settings extends BaseRecordProps {
+    lastPage: string;
+    theme: string;
 }
 ```

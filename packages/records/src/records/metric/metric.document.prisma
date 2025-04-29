@@ -1,0 +1,7 @@
+model Metric {
+    id        String   @id @default(uuid())
+    createdAt DateTime @default(now())
+    name String
+    dimensions Json
+    value Float
+} 

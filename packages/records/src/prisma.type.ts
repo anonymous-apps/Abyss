@@ -3,7 +3,9 @@ import { AgentGraphController } from './records/agentGraph/agentGraph.controller
 import { AgentGraphExecutionController } from './records/agentGraphExecution/agentGraphExecution.controller';
 import { ChatThreadController } from './records/chatThread/chatThread.controller';
 import { MessageThreadController } from './records/messageThread/messageThread.controller';
+import { MetricController } from './records/metric/metric.controller';
 import { ModelConnectionController } from './records/modelConnection/modelConnection.controller';
+import { SettingsController } from './records/settings/settings.controller';
 import { TextDocumentController } from './records/textDocument/textDocument.controller';
 
 export interface TableReferences {
@@ -13,6 +15,8 @@ export interface TableReferences {
     chatThread: ChatThreadController;
     agentGraph: AgentGraphController;
     agentGraphExecution: AgentGraphExecutionController;
+    metric: MetricController;
+    settings: SettingsController;
 }
 
 export function buildTableReferences(connection: PrismaConnection): TableReferences {
@@ -23,5 +27,7 @@ export function buildTableReferences(connection: PrismaConnection): TableReferen
         chatThread: new ChatThreadController(connection),
         agentGraph: new AgentGraphController(connection),
         agentGraphExecution: new AgentGraphExecutionController(connection),
+        metric: new MetricController(connection),
+        settings: new SettingsController(connection),
     };
 }
