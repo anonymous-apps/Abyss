@@ -161,3 +161,32 @@ export interface ChatThread extends BaseRecordProps {
     participantId: string;
 }
 ```
+
+### agentGraph
+
+An agent graph is a graph of an agent and their connections.
+
+```ts
+export interface AgentGraph extends BaseRecordProps {
+    name: string;
+    description: string;
+    nodes: AgentGraphNode[];
+    edges: AgentGraphEdge[];
+}
+
+export interface AgentGraphNode extends BaseRecordProps {
+    nodeId: string;
+    position: {
+        x: number;
+        y: number;
+    };
+    parameters: any;
+}
+
+export interface AgentGraphEdge extends BaseRecordProps {
+    sourceNodeId: string;
+    sourcePortId: string;
+    targetNodeId: string;
+    targetPortId: string;
+}
+```

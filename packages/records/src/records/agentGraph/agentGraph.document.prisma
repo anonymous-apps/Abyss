@@ -1,0 +1,9 @@
+model AgentGraph {
+    id          String   @id @default(uuid())
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    name        String
+    description String
+    nodes       Json
+    edges       Json
+}

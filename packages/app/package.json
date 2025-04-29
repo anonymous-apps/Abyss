@@ -24,6 +24,7 @@
     },
     "dependencies": {
         "@abyss/intelligence": "file:../intelligence",
+        "@abyss/records": "file:../records",
         "@abyss/ui-components": "file:../ui-components",
         "@aws-sdk/client-bedrock-runtime": "^3.758.0",
         "@aws-sdk/client-dynamodb": "^3.767.0",

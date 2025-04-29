@@ -1,4 +1,5 @@
 import { PrismaConnection } from './prisma';
+import { AgentGraphController } from './records/agentGraph/agentGraph.controller';
 import { ChatThreadController } from './records/chatThread/chatThread.controller';
 import { MessageThreadController } from './records/messageThread/messageThread.controller';
 import { ModelConnectionController } from './records/modelConnection/modelConnection.controller';
@@ -9,6 +10,7 @@ export interface TableReferences {
     modelConnection: ModelConnectionController;
     messageThread: MessageThreadController;
     chatThread: ChatThreadController;
+    agentGraph: AgentGraphController;
 }
 
 export function buildTableReferences(connection: PrismaConnection): TableReferences {
@@ -17,5 +19,6 @@ export function buildTableReferences(connection: PrismaConnection): TableReferen
         modelConnection: new ModelConnectionController(connection),
         messageThread: new MessageThreadController(connection),
         chatThread: new ChatThreadController(connection),
+        agentGraph: new AgentGraphController(connection),
     };
 }
