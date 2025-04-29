@@ -21,7 +21,8 @@ export class PrismaConnection {
     }
 
     public _reference(table: string) {
-        return this.client[table as 'document'];
+        // Using this to get type safty even though it's not the best way to do it
+        return this.client[table as 'textDocument'];
     }
 
     // Connection subscriptions - hierarchical structure

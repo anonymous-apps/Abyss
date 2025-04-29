@@ -5,6 +5,7 @@
     "types": "dist/index.d.ts",
     "scripts": {
         "test": "vitest run",
+        "build": "esbuild src/index.ts --bundle --platform=node --outfile=dist/index.js",
         "prisma": "DATABASE_URL=file:./dev.db npm run prisma:dev",
         "prisma:dev": "scripts/prisma-dev.sh"
     },
@@ -15,7 +16,7 @@
         "vitest": "^3.0.9"
     },
     "dependencies": {
-        "@prisma/client": "^6.6.0",
+        "@prisma/client": "./prisma/prisma",
         "dotenv": "^16.5.0",
         "prisma": "^6.4.1"
     }
