@@ -1,8 +1,7 @@
-import { Nodes } from '@abyss/intelligence';
-import { GraphNodeDefinition } from '@abyss/intelligence/dist/state-machine/type-definition.type';
+import { GraphNodeDefinition, NodeHandler } from '@abyss/intelligence';
 import { AgentGraphEdge, AgentGraphNode, AgentGraphRecord } from '@abyss/records';
 import { Connection, Edge, addEdge, useEdgesState, useNodesState } from '@xyflow/react';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Database } from '../../main';
 import { useDatabaseRecord } from '../../state/database-connection';
@@ -12,10 +11,11 @@ export function useViewAgent() {
     const { id } = useParams();
     const navigate = useNavigate();
     const agent = useDatabaseRecord<AgentGraphRecord>('agentGraph', id || '');
+    const [hasDoneInitialLoad, setHasDoneInitialLoad] = useState(false);
 
     const handleUpdateAgent = (data: Partial<AgentGraphRecord>) => {
         if (agent) {
-            Database.table.agentGraph.update(id || '', { ...agent, ...data });
+            Database.table.agentGraph.update(id || '', data);
         }
     };
 
@@ -29,22 +29,31 @@ export function useViewAgent() {
     const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
 
     const dbToRenderedGraphNode = (node: AgentGraphNode): RenderedGraphNode => {
-        const definition = Nodes[node.nodeId as keyof typeof Nodes].getDefinition();
+        const definition = NodeHandler.getById(node.nodeId).getDefinition(node.id);
         return {
-            id: node.nodeId,
+            id: node.id,
             type: 'custom',
             position: { x: node.position.x, y: node.position.y },
             data: { label: definition.name, definition: definition, database: node },
         };
     };
 
-    const dbToRenderedGraphEdge = (edge: AgentGraphEdge): Edge => {
+    const dbToRenderedGraphEdge = (edge: AgentGraphEdge, nodes: AgentGraphNode[]): Edge => {
+        const targetNode = nodes.find(node => node.id === edge.targetNodeId);
+        const definition = NodeHandler.getById(targetNode?.nodeId!);
+        const isSignal = definition.isSignalPort(edge.targetPortId);
+
         return {
             id: edge.id,
             source: edge.sourceNodeId,
-            sourceHandle: `${edge.sourceNodeId}:${edge.sourcePortId}`,
+            sourceHandle: edge.sourcePortId,
             target: edge.targetNodeId,
-            targetHandle: `${edge.targetNodeId}:${edge.targetPortId}`,
+            targetHandle: edge.targetPortId,
+            type: 'custom',
+            data: {
+                isSignal,
+                targetColor: definition.getDefinition().color,
+            },
         };
     };
 
@@ -58,14 +67,12 @@ export function useViewAgent() {
     };
 
     const renderedToDbEdge = (edge: Edge): AgentGraphEdge => {
-        const [sourceNodeId, sourcePortId] = edge.sourceHandle?.split(':') || [];
-        const [targetNodeId, targetPortId] = edge.targetHandle?.split(':') || [];
         return {
             id: edge.id,
-            sourceNodeId,
-            sourcePortId,
-            targetNodeId,
-            targetPortId,
+            sourceNodeId: edge.source,
+            sourcePortId: edge.sourceHandle || '',
+            targetNodeId: edge.target,
+            targetPortId: edge.targetHandle || '',
         };
     };
 
@@ -83,9 +90,10 @@ export function useViewAgent() {
     );
 
     useEffect(() => {
-        if (agent && nodes.length === 0 && edges.length === 0) {
-            setNodes(agent.nodes.map(dbToRenderedGraphNode));
-            setEdges(agent.edges.map(dbToRenderedGraphEdge));
+        if (agent && nodes.length === 0 && edges.length === 0 && !hasDoneInitialLoad) {
+            setNodes(agent.nodes.map(node => dbToRenderedGraphNode(node)));
+            setEdges(agent.edges.map(edge => dbToRenderedGraphEdge(edge, agent.nodes)));
+            setHasDoneInitialLoad(true);
         }
     }, [agent]);
 
@@ -98,7 +106,7 @@ export function useViewAgent() {
                 definition: node,
                 database: {
                     id: node.id,
-                    nodeId: node.id,
+                    nodeId: node.type,
                     parameters: {},
                     position: { x: 0, y: 0 },
                 },
@@ -114,9 +122,9 @@ export function useViewAgent() {
     const onConnect = useCallback(
         (connection: Connection) => {
             const sourceNode = nodes.find(node => node.id === connection.source);
-            const sourceHandleLocalId = connection.sourceHandle?.split(':')[1];
+            const sourceHandleLocalId = connection.sourceHandle;
             const targetNode = nodes.find(node => node.id === connection.target);
-            const targetHandleLocalId = connection.targetHandle?.split(':')[1];
+            const targetHandleLocalId = connection.targetHandle;
             const sourceHandle =
                 sourceNode?.data.definition.outputPorts[sourceHandleLocalId as keyof typeof sourceNode.data.definition.outputPorts];
             const targetHandle =

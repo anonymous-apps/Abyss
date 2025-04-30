@@ -28,6 +28,7 @@ export function AgentsPage() {
                                 title={agent.name || 'Untitled'}
                                 onClick={() => navigate(`/agents/id/${agent.id}`)}
                                 icon={<Bot className="w-4 h-4" />}
+                                footer={agent.nodes.length + ' nodes'}
                             >
                                 {agent.description || 'No description'}
                             </Tile>
