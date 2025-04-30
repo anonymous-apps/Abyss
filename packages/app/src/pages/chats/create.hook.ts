@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Database } from '../../main';
-import { chatWithAiModel } from '../../operations/chat-with-ai-model';
 import { useScanTableAgents, useScanTableModelConnections } from '../../state/database-access-utils';
+import { chatWithAgentGraph, chatWithAiModel } from '../../state/operations';
 
 export function useChatCreate() {
     const navigate = useNavigate();
@@ -29,7 +29,11 @@ export function useChatCreate() {
             return;
         }
         const chatRecord = await Database.table.chatThread.new(sourceId);
-        chatWithAiModel(message, sourceId, chatRecord.id);
+        if (chatType === 'model') {
+            chatWithAiModel(message, sourceId, chatRecord.id);
+        } else {
+            chatWithAgentGraph(message, sourceId, chatRecord.id);
+        }
         navigate(`/chats/id/${chatRecord.id}`);
     };
 

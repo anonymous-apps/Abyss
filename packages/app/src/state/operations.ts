@@ -9,3 +9,12 @@ export function chatWithAiModel(humanMessage: string, modelConnectionId: string,
         database: Database,
     });
 }
+
+export async function chatWithAgentGraph(humanMessage: string, agentGraphId: string, chatId: string) {
+    return Operations.handlerOnHumanMessage({
+        graphId: agentGraphId,
+        humanMessage,
+        chatId,
+        database: Database,
+    });
+}

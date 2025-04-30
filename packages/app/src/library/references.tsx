@@ -56,6 +56,15 @@ export function useRecordReference({ sourceId }: { sourceId: string }): RecordRe
         };
     }
 
+    if (recordType === 'agentgraph') {
+        const Icon = getIconForSourceType('agentgraph');
+        return {
+            icon: Icon,
+            label: 'Agent Graph',
+            link: `/database/id/agentGraph/record/${sourceId}`,
+        };
+    }
+
     console.warn('Unknown record type', recordType);
 
     return {

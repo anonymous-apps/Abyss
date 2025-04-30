@@ -14,18 +14,14 @@ export class ChatThreadController extends RecordController<'chatThread', ChatThr
     }
 
     async new(participantId: string): Promise<ChatThreadRecord> {
-        const messageThread = await this.connection.client.messageThread.create({
-            data: {
-                turns: [],
-            },
+        const messageThread = await this.connection.table.messageThread.create({
+            turns: [],
         });
-        const result = await this.connection.client.chatThread.create({
-            data: {
-                name: 'New Chat Thread',
-                description: 'New Chat Thread',
-                threadId: messageThread.id,
-                participantId,
-            },
+        const result = await this.connection.table.chatThread.create({
+            name: 'New Chat Thread',
+            description: 'New Chat Thread',
+            threadId: messageThread.id,
+            participantId,
         });
         this.connection.notifyRecord(this.recordType, result);
         this.connection.notifyRecord('messageThread', messageThread);

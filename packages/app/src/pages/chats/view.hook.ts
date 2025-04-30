@@ -1,8 +1,8 @@
 import { ChatThreadRecord, MessageThreadRecord } from '@abyss/records';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { chatWithAiModel } from '../../operations/chat-with-ai-model';
 import { useDatabaseRecord } from '../../state/database-connection';
+import { chatWithAgentGraph, chatWithAiModel } from '../../state/operations';
 
 export function useChatView() {
     const { id } = useParams();
@@ -42,7 +42,11 @@ export function useChatView() {
             return;
         }
         setMessage('');
-        chatWithAiModel(message, chat?.participantId || '', chat?.id || '');
+        if (chat?.participantId?.startsWith('modelConnection::')) {
+            chatWithAiModel(message, chat?.participantId || '', chat?.id || '');
+        } else {
+            chatWithAgentGraph(message, chat?.participantId || '', chat?.id || '');
+        }
     };
 
     const breadcrumbs = [

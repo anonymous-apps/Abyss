@@ -158,7 +158,7 @@ export class StateMachineExecution {
             throw new Error('Max invoke count reached');
         }
 
-        Log.log('state-machine', `Invoking node ${nodeId} for execution ${this.executionRecord.id}`);
+        Log.log('state-machine', `Invoking node ${nodeId} (${node.nodeId}) for execution ${this.executionRecord.id}`);
         Log.log('state-machine', `Queue now is [${[...this.evaluationQueue].join(', ')}] for execution ${this.executionRecord.id}`);
 
         try {
@@ -177,6 +177,12 @@ export class StateMachineExecution {
             const outputMap = this._getPortMap(result.portData);
             await this.executionRecord.completeNodeResolution(nodeId, node.nodeId, outputMap);
         } catch (error) {
+            Log.error(
+                'state-machine',
+                `Failed to resolve node ${nodeId} (${node.nodeId}) for execution ${this.executionRecord.id}, error: ${error}, stack: ${
+                    error instanceof Error ? error.stack : undefined
+                }`
+            );
             await this.executionRecord.failNodeResolution(
                 nodeId,
                 node.nodeId,

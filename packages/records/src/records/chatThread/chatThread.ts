@@ -30,17 +30,14 @@ export class ChatThreadRecord extends RecordClass<ChatThreadType> {
     }
 
     public async setThreadId(threadId: string) {
-        this.threadId = threadId;
-        await this.save();
+        return await this.controller.connection.table.chatThread.update(this.id, { threadId });
     }
 
     public async block(blocker: string) {
-        this.blocker = blocker;
-        await this.save();
+        return await this.controller.connection.table.chatThread.update(this.id, { blocker });
     }
 
     public async unblock() {
-        this.blocker = null;
-        await this.save();
+        return await this.controller.connection.table.chatThread.update(this.id, { blocker: null });
     }
 }

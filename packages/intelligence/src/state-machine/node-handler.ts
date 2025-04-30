@@ -28,7 +28,12 @@ export abstract class NodeHandler {
     protected abstract _getDefinition(): Omit<GraphNodeDefinition, 'id' | 'type'>;
 
     public isSignalPort(portId: string): boolean {
-        return this._getDefinition().inputPorts[portId].type === 'signal';
+        const definition = this._getDefinition();
+        const port = definition.inputPorts[portId];
+        if (!port) {
+            return false;
+        }
+        return port.type === 'signal';
     }
 
     public isStaticData(): boolean {
@@ -41,7 +46,10 @@ export abstract class NodeHandler {
 
     // Resolution
     async resolve(data: ResolveNodeData): Promise<NodeExecutionResult> {
-        return this._resolve(data);
+        console.log('Starting node', this.id, data);
+        const resolution = await this._resolve(data);
+        console.log('Resolved node', this.id, resolution);
+        return resolution;
     }
     protected _resolve(data: ResolveNodeData): Promise<NodeExecutionResult> {
         throw new Error('Not implemented');
