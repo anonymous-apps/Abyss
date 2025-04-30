@@ -6,6 +6,6 @@ export interface AgentGraphExecutionType extends BaseRecordProps {
     agentGraphId: string;
     status: Status;
     events: StateMachineEvent[];
-    startTime: Date;
-    endTime: Date;
+    startTime?: string;
+    endTime?: string;
 }

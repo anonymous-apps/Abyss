@@ -18,10 +18,10 @@ export class AgentGraphExecutionController extends RecordController<
     }
 
     async new(agentGraphId: string): Promise<AgentGraphExecutionRecord> {
-        const result = await this.connection.client.agentGraphExecution.create({
-            data: {
-                agentGraphId,
-            },
+        const result = await this.connection.table.agentGraphExecution.create({
+            agentGraphId,
+            status: 'notStarted',
+            events: [],
         });
         this.connection.notifyRecord(this.recordType, result);
         return new AgentGraphExecutionRecord(this, result.id);

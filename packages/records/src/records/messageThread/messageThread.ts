@@ -7,7 +7,7 @@ export class MessageThreadRecord extends ReferencedDatabaseRecord<MessageThreadT
         super(controller, id);
     }
 
-    async addPartial(senderId: string, ...messages: Omit<MessagePartial, 'timestamp'>[]): Promise<MessageThreadRecord> {
+    async addPartial(senderId: string, ...messages: Omit<MessagePartial, 'timestamp'>[]): Promise<MessageThreadType> {
         const data = await this.getOrThrow();
         const currentTurns = data.turns ?? [];
         const currentTurn = currentTurns[currentTurns.length - 1];
@@ -33,10 +33,10 @@ export class MessageThreadRecord extends ReferencedDatabaseRecord<MessageThreadT
         const updatedData = await this.controller.create({
             turns: newTurns,
         });
-        return updatedData as unknown as MessageThreadRecord;
+        return updatedData as unknown as MessageThreadType;
     }
 
-    async addHumanPartial(...messages: MessagePartial[]): Promise<MessageThreadRecord> {
+    async addHumanPartial(...messages: MessagePartial[]): Promise<MessageThreadType> {
         return this.addPartial('HUMAN', ...messages);
     }
 }

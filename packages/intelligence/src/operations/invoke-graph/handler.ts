@@ -49,5 +49,5 @@ export async function invokeGraphHandler(options: InvokeGraphParams) {
 
     // Execute
     const execution = new StateMachineExecution(graph, graphExecution, database);
-    await execution.invoke(inputNodeId, triggerValues);
+    await execution.invoke(inputNodeId, triggerValues, input);
 }

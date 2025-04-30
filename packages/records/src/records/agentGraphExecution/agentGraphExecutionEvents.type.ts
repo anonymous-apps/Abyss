@@ -1,50 +1,56 @@
-export interface ExecutionBeganEvent {
-    type: 'execution-began';
+export interface BaseEvent {
+    level: 'info' | 'error';
+    timestamp: string;
     executionId: string;
+    message: string;
 }
 
-export interface NodeResolutionBeganEvent {
+export interface ExecutionBeganEvent extends BaseEvent {
+    type: 'execution-began';
+    eventType: string;
+    eventData: Record<string, any>;
+}
+
+export interface ExecutionInfoEvent extends BaseEvent {
+    type: 'execution-info';
+    eventData: Record<string, any>;
+}
+
+export interface NodeResolutionBeganEvent extends BaseEvent {
     type: 'node-resolution-began';
-    executionId: string;
     nodeId: string;
     nodeType: string;
-    timestamp: Date;
     inputs: Record<string, any>;
 }
 
-export interface NodeResolutionCompletedEvent {
+export interface NodeResolutionCompletedEvent extends BaseEvent {
     type: 'node-resolution-completed';
-    executionId: string;
     nodeId: string;
     nodeType: string;
     outputs: Record<string, any>;
-    timestamp: Date;
 }
 
-export interface NodeResolutionFailedEvent {
+export interface NodeResolutionFailedEvent extends BaseEvent {
     type: 'node-resolution-failed';
-    executionId: string;
     nodeType: string;
     nodeId: string;
     error: string;
     stack: string | undefined;
-    timestamp: Date;
 }
 
-export interface ExecutionCompletedEvent {
+export interface ExecutionCompletedEvent extends BaseEvent {
     type: 'execution-completed';
-    executionId: string;
 }
 
-export interface ExecutionFailedEvent {
+export interface ExecutionFailedEvent extends BaseEvent {
     type: 'execution-failed';
-    executionId: string;
     error: string;
     stack: string | undefined;
 }
 
 export type StateMachineEvent =
     | ExecutionBeganEvent
+    | ExecutionInfoEvent
     | NodeResolutionBeganEvent
     | NodeResolutionCompletedEvent
     | NodeResolutionFailedEvent

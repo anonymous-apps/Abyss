@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router';
 import { HeaderBar } from './library/header-bar';
+import { AgentExecutionPage } from './pages/agents/agent-execution';
 import { AgentsPage } from './pages/agents/agents-page';
 import { ViewAgentGraphPage } from './pages/agents/view-agent-graph';
 import { ChatCreatePage } from './pages/chats/create.page';
@@ -41,6 +42,7 @@ export function App() {
                         <Route path="/models/id/:id" element={<ModelProfileViewPage />} />
                         <Route path="/agents" element={<AgentsPage />} />
                         <Route path="/agents/id/:id" element={<ViewAgentGraphPage />} />
+                        <Route path="/agents/execution/:id" element={<AgentExecutionPage />} />
                         <Route path="/chats" element={<ChatMainPage />}>
                             <Route path="/chats/create" element={<ChatCreatePage />} />
                             <Route path="/chats/id/:id" element={<ChatViewPage />} />

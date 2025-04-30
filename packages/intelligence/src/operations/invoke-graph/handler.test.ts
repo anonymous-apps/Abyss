@@ -99,18 +99,25 @@ describe('invokeGraph', () => {
 
         const execution = new StateMachineExecution(agentGraph, executionRecord, db);
 
-        const result = await execution.invoke('onChatMessage', [
+        const result = await execution.invoke(
+            'onChatMessage',
+            [
+                {
+                    portId: 'thread',
+                    inputValue: thread,
+                    dataType: 'thread',
+                },
+                {
+                    portId: 'chat',
+                    inputValue: chat,
+                    dataType: 'chat',
+                },
+            ],
             {
-                portId: 'thread',
-                inputValue: thread,
-                dataType: 'thread',
-            },
-            {
-                portId: 'chat',
-                inputValue: chat,
-                dataType: 'chat',
-            },
-        ]);
+                type: 'onUserChat',
+                chatId: chat.id,
+            }
+        );
 
         const events = await db.table.agentGraphExecution.get(executionRecord.id);
         const chatOutput = await db.table.chatThread.getOrThrow(chat.id);

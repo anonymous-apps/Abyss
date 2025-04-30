@@ -8,6 +8,7 @@ export * from './content/IconSection';
 export * from './content/MonospaceText';
 export * from './content/Tile';
 export * from './data/LabelValue';
+export * from './data/LogView';
 export * from './data/Table';
 export * from './inputs/Button';
 export * from './inputs/ButtonGroup';

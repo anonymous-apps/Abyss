@@ -32,7 +32,7 @@ export function useChatView() {
             if (chat.participantId.startsWith('modelConnection::')) {
                 navigate(`/database/id/modelConnection/record/${chat.participantId}`);
             } else if (chat.participantId.startsWith('agentGraph::')) {
-                navigate(`/database/id/agentGraph/record/${chat.participantId}`);
+                navigate(`/agents/id/${chat.participantId}`);
             }
         }
     };

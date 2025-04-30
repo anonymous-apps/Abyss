@@ -55,14 +55,12 @@ export class InvokeLanguageModelNode extends NodeHandler {
         const inputLanguageModel = data.resolvePort<ModelConnectionType>('chatModel');
         const thread = data.resolvePort<MessageThreadType>('thread');
         const result = await invokeModelAgainstThread(inputLanguageModel, thread);
-
-        const outThreadRef = await data.database.table.messageThread.ref(thread.id).addPartial('bot', {
+        const outThread = await data.database.table.messageThread.ref(thread.id).addPartial('bot', {
             type: 'text',
             payload: {
                 content: result.outputString,
             },
         });
-        const outThread = await outThreadRef.getOrThrow();
 
         return {
             portData: [

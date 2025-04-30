@@ -3,6 +3,7 @@ import { Log } from '../utils/logs';
 import { NodeHandler } from './node-handler';
 import './node-handlers';
 import { PortTriggerData } from './type-base.type';
+import { GraphInputEvent } from './type-input.type';
 
 export class StateMachineExecution {
     private static maxInvokeCount = 100;
@@ -102,11 +103,12 @@ export class StateMachineExecution {
 
     // Invoke
 
-    public async invoke(inputNode: string, portData: PortTriggerData<any>[]) {
+    public async invoke(inputNode: string, portData: PortTriggerData<any>[], eventRef: GraphInputEvent) {
         try {
             Log.log('state-machine', `Invoking state machine execution ${this.executionRecord.id}`);
-            await this.executionRecord.beginExecution();
+            await this.executionRecord.beginExecution(eventRef.type, eventRef);
             await this._evaluateStaticNodes();
+            await this.executionRecord.addExecutionInfo(`Processed source event ${eventRef.type}, tracing results across graph`);
             await this._invoke(inputNode, portData);
             await this.executionRecord.completeExecution();
         } catch (error) {
@@ -133,6 +135,7 @@ export class StateMachineExecution {
         Log.log('state-machine', `Evaluating static nodes for execution ${this.executionRecord.id}`);
         // Queue up all nodes that dont have any input ports
         const staticNodes = this.graph.nodes.filter(n => this._getNodeDefinition(n.id).isStaticData());
+        await this.executionRecord.addExecutionInfo('Evaluating all static nodes first before processing source event', { staticNodes });
         for (const node of staticNodes) {
             const noInputPorts = this._nodeLacksInputPorts(node.id);
             if (noInputPorts) {

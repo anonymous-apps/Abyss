@@ -1,10 +1,10 @@
-import { Button, IconSection, PageCrumbed, Tile, TileGrid } from '@abyss/ui-components';
-import { Bot, Plus } from 'lucide-react';
+import { Button, IconSection, PageCrumbed, Table, Tile, TileGrid } from '@abyss/ui-components';
+import { Bot, List, Plus } from 'lucide-react';
 import React from 'react';
 import { useAgentsPage } from './agents-page.hook';
 
 export function AgentsPage() {
-    const { agents, handleCreateAgent, navigate } = useAgentsPage();
+    const { agents, handleCreateAgent, navigate, executionTableData, onOpenRecordStr } = useAgentsPage();
 
     return (
         <PageCrumbed
@@ -37,6 +37,14 @@ export function AgentsPage() {
                 ) : (
                     <div className="text-text-700">No agents found</div>
                 )}
+            </IconSection>
+
+            <IconSection title="Executions" icon={List}>
+                <Table
+                    table={'agentGraphExecution'}
+                    data={executionTableData as Record<string, any>[]}
+                    onRecordClick={recordId => onOpenRecordStr(recordId)}
+                />
             </IconSection>
         </PageCrumbed>
     );
