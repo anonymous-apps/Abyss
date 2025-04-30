@@ -41,6 +41,7 @@ export function useChatView() {
         if (message.trim() === '') {
             return;
         }
+        setMessage('');
         chatWithAiModel(message, chat?.participantId || '', chat?.id || '');
     };
 

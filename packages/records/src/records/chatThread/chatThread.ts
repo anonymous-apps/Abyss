@@ -8,13 +8,15 @@ export class ChatThreadRecord extends RecordClass<ChatThreadType> {
     public description: string;
     public threadId: string;
     public participantId: string;
-    public blocker?: string;
+    public blocker?: string | null;
+
     constructor(controller: ChatThreadController, data: ChatThreadType) {
         super(controller, data);
         this.name = data.name;
         this.description = data.description;
         this.threadId = data.threadId;
         this.participantId = data.participantId;
+        this.blocker = data.blocker;
     }
 
     public async addPartial(senderId: string, ...messages: Omit<MessagePartial, 'timestamp'>[]) {
@@ -38,7 +40,7 @@ export class ChatThreadRecord extends RecordClass<ChatThreadType> {
     }
 
     public async unblock() {
-        this.blocker = undefined;
+        this.blocker = null;
         await this.save();
     }
 }

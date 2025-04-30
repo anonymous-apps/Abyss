@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Database } from '../../main';
+import { chatWithAiModel } from '../../operations/chat-with-ai-model';
 import { useScanTableAgents, useScanTableModelConnections } from '../../state/database-access-utils';
 
 export function useChatCreate() {
@@ -28,14 +29,7 @@ export function useChatCreate() {
             return;
         }
         const chatRecord = await Database.table.chatThread.new(sourceId);
-        const messageThread = await Database.table.messageThread.getOrThrow(chatRecord.threadId);
-        const messageThreadWithUserMessage = await messageThread.addHumanPartial({
-            type: 'text',
-            payload: {
-                content: message,
-            },
-        });
-        await chatRecord.setThreadId(messageThreadWithUserMessage.id);
+        chatWithAiModel(message, sourceId, chatRecord.id);
         navigate(`/chats/id/${chatRecord.id}`);
     };
 

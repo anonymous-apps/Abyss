@@ -27,6 +27,7 @@ export function useChatMain() {
             title: entry.name,
             icon: getIconForSourceType(entry.participantId),
             url: `/chats/id/${entry.id}`,
+            isInProgress: !!entry.blocker,
             onCancel: () => handleDeleteChat(entry.id),
         };
     });

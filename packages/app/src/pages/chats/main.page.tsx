@@ -23,6 +23,7 @@ export function ChatMainPage() {
                         icon={item.icon}
                         onClick={() => navigate(item.url)}
                         isActive={location.pathname === item.url}
+                        isInProgress={item.isInProgress}
                         isClosable={true}
                         onClose={() => handleDeleteChat(item.id)}
                     />

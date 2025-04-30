@@ -14,32 +14,32 @@ export function ChatHistoryRenderer({ thread }: { thread?: MessageThreadRecord }
         // Render messages themselves
         for (let i = 0; i < turn.partials.length; i++) {
             const message = turn.partials[i];
-            if (turn.senderId === 'HUMAN') {
+            if (turn.senderId.toLowerCase() === 'human') {
                 if (message.type === 'text') {
                     elements.push(<UserMessageSection key={turn.id + '-' + i} message={message} />);
                 } else {
-                    console.error('Unknown user message type', turn);
+                    console.error('Unknown user message type', message);
                 }
-            } else if (turn.senderId === 'SYSTEM') {
+            } else if (turn.senderId.toLowerCase() === 'system') {
                 if (message.type === 'text') {
                     elements.push(<SystemTextMessageSection key={turn.id + '-' + i} message={message} />);
                 } else {
-                    console.error('Unknown system message type', turn);
+                    console.error('Unknown system message type', message);
                 }
             } else if (turn.senderId.startsWith('agentGraph:')) {
                 if (message.type === 'text') {
                     elements.push(<AiMessageTextSection key={turn.id + '-' + i} message={message} />);
                 } else {
-                    console.error('Unknown agent graph message type', turn);
+                    console.error('Unknown agent graph message type', message);
                 }
             } else if (turn.senderId.startsWith('modelConnection:')) {
                 if (message.type === 'text') {
                     elements.push(<AiMessageTextSection key={turn.id + '-' + i} message={message} />);
                 } else {
-                    console.error('Unknown model connection message type', turn);
+                    console.error('Unknown model connection message type', message);
                 }
             } else {
-                console.error('Unknown message type', turn);
+                console.error('Unknown message type sender', turn.senderId, message);
             }
         }
     }

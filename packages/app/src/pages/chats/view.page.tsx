@@ -22,17 +22,22 @@ export function ChatViewPage() {
             <ChatHistoryRenderer thread={thread || undefined} />
             <br />
             <br />
-            <InputArea
-                value={message}
-                onChange={e => setMessage(e.target.value)}
-                placeholder="Type your message here..."
-                onKeyDown={handleKeyPress}
-            />
-            <div className="flex justify-end">
-                <Button icon={Send} onClick={handleSendMessage}>
-                    Send
-                </Button>
-            </div>
+            {chat?.blocker && <div className="text-sm text-gray-500">Chat is responding...</div>}
+            {!chat?.blocker && (
+                <>
+                    <InputArea
+                        value={message}
+                        onChange={e => setMessage(e.target.value)}
+                        placeholder="Type your message here..."
+                        onKeyDown={handleKeyPress}
+                    />
+                    <div className="flex justify-end">
+                        <Button icon={Send} onClick={handleSendMessage}>
+                            Send
+                        </Button>
+                    </div>
+                </>
+            )}
         </PageCrumbed>
     );
 }

@@ -7,7 +7,7 @@ export function buildAnthropicMessages(thread: MessageThreadRecord): AnthropicMe
     const messages: AnthropicMessage[] = [];
 
     for (const turn of turns) {
-        const role = turn.senderId === 'HUMAN' ? 'user' : 'assistant';
+        const role = turn.senderId.toLowerCase() === 'human' ? 'user' : 'assistant';
         const content: AnthropicContent[] = [];
 
         for (const partial of turn.partials) {
