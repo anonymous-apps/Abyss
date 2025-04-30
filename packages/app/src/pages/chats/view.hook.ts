@@ -1,52 +1,21 @@
+import { ChatThreadRecord, MessageThreadRecord } from '@abyss/records';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Database } from '../../main';
-import { useChatData } from '../../state/hooks/useChat';
+import { useDatabaseRecord } from '../../state/database-connection';
 
 export function useChatView() {
     const { id } = useParams();
     const navigate = useNavigate();
 
-    const chat = useChatData(id || '');
+    const chat = useDatabaseRecord<ChatThreadRecord>('chatThread', id);
+    const thread = useDatabaseRecord<MessageThreadRecord>('messageThread', chat?.threadId);
+
     const [message, setMessage] = useState('');
 
     const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
-            onSendMessage();
         }
-    };
-
-    const onAskAiToRespond = async () => {
-        const sourceId = chat.chat?.references?.sourceId || '';
-        if (!chat.chat || !chat.chat.id || !sourceId) {
-            return;
-        }
-
-        Database.workflows.AskAiToRespondToThread(chat.chat.id, sourceId);
-    };
-
-    const onSendMessage = async () => {
-        const sourceId = chat.chat?.references?.sourceId || '';
-        try {
-            if (chat.chat && chat.chat.id && chat.thread && chat.thread.id && message.trim()) {
-                await Database.table.messageThread.addMessage(chat.thread.id, {
-                    sourceId: 'USER',
-                    content: {
-                        type: 'text',
-                        text: {
-                            content: message,
-                        },
-                    },
-                });
-                setMessage('');
-                await Database.workflows.AskAiToRespondToThread(chat.chat.id, sourceId);
-            }
-        } catch (error) {}
-    };
-
-    const navigateToModel = () => {
-        navigate(`/models/id/${chat.model?.id}`);
     };
 
     const navigateToHome = () => {
@@ -57,21 +26,29 @@ export function useChatView() {
         navigate('/chats');
     };
 
+    const navigateToParticipant = () => {
+        if (chat?.participantId) {
+            if (chat.participantId.startsWith('modelConnection::')) {
+                navigate(`/database/id/modelConnection/record/${chat.participantId}`);
+            } else if (chat.participantId.startsWith('agentGraph::')) {
+                navigate(`/database/id/agentGraph/record/${chat.participantId}`);
+            }
+        }
+    };
+
     const breadcrumbs = [
         { name: 'Home', onClick: navigateToHome },
         { name: 'Chats', onClick: navigateToChats },
-        { name: chat.chat?.name || 'Chat', onClick: () => {} },
+        { name: chat?.name || 'Chat', onClick: () => {} },
     ];
 
     return {
         chat,
+        thread,
         message,
         setMessage,
         handleKeyPress,
-        onAskAiToRespond,
-        onSendMessage,
-        navigateToModel,
-        isTyping: !!chat.thread?.lockingId?.length,
+        navigateToParticipant,
         breadcrumbs,
         navigateToHome,
         navigateToChats,

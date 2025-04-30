@@ -1,7 +1,6 @@
 import { ActionItem } from '@abyss/ui-components';
 import { Bell, BinaryIcon, Bot, Box, Cog, Globe, Hammer, LucideIcon, MessageCircleQuestion, NotepadText, User } from 'lucide-react';
 import { useNavigate } from 'react-router';
-import { useDatabaseTableSubscription } from '../state/database-connection';
 
 export interface RecordReference {
     icon: LucideIcon;
@@ -13,13 +12,11 @@ export function getIconForSourceType(source: string): LucideIcon {
     switch (source.toLowerCase().split('::')[0]) {
         case 'system':
             return Cog;
-        case 'ai':
-        case 'chat':
-        case 'chatmodel':
-        case 'modelconnections':
+        case 'modelconnection':
             return Box;
-        case 'agent':
+        case 'agentgraph':
             return Bot;
+        case 'human':
         case 'user':
             return User;
         case 'internal':
@@ -34,7 +31,7 @@ export function getIconForSourceType(source: string): LucideIcon {
 export function useRecordReference({ sourceId }: { sourceId: string }): RecordReference {
     const recordType = sourceId.toLowerCase().split('::')[0];
 
-    if (recordType === 'user') {
+    if (recordType === 'human') {
         const Icon = getIconForSourceType('user');
         return {
             icon: Icon,
@@ -47,26 +44,6 @@ export function useRecordReference({ sourceId }: { sourceId: string }): RecordRe
         return {
             icon: Icon,
             label: 'System',
-        };
-    }
-
-    if (recordType === 'modelconnections') {
-        const Icon = getIconForSourceType('modelConnections');
-        const data = useDatabaseTableSubscription('modelConnections', db => db.table.modelConnections.findById(sourceId));
-        return {
-            icon: Icon,
-            label: data.data?.name || '',
-            link: `/database/id/modelConnections/record/${sourceId}`,
-        };
-    }
-
-    if (recordType === 'agent') {
-        const Icon = getIconForSourceType('agent');
-        const data = useDatabaseTableSubscription('agent', db => db.table.agent.findById(sourceId));
-        return {
-            icon: Icon,
-            label: data.data?.name || '',
-            link: `/database/id/agent/record/${sourceId}`,
         };
     }
 

@@ -3,6 +3,9 @@ import { BrowserRouter, Route, Routes } from 'react-router';
 import { HeaderBar } from './library/header-bar';
 import { AgentsPage } from './pages/agents/agents-page';
 import { ViewAgentGraphPage } from './pages/agents/view-agent-graph';
+import { ChatCreatePage } from './pages/chats/create.page';
+import { ChatMainPage } from './pages/chats/main.page';
+import { ChatViewPage } from './pages/chats/view.page';
 import { ListTablesPage } from './pages/database/database.page';
 import { ViewTableRecordPage } from './pages/database/record.page';
 import { ViewTablePage } from './pages/database/table.page';
@@ -38,13 +41,13 @@ export function App() {
                         <Route path="/models/id/:id" element={<ModelProfileViewPage />} />
                         <Route path="/agents" element={<AgentsPage />} />
                         <Route path="/agents/id/:id" element={<ViewAgentGraphPage />} />
-                    </Route>
-
-                    {/* <Route path="/" element={<WithAppSidebar />}>
                         <Route path="/chats" element={<ChatMainPage />}>
                             <Route path="/chats/create" element={<ChatCreatePage />} />
                             <Route path="/chats/id/:id" element={<ChatViewPage />} />
                         </Route>
+                    </Route>
+
+                    {/* <Route path="/" element={<WithAppSidebar />}>
                         <Route path="/tools" element={<ToolsPage />} />
                         <Route path="/tools/id/:id" element={<ToolViewPage />} />
                         <Route path="/prompts" element={<PromptsPage />} />

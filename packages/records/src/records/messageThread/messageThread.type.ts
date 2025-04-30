@@ -12,6 +12,7 @@ export interface MessageTurn extends BaseRecordProps {
 
 export interface TextPartial {
     type: 'text';
+    timestamp: Date;
     payload: {
         content: string;
     };
@@ -19,6 +20,7 @@ export interface TextPartial {
 
 export interface ToolRequestPartial {
     type: 'toolRequest';
+    timestamp: Date;
     payload: {
         callId: string;
         shortId: string;
@@ -28,6 +30,7 @@ export interface ToolRequestPartial {
 
 export interface ToolResponsePartial {
     type: 'toolResponse';
+    timestamp: Date;
     payload: {
         callId: string;
         status: Status;

@@ -23,11 +23,11 @@ export function ChatMainPage() {
                         icon={item.icon}
                         onClick={() => navigate(item.url)}
                         isActive={location.pathname === item.url}
-                        isInProgress={item.status === 'in-progress'}
                         isClosable={true}
                         onClose={() => handleDeleteChat(item.id)}
                     />
                 ))}
+                {sidebarItems.length === 0 && <div className="text-center text-sm text-gray-500 mt-4">Chats will appear here</div>}
             </Sidebar>
             <div className="w-full h-full overflow-y-auto bg-background-transparent">
                 <Outlet />

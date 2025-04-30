@@ -2,15 +2,14 @@ import { ChatTurnHeader } from '@abyss/ui-components';
 import { formatDistanceToNow } from 'date-fns';
 import React from 'react';
 import { useNavigate } from 'react-router';
-import { MessageRecord } from '../../../../server/preload/controllers/message';
 import { useRecordReference } from '../../../library/references';
 
-export function SectionHeader({ message }: { message: MessageRecord }) {
+export function SectionHeader({ sender, timestamp }: { sender: string; timestamp: Date }) {
     const navigate = useNavigate();
-    const reference = useRecordReference({ sourceId: message.sourceId });
-    const formattedTime = formatDistanceToNow(new Date(message.createdAt), { addSuffix: true });
+    const reference = useRecordReference({ sourceId: sender });
+    const formattedTime = formatDistanceToNow(timestamp, { addSuffix: true });
 
-    if (message.sourceId === 'SYSTEM') {
+    if (sender === 'SYSTEM') {
         return null;
     }
 

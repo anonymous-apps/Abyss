@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Database } from '../../main';
-import { useScanTableAgent, useScanTableModelConnections } from '../../state/database-connection';
+import { useScanTableAgents, useScanTableModelConnections } from '../../state/database-access-utils';
 
 export function useChatCreate() {
     const navigate = useNavigate();
     const allModels = useScanTableModelConnections();
-    const allAgents = useScanTableAgent();
+    const allAgents = useScanTableAgents();
 
     const [chatType, setChatType] = useState<'model' | 'agent'>('model');
     const [selectedModel, setSelectedModel] = useState<string>('');
@@ -22,54 +22,20 @@ export function useChatCreate() {
         }
     }, [allModels.data, allAgents.data, chatType]);
 
-    const getSystemPrompt = async (sourceId: string) => {
-        if (chatType === 'model') {
-            return null;
-        }
-
-        const agent = await Database.table.agent.findById(sourceId);
-        const prompt = await Database.table.prompt.findById(agent?.systemPromptId);
-        return prompt?.text;
-    };
-
     const handleSubmit = async () => {
         const sourceId = chatType === 'model' ? selectedModel : selectedAgent;
         if (!sourceId || !message) {
             return;
         }
-
-        const systemPrompt = await getSystemPrompt(sourceId);
-
-        const chatRecord = await Database.table.chat.createWithThread({
-            name: '',
-            references: {
-                sourceId,
+        const chatRecord = await Database.table.chatThread.new(sourceId);
+        const messageThread = await Database.table.messageThread.getOrThrow(chatRecord.threadId);
+        const messageThreadWithUserMessage = await messageThread.addHumanPartial({
+            type: 'text',
+            payload: {
+                content: message,
             },
         });
-
-        if (systemPrompt) {
-            await Database.table.messageThread.addMessage(chatRecord.threadId, {
-                sourceId: 'SYSTEM',
-                content: {
-                    type: 'text',
-                    text: {
-                        content: systemPrompt,
-                    },
-                },
-            });
-        }
-
-        await Database.table.messageThread.addMessage(chatRecord.threadId, {
-            sourceId: 'USER',
-            content: {
-                type: 'text',
-                text: {
-                    content: message,
-                },
-            },
-        });
-
-        Database.workflows.AskAiToRespondToThread(chatRecord.id, sourceId);
+        await chatRecord.setThreadId(messageThreadWithUserMessage.id);
         navigate(`/chats/id/${chatRecord.id}`);
     };
 

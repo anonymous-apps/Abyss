@@ -30,11 +30,11 @@ export function AppSidebar() {
             <AbyssSidebar className="" title="Abyss">
                 <AbyssSidebarSection title="Activity" />
                 <AbyssSidebarButton label="Chats" icon={MessageSquare} {...navProps('/chats')} />
-                <AbyssSidebarSection title="Configuration" />
+                <AbyssSidebarSection title="Configure" />
                 <AbyssSidebarButton label="Models" icon={Box} {...navProps('/models')} />
                 <AbyssSidebarButton label="Agents" icon={Bot} {...navProps('/agents')} />
                 <AbyssSidebarButton label="Settings" icon={SettingsIcon} {...navProps('/settings')} />
-                <AbyssSidebarSection title="Settings" />
+                <AbyssSidebarSection title="Monitor" />
                 <AbyssSidebarButton label="Storage" icon={DatabaseIcon} {...navProps('/database')} />
                 <AbyssSidebarButton label="Metrics" icon={ChartLine} {...navProps('/metrics')} />
             </AbyssSidebar>

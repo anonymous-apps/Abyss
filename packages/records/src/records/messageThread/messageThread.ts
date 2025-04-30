@@ -3,7 +3,6 @@ import { MessageThreadController } from './messageThread.controller';
 import { MessagePartial, MessageThreadType, MessageTurn } from './messageThread.type';
 
 export class MessageThreadRecord extends RecordClass<MessageThreadType> {
-    public static HUMAN = 'human';
     public turns: MessageTurn[];
 
     constructor(controller: MessageThreadController, data: MessageThreadType) {
@@ -35,5 +34,9 @@ export class MessageThreadRecord extends RecordClass<MessageThreadType> {
             turns: newTurns,
         });
         return data as unknown as MessageThreadRecord;
+    }
+
+    async addHumanPartial(...messages: MessagePartial[]): Promise<MessageThreadRecord> {
+        return this.addPartial('HUMAN', ...messages);
     }
 }

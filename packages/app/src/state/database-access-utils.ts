@@ -1,4 +1,4 @@
-import { AgentGraphRecord, ModelConnectionRecord, SettingsRecord } from '@abyss/records';
+import { AgentGraphRecord, ChatThreadRecord, ModelConnectionRecord, SettingsRecord } from '@abyss/records';
 import { TableReferences } from '@abyss/records/dist/prisma.type';
 import { useDatabaseQuery, useDatabaseRecord, useDatabaseTableQuery } from './database-connection';
 
@@ -24,4 +24,8 @@ export function useScanTableModelConnections() {
 
 export function useScanTableAgents() {
     return useDatabaseTableScan<AgentGraphRecord>('agentGraph');
+}
+
+export function useScanTableChats() {
+    return useDatabaseTableScan<ChatThreadRecord>('chatThread');
 }
