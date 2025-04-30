@@ -9,9 +9,9 @@ export class InputLanguageModelNode extends NodeHandler {
 
     protected _getDefinition(): Omit<GraphNodeDefinition, 'id' | 'type'> {
         return {
-            name: 'Language Model',
+            name: 'Chat Model',
             icon: 'model',
-            description: 'Reference to a language model',
+            description: 'Reference to a chat-model from those you have configured',
             color: '#800080',
             inputPorts: {},
             parameters: {},

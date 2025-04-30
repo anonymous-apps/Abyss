@@ -27,6 +27,7 @@ export async function handlerOnHumanMessage(options: HandlerOnHumanMessageParams
             input: {
                 type: 'onUserChat',
                 chatId,
+                message: humanMessage,
             },
             database,
         });

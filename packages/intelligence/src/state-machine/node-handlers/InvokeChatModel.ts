@@ -11,9 +11,9 @@ export class InvokeLanguageModelNode extends NodeHandler {
 
     protected _getDefinition(): Omit<GraphNodeDefinition, 'id' | 'type'> {
         return {
-            name: 'Invoke Language Model',
+            name: 'Invoke Chat Model',
             icon: 'ai',
-            description: 'Invoke a language model',
+            description: 'Invoke a chat model by giving it a thread and capturing the output',
             color: '#800080',
             parameters: {},
             inputPorts: {
@@ -38,14 +38,14 @@ export class InvokeLanguageModelNode extends NodeHandler {
                     type: 'data',
                     dataType: 'string',
                     name: 'Raw Response',
-                    description: 'The raw response from the language model',
+                    description: 'The raw response from the chat model',
                 },
                 newThread: {
                     id: 'newThread',
                     type: 'data',
                     dataType: 'thread',
                     name: 'New Thread',
-                    description: 'The updated thread with the response from the language model',
+                    description: 'The updated thread with the response from the chat model',
                 },
             },
         };

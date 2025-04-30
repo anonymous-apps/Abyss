@@ -34,15 +34,14 @@ export class StateMachineExecution {
         this.portValues[nodeId][portId] = value;
 
         // If the port is connected to another node, set the value of that port
-        const connection = this._getConnectionOutofPort(nodeId, portId);
-        if (connection) {
-            this._setPortValue(connection.targetNodeId, connection.targetPortId, {
-                portId: connection.targetPortId,
+        const connections = this._getConnectionsOutofPort(nodeId, portId);
+        connections.forEach(c => {
+            this._setPortValue(c.targetNodeId, c.targetPortId, {
+                portId: c.targetPortId,
                 dataType: value.dataType,
                 inputValue: value.inputValue,
             });
-            return;
-        }
+        });
 
         // If this port is an input signal, add the node to the evaluation queue
         const node = this._getNode(nodeId);
@@ -76,8 +75,8 @@ export class StateMachineExecution {
         }, {} as Record<string, any>);
     }
 
-    private _getConnectionOutofPort(nodeId: string, portId: string) {
-        return this.graph.edges.find(e => e.sourceNodeId === nodeId && e.sourcePortId === portId);
+    private _getConnectionsOutofPort(nodeId: string, portId: string) {
+        return this.graph.edges.filter(e => e.sourceNodeId === nodeId && e.sourcePortId === portId);
     }
 
     private _getNode(nodeId: string) {

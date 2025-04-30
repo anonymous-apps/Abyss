@@ -25,6 +25,7 @@ export async function invokeGraphHandler(options: InvokeGraphParams) {
 
         const threadPort = ports.find(port => port.dataType === 'thread');
         const chatPort = ports.find(port => port.dataType === 'chat');
+        const messagePort = ports.find(port => port.dataType === 'string');
 
         if (threadPort) {
             triggerValues.push({
@@ -38,6 +39,13 @@ export async function invokeGraphHandler(options: InvokeGraphParams) {
                 portId: chatPort.id,
                 dataType: chatPort.dataType,
                 inputValue: chat,
+            });
+        }
+        if (messagePort) {
+            triggerValues.push({
+                portId: messagePort.id,
+                dataType: messagePort.dataType,
+                inputValue: input.message,
             });
         }
     }
