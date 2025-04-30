@@ -1,13 +1,14 @@
 import { Handle, Position, useReactFlow } from '@xyflow/react';
-import { XIcon } from 'lucide-react';
+import { ChevronDown, XIcon } from 'lucide-react';
 import React from 'react';
+import { SelectForAgentGraph } from './agent-graph-inputs';
 import { RenderedGraphNode } from './graph.types';
 import { IdsToIcons } from './ids-to-icons';
 
-export function CustomAgentGraphNode({ data }: { data: RenderedGraphNode['data'] }) {
+export function CustomAgentGraphNode({ id, data }: { id: string; data: RenderedGraphNode['data'] }) {
     let leftHandles: React.ReactNode[] = [];
     let rightHandles: React.ReactNode[] = [];
-    const { deleteElements } = useReactFlow();
+    const { deleteElements, updateNodeData } = useReactFlow();
 
     const Icon = IdsToIcons[data.definition.icon];
     const color = data.definition.color;
@@ -21,6 +22,8 @@ export function CustomAgentGraphNode({ data }: { data: RenderedGraphNode['data']
                         className={`bg-background-300 border-background-900`}
                         style={{
                             borderColor: input.type === 'signal' ? color : undefined,
+                            height: input.type === 'signal' ? '12px' : undefined,
+                            borderRadius: input.type === 'signal' ? '5px' : undefined,
                         }}
                         type="target"
                         position={Position.Left}
@@ -33,20 +36,54 @@ export function CustomAgentGraphNode({ data }: { data: RenderedGraphNode['data']
     }
 
     for (const output of Object.values(data.definition.outputPorts)) {
-        rightHandles.push(
-            <div className="flex flex-col gap-1 relative" key={output.id}>
-                <div className="text-[8px] text-text-500 px-2 flex flex-row gap-1 justify-end relative">
-                    {output.name} <pre className="opacity-70">({output.dataType})</pre>
-                    <Handle className={`bg-background-300 border-background-900`} type="source" position={Position.Right} id={output.id} />
+        if (output.userConfigurable) {
+            rightHandles.push(
+                <div className="flex flex-col gap-1 relative" key={output.id}>
+                    <div className="text-[8px] text-text-500 px-2 flex flex-row items-center gap-1 justify-end relative">
+                        <ChevronDown className="w-3 h-3 translate-x-5 translate-y-[1px]" />
+                        <SelectForAgentGraph
+                            port={output}
+                            onSelect={value => {
+                                const newObject = JSON.parse(JSON.stringify(data));
+                                newObject.database.parameters[output.id] = value;
+                                updateNodeData(id, newObject);
+                            }}
+                            value={data.database.parameters[output.id]}
+                            color={color}
+                        />
+                        <Handle
+                            className={`bg-background-300 border-background-900`}
+                            type="source"
+                            position={Position.Right}
+                            id={output.id}
+                        />
+                    </div>
+                    <div className="text-[6px] text-text-500 px-2">{output.description}</div>
                 </div>
-                <div className="text-[6px] text-text-500 px-2">{output.description}</div>
-            </div>
-        );
+            );
+        } else {
+            rightHandles.push(
+                <div className="flex flex-col gap-1 relative" key={output.id}>
+                    <div className="text-[8px] text-text-500 px-2 flex flex-row gap-1 justify-end relative">
+                        {output.name} <pre className="opacity-70">({output.dataType})</pre>
+                        <Handle
+                            className={`bg-background-300 border-background-900`}
+                            type="source"
+                            position={Position.Right}
+                            id={output.id}
+                        />
+                    </div>
+                    <div className="text-[6px] text-text-500 px-2">{output.description}</div>
+                </div>
+            );
+        }
     }
 
     const handleDelete = () => {
         deleteElements({ nodes: [{ id: data.definition.id }] });
     };
+
+    const hasParameters = Object.keys(data.definition.parameters).length > 0;
 
     return (
         <div className="bg-background-200">

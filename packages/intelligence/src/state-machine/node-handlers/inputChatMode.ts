@@ -14,6 +14,7 @@ export class InputLanguageModelNode extends NodeHandler {
             description: 'Reference to a language model',
             color: '#800080',
             inputPorts: {},
+            parameters: {},
             outputPorts: {
                 chatModel: {
                     id: 'chatModel',
@@ -21,6 +22,7 @@ export class InputLanguageModelNode extends NodeHandler {
                     dataType: 'chat-model',
                     name: 'Chat Model',
                     description: 'A chat based model of intelligence',
+                    userConfigurable: true,
                 },
             },
         };

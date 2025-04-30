@@ -15,6 +15,7 @@ export class InvokeLanguageModelNode extends NodeHandler {
             icon: 'ai',
             description: 'Invoke a language model',
             color: '#800080',
+            parameters: {},
             inputPorts: {
                 chatModel: {
                     id: 'chatModel',

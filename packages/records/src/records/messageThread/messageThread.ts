@@ -10,8 +10,9 @@ export class MessageThreadRecord extends RecordClass<MessageThreadType> {
         this.turns = data.turns;
     }
 
-    async addPartial(senderId: string, ...messages: MessagePartial[]): Promise<MessageThreadRecord> {
+    async addPartial(senderId: string, ...messages: Omit<MessagePartial, 'timestamp'>[]): Promise<MessageThreadRecord> {
         const currentTurn = this.turns[this.turns.length - 1];
+        const mappedMessages = messages.map(message => ({ ...message, timestamp: new Date() })) as MessagePartial[];
 
         const newTurns = [...this.turns];
         if (!currentTurn || currentTurn.senderId !== senderId) {
@@ -20,13 +21,13 @@ export class MessageThreadRecord extends RecordClass<MessageThreadType> {
                 createdAt: new Date(),
                 updatedAt: new Date(),
                 senderId,
-                partials: messages,
+                partials: mappedMessages,
             });
         } else {
             newTurns[newTurns.length - 1] = {
                 ...currentTurn,
                 updatedAt: new Date(),
-                partials: [...currentTurn.partials, ...messages],
+                partials: [...currentTurn.partials, ...mappedMessages],
             };
         }
 

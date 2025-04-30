@@ -1,10 +1,10 @@
 import { PrismaConnection } from '@abyss/records';
 import { StateMachineExecution } from './state-machine-execution';
-import { GraphNodeDefinition, PortDataType } from './type-definition.type';
+import { GraphDataType, GraphNodeDefinition } from './type-definition.type';
 
 export interface PortTriggerData<T> {
     portId: string;
-    dataType: PortDataType;
+    dataType: GraphDataType;
     inputValue: T;
 }
 

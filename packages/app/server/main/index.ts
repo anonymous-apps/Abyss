@@ -60,7 +60,6 @@ async function createWindow() {
     appController.setIpcMain(ipcMain);
     appController.setupAutoUpdaterHandlers();
     appController.setupAppInfoHandlers();
-    appController.setupDatabaseConnectionHandlers();
     window.setWindowButtonVisibility(false);
 
     if (url) {

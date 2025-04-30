@@ -1,9 +1,17 @@
-export type PortDataType = 'string' | 'number' | 'boolean' | 'thread' | 'chat-model' | 'chat';
+export type GraphDataType = 'string' | 'number' | 'boolean' | 'thread' | 'chat-model' | 'chat';
 
 export interface GraphPortDefinition {
     id: string;
     type: 'data' | 'signal';
-    dataType: PortDataType;
+    dataType: GraphDataType;
+    name: string;
+    description: string;
+    userConfigurable?: boolean | undefined;
+}
+
+export interface GraphParameterDefinition {
+    id: string;
+    type: GraphDataType;
     name: string;
     description: string;
 }
@@ -17,4 +25,5 @@ export interface GraphNodeDefinition {
     color: string;
     inputPorts: Record<string, GraphPortDefinition>;
     outputPorts: Record<string, GraphPortDefinition>;
+    parameters: Record<string, GraphParameterDefinition>;
 }

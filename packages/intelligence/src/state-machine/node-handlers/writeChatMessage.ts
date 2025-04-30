@@ -14,6 +14,7 @@ export class WriteChatMessageNode extends NodeHandler {
             icon: 'chat',
             description: 'Add a chat message to a given chat history',
             color: '#008000',
+            parameters: {},
             inputPorts: {
                 message: {
                     id: 'message',

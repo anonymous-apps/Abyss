@@ -13,6 +13,7 @@ export class OnChatMessageNode extends NodeHandler {
             description: 'Triggered when a chat message is sent to a chat with this agent',
             color: '#FFA500',
             inputPorts: {},
+            parameters: {},
             outputPorts: {
                 thread: {
                     id: 'thread',

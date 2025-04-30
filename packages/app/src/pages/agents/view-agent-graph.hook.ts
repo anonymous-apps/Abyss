@@ -107,8 +107,8 @@ export function useViewAgent() {
                 database: {
                     id: node.id,
                     nodeId: node.type,
-                    parameters: {},
                     position: { x: 0, y: 0 },
+                    parameters: {},
                 },
             },
             type: 'custom',
