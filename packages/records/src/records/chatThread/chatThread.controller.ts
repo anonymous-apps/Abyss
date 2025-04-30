@@ -25,6 +25,6 @@ export class ChatThreadController extends RecordController<'chatThread', ChatThr
         });
         this.connection.notifyRecord(this.recordType, result);
         this.connection.notifyRecord('messageThread', messageThread);
-        return new ChatThreadRecord(this, result as unknown as ChatThreadType);
+        return new ChatThreadRecord(this, result.id);
     }
 }

@@ -15,7 +15,7 @@ export * from './records/messageThread/messageThread.type';
 export * from './records/modelConnection/modelConnection';
 export * from './records/modelConnection/modelConnection.controller';
 export * from './records/modelConnection/modelConnection.type';
-export { RecordClass } from './records/recordClass';
+export { ReferencedDatabaseRecord as RecordClass } from './records/recordClass';
 export { RecordController } from './records/recordController';
 export * from './records/settings/settings';
 export * from './records/settings/settings.controller';

@@ -92,9 +92,9 @@ describe('invokeGraph', () => {
             nodes: nodes,
             edges: edges,
         });
-
-        const chat = await db.table.chatThread.new(agentGraph.id);
-        const thread = await db.table.messageThread.get(chat.threadId);
+        const chatRef = await db.table.chatThread.new(agentGraph.id);
+        const chat = await chatRef.getOrThrow();
+        const thread = await db.table.messageThread.getOrThrow(chat.threadId);
         const executionRecord = await db.table.agentGraphExecution.new(agentGraph.id);
 
         const execution = new StateMachineExecution(agentGraph, executionRecord, db);

@@ -1,4 +1,4 @@
-import { AgentGraphExecutionRecord, AgentGraphRecord, PrismaConnection } from '@abyss/records';
+import { AgentGraphExecutionRecord, AgentGraphType, PrismaConnection } from '@abyss/records';
 import { Log } from '../utils/logs';
 import { NodeHandler } from './node-handler';
 import './node-handlers';
@@ -9,7 +9,7 @@ export class StateMachineExecution {
     private invokeCount = 0;
 
     // References
-    public readonly graph: AgentGraphRecord;
+    public readonly graph: AgentGraphType;
     private executionRecord: AgentGraphExecutionRecord;
     private database: PrismaConnection;
 
@@ -18,7 +18,7 @@ export class StateMachineExecution {
     private portValues: Record<string, Record<string, PortTriggerData<any>>> = {};
     private staticNodesEvaluated: Set<string> = new Set();
 
-    constructor(graph: AgentGraphRecord, executionRecord: AgentGraphExecutionRecord, database: PrismaConnection) {
+    constructor(graph: AgentGraphType, executionRecord: AgentGraphExecutionRecord, database: PrismaConnection) {
         this.graph = graph;
         this.executionRecord = executionRecord;
         this.database = database;
@@ -44,7 +44,7 @@ export class StateMachineExecution {
         }
 
         // If this port is an input signal, add the node to the evaluation queue
-        const node = this.graph.getNode(nodeId);
+        const node = this._getNode(nodeId);
         const nodeDefinition = NodeHandler.getById(node?.nodeId as string);
         if (nodeDefinition?.isSignalPort(portId)) {
             this._addEvaluationQueue(nodeId);
@@ -76,23 +76,27 @@ export class StateMachineExecution {
     }
 
     private _getConnectionOutofPort(nodeId: string, portId: string) {
-        return this.graph.getConnection(nodeId, portId);
+        return this.graph.edges.find(e => e.sourceNodeId === nodeId && e.sourcePortId === portId);
+    }
+
+    private _getNode(nodeId: string) {
+        return this.graph.nodes.find(n => n.id === nodeId);
     }
 
     private _nodeLacksInputPorts(nodeId: string) {
-        const node = this.graph.getNode(nodeId);
+        const node = this._getNode(nodeId);
         const nodeDefinition = NodeHandler.getById(node?.nodeId as string);
         return nodeDefinition?.getAllPortIds().length == 0;
     }
 
     private _nodeHasAllInputPortsResolved(nodeId: string) {
-        const node = this.graph.getNode(nodeId);
+        const node = this._getNode(nodeId);
         const nodeDefinition = NodeHandler.getById(node?.nodeId as string);
         return nodeDefinition?.getAllPortIds().every(p => this.portValues[nodeId]?.[p]);
     }
 
     private _getNodeDefinition(nodeId: string) {
-        const node = this.graph.getNode(nodeId);
+        const node = this._getNode(nodeId);
         return NodeHandler.getById(node?.nodeId as string);
     }
 
@@ -128,7 +132,7 @@ export class StateMachineExecution {
     private async _evaluateStaticNodes() {
         Log.log('state-machine', `Evaluating static nodes for execution ${this.executionRecord.id}`);
         // Queue up all nodes that dont have any input ports
-        const staticNodes = this.graph.getNodes().filter(n => this._getNodeDefinition(n.id).isStaticData());
+        const staticNodes = this.graph.nodes.filter(n => this._getNodeDefinition(n.id).isStaticData());
         for (const node of staticNodes) {
             const noInputPorts = this._nodeLacksInputPorts(node.id);
             if (noInputPorts) {
@@ -149,7 +153,7 @@ export class StateMachineExecution {
         if (!nodeId) {
             return;
         }
-        const node = this.graph.getNode(nodeId);
+        const node = this._getNode(nodeId);
         if (!node) {
             throw new Error(`Node ${nodeId} not found`);
         }
@@ -202,7 +206,7 @@ export class StateMachineExecution {
             node: node.getDefinition(),
             portData: portData,
             resolvePort: (id: string) => portData.find(p => p.portId === id)?.inputValue,
-            parameters: this.graph.getNode(nodeId)?.parameters ?? {},
+            parameters: this._getNode(nodeId)?.parameters ?? {},
             database: this.database,
         });
         result.portData.forEach(p => this._setPortValue(nodeId, p.portId, p));

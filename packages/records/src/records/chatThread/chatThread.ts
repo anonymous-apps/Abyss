@@ -1,28 +1,21 @@
 import { MessagePartial } from '../messageThread/messageThread.type';
-import { RecordClass } from '../recordClass';
+import { ReferencedDatabaseRecord } from '../recordClass';
 import { ChatThreadController } from './chatThread.controller';
 import { ChatThreadType } from './chatThread.type';
 
-export class ChatThreadRecord extends RecordClass<ChatThreadType> {
-    public name: string;
-    public description: string;
-    public threadId: string;
-    public participantId: string;
-    public blocker?: string | null;
-
-    constructor(controller: ChatThreadController, data: ChatThreadType) {
-        super(controller, data);
-        this.name = data.name;
-        this.description = data.description;
-        this.threadId = data.threadId;
-        this.participantId = data.participantId;
-        this.blocker = data.blocker;
+export class ChatThreadRecord extends ReferencedDatabaseRecord<ChatThreadType> {
+    constructor(controller: ChatThreadController, id: string) {
+        super(controller, id);
     }
 
     public async addPartial(senderId: string, ...messages: Omit<MessagePartial, 'timestamp'>[]) {
-        const messageThread = await this.controller.connection.table.messageThread.getOrThrow(this.threadId);
+        const data = await this.getOrThrow();
+        if (!data.threadId) {
+            throw new Error('Thread ID is required');
+        }
+        const messageThread = this.controller.connection.table.messageThread.ref(data.threadId);
         const updatedMessageThread = await messageThread.addPartial(senderId, ...messages);
-        await this.setThreadId(updatedMessageThread.id);
+        await this.update({ threadId: updatedMessageThread.id });
     }
 
     public async addHumanPartial(...messages: Omit<MessagePartial, 'timestamp'>[]) {
@@ -30,14 +23,14 @@ export class ChatThreadRecord extends RecordClass<ChatThreadType> {
     }
 
     public async setThreadId(threadId: string) {
-        return await this.controller.connection.table.chatThread.update(this.id, { threadId });
+        await this.update({ threadId });
     }
 
     public async block(blocker: string) {
-        return await this.controller.connection.table.chatThread.update(this.id, { blocker });
+        await this.update({ blocker });
     }
 
     public async unblock() {
-        return await this.controller.connection.table.chatThread.update(this.id, { blocker: null });
+        await this.update({ blocker: null });
     }
 }

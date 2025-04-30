@@ -1,20 +1,19 @@
-import { RecordClass } from '../recordClass';
+import { ReferencedDatabaseRecord } from '../recordClass';
 import { MessageThreadController } from './messageThread.controller';
-import { MessagePartial, MessageThreadType, MessageTurn } from './messageThread.type';
+import { MessagePartial, MessageThreadType } from './messageThread.type';
 
-export class MessageThreadRecord extends RecordClass<MessageThreadType> {
-    public turns: MessageTurn[];
-
-    constructor(controller: MessageThreadController, data: MessageThreadType) {
-        super(controller, data);
-        this.turns = data.turns;
+export class MessageThreadRecord extends ReferencedDatabaseRecord<MessageThreadType> {
+    constructor(controller: MessageThreadController, id: string) {
+        super(controller, id);
     }
 
     async addPartial(senderId: string, ...messages: Omit<MessagePartial, 'timestamp'>[]): Promise<MessageThreadRecord> {
-        const currentTurn = this.turns[this.turns.length - 1];
+        const data = await this.getOrThrow();
+        const currentTurns = data.turns ?? [];
+        const currentTurn = currentTurns[currentTurns.length - 1];
         const mappedMessages = messages.map(message => ({ ...message, timestamp: new Date() })) as MessagePartial[];
 
-        const newTurns = [...this.turns];
+        const newTurns = [...currentTurns];
         if (!currentTurn || currentTurn.senderId !== senderId) {
             newTurns.push({
                 id: crypto.randomUUID(),
@@ -31,10 +30,10 @@ export class MessageThreadRecord extends RecordClass<MessageThreadType> {
             };
         }
 
-        const data = await this.controller.create({
+        const updatedData = await this.controller.create({
             turns: newTurns,
         });
-        return data as unknown as MessageThreadRecord;
+        return updatedData as unknown as MessageThreadRecord;
     }
 
     async addHumanPartial(...messages: MessagePartial[]): Promise<MessageThreadRecord> {

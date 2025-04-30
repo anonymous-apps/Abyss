@@ -24,6 +24,6 @@ export class AgentGraphExecutionController extends RecordController<
             },
         });
         this.connection.notifyRecord(this.recordType, result);
-        return new AgentGraphExecutionRecord(this, result as unknown as AgentGraphExecutionType);
+        return new AgentGraphExecutionRecord(this, result.id);
     }
 }

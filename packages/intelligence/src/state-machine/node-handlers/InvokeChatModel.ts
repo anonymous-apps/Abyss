@@ -1,4 +1,4 @@
-import { MessageThreadRecord, ModelConnectionRecord } from '@abyss/records';
+import { MessageThreadType, ModelConnectionType } from '@abyss/records';
 import { invokeModelAgainstThread } from '../../models/handler';
 import { NodeHandler } from '../node-handler';
 import { NodeExecutionResult, ResolveNodeData } from '../type-base.type';
@@ -52,15 +52,17 @@ export class InvokeLanguageModelNode extends NodeHandler {
     }
 
     protected async _resolve(data: ResolveNodeData): Promise<NodeExecutionResult> {
-        const inputLanguageModel = data.resolvePort<ModelConnectionRecord>('chatModel');
-        const thread = data.resolvePort<MessageThreadRecord>('thread');
+        const inputLanguageModel = data.resolvePort<ModelConnectionType>('chatModel');
+        const thread = data.resolvePort<MessageThreadType>('thread');
         const result = await invokeModelAgainstThread(inputLanguageModel, thread);
-        const outThread = await thread.addPartial('bot', {
+
+        const outThreadRef = await data.database.table.messageThread.ref(thread.id).addPartial('bot', {
             type: 'text',
             payload: {
                 content: result.outputString,
             },
         });
+        const outThread = await outThreadRef.getOrThrow();
 
         return {
             portData: [

@@ -8,7 +8,7 @@ export class SettingsController extends RecordController<'settings', SettingsTyp
         super('settings', 'application settings', connection, data => new SettingsRecord(this, data));
     }
 
-    public async getSettings(): Promise<SettingsRecord> {
+    public async getSettings(): Promise<SettingsType> {
         const settings = await this.connection.table.settings.get('settings::default');
         if (!settings) {
             return await this.connection.table.settings.create({

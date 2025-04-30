@@ -1,96 +1,115 @@
 import { safeSerialize } from '../../utils/serialization';
-import { RecordClass } from '../recordClass';
-import { Status } from '../shared.type';
+import { ReferencedDatabaseRecord } from '../recordClass';
 import { AgentGraphExecutionController } from './agentGraphExecution.controller';
 import { AgentGraphExecutionType } from './agentGraphExecution.type';
 import { StateMachineEvent } from './agentGraphExecutionEvents.type';
 
-export class AgentGraphExecutionRecord extends RecordClass<AgentGraphExecutionType> {
-    public agentGraphId: string;
-    public status: Status;
-    public events: StateMachineEvent[];
-    public startTime: Date;
-    public endTime: Date;
-
-    constructor(controller: AgentGraphExecutionController, data: AgentGraphExecutionType) {
-        super(controller, data);
-        this.agentGraphId = data.agentGraphId;
-        this.status = data.status;
-        this.events = data.events;
-        this.startTime = data.startTime;
-        this.endTime = data.endTime;
+export class AgentGraphExecutionRecord extends ReferencedDatabaseRecord<AgentGraphExecutionType> {
+    constructor(controller: AgentGraphExecutionController, id: string) {
+        super(controller, id);
     }
 
-    public getEvents(): StateMachineEvent[] {
-        return this.events;
+    public async getEvents(): Promise<StateMachineEvent[]> {
+        const data = await this.getOrThrow();
+        return data.events ?? [];
     }
 
     public async beginExecution(): Promise<void> {
-        this.status = 'inProgress';
-        this.startTime = new Date();
-        this.events.push({
-            type: 'execution-began',
-            executionId: this.id,
+        const data = await this.getOrThrow();
+        await this.update({
+            status: 'inProgress',
+            startTime: new Date(),
+            events: [
+                ...(data.events ?? []),
+                {
+                    type: 'execution-began',
+                    executionId: this.id,
+                },
+            ],
         });
-        await this.save();
     }
 
     public async beginNodeResolution(nodeId: string, nodeType: string, inputs: Record<string, any>): Promise<void> {
-        this.events.push({
-            type: 'node-resolution-began',
-            executionId: this.id,
-            nodeId,
-            nodeType,
-            inputs: safeSerialize(inputs),
-            timestamp: new Date(),
+        const data = await this.getOrThrow();
+        await this.update({
+            events: [
+                ...(data.events ?? []),
+                {
+                    type: 'node-resolution-began',
+                    executionId: this.id,
+                    nodeId,
+                    nodeType,
+                    inputs: safeSerialize(inputs),
+                    timestamp: new Date(),
+                },
+            ],
         });
-        await this.save();
     }
 
     public async completeNodeResolution(nodeId: string, nodeType: string, outputs: Record<string, any>): Promise<void> {
-        this.events.push({
-            type: 'node-resolution-completed',
-            executionId: this.id,
-            nodeId,
-            nodeType,
-            outputs: safeSerialize(outputs),
-            timestamp: new Date(),
+        const data = await this.getOrThrow();
+        await this.update({
+            events: [
+                ...(data.events ?? []),
+                {
+                    type: 'node-resolution-completed',
+                    executionId: this.id,
+                    nodeId,
+                    nodeType,
+                    outputs: safeSerialize(outputs),
+                    timestamp: new Date(),
+                },
+            ],
         });
-        await this.save();
     }
 
     public async failNodeResolution(nodeId: string, nodeType: string, error: string, stack: string | undefined): Promise<void> {
-        this.events.push({
-            type: 'node-resolution-failed',
-            executionId: this.id,
-            nodeId,
-            nodeType,
-            error: safeSerialize(error),
-            stack: safeSerialize(stack),
-            timestamp: new Date(),
+        const data = await this.getOrThrow();
+        await this.update({
+            events: [
+                ...(data.events ?? []),
+                {
+                    type: 'node-resolution-failed',
+                    executionId: this.id,
+                    nodeId,
+                    nodeType,
+                    error: safeSerialize(error),
+                    stack: safeSerialize(stack),
+                    timestamp: new Date(),
+                },
+            ],
         });
-        await this.save();
     }
 
     public async completeExecution(): Promise<void> {
-        this.status = 'completed';
-        this.endTime = new Date();
-        this.events.push({
-            type: 'execution-completed',
-            executionId: this.id,
+        const data = await this.getOrThrow();
+        await this.update({
+            status: 'completed',
+            endTime: new Date(),
+            events: [
+                ...(data.events ?? []),
+                {
+                    type: 'execution-completed',
+                    executionId: this.id,
+                },
+            ],
         });
-        await this.save();
     }
 
     public async failExecution(error: string, stack: string | undefined): Promise<void> {
-        this.status = 'failed';
-        this.endTime = new Date();
-        this.events.push({
-            type: 'execution-failed',
-            executionId: this.id,
-            error: safeSerialize(error),
-            stack: safeSerialize(stack),
+        const data = await this.getOrThrow();
+        await this.update({
+            status: 'failed',
+            endTime: new Date(),
+            events: [
+                ...(data.events ?? []),
+                {
+                    type: 'execution-failed',
+                    executionId: this.id,
+                    error: safeSerialize(error),
+                    stack: safeSerialize(stack),
+                },
+            ],
         });
-        await this.save();
     }
 }

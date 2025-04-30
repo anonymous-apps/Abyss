@@ -52,7 +52,7 @@ export class MetricController extends RecordController<'metric', MetricType, Met
         return metrics.map(metric => metric.name);
     }
 
-    public async queryMetrics(name: string, dimensions: Record<string, string>): Promise<MetricRecord[]> {
+    public async queryMetrics(name: string, dimensions: Record<string, string>): Promise<MetricType[]> {
         const metrics = await this.table.findMany({
             where: {
                 name,
@@ -61,6 +61,6 @@ export class MetricController extends RecordController<'metric', MetricType, Met
                 },
             },
         });
-        return metrics.map(metric => new MetricRecord(this, metric as unknown as MetricType));
+        return metrics as unknown as MetricType[];
     }
 }

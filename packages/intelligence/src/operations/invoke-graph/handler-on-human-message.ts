@@ -10,12 +10,12 @@ export interface HandlerOnHumanMessageParams {
 
 export async function handlerOnHumanMessage(options: HandlerOnHumanMessageParams) {
     const { graphId, humanMessage, chatId, database } = options;
-    const chat = await database.table.chatThread.getOrThrow(chatId);
+    const chatRef = database.table.chatThread.ref(chatId);
 
     try {
         // Block chat and add human message
-        await chat.block(graphId);
-        await chat.addHumanPartial({
+        await chatRef.block(graphId);
+        await chatRef.addHumanPartial({
             type: 'text',
             payload: {
                 content: humanMessage,
@@ -33,6 +33,6 @@ export async function handlerOnHumanMessage(options: HandlerOnHumanMessageParams
     } catch (error) {
         console.error(error);
     } finally {
-        await chat.unblock();
+        await chatRef.unblock();
     }
 }

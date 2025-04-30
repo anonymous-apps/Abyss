@@ -1,6 +1,6 @@
-import { MessageThreadRecord } from '@abyss/records';
+import { MessageThreadType } from '@abyss/records';
 
 export interface StaticLanguageModelOptions {
-    thread: MessageThreadRecord;
+    thread: MessageThreadType;
     response: string;
 }

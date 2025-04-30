@@ -1,16 +1,25 @@
 import { PrismaConnection } from '../prisma';
 import { TableReferences } from '../prisma.type';
 import { generateId } from '../utils/ids';
-import { BaseRecordProps, RecordClass } from './recordClass';
+import { BaseRecordProps, ReferencedDatabaseRecord } from './recordClass';
 
-export abstract class RecordController<ITable extends keyof TableReferences, T extends BaseRecordProps, R extends RecordClass<T>> {
+export abstract class RecordController<
+    ITable extends keyof TableReferences,
+    IDataType extends BaseRecordProps,
+    IReference extends ReferencedDatabaseRecord<IDataType>
+> {
     protected readonly recordType: keyof TableReferences;
     public readonly description: string;
     public readonly connection: PrismaConnection;
     protected readonly table: PrismaConnection['client'][ITable];
-    protected readonly factory: (data: any) => R;
+    protected readonly factory: (id: string) => IReference;
 
-    public constructor(type: keyof TableReferences, description: string, connection: PrismaConnection, factory: (data: any) => R) {
+    public constructor(
+        type: keyof TableReferences,
+        description: string,
+        connection: PrismaConnection,
+        factory: (id: string) => IReference
+    ) {
         this.recordType = type;
         this.description = description;
         this.connection = connection;
@@ -22,7 +31,7 @@ export abstract class RecordController<ITable extends keyof TableReferences, T e
     // Mutators
     //
 
-    async create(data: Omit<T, 'id' | 'createdAt' | 'updatedAt'> & { id?: string }): Promise<R> {
+    async create(data: Omit<IDataType, 'id' | 'createdAt' | 'updatedAt'> & { id?: string }): Promise<IDataType> {
         // @ts-ignore
         const result = await this.table.create({
             data: {
@@ -31,7 +40,7 @@ export abstract class RecordController<ITable extends keyof TableReferences, T e
             },
         });
         this.connection.notifyRecord(this.recordType, result);
-        return this.factory(result);
+        return result as unknown as IDataType;
     }
 
     async purge(): Promise<void> {
@@ -40,7 +49,7 @@ export abstract class RecordController<ITable extends keyof TableReferences, T e
         this.connection.notifyTable(this.recordType);
     }
 
-    async update(id: string, data: Partial<Omit<T, 'id' | 'createdAt' | 'updatedAt'>>): Promise<void> {
+    async update(id: string, data: Partial<Omit<IDataType, 'id' | 'createdAt' | 'updatedAt'>>): Promise<void> {
         // @ts-ignore
         const result = await this.table.update({
             where: { id },
@@ -59,31 +68,31 @@ export abstract class RecordController<ITable extends keyof TableReferences, T e
     // Getters
     //
 
-    async scan(): Promise<R[]> {
+    async scan(): Promise<IDataType[]> {
         // @ts-ignore
         const result = await this.table.findMany({ orderBy: { createdAt: 'desc' } });
-        return result.map(this.factory);
+        return result;
     }
 
-    async scanLatest(limit: number = 10): Promise<R[]> {
+    async scanLatest(limit: number = 10): Promise<IDataType[]> {
         // @ts-ignore
         const result = await this.table.findMany({ orderBy: { createdAt: 'desc' }, take: limit });
-        return result.map(this.factory);
+        return result;
     }
 
-    async get(id: string): Promise<R | null> {
+    async get(id: string): Promise<IDataType | null> {
         // @ts-ignore
         const result = await this.table.findUnique({ where: { id } });
-        return result ? this.factory(result) : null;
+        return result;
     }
 
-    async getOrThrow(id: string): Promise<R> {
+    async getOrThrow(id: string): Promise<IDataType> {
         // @ts-ignore
         const result = await this.table.findUnique({ where: { id } });
         if (!result) {
             throw new Error(`Record ${this.recordType} with id ${id} not found`);
         }
-        return this.factory(result);
+        return result;
     }
 
     async exists(id: string): Promise<boolean> {
@@ -96,5 +105,9 @@ export abstract class RecordController<ITable extends keyof TableReferences, T e
         // @ts-ignore
         const result = await this.table.count();
         return result;
+    }
+
+    ref(id: string): IReference {
+        return this.factory(id);
     }
 }

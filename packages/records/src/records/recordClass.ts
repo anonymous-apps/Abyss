@@ -7,34 +7,25 @@ export interface BaseRecordProps {
     updatedAt: Date;
 }
 
-export abstract class RecordClass<T extends BaseRecordProps> {
-    public readonly controller: RecordController<keyof TableReferences, T, RecordClass<T>>;
-
+export abstract class ReferencedDatabaseRecord<IDataType extends BaseRecordProps> {
+    public readonly controller: RecordController<keyof TableReferences, IDataType, ReferencedDatabaseRecord<IDataType>>;
     public id: string;
-    public createdAt: Date;
-    public updatedAt: Date;
 
-    constructor(controller: RecordController<keyof TableReferences, T, RecordClass<T>>, data: T) {
+    constructor(controller: RecordController<keyof TableReferences, IDataType, ReferencedDatabaseRecord<IDataType>>, id: string) {
         this.controller = controller;
-        this.id = data.id;
-        this.createdAt = data.createdAt;
-        this.updatedAt = data.updatedAt;
+        this.id = id;
     }
 
-    private serialize(): T {
-        const result: any = {};
-
-        for (const key of Object.keys(this)) {
-            if (key !== 'controller' && typeof this[key as keyof this] !== 'function') {
-                result[key] = this[key as keyof this];
-            }
-        }
-
-        return result as T;
+    public async get() {
+        return await this.controller.get(this.id);
     }
 
-    public async save() {
-        await this.controller.update(this.id, this.serialize());
+    public async getOrThrow() {
+        return await this.controller.getOrThrow(this.id);
+    }
+
+    public async update(data: Partial<IDataType>) {
+        return await this.controller.update(this.id, data);
     }
 
     public async delete() {

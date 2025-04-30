@@ -1,4 +1,4 @@
-import { ChatThreadRecord } from '@abyss/records/dist/records/chatThread/chatThread';
+import { ChatThreadType } from '@abyss/records';
 import { NodeHandler } from '../node-handler';
 import { NodeExecutionResult, ResolveNodeData } from '../type-base.type';
 import { GraphNodeDefinition } from '../type-definition.type';
@@ -37,9 +37,9 @@ export class WriteChatMessageNode extends NodeHandler {
 
     protected async _resolve(data: ResolveNodeData): Promise<NodeExecutionResult> {
         const message = data.resolvePort<string>('message');
-        const chat = data.resolvePort<ChatThreadRecord>('chat');
+        const chat = data.resolvePort<ChatThreadType>('chat');
 
-        await chat.addPartial(data.execution.graph.id, {
+        await data.database.table.chatThread.ref(chat.id).addPartial(data.execution.graph.id, {
             type: 'text',
             payload: {
                 content: message,

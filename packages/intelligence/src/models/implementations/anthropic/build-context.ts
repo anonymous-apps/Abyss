@@ -1,8 +1,8 @@
-import { MessageThreadRecord } from '@abyss/records';
+import { MessageThreadType } from '@abyss/records';
 import { Log } from '../../../utils/logs';
 import { AnthropicContent, AnthropicMessage } from './types';
 
-export function buildAnthropicMessages(thread: MessageThreadRecord): AnthropicMessage[] {
+export function buildAnthropicMessages(thread: MessageThreadType): AnthropicMessage[] {
     const turns = thread.turns;
     const messages: AnthropicMessage[] = [];
 
