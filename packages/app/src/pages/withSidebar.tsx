@@ -1,5 +1,5 @@
 import { Sidebar as AbyssSidebar, SidebarButton as AbyssSidebarButton, SidebarSection as AbyssSidebarSection } from '@abyss/ui-components';
-import { Bot, Box, ChartLine, DatabaseIcon, FileInput, FileText, MessageSquare, Play, SettingsIcon } from 'lucide-react';
+import { Bot, Box, ChartLine, DatabaseIcon, MessageSquare, SettingsIcon } from 'lucide-react';
 import React from 'react';
 import { useLocation, useNavigate, useOutlet } from 'react-router';
 import { useSidebarFadeStore } from '../state/sidebar-fade';
@@ -30,12 +30,9 @@ export function AppSidebar() {
             <AbyssSidebar className="" title="Abyss">
                 <AbyssSidebarSection title="Activity" />
                 <AbyssSidebarButton label="Chats" icon={MessageSquare} {...navProps('/chats')} />
-                <AbyssSidebarButton label="Documents" icon={FileText} {...navProps('/documents')} />
                 <AbyssSidebarSection title="Configuration" />
                 <AbyssSidebarButton label="Models" icon={Box} {...navProps('/models')} />
-                <AbyssSidebarButton label="Prompts" icon={FileInput} {...navProps('/prompts')} />
                 <AbyssSidebarButton label="Agents" icon={Bot} {...navProps('/agents')} />
-                <AbyssSidebarButton label="Tools" icon={Play} {...navProps('/tools')} />
                 <AbyssSidebarButton label="Settings" icon={SettingsIcon} {...navProps('/settings')} />
                 <AbyssSidebarSection title="Settings" />
                 <AbyssSidebarButton label="Storage" icon={DatabaseIcon} {...navProps('/database')} />

@@ -40,7 +40,7 @@ export function NodejsLogo({ className, size = 24 }: LogoProps) {
 
 // Logo Component
 export function Logo({ className, size = 24, logo }: LogoProps) {
-    switch (logo.toLowerCase()) {
+    switch ((logo || '').toLowerCase()) {
         case 'openai':
             return <OpenAILogo className={className} size={size} logo={logo} />;
         case 'anthropic':

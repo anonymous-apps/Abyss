@@ -22,7 +22,7 @@ export function ModelProfileMainPage() {
                                 title={model.name || 'Untitled'}
                                 onClick={() => navigateToModelDetail(model.id)}
                                 icon={<Box className="w-4 h-4" />}
-                                footer={<Logo logo={model.provider} className="w-6 h-6" />}
+                                footer={<Logo logo={model.providerId} className="w-6 h-6" />}
                             >
                                 {model.description}
                             </Tile>

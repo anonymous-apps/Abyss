@@ -1,3 +1,4 @@
+import { ModelConnectionAccessFormat } from '@abyss/records';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Database } from '../../main';
@@ -11,11 +12,12 @@ export function useModelProfileCreate() {
     const navigate = useNavigate();
 
     const handleCreateConnection = () => {
-        Database.table.modelConnections.create({
+        Database.table.modelConnection.create({
             name: name,
             description: 'A model connection for ' + selectedProvider + ' ' + selectedModel,
-            provider: selectedProvider,
+            providerId: selectedProvider,
             modelId: selectedModel,
+            accessFormat: selectedProvider as ModelConnectionAccessFormat,
             data: data,
         });
         navigate('/models');
