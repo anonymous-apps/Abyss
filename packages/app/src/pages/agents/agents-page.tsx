@@ -4,7 +4,7 @@ import React from 'react';
 import { useAgentsPage } from './agents-page.hook';
 
 export function AgentsPage() {
-    const { agents, toolConnectionsForAgent, handleCreateAgent, navigate } = useAgentsPage();
+    const { agents, handleCreateAgent, navigate } = useAgentsPage();
 
     return (
         <PageCrumbed
@@ -28,7 +28,6 @@ export function AgentsPage() {
                                 title={agent.name || 'Untitled'}
                                 onClick={() => navigate(`/agents/id/${agent.id}`)}
                                 icon={<Bot className="w-4 h-4" />}
-                                footer={`${toolConnectionsForAgent(agent.id)?.length} tools`}
                             >
                                 {agent.description || 'No description'}
                             </Tile>

@@ -1,6 +1,8 @@
 import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router';
 import { HeaderBar } from './library/header-bar';
+import { AgentsPage } from './pages/agents/agents-page';
+import { ViewAgentGraphPage } from './pages/agents/view-agent-graph';
 import { ListTablesPage } from './pages/database/database.page';
 import { ViewTableRecordPage } from './pages/database/record.page';
 import { ViewTablePage } from './pages/database/table.page';
@@ -34,6 +36,8 @@ export function App() {
                         <Route path="/models" element={<ModelProfileMainPage />} />
                         <Route path="/models/create" element={<ModelProfileCreatePage />} />
                         <Route path="/models/id/:id" element={<ModelProfileViewPage />} />
+                        <Route path="/agents" element={<AgentsPage />} />
+                        <Route path="/agents/id/:id" element={<ViewAgentGraphPage />} />
                     </Route>
 
                     {/* <Route path="/" element={<WithAppSidebar />}>
@@ -43,8 +47,6 @@ export function App() {
                         </Route>
                         <Route path="/tools" element={<ToolsPage />} />
                         <Route path="/tools/id/:id" element={<ToolViewPage />} />
-                        <Route path="/agents" element={<AgentsPage />} />
-                        <Route path="/agents/id/:id" element={<ViewAgentGraphPage />} />
                         <Route path="/prompts" element={<PromptsPage />} />
                         <Route path="/prompts/create" element={<CreatePromptPage />} />
                         <Route path="/prompts/id/:id" element={<ViewPromptPage />} />

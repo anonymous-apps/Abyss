@@ -1,4 +1,5 @@
-import { GraphNodeDefinition, Nodes } from '@abyss/intelligence';
+import { Nodes } from '@abyss/intelligence';
+import { GraphNodeDefinition } from '@abyss/intelligence/dist/state-machine/type-definition.type';
 import { Sidebar, SidebarButton, SidebarSection } from '@abyss/ui-components';
 import { Box, MessageCircle, Sparkles } from 'lucide-react';
 import React from 'react';
