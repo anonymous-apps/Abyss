@@ -10,7 +10,7 @@ interface LogoProps {
 // Function to get the path to a logo in the public directory
 export function getLogoPath(name: string): string {
     // @ts-ignore
-    return window.fs.assetPath(`/${name}`);
+    return window['abyss-fs'].assetPath(`/${name}`);
 }
 
 // Abyss Logo Component

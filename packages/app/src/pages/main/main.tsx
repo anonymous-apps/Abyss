@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { AbyssAnimation } from '../../library/abyss-animation';
 import { useSidebarFadeStore } from '../../state/sidebar-fade';
-
 export function MainPage() {
     const navigate = useNavigate();
     const [sidebarWidth, setSidebarWidth] = useState('40vw');
@@ -29,7 +28,7 @@ export function MainPage() {
                 className="flex flex-col items-center justify-center transition-all duration-[1s] display-font relative"
                 style={{ width: sidebarWidth, opacity: contentOpacity }}
             >
-                <div className="text-5xl text-center w-full transition-all duration-[1s] absolute top-0 left-0 h-full flex items-center justify-center">
+                <div className="text-5xl text-center w-full transition-all duration-[1s] absolute top-0 left-0 h-full flex items-center justify-center ">
                     <div className="absolute text-white blur-[4px] opacity-70" style={{ opacity: contentOpacity * 0.7, fontWeight: 900 }}>
                         Abyss
                     </div>
