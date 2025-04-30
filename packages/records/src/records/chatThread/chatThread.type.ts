@@ -5,4 +5,5 @@ export interface ChatThreadType extends BaseRecordProps {
     description: string;
     threadId: string;
     participantId: string;
+    blocker?: string;
 }

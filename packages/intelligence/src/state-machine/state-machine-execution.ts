@@ -9,7 +9,7 @@ export class StateMachineExecution {
     private invokeCount = 0;
 
     // References
-    private graph: AgentGraphRecord;
+    public readonly graph: AgentGraphRecord;
     private executionRecord: AgentGraphExecutionRecord;
     private database: PrismaConnection;
 

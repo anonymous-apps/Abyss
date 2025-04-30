@@ -6,7 +6,7 @@ import { BaseRecordProps, RecordClass } from './recordClass';
 export abstract class RecordController<ITable extends keyof TableReferences, T extends BaseRecordProps, R extends RecordClass<T>> {
     protected readonly recordType: keyof TableReferences;
     public readonly description: string;
-    protected readonly connection: PrismaConnection;
+    public readonly connection: PrismaConnection;
     protected readonly table: PrismaConnection['client'][ITable];
     protected readonly factory: (data: any) => R;
 

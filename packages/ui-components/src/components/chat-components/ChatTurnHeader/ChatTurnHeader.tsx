@@ -33,7 +33,7 @@ export const ChatTurnHeader: React.FC<ChatTurnHeaderProps> = ({ icon: Icon, labe
                 }`}
                 onClick={onClick}
             >
-                <Icon className="h-5 w-5 text-primary-500" />
+                <Icon className="h-4 w-4 text-primary-500" />
                 <span className="font-medium text-text-400">{label}</span>
             </div>
             <span className=" text-text-600">{timestamp}</span>

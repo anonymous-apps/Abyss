@@ -6,4 +6,5 @@ model chatThread {
     description   String
     threadId      String
     participantId String
+    blocker       String?
 } 
