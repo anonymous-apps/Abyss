@@ -7,7 +7,7 @@
         "test": "vitest run",
         "build": "scripts/build.sh",
         "watch": "nodemon --watch src --ext ts --exec 'npm run build'",
-        "prisma": "DATABASE_URL=file:./dev.db npm run prisma:dev",
+        "prisma": "npm run prisma:dev",
         "prisma:dev": "scripts/prisma-dev.sh"
     },
     "devDependencies": {

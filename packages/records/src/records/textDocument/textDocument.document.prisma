@@ -1,7 +1,7 @@
 model TextDocument {
     id        String   @id
     createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    updatedAt DateTime @default(now())  @updatedAt
 
     // Title of this document
     title String

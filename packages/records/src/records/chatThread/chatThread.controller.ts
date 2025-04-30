@@ -5,7 +5,12 @@ import { ChatThreadType } from './chatThread.type';
 
 export class ChatThreadController extends RecordController<ChatThreadType, ChatThreadRecord> {
     constructor(connection: PrismaConnection) {
-        super('chatThread', connection, data => new ChatThreadRecord(this, data));
+        super(
+            'chatThread',
+            'A pointer to a message thread representing an ongoing conversation between two participants',
+            connection,
+            data => new ChatThreadRecord(this, data)
+        );
     }
 
     async new(participantId: string): Promise<ChatThreadRecord> {

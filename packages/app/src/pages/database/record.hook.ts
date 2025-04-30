@@ -1,17 +1,13 @@
-import { useEffect } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router';
-import { useDatabaseQuery } from '../../state/database-connection';
+import { RecordClass } from '@abyss/records';
+import { useNavigate, useParams } from 'react-router';
+import { Database } from '../../main';
+import { useDatabaseRecord } from '../../state/database-connection';
 
 export function useRecordPage() {
     const { id, recordId } = useParams();
-    const path = useLocation();
     const navigate = useNavigate();
 
-    const record = useDatabaseQuery(async database => database.table[id as keyof typeof database.table].getByRecordId(recordId as string));
-
-    useEffect(() => {
-        record.refetch();
-    }, [path.pathname]);
+    const record = useDatabaseRecord<RecordClass<any>>(id as keyof typeof Database.table, recordId as string);
 
     const breadcrumbs = [
         { name: 'Home', onClick: () => navigate('/') },

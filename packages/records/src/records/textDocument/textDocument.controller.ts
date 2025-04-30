@@ -5,6 +5,11 @@ import { TextDocumentType } from './textDocument.type';
 
 export class TextDocumentController extends RecordController<TextDocumentType, TextDocumentRecord> {
     constructor(connection: PrismaConnection) {
-        super('textDocument', connection, data => new TextDocumentRecord(this, data));
+        super(
+            'textDocument',
+            'A document that can be written to and read from by both users and agents',
+            connection,
+            data => new TextDocumentRecord(this, data)
+        );
     }
 }

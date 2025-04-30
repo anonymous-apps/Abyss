@@ -1,6 +1,6 @@
-import { contextBridge, ipcRenderer } from 'electron';
+import { ipcRenderer } from 'electron';
 
-contextBridge.exposeInMainWorld('abyss-updater', {
+window['abyss-updater'] = {
     // Trigger the update check
     checkForUpdates: () => ipcRenderer.invoke('check-for-updates'),
 
@@ -29,4 +29,4 @@ contextBridge.exposeInMainWorld('abyss-updater', {
 
     // Trigger the restart to install the update
     restartToUpdate: () => ipcRenderer.invoke('restart-to-update'),
-});
+};

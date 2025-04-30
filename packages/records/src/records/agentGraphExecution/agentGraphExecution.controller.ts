@@ -5,7 +5,12 @@ import { AgentGraphExecutionType } from './agentGraphExecution.type';
 
 export class AgentGraphExecutionController extends RecordController<AgentGraphExecutionType, AgentGraphExecutionRecord> {
     constructor(connection: PrismaConnection) {
-        super('agentGraphExecution', connection, (data: any) => new AgentGraphExecutionRecord(this, data));
+        super(
+            'agentGraphExecution',
+            'an execution of an agent graph, outputs and logs',
+            connection,
+            (data: any) => new AgentGraphExecutionRecord(this, data)
+        );
     }
 
     async new(agentGraphId: string): Promise<AgentGraphExecutionRecord> {

@@ -3,13 +3,10 @@ import { Box, DatabaseIcon, MessageCircle, Play, Settings } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { AbyssAnimation } from '../../library/abyss-animation';
-import { useSettings } from '../../state/database-access-utils';
 import { useSidebarFadeStore } from '../../state/sidebar-fade';
 
 export function MainPage() {
     const navigate = useNavigate();
-    const settings = useSettings();
-
     const [sidebarWidth, setSidebarWidth] = useState('40vw');
     const [contentOpacity, setContentOpacity] = useState(1);
     const { setSidebarFadeable } = useSidebarFadeStore();
@@ -25,9 +22,6 @@ export function MainPage() {
             navigate(href, { viewTransition: true });
         }, 1000);
     };
-
-    //@ts-ignore
-    // const logoPath = window.fs.assetPath('logo.png');
 
     return (
         <div className="flex h-screen">

@@ -1,13 +1,18 @@
+import { PrismaConnection } from '@abyss/records';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import { loadFromLastPage } from './state/page-history';
 import './style.css';
+
 // @ts-ignore
-export const Database = window['abyss-sqlite'];
+export const Database = window['abyss-sqlite'] as PrismaConnection;
 
 // Reload the last page the user was on, start from there
 loadFromLastPage(async () => {
+    await Database.runMigration();
+
+    await Database.table.settings.getSettings();
     // await applyTheme();
     // await CaptureMetric.ApplicationOpened();
     // await CaptureMetric.SqliteSize();

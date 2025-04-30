@@ -2,7 +2,7 @@ import { RecordClass } from '../recordClass';
 import { MetricController } from './metric.controller';
 import { MetricType } from './metric.type';
 
-export class Metric extends RecordClass<MetricType> {
+export class MetricRecord extends RecordClass<MetricType> {
     public name: string;
     public dimensions: Record<string, string>;
     public value: number;

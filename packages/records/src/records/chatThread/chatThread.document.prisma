@@ -1,7 +1,7 @@
 model chatThread {
     id            String   @id @default(uuid())
     createdAt     DateTime @default(now())
-    updatedAt     DateTime @updatedAt
+    updatedAt     DateTime @default(now())  @updatedAt
     name          String
     description   String
     threadId      String

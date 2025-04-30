@@ -1,5 +1,7 @@
+import { existsSync } from 'fs';
 import path from 'path';
 import { PrismaClient } from '../prisma/prisma';
+import { runDatabaseMigration } from './management/runMigration';
 import { buildTableReferences, TableReferences } from './prisma.type';
 import { randomId } from './utils/ids';
 
@@ -29,8 +31,8 @@ export class PrismaConnection {
     private subscriptions: Record<
         string,
         {
-            __table__?: Record<string, (connection: TableReferences) => void>;
-            [recordId: string]: Record<string, (record: any) => void> | undefined;
+            __table__?: Record<string, (data: any) => void>;
+            [recordId: string]: Record<string, (data: any) => void> | undefined;
         }
     > = {};
 
@@ -89,21 +91,43 @@ export class PrismaConnection {
         };
     }
 
+    public subscribeDatabase(callback: (connection: this) => void) {
+        const identifier = randomId();
+
+        if (!this.subscriptions['__database']) {
+            this.subscriptions['__database'] = {};
+        }
+
+        if (!this.subscriptions['__database']['__database__']) {
+            this.subscriptions['__database']['__database__'] = {};
+        }
+
+        this.subscriptions['__database']['__database__']![identifier] = callback;
+
+        return () => {
+            delete this.subscriptions['__database']['__database__']![identifier];
+        };
+    }
+
     private async notifySubscribers(table: keyof TableReferences, newRecord: any | null | undefined, isTableNotification: boolean = false) {
         if (!this.subscriptions[table]) {
             return;
         }
 
-        // Notify table-level subscribers
-        if (this.subscriptions[table]['__table__']) {
-            Object.values(this.subscriptions[table]['__table__']!).forEach(callback => {
-                callback(this.table);
+        // Notify database-level subscribers
+        if (this.subscriptions['__database']?.['__database__']) {
+            Object.values(this.subscriptions['__database']['__database__']!).forEach(callback => {
+                console.log(`[subscribe] notify database subscribers of update to: ${table}`);
+                callback(this);
             });
         }
 
-        // If we don't know about the record, get it
-        if (newRecord === undefined) {
-            newRecord = await this.table[table].get(newRecord.id);
+        // Notify table-level subscribers
+        if (this.subscriptions[table]['__table__']) {
+            Object.values(this.subscriptions[table]['__table__']!).forEach(callback => {
+                console.log(`[subscribe] notify table subscribers of update to: ${table}`);
+                callback(this.table);
+            });
         }
 
         // For table notifications, notify all record subscribers in this table
@@ -111,6 +135,7 @@ export class PrismaConnection {
             Object.keys(this.subscriptions[table]).forEach(recordId => {
                 if (recordId !== '__table__') {
                     Object.values(this.subscriptions[table][recordId]!).forEach(callback => {
+                        console.log(`[subscribe] notify record subscribers of update to: ${recordId}`);
                         callback(newRecord);
                     });
                 }
@@ -119,6 +144,7 @@ export class PrismaConnection {
 
         // For record notifications, notify just that specific record's subscribers
         else if (this.subscriptions[table][newRecord?.id]) {
+            console.log(`[subscribe] notify record subscribers of update to: ${newRecord?.id}`);
             Object.values(this.subscriptions[table][newRecord.id]!).forEach(callback => {
                 callback(newRecord);
             });
@@ -133,40 +159,28 @@ export class PrismaConnection {
         this.notifySubscribers(table, record, false);
     }
 
-    // This is very hacky, but it allows the electron render process to directly call methods on the PrismaConnection instance
-    // This means that the UI (and not just the main process) can directly subscribe to and update table records
-    // Not ideal, but it works for now and would slow down development speed if this is changed
-    // TODO: Find a better solution in the future
-    export(): this {
-        const exportedMethods: Record<string, any> = {};
+    public async describeTables() {
+        const tables = Object.keys(this.table) as (keyof TableReferences)[];
+        const result: Record<string, { rows: number; description: string }> = {};
 
-        // First, include own properties (if any are functions)
-        Object.getOwnPropertyNames(this)
-            .filter(name => name !== 'constructor' && name !== 'export')
-            .forEach(name => {
-                const property = this[name as keyof this];
-                if (typeof property === 'function') {
-                    exportedMethods[name] = property.bind(this);
-                }
-            });
-
-        // Then, traverse the prototype chain to get inherited methods
-        let proto = Object.getPrototypeOf(this);
-        while (proto && proto !== Object.prototype) {
-            Object.getOwnPropertyNames(proto)
-                .filter(name => name !== 'constructor' && name !== 'export')
-                .forEach(name => {
-                    // Only add if not already added (i.e. not overridden in the instance)
-                    if (!(name in exportedMethods)) {
-                        const descriptor = Object.getOwnPropertyDescriptor(proto, name);
-                        if (descriptor && typeof descriptor.value === 'function') {
-                            exportedMethods[name] = descriptor.value.bind(this);
-                        }
-                    }
-                });
-            proto = Object.getPrototypeOf(proto);
+        for (const table of tables) {
+            try {
+                const count = await this.table[table].count();
+                result[table] = { rows: count, description: this.table[table].description };
+            } catch (error) {
+                result[table] = { rows: 0, description: this.table[table].description };
+            }
         }
 
-        return exportedMethods as unknown as this;
+        return result;
+    }
+
+    public async runMigration() {
+        await runDatabaseMigration(this);
+    }
+
+    public async databaseExists() {
+        const dbPath = path.join('~', '.abyss', 'database.sqlite');
+        return existsSync(dbPath);
     }
 }

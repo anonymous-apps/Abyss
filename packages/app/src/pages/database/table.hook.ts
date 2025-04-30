@@ -1,14 +1,12 @@
 import { useNavigate, useParams } from 'react-router';
 import { Database } from '../../main';
-import { useDatabaseTableSubscription } from '../../state/database-connection';
+import { useDatabaseTableScan } from '../../state/database-access-utils';
 
 export function useTable() {
     const navigate = useNavigate();
     const { id } = useParams();
 
-    const scanTable = useDatabaseTableSubscription(id as string, async database =>
-        database.table[id as keyof typeof database.table].scanTable()
-    );
+    const scanTable = useDatabaseTableScan(id as keyof typeof Database.table);
 
     const breadcrumbs = [
         { name: 'Home', onClick: () => navigate('/') },
@@ -17,7 +15,7 @@ export function useTable() {
     ];
 
     const onPurgeTable = () => {
-        Database.table[id as keyof typeof Database.table].removeAll();
+        Database.table[id as keyof typeof Database.table].purge();
     };
 
     const onOpenRecordStr = (record: string) => {

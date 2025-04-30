@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Database } from '../../main';
 import { useAppUpdator } from '../../state/app-updater';
-import { useTableRecordUserSettings } from '../../state/database-connection';
+import { useDatabaseSettings } from '../../state/database-access-utils';
+
 export function useSettingsPage() {
     // Navigation
     const navigate = useNavigate();
@@ -12,11 +13,11 @@ export function useSettingsPage() {
     ];
 
     // Settings
-    const settings = useTableRecordUserSettings();
+    const settings = useDatabaseSettings();
 
     // Theme
     const onChangeAppTheme = (theme: string) => {
-        Database.table.userSettings.updateFirst({ theme });
+        Database.table.settings.updateSettings({ theme });
     };
 
     // Updating
@@ -29,8 +30,8 @@ export function useSettingsPage() {
     // Version
     const [version, setVersion] = useState<string | undefined>(undefined);
     useEffect(() => {
-        window.app.getVersion().then(setVersion);
+        window['abyss-app'].getVersion().then(setVersion);
     }, []);
 
-    return { breadcrumbs: pageBreadcrumbs, record: settings.data, onChangeAppTheme, updates, version };
+    return { breadcrumbs: pageBreadcrumbs, record: settings, onChangeAppTheme, updates, version };
 }

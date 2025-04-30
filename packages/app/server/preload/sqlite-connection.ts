@@ -1,6 +1,9 @@
 import { PrismaConnection } from '@abyss/records';
-import { contextBridge } from 'electron';
+import os from 'os';
+import path from 'path';
 
-export const connection = new PrismaConnection();
+const dbPath = path.join(os.homedir(), '.abyss', 'database.sqlite');
 
-contextBridge.exposeInMainWorld('abyss-sqlite', connection.export());
+window['abyss-sqlite'] = new PrismaConnection({
+    url: dbPath,
+});

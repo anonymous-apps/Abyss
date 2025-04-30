@@ -2,7 +2,7 @@ import { RecordClass } from '../recordClass';
 import { SettingsController } from './settings.controller';
 import { SettingsType } from './settings.type';
 
-export class Settings extends RecordClass<SettingsType> {
+export class SettingsRecord extends RecordClass<SettingsType> {
     public lastPage: string;
     public theme: string;
 

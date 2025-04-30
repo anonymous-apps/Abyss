@@ -3,7 +3,7 @@ import { TableReferences } from '@abyss/records/dist/prisma.type';
 import { useEffect, useState } from 'react';
 import { Database } from '../main';
 
-function useDatabaseQuery<T>(callback: (database: PrismaConnection) => Promise<T>) {
+function useStatefulQuery<T>(callback: (database: PrismaConnection) => Promise<T>) {
     const [data, setData] = useState<T | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
@@ -29,12 +29,25 @@ function useDatabaseQuery<T>(callback: (database: PrismaConnection) => Promise<T
     return { data, loading, error, refetch: fetchData };
 }
 
+export function useDatabaseQuery<T>(callback: (database: PrismaConnection) => Promise<T>) {
+    const query = useStatefulQuery(callback);
+
+    useEffect(() => {
+        const unsubscribe = Database.subscribeDatabase(data => {
+            query.refetch();
+        });
+        return () => unsubscribe();
+    }, []);
+
+    return query;
+}
+
 export function useDatabaseTableQuery<T>(
     table: keyof TableReferences,
     callback: (database: PrismaConnection) => Promise<T>,
     listeners: any[] = []
 ) {
-    const query = useDatabaseQuery(callback);
+    const query = useStatefulQuery(callback);
 
     useEffect(() => {
         const unsubscribe = Database.subscribeTable(table, data => {

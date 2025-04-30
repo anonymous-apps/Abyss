@@ -1,5 +1,7 @@
 model Settings {
     id        String   @id
+    createdAt DateTime @default(now())
+    updatedAt DateTime @default(now()) @updatedAt
     lastPage String
     theme String
 } 

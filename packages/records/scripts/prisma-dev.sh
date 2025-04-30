@@ -1,4 +1,5 @@
 #!/bin/bash
+export DATABASE_URL=file:./dev.db
 
 # Remove existing schema.prisma file if it exists
 rm -f ./prisma/schema.prisma 2>/dev/null || true

@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Database } from '../../main';
-import { useDatabaseQuery, useDatabaseTableSubscription } from '../../state/database-connection';
+import { useDatabaseSettings, useDatabaseTables } from '../../state/database-access-utils';
 
 export function useDatabasePage() {
     const navigate = useNavigate();
@@ -14,8 +13,8 @@ export function useDatabasePage() {
     ];
 
     // Data fetching
-    const userSettings = useDatabaseTableSubscription('UserSettings', async database => database.table.userSettings.get());
-    const allTables = useDatabaseQuery(async database => database.describeTables());
+    const userSettings = useDatabaseSettings();
+    const allTables = useDatabaseTables();
 
     // Actions
     const openDbFolder = () => {
@@ -23,17 +22,12 @@ export function useDatabasePage() {
         window.fs.openDbFolder();
     };
 
-    const bootstrapDB = () => {
-        Database.bootstrap.bootstrapping.bootstrapDB();
-    };
-
     return {
         pageTitle,
         pageBreadcrumbs,
         userSettings,
-        allTables: allTables.data,
+        allTables,
         openDbFolder,
-        bootstrapDB,
         navigate,
         openDbTable,
     };

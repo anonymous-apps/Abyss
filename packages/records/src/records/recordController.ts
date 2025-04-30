@@ -5,12 +5,14 @@ import { BaseRecordProps, RecordClass } from './recordClass';
 
 export abstract class RecordController<T extends BaseRecordProps, R extends RecordClass<T>> {
     protected readonly recordType: keyof TableReferences;
+    public readonly description: string;
     protected readonly connection: PrismaConnection;
     protected readonly table: ReturnType<PrismaConnection['_reference']>;
     protected readonly factory: (data: any) => R;
 
-    public constructor(type: keyof TableReferences, connection: PrismaConnection, factory: (data: any) => R) {
+    public constructor(type: keyof TableReferences, description: string, connection: PrismaConnection, factory: (data: any) => R) {
         this.recordType = type;
+        this.description = description;
         this.connection = connection;
         this.table = this.connection._reference(type);
         this.factory = factory;
@@ -20,11 +22,11 @@ export abstract class RecordController<T extends BaseRecordProps, R extends Reco
     // Mutators
     //
 
-    async create(data: Omit<T, 'id' | 'createdAt' | 'updatedAt'>): Promise<R> {
+    async create(data: Omit<T, 'id' | 'createdAt' | 'updatedAt'> & { id?: string }): Promise<R> {
         const result = await this.table.create({
             data: {
-                ...(data as any),
                 id: generateId(this.recordType),
+                ...(data as any),
             },
         });
         this.connection.notifyRecord(this.recordType, result);
@@ -74,5 +76,10 @@ export abstract class RecordController<T extends BaseRecordProps, R extends Reco
     async exists(id: string): Promise<boolean> {
         const result = await this.table.findUnique({ where: { id } });
         return !!result;
+    }
+
+    async count(): Promise<number> {
+        const result = await this.table.count();
+        return result;
     }
 }
