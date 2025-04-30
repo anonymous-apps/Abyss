@@ -116,6 +116,7 @@ describe('invokeGraph', () => {
             {
                 type: 'onUserChat',
                 chatId: chat.id,
+                message: 'test',
             }
         );
 
