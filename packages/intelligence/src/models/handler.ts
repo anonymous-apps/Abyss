@@ -3,14 +3,14 @@ import { InvokeAnthropic } from './implementations/anthropic/handler';
 import { InvokeStatic } from './implementations/static/handler';
 
 export async function invokeModelAgainstThread(connection: ModelConnectionRecord, thread: MessageThreadRecord) {
-    if (connection.accessFormat === 'anthropic') {
+    if (connection.accessFormat.toLowerCase() === 'anthropic') {
         return InvokeAnthropic({
             thread,
             modelId: connection.modelId,
             apiKey: connection.data.apiKey,
         });
     }
-    if (connection.accessFormat === 'static') {
+    if (connection.accessFormat.toLowerCase() === 'static') {
         return InvokeStatic({
             thread,
             response: connection.data.response,

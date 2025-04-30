@@ -12,28 +12,29 @@ export function ChatHistoryRenderer({ thread }: { thread?: MessageThreadRecord }
         elements.push(<SectionHeader key={'header-' + turn.id} sender={turn.senderId} timestamp={turn.updatedAt} />);
 
         // Render messages themselves
-        for (const message of turn.partials) {
+        for (let i = 0; i < turn.partials.length; i++) {
+            const message = turn.partials[i];
             if (turn.senderId === 'HUMAN') {
                 if (message.type === 'text') {
-                    elements.push(<UserMessageSection key={turn.id} message={message} />);
+                    elements.push(<UserMessageSection key={turn.id + '-' + i} message={message} />);
                 } else {
                     console.error('Unknown user message type', turn);
                 }
             } else if (turn.senderId === 'SYSTEM') {
                 if (message.type === 'text') {
-                    elements.push(<SystemTextMessageSection key={turn.id} message={message} />);
+                    elements.push(<SystemTextMessageSection key={turn.id + '-' + i} message={message} />);
                 } else {
                     console.error('Unknown system message type', turn);
                 }
             } else if (turn.senderId.startsWith('agentGraph:')) {
                 if (message.type === 'text') {
-                    elements.push(<AiMessageTextSection key={turn.id} message={message} />);
+                    elements.push(<AiMessageTextSection key={turn.id + '-' + i} message={message} />);
                 } else {
                     console.error('Unknown agent graph message type', turn);
                 }
             } else if (turn.senderId.startsWith('modelConnection:')) {
                 if (message.type === 'text') {
-                    elements.push(<AiMessageTextSection key={turn.id} message={message} />);
+                    elements.push(<AiMessageTextSection key={turn.id + '-' + i} message={message} />);
                 } else {
                     console.error('Unknown model connection message type', turn);
                 }

@@ -1,11 +1,12 @@
 import { Button, InputArea, PageCrumbed } from '@abyss/ui-components';
+import { Send } from 'lucide-react';
 import React from 'react';
 import { getIconForSourceType } from '../../library/references';
 import { ChatHistoryRenderer } from './components/ChatContent';
 import { useChatView } from './view.hook';
 
 export function ChatViewPage() {
-    const { chat, thread, message, setMessage, handleKeyPress, breadcrumbs, navigateToParticipant } = useChatView();
+    const { chat, thread, message, setMessage, handleKeyPress, breadcrumbs, navigateToParticipant, handleSendMessage } = useChatView();
     const participantIcon = getIconForSourceType(chat?.participantId || '');
     const headerReference = (
         <Button variant="secondary" icon={participantIcon} tooltip="View model profile" onClick={navigateToParticipant} />
@@ -27,6 +28,11 @@ export function ChatViewPage() {
                 placeholder="Type your message here..."
                 onKeyDown={handleKeyPress}
             />
+            <div className="flex justify-end">
+                <Button icon={Send} onClick={handleSendMessage}>
+                    Send
+                </Button>
+            </div>
         </PageCrumbed>
     );
 }

@@ -47,6 +47,17 @@ export function useRecordReference({ sourceId }: { sourceId: string }): RecordRe
         };
     }
 
+    if (recordType === 'modelconnection') {
+        const Icon = getIconForSourceType('modelconnection');
+        return {
+            icon: Icon,
+            label: 'Model Connection',
+            link: `/database/id/modelConnection/record/${sourceId}`,
+        };
+    }
+
+    console.warn('Unknown record type', recordType);
+
     return {
         icon: MessageCircleQuestion,
         label: 'Unknown',

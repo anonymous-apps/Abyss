@@ -1,6 +1,7 @@
 import { ChatThreadRecord, MessageThreadRecord } from '@abyss/records';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { chatWithAiModel } from '../../operations/chat-with-ai-model';
 import { useDatabaseRecord } from '../../state/database-connection';
 
 export function useChatView() {
@@ -36,6 +37,13 @@ export function useChatView() {
         }
     };
 
+    const handleSendMessage = () => {
+        if (message.trim() === '') {
+            return;
+        }
+        chatWithAiModel(message, chat?.participantId || '', chat?.id || '');
+    };
+
     const breadcrumbs = [
         { name: 'Home', onClick: navigateToHome },
         { name: 'Chats', onClick: navigateToChats },
@@ -52,5 +60,6 @@ export function useChatView() {
         breadcrumbs,
         navigateToHome,
         navigateToChats,
+        handleSendMessage,
     };
 }
