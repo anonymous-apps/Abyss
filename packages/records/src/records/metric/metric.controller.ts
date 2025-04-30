@@ -13,7 +13,7 @@ export class MetricController extends RecordController<'metric', MetricType, Met
         );
     }
 
-    public async getUniqueDimensionsForMetric(metricName: string): Promise<string[]> {
+    public async getUniqueDimensionsForMetric(metricName: string): Promise<Record<string, string[]>> {
         const metrics = await this.table.findMany({
             where: {
                 name: metricName,
@@ -21,10 +21,25 @@ export class MetricController extends RecordController<'metric', MetricType, Met
             select: {
                 dimensions: true,
             },
-            distinct: ['dimensions'],
         });
 
-        return metrics.map(metric => metric.dimensions).filter(dimension => dimension !== null && dimension !== undefined) as string[];
+        const dimensionsMap: Record<string, string[]> = {};
+
+        for (const metric of metrics) {
+            const dimensions = metric.dimensions as Record<string, string>;
+
+            for (const [key, value] of Object.entries(dimensions)) {
+                if (!dimensionsMap[key]) {
+                    dimensionsMap[key] = [];
+                }
+
+                if (!dimensionsMap[key].includes(value)) {
+                    dimensionsMap[key].push(value);
+                }
+            }
+        }
+
+        return dimensionsMap;
     }
 
     public async uniqueNames(): Promise<string[]> {
