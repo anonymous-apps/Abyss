@@ -3,7 +3,7 @@ import { RecordController } from '../recordController';
 import { SettingsRecord } from './settings';
 import { SettingsType } from './settings.type';
 
-export class SettingsController extends RecordController<SettingsType, SettingsRecord> {
+export class SettingsController extends RecordController<'settings', SettingsType, SettingsRecord> {
     constructor(connection: PrismaConnection) {
         super('settings', 'application settings', connection, data => new SettingsRecord(this, data));
     }

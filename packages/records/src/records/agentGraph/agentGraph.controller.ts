@@ -3,7 +3,7 @@ import { RecordController } from '../recordController';
 import { AgentGraphRecord } from './agentGraph';
 import { AgentGraphType } from './agentGraph.type';
 
-export class AgentGraphController extends RecordController<AgentGraphType, AgentGraphRecord> {
+export class AgentGraphController extends RecordController<'agentGraph', AgentGraphType, AgentGraphRecord> {
     constructor(connection: PrismaConnection) {
         super(
             'agentGraph',

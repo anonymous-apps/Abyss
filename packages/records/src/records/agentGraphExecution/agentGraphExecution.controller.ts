@@ -3,7 +3,11 @@ import { RecordController } from '../recordController';
 import { AgentGraphExecutionRecord } from './agentGraphExecution';
 import { AgentGraphExecutionType } from './agentGraphExecution.type';
 
-export class AgentGraphExecutionController extends RecordController<AgentGraphExecutionType, AgentGraphExecutionRecord> {
+export class AgentGraphExecutionController extends RecordController<
+    'agentGraphExecution',
+    AgentGraphExecutionType,
+    AgentGraphExecutionRecord
+> {
     constructor(connection: PrismaConnection) {
         super(
             'agentGraphExecution',

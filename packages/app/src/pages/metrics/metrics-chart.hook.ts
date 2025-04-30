@@ -1,7 +1,7 @@
 import { addDays, addHours, addMinutes, format, subDays, subHours, subMonths } from 'date-fns';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useDatabaseTableSubscription } from '../../state/database-connection';
+import { useDatabaseTableQuery } from '../../state/database-connection';
 
 // Define time bucket options
 export type TimeBucketOption = {
@@ -113,13 +113,13 @@ export function useMetricsChart() {
 
     // Dimensions
     const [selectedDimensions, setSelectedDimensions] = useState<Record<string, any>>({});
-    const uniqueDimensions = useDatabaseTableSubscription('Metric', async database =>
+    const uniqueDimensions = useDatabaseTableQuery('metric', async database =>
         database.table.metric.getUniqueDimensionsForMetric(metricName || '')
     );
 
     // Fetch metrics data
-    const metrics = useDatabaseTableSubscription(
-        'Metric',
+    const metrics = useDatabaseTableQuery(
+        'metric',
         async database => database.table.metric.queryMetrics(metricName || '', selectedDimensions),
         [metricName]
     );

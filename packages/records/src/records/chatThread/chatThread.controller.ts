@@ -3,7 +3,7 @@ import { RecordController } from '../recordController';
 import { ChatThreadRecord } from './chatThread';
 import { ChatThreadType } from './chatThread.type';
 
-export class ChatThreadController extends RecordController<ChatThreadType, ChatThreadRecord> {
+export class ChatThreadController extends RecordController<'chatThread', ChatThreadType, ChatThreadRecord> {
     constructor(connection: PrismaConnection) {
         super(
             'chatThread',

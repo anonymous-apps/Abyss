@@ -3,7 +3,7 @@ import { RecordController } from '../recordController';
 import { MessageThreadRecord } from './messageThread';
 import { MessageThreadType } from './messageThread.type';
 
-export class MessageThreadController extends RecordController<MessageThreadType, MessageThreadRecord> {
+export class MessageThreadController extends RecordController<'messageThread', MessageThreadType, MessageThreadRecord> {
     constructor(connection: PrismaConnection) {
         super(
             'messageThread',

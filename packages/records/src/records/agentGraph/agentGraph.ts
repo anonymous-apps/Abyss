@@ -8,7 +8,7 @@ export class AgentGraphRecord extends RecordClass<AgentGraphType> {
     public nodes: AgentGraphNode[];
     public edges: AgentGraphEdge[];
 
-    constructor(controller: RecordController<AgentGraphType, AgentGraphRecord>, data: AgentGraphType) {
+    constructor(controller: RecordController<'agentGraph', AgentGraphType, AgentGraphRecord>, data: AgentGraphType) {
         super(controller, data);
         this.name = data.name;
         this.description = data.description;

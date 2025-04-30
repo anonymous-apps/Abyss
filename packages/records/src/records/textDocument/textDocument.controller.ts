@@ -3,7 +3,7 @@ import { RecordController } from '../recordController';
 import { TextDocumentRecord } from './textDocument';
 import { TextDocumentType } from './textDocument.type';
 
-export class TextDocumentController extends RecordController<TextDocumentType, TextDocumentRecord> {
+export class TextDocumentController extends RecordController<'textDocument', TextDocumentType, TextDocumentRecord> {
     constructor(connection: PrismaConnection) {
         super(
             'textDocument',

@@ -3,7 +3,7 @@ import { RecordController } from '../recordController';
 import { ModelConnectionRecord } from './modelConnection';
 import { ModelConnectionType } from './modelConnection.type';
 
-export class ModelConnectionController extends RecordController<ModelConnectionType, ModelConnectionRecord> {
+export class ModelConnectionController extends RecordController<'modelConnection', ModelConnectionType, ModelConnectionRecord> {
     constructor(connection: PrismaConnection) {
         super(
             'modelConnection',

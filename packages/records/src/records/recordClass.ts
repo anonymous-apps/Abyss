@@ -1,3 +1,4 @@
+import { TableReferences } from '../prisma.type';
 import { RecordController } from './recordController';
 
 export interface BaseRecordProps {
@@ -7,13 +8,13 @@ export interface BaseRecordProps {
 }
 
 export abstract class RecordClass<T extends BaseRecordProps> {
-    public readonly controller: RecordController<T, RecordClass<T>>;
+    public readonly controller: RecordController<keyof TableReferences, T, RecordClass<T>>;
 
     public id: string;
     public createdAt: Date;
     public updatedAt: Date;
 
-    constructor(controller: RecordController<T, RecordClass<T>>, data: T) {
+    constructor(controller: RecordController<keyof TableReferences, T, RecordClass<T>>, data: T) {
         this.controller = controller;
         this.id = data.id;
         this.createdAt = data.createdAt;

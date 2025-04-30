@@ -22,11 +22,6 @@ export class PrismaConnection {
         this.table = buildTableReferences(this);
     }
 
-    public _reference(table: string) {
-        // Using this to get type safty even though it's not the best way to do it
-        return this.client[table as 'textDocument'];
-    }
-
     // Connection subscriptions - hierarchical structure
     private subscriptions: Record<
         string,

@@ -1,12 +1,12 @@
 import { formatDistanceToNow } from 'date-fns';
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useDatabaseTableSubscription } from '../../state/database-connection';
+import { useDatabaseTableQuery } from '../../state/database-connection';
 
 export function useMetrics() {
     const navigate = useNavigate();
-    const metrics = useDatabaseTableSubscription('Metric', async database => database.table.metric.readLatest(100));
-    const uniqueMetricNames = useDatabaseTableSubscription('Metric', async database => database.table.metric.getUniqueMetricNames());
+    const metrics = useDatabaseTableQuery('metric', async database => database.table.metric.scanLatest(10));
+    const uniqueMetricNames = useDatabaseTableQuery('metric', async database => database.table.metric.uniqueNames());
     const [search, setSearch] = useState('');
 
     const renderableRows =
