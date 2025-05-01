@@ -35,8 +35,8 @@ export abstract class RecordController<
         // @ts-ignore
         const result = await this.table.create({
             data: {
-                ...(data as any),
                 id: generateId(this.recordType),
+                ...(data as any),
             },
         });
         this.connection.notifyRecord(this.recordType, result);

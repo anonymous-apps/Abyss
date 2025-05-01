@@ -1,4 +1,4 @@
-import { AgentGraphExecutionType, AgentGraphType, ChatThreadType, ModelConnectionType, SettingsRecord } from '@abyss/records';
+import { AgentGraphExecutionType, AgentGraphType, ChatThreadType, ModelConnectionType, SettingsType } from '@abyss/records';
 import { TableReferences } from '@abyss/records/dist/prisma.type';
 import { useDatabaseQuery, useDatabaseRecord, useDatabaseTableQuery } from './database-connection';
 
@@ -13,7 +13,7 @@ export function useDatabaseTables() {
 }
 
 export function useDatabaseSettings() {
-    return useDatabaseRecord<SettingsRecord>('settings', 'settings::default');
+    return useDatabaseRecord<SettingsType>('settings', 'settings::default');
 }
 
 // Specific access
