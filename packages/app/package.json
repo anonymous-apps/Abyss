@@ -9,7 +9,7 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build:mac": "vite build && electron-builder build --mac ",
+        "build:mac": "vite build && node scripts/copy-prisma-artifacts.cjs && electron-builder build --mac ",
         "debug:mac": "npm run build:mac && dist/mac/Abyss.app/Contents/MacOS/Abyss",
         "debug:asar": "npx asar extract dist/mac/Abyss.app/Contents/Resources/app.asar ./tmp/extracted-app",
         "publish:mac": "vite build && electron-builder build --mac --publish always && npm run publish:checksums",

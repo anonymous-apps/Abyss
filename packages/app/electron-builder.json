@@ -1,6 +1,6 @@
 {
     "asar": true,
-    "asarUnpack": ["**/node_modules/@prisma/client/**", "**/node_modules/.prisma/client/**"],
+    "asarUnpack": ["**/node_modules/@prisma/client/**", "**/node_modules/.prisma/client/**", "**/node_modules/@abyss/records/dist/**"],
     "afterPack": "scripts/after-pack.cjs",
     "afterSign": "scripts/after-sign.cjs",
     "appId": "com.abyssal.abyss",
@@ -36,7 +36,8 @@
         "entitlements": "mac/entitlements.mac.plist",
         "entitlementsInherit": "mac/entitlements.mac.plist",
         "identity": "Eric Robertson",
-        "hardenedRuntime": true
+        "hardenedRuntime": true,
+        "binaries": ["Contents/Resources/app.asar.unpacked/node_modules/@abyss/records/dist/libquery_engine-darwin-arm64.dylib.node"]
     },
     "publish": {
         "provider": "github",

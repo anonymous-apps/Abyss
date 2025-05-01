@@ -6,3 +6,4 @@ dist-vite
 *.db
 .env
 prisma/schema.prisma
+prisma

@@ -61,7 +61,7 @@ export function useRecordReference({ sourceId }: { sourceId: string }): RecordRe
         return {
             icon: Icon,
             label: 'Agent Graph',
-            link: `/database/id/agentGraph/record/${sourceId}`,
+            link: `/agents/id/${sourceId}`,
         };
     }
 

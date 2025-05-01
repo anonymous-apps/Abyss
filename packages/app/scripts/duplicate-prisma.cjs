@@ -2,6 +2,7 @@ const fs = require('fs-extra');
 const path = require('path');
 
 module.exports = async function duplicatePrisma(context) {
+    console.log('Duplicating Prisma');
     // Define all source and destination pairs
     const copyPairs = [
         {
