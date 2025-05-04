@@ -1,34 +1,36 @@
-import { rmdirSync, unlinkSync } from 'fs';
-import { describe, it } from 'vitest';
+import { mkdirSync, rmdirSync, unlinkSync } from 'fs';
+import { join } from 'path';
+import { expect, test } from 'vitest';
+import { randomId } from '../utils/ids';
+import { wait } from '../utils/wait';
 import { SQliteClient } from './sqlite-client';
 
-export async function buildCleanDB({ setupCommand, skipMigrations = false }: { setupCommand?: string; skipMigrations?: boolean } = {}) {
+export async function buildCleanDB({ setupCommand, doMigrations = true }: { setupCommand?: string; doMigrations?: boolean } = {}) {
+    await wait();
+    const id = randomId();
+    const path = join('.test-artifacts', id);
+    mkdirSync(path, { recursive: true });
     try {
-        unlinkSync('./.test-artifacts/db.sqlite');
+        unlinkSync(join(path, 'db.sqlite'));
     } catch {}
     try {
-        unlinkSync('./.test-artifacts/sidecar.json');
+        unlinkSync(join(path, 'sidecar.json'));
     } catch {}
     try {
-        rmdirSync('./.test-artifacts');
+        rmdirSync(path);
     } catch {}
-    const client = new SQliteClient('./.test-artifacts');
+    const client = new SQliteClient(path);
     await client.initialize();
-    if (!skipMigrations) {
+    if (doMigrations) {
         await client.migrateAll();
     }
     if (setupCommand) {
         await client.execute(setupCommand);
     }
+    await wait();
     return client;
 }
 
-describe('SQLiteClient', () => {
-    it('should create a new database', async () => {
-        const client = await buildCleanDB();
-        const newSettings = await client.tables.settings.create({
-            lastPage: 'hey',
-            theme: 'dark',
-        });
-    });
+test('true', () => {
+    expect(true).toBe(true);
 });

@@ -5,10 +5,10 @@ describe('MessageThread::create', () => {
     test('Happy: Create message thread record', async () => {
         const client = await buildCleanDB();
         const messageThread = await client.tables.messageThread.create({
-            id: 'message-thread::test',
+            id: 'messageThread::test',
             messagesData: [],
         });
         expect(messageThread).toBeDefined();
-        expect(messageThread.id).toBe('message-thread::test');
+        expect(messageThread.id).toBe('messageThread::test');
     });
 });

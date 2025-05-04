@@ -37,7 +37,7 @@ export const BaseMessageThreadTable = `
         id TEXT PRIMARY KEY,
         createdAt INTEGER NOT NULL,
         updatedAt INTEGER NOT NULL,
-        messages TEXT NOT NULL
+        messagesData TEXT NOT NULL
     )
 `;
 

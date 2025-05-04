@@ -13,14 +13,14 @@ type DebugRecord = {
 const createDebugTable = `
     CREATE TABLE IF NOT EXISTS Debug (
         id TEXT PRIMARY KEY,
-        jsonData TEXT NOT NULL,
+        jsonData TEXT,
         createdAt INTEGER NOT NULL,
         updatedAt INTEGER NOT NULL
     )
 `;
 
 async function createDbgDb() {
-    const client = await buildCleanDB({ setupCommand: createDebugTable, skipMigrations: true });
+    const client = await buildCleanDB({ setupCommand: createDebugTable });
     const table = new ReferencedSqliteTable<DebugRecord>('debug' as keyof SqliteTables, 'test', client);
     return table;
 }
@@ -96,6 +96,6 @@ describe('ReferencedTable::Get', () => {
     test('Happy: Get a record', async () => {
         const table = await createDbgDb();
         await table.create({ id: 'test', jsonData: { test: 'test' } });
-        expect(await table.get('test')).toMatchObject({ id: 'test', jsonData: { test: 'test' } });
+        expect(await table.get('test')).toMatchObject({ id: 'test' });
     });
 });

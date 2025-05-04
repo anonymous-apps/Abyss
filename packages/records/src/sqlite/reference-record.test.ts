@@ -19,9 +19,7 @@ const createDebugTable = `
 `;
 
 async function createDbgDb() {
-    await wait();
-    const client = await buildCleanDB({ setupCommand: createDebugTable, skipMigrations: true });
-    await wait();
+    const client = await buildCleanDB({ setupCommand: createDebugTable });
     const table = new ReferencedSqliteTable<DebugType>('debug' as keyof SqliteTables, 'test', client);
     await client.overrideTable('debug' as keyof SqliteTables, table);
     return table;

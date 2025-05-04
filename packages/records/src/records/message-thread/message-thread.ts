@@ -8,13 +8,13 @@ import { MessageThreadType } from './message-thread.type';
 
 export class ReferencedMessageThreadTable extends ReferencedSqliteTable<MessageThreadType> {
     constructor(client: SQliteClient) {
-        super('message', 'A thread of messages with different types of content', client);
+        super('messageThread', 'A thread of messages with different types of content', client);
     }
 }
 
 export class ReferencedMessageThreadRecord extends ReferencedSqliteRecord<MessageThreadType> {
     constructor(id: string, client: SQliteClient) {
-        super('message', id, client);
+        super('messageThread', id, client);
     }
 
     public async addMessagesByReference(...messages: ReferencedMessageRecord[]) {
