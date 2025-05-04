@@ -6,3 +6,4 @@ prisma/dev.db-journal
 prisma/schema.prisma
 plan.md
 test
+.test-artifacts

@@ -1,7 +1,0 @@
-model MessageThread {
-    id        String   @id @default(uuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @default(now()) @updatedAt
-
-    turns Json // Will store the array of MessageTurn objects
-} 

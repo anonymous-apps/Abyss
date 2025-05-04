@@ -1,0 +1,27 @@
+import { ReferencedSqliteRecord } from '../../sqlite/reference-record';
+import { ReferencedSqliteTable } from '../../sqlite/reference-table';
+import { SQliteClient } from '../../sqlite/sqlite-client';
+import { NewRecord } from '../../sqlite/sqlite.type';
+import { ReferencedMessageThreadRecord } from '../message-thread/message-thread';
+import { MessageType } from '../message/message.type';
+import { ChatThreadType } from './chat-thread.type';
+
+export class ReferencedChatThreadTable extends ReferencedSqliteTable<ChatThreadType> {
+    constructor(client: SQliteClient) {
+        super('chatThread', 'A thread of chat messages between participants', client);
+    }
+}
+
+export class ReferencedChatThreadRecord extends ReferencedSqliteRecord<ChatThreadType> {
+    constructor(id: string, client: SQliteClient) {
+        super('chatThread', id, client);
+    }
+
+    public async addMessages(...messages: NewRecord<MessageType>[]) {
+        const data = await this.get();
+        const messageThread = await this.client.tables.messageThread.get(data.threadId);
+        const messageThreadRef = new ReferencedMessageThreadRecord(messageThread.id, this.client);
+        const newThread = await messageThreadRef.addMessages(...messages);
+        await this.update({ threadId: newThread.id });
+    }
+}

@@ -108,7 +108,9 @@ export class DatabaseSubscriptionLayer {
 
     private async triggerRecordSubscribers(record: ReferencedSqliteRecord) {
         const value = await record.get();
-        Object.values(this.subscribersToRecords[record.tableId][record.id]).forEach(callback => callback(value));
+        if (this.subscribersToRecords[record.tableId] && this.subscribersToRecords[record.tableId][record.id]) {
+            Object.values(this.subscribersToRecords[record.tableId][record.id]).forEach(callback => callback(value));
+        }
     }
 
     private async triggerAllRecordsSubscriberInsideTable(table: ReferencedSqliteTable) {

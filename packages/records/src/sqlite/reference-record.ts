@@ -1,4 +1,3 @@
-import { ReferencedSqliteTable } from './reference-table';
 import { SQliteClient } from './sqlite-client';
 import { BaseSqliteRecord, SqliteTables } from './sqlite.type';
 
@@ -13,13 +12,13 @@ export class ReferencedSqliteRecord<IRecordType extends BaseSqliteRecord = BaseS
         this.client = client;
     }
 
-    ref_table(): ReferencedSqliteTable {
+    ref_table() {
         return this.client.tables[this.tableId];
     }
 
     async get(): Promise<IRecordType> {
         const raw = await this.client.execute(`SELECT * FROM ${this.tableId} WHERE id = ?`, [this.id]);
-        return raw as IRecordType;
+        return (raw as IRecordType[])[0];
     }
 
     async delete() {
@@ -28,7 +27,7 @@ export class ReferencedSqliteRecord<IRecordType extends BaseSqliteRecord = BaseS
     }
 
     async exists() {
-        const raw = await this.client.execute(`SELECT COUNT(*) FROM ${this.tableId} WHERE id = ?`, [this.id]);
+        const raw = await this.client.execute(`SELECT COUNT(*) as count FROM ${this.tableId} WHERE id = ?`, [this.id]);
         return (raw as { count: number }[])[0].count > 0;
     }
 
@@ -41,5 +40,12 @@ export class ReferencedSqliteRecord<IRecordType extends BaseSqliteRecord = BaseS
             [...Object.values(record), this.id]
         );
         this.client.events.notifyRecordChanged(this);
+    }
+
+    async clone(): Promise<ReferencedSqliteRecord<IRecordType>> {
+        const record = await this.get();
+        const { id, createdAt, updatedAt, ...rest } = record;
+        const newRecord = await this.ref_table().create(rest as any);
+        return new ReferencedSqliteRecord(this.tableId, newRecord.id, this.client);
     }
 }

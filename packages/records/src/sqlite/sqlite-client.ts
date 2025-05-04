@@ -1,8 +1,16 @@
-import { existsSync, promises as fs } from 'fs';
+import { existsSync, promises as fs, mkdirSync } from 'fs';
 import { join } from 'path';
 import sqlite3 from 'sqlite3';
-import { ReferencedSettingsTable } from '../records/settings';
+import { ReferencedAgentGraphTable } from '../records/agent-graph/agent-graph';
+import { ReferencedChatThreadTable } from '../records/chat-thread/chat-thread';
+import { ReferencedLogStreamTable } from '../records/logstream/logstream';
+import { ReferencedMessageThreadTable } from '../records/message-thread/message-thread';
+import { ReferencedMessageTable } from '../records/message/message';
+import { ReferencedMetricTable } from '../records/metric/metric';
+import { ReferencedModelConnectionTable } from '../records/model-connection/model-connection';
+import { ReferencedSettingsTable } from '../records/settings/settings';
 import { DatabaseSubscriptionLayer } from './database-subscription-layer';
+import { ReferencedSqliteTable } from './reference-table';
 import { migrations } from './schemas/migrations';
 import { DBSidecarType, DefaultSidecar, SqliteTables } from './sqlite.type';
 
@@ -25,10 +33,22 @@ export class SQliteClient {
         this.path = dbPath;
         this.sidecarPath = join(this.path, 'sidecar.json');
         this.dbPath = join(this.path, 'db.sqlite');
+        mkdirSync(this.path, { recursive: true });
         this.events = new DatabaseSubscriptionLayer(this);
         this.tables = {
             settings: new ReferencedSettingsTable(this),
+            modelConnection: new ReferencedModelConnectionTable(this),
+            agentGraph: new ReferencedAgentGraphTable(this),
+            chatThread: new ReferencedChatThreadTable(this),
+            messageThread: new ReferencedMessageThreadTable(this),
+            metric: new ReferencedMetricTable(this),
+            message: new ReferencedMessageTable(this),
+            logStream: new ReferencedLogStreamTable(this),
         };
+    }
+
+    async overrideTable(tableId: keyof SqliteTables, table: ReferencedSqliteTable<any>) {
+        this.tables[tableId] = table as any;
     }
 
     async initialize() {
@@ -54,7 +74,6 @@ export class SQliteClient {
     }
 
     async execute(sql: string, params: any[] = []) {
-        console.log('Executing', sql, params);
         return new Promise((resolve, reject) => {
             this.db.all(sql, params, (err, rows) => {
                 if (err) reject(err);
