@@ -1,4 +1,4 @@
-import { PrismaConnection } from '@abyss/records';
+import { SQliteClient } from '@abyss/records';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
@@ -8,11 +8,12 @@ import { applyTheme } from './state/theme-state';
 import './style.css';
 
 // @ts-ignore
-export const Database = window['abyss-sqlite'] as PrismaConnection;
+export const Database = window['abyss-sqlite'] as SQliteClient;
 
 // Reload the last page the user was on, start from there
 async function main() {
-    await Database.runMigration();
+    await Database.initialize();
+    await Database.migrateAll();
     await loadFromLastPage();
     await applyTheme();
     await CaptureMetric.ApplicationOpened();

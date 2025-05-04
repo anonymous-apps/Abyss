@@ -37,7 +37,7 @@ export class ReferencedSqliteTable<IRecordType extends BaseSqliteRecord = BaseSq
         const raw = await this.client.execute(`SELECT * FROM ${this.tableId} ORDER BY createdAt LIMIT ?`, [limit]);
         const results = raw as Record<string, any>[];
         const deserialized = results.map(r => ReferencedSqliteTable.deserialize(r));
-        return deserialized;
+        return deserialized as IRecordType[];
     }
 
     async count(): Promise<number> {

@@ -5,8 +5,8 @@ import { useDatabaseTableQuery } from '../../state/database-connection';
 
 export function useMetrics() {
     const navigate = useNavigate();
-    const metrics = useDatabaseTableQuery('metric', async database => database.table.metric.scanLatest(10));
-    const uniqueMetricNames = useDatabaseTableQuery('metric', async database => database.table.metric.uniqueNames());
+    const metrics = useDatabaseTableQuery('metric', async database => database.tables.metric.list(10));
+    const uniqueMetricNames = useDatabaseTableQuery('metric', async database => database.tables.metric.getUniqueNames());
     const [search, setSearch] = useState('');
 
     const renderableRows =

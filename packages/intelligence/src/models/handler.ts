@@ -1,19 +1,19 @@
-import { MessageThreadType, ModelConnectionType } from '@abyss/records';
+import { ModelConnectionType, ReferencedMessageThreadRecord } from '@abyss/records';
 import { InvokeAnthropic } from './implementations/anthropic/handler';
 import { InvokeStatic } from './implementations/static/handler';
 
-export async function invokeModelAgainstThread(connection: ModelConnectionType, thread: MessageThreadType) {
+export async function invokeModelAgainstThread(connection: ModelConnectionType, thread: ReferencedMessageThreadRecord) {
     if (connection.accessFormat.toLowerCase() === 'anthropic') {
         return InvokeAnthropic({
             thread,
             modelId: connection.modelId,
-            apiKey: connection.data.apiKey,
+            apiKey: connection.connectionData.apiKey,
         });
     }
     if (connection.accessFormat.toLowerCase() === 'static') {
         return InvokeStatic({
             thread,
-            response: connection.data.response,
+            response: connection.connectionData.response,
         });
     }
 

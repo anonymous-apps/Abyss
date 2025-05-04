@@ -114,13 +114,13 @@ export function useMetricsChart() {
     // Dimensions
     const [selectedDimensions, setSelectedDimensions] = useState<Record<string, any>>({});
     const uniqueDimensions = useDatabaseTableQuery('metric', async database =>
-        database.table.metric.getUniqueDimensionsForMetric(metricName || '')
+        database.tables.metric.getUniqueDimensionsForMetric(metricName || '')
     );
 
     // Fetch metrics data
     const metrics = useDatabaseTableQuery(
         'metric',
-        async database => database.table.metric.queryMetrics(metricName || '', selectedDimensions),
+        async database => database.tables.metric.queryMetrics(metricName || '', selectedDimensions),
         [metricName]
     );
 

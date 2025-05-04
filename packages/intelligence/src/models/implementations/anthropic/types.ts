@@ -1,7 +1,7 @@
-import { MessageThreadType } from '@abyss/records';
+import { ReferencedMessageThreadRecord } from '@abyss/records';
 
 export interface InvokeAnthropicProps {
-    thread: MessageThreadType;
+    thread: ReferencedMessageThreadRecord;
     modelId: string;
     apiKey: string;
 }

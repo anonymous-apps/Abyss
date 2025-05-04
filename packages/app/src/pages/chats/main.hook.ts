@@ -18,7 +18,7 @@ export function useChatMain() {
     };
 
     const handleDeleteChat = (chatId: string) => {
-        Database.table.chatThread.delete(chatId);
+        Database.tables.chatThread.ref(chatId).delete();
     };
 
     const sidebarItems = (chats.data || []).map(entry => {
@@ -27,7 +27,7 @@ export function useChatMain() {
             title: entry.name,
             icon: getIconForSourceType(entry.participantId),
             url: `/chats/id/${entry.id}`,
-            isInProgress: !!entry.blocker,
+            isInProgress: !!entry.blockerId,
             onCancel: () => handleDeleteChat(entry.id),
         };
     });

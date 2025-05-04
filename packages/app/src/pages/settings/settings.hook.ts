@@ -17,7 +17,7 @@ export function useSettingsPage() {
 
     // Theme
     const onChangeAppTheme = (theme: string) => {
-        Database.table.settings.updateSettings({ theme });
+        Database.tables.settings.ref().update({ theme });
     };
 
     // Updating

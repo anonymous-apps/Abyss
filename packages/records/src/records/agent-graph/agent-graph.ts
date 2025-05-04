@@ -7,6 +7,10 @@ export class ReferencedAgentGraphTable extends ReferencedSqliteTable<AgentGraphT
     constructor(client: SQliteClient) {
         super('agentGraph', 'A graph representing an agent workflow with nodes and edges', client);
     }
+
+    public ref(id: string) {
+        return new ReferencedAgentGraphRecord(id, this.client);
+    }
 }
 
 export class ReferencedAgentGraphRecord extends ReferencedSqliteRecord<AgentGraphType> {

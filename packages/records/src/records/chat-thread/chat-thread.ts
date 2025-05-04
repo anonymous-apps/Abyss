@@ -10,6 +10,20 @@ export class ReferencedChatThreadTable extends ReferencedSqliteTable<ChatThreadT
     constructor(client: SQliteClient) {
         super('chatThread', 'A thread of chat messages between participants', client);
     }
+
+    public ref(id: string) {
+        return new ReferencedChatThreadRecord(id, this.client);
+    }
+
+    public async new(sourceId: string) {
+        const thread = await this.client.tables.messageThread.new();
+        return await this.create({
+            name: `New Chat Thread`,
+            description: `New Chat Thread`,
+            participantId: sourceId,
+            threadId: thread.id,
+        });
+    }
 }
 
 export class ReferencedChatThreadRecord extends ReferencedSqliteRecord<ChatThreadType> {
@@ -23,5 +37,13 @@ export class ReferencedChatThreadRecord extends ReferencedSqliteRecord<ChatThrea
         const messageThreadRef = new ReferencedMessageThreadRecord(messageThread.id, this.client);
         const newThread = await messageThreadRef.addMessages(...messages);
         await this.update({ threadId: newThread.id });
+    }
+
+    public async block(blockerId: string) {
+        await this.update({ blockerId });
+    }
+
+    public async unblock() {
+        await this.update({ blockerId: null });
     }
 }

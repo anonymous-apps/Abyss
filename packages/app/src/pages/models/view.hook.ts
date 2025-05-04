@@ -1,4 +1,4 @@
-import { ModelConnectionRecord } from '@abyss/records';
+import { ModelConnectionType } from '@abyss/records';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Database } from '../../main';
 import { useDatabaseRecord } from '../../state/database-connection';
@@ -6,24 +6,24 @@ import { useDatabaseRecord } from '../../state/database-connection';
 export function useModelProfileView() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const modelProfile = useDatabaseRecord<ModelConnectionRecord>('modelConnection', id || '');
+    const modelProfile = useDatabaseRecord<ModelConnectionType>('modelConnection', id || '');
 
     const handleDelete = async () => {
         if (!id) return;
-        await Database.table.modelConnection.delete(id);
+        await Database.tables.modelConnection.ref(id).delete();
         navigate('/models');
     };
 
     const handleUpdateData = (data: Record<string, any>) => {
         if (!id || !modelProfile) return;
         const newData = { ...modelProfile, ...data };
-        Database.table.modelConnection.update(id, newData);
+        Database.tables.modelConnection.ref(id).update(newData);
     };
 
     const handleUpdateConfig = (configData: Record<string, any>) => {
         if (!id || !modelProfile) return;
-        const newData = { ...modelProfile, data: configData };
-        Database.table.modelConnection.update(id, newData);
+        const newData = { ...modelProfile, connectionData: configData };
+        Database.tables.modelConnection.ref(id).update(newData);
     };
 
     const breadcrumbs = [

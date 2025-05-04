@@ -31,11 +31,11 @@ export function useAgentsPage() {
     }, [executions.data]);
 
     const handleCreateAgent = async () => {
-        const agent = await Database.table.agentGraph.create({
+        const agent = await Database.tables.agentGraph.create({
             name: 'New Agent',
             description: 'New Agent',
-            nodes: [],
-            edges: [],
+            nodesData: [],
+            edgesData: [],
         });
         navigate(`/agents/id/${agent.id}`);
     };

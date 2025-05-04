@@ -1,7 +1,6 @@
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import React, { useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Database } from '../main';
 
 export const HeaderBar = () => {
     const location = useLocation();
@@ -31,13 +30,6 @@ export const HeaderBar = () => {
         };
     }, []);
 
-    const onPopPageHistory = async () => {
-        const lastPage = await Database.table.userSettings.popPageHistory();
-        if (lastPage) {
-            navigate(lastPage);
-        }
-    };
-
     return (
         <div
             ref={headerRef}
@@ -48,7 +40,7 @@ export const HeaderBar = () => {
             <div className="absolute bottom-0 left-0 w-full h-full flex items-center justify-center menuDragSection"></div>
 
             <div className={`absolute text-text-sidebar h-[45%] w-[40%] right-0 flex gap-1 mt-1 px-2 z-10 hidden`}>
-                <ChevronLeftIcon className={`h-full w-full rounded-sm opacity-100 hover:bg-primary-100`} onClick={onPopPageHistory} />
+                <ChevronLeftIcon className={`h-full w-full rounded-sm opacity-100 hover:bg-primary-100`} />
                 <ChevronRightIcon className={`h-full w-full rounded-sm opacity-20`} />
             </div>
         </div>

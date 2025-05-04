@@ -1,9 +1,8 @@
-import { PrismaConnection } from '@abyss/records';
-import { TableReferences } from '@abyss/records/dist/prisma.type';
+import { SQliteClient, SqliteTables } from '@abyss/records';
 import { useEffect, useState } from 'react';
 import { Database } from '../main';
 
-function useStatefulQuery<T>(callback: (database: PrismaConnection) => Promise<T>) {
+function useStatefulQuery<T>(callback: (database: SQliteClient) => Promise<T>) {
     const [data, setData] = useState<T | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
@@ -29,11 +28,11 @@ function useStatefulQuery<T>(callback: (database: PrismaConnection) => Promise<T
     return { data, loading, error, refetch: fetchData };
 }
 
-export function useDatabaseQuery<T>(callback: (database: PrismaConnection) => Promise<T>) {
+export function useDatabaseQuery<T>(callback: (database: SQliteClient) => Promise<T>) {
     const query = useStatefulQuery(callback);
 
     useEffect(() => {
-        const unsubscribe = Database.subscribeDatabase(data => {
+        const unsubscribe = Database.subscribeDatabase(() => {
             query.refetch();
         });
         return () => unsubscribe();
@@ -43,14 +42,14 @@ export function useDatabaseQuery<T>(callback: (database: PrismaConnection) => Pr
 }
 
 export function useDatabaseTableQuery<T>(
-    table: keyof TableReferences,
-    callback: (database: PrismaConnection) => Promise<T>,
+    table: keyof SqliteTables,
+    callback: (database: SQliteClient) => Promise<T>,
     listeners: any[] = []
 ) {
     const query = useStatefulQuery(callback);
 
     useEffect(() => {
-        const unsubscribe = Database.subscribeTable(table, data => {
+        const unsubscribe = Database.tables[table].subscribeTable(data => {
             query.refetch();
         });
         return () => unsubscribe();
@@ -63,13 +62,13 @@ export function useDatabaseTableQuery<T>(
     return query;
 }
 
-export function useDatabaseRecord<T>(table: keyof TableReferences, recordId: string | undefined) {
+export function useDatabaseRecord<T>(table: keyof SqliteTables, recordId: string | undefined) {
     const [data, setData] = useState<T | null>(null);
     useEffect(() => {
         if (!recordId) {
             return;
         }
-        const unsubscribe = Database.subscribeRecord(table, recordId, setData);
+        const unsubscribe = Database.tables[table].subscribeRecord(recordId, setData as (data: any) => void);
         return () => unsubscribe();
     }, [table, recordId]);
 

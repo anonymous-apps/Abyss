@@ -29,14 +29,12 @@ export class InputLanguageModelNode extends NodeHandler {
     }
 
     protected async _resolve(data: ResolveNodeData): Promise<NodeExecutionResult> {
-        const modelConnection = await data.database.table.modelConnection.getOrThrow(data.parameters.chatModel);
-
         return {
             portData: [
                 {
                     portId: 'chatModel',
                     dataType: 'chat-model',
-                    inputValue: modelConnection,
+                    inputValue: data.parameters.chatModel,
                 },
             ],
         };

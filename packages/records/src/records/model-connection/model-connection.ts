@@ -7,6 +7,10 @@ export class ReferencedModelConnectionTable extends ReferencedSqliteTable<ModelC
     constructor(client: SQliteClient) {
         super('modelConnection', 'A connection to a AI model including the model name, API key, and other relevant information', client);
     }
+
+    public ref(id: string) {
+        return new ReferencedModelConnectionRecord(id, this.client);
+    }
 }
 
 export class ReferencedModelConnectionRecord extends ReferencedSqliteRecord<ModelConnectionType> {

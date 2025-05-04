@@ -1,11 +1,21 @@
 import { ReferencedSqliteRecord } from '../../sqlite/reference-record';
 import { ReferencedSqliteTable } from '../../sqlite/reference-table';
 import { SQliteClient } from '../../sqlite/sqlite-client';
+import { generateId } from '../../utils/ids';
 import { LogMessage, LogStreamType } from './logstream.type';
 
 export class ReferencedLogStreamTable extends ReferencedSqliteTable<LogStreamType> {
     constructor(client: SQliteClient) {
         super('logStream', 'A stream of log messages from some execution', client);
+    }
+
+    public async new(sourceId: string) {
+        const newLogStream = await this.create({ sourceId, status: 'inProgress', messagesData: [] });
+        return new ReferencedLogStreamRecord(newLogStream.id, this.client);
+    }
+
+    public ref(id: string) {
+        return new ReferencedLogStreamRecord(id, this.client);
     }
 }
 
@@ -14,10 +24,33 @@ export class ReferencedLogStreamRecord extends ReferencedSqliteRecord<LogStreamT
         super('logStream', id, client);
     }
 
-    public async addMessage(message: Omit<LogMessage, 'timestamp'>) {
+    public async addMessage(message: Omit<LogMessage, 'timestamp' | 'id'>) {
         const data = await this.get();
-        const newMessage = { ...message, timestamp: Date.now() };
+        const newMessage = { timestamp: Date.now(), id: generateId('logMessage'), ...message };
         data.messagesData.push(newMessage);
         await this.update(data);
+    }
+
+    public async log(scope: string, message: string, data: Record<string, any> = {}) {
+        console.log(scope, message, data);
+        await this.addMessage({ scope, message, data, level: 'info' });
+    }
+
+    public async warn(scope: string, message: string, data: Record<string, any> = {}) {
+        console.warn(scope, message, data);
+        await this.addMessage({ scope, message, data, level: 'warning' });
+    }
+
+    public async error(scope: string, message: string, data: Record<string, any> = {}) {
+        console.error(scope, message, data);
+        await this.addMessage({ scope, message, data, level: 'error' });
+    }
+
+    public async complete() {
+        await this.update({ status: 'completed' });
+    }
+
+    public async fail() {
+        await this.update({ status: 'failed' });
     }
 }

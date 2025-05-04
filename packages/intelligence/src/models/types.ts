@@ -1,4 +1,4 @@
-import { MessagePartial, MessageThreadRecord } from '@abyss/records';
+import { MessageType, ReferencedMessageThreadRecord } from '@abyss/records';
 
 export interface InvokeModelInternalResult {
     inputRaw: any;
@@ -11,7 +11,7 @@ export interface InvokeModelChatResult {
     inputRaw: any;
     outputRaw: any;
     outputString: string;
-    outputParsed: MessagePartial[];
-    outputThread: MessageThreadRecord;
+    outputParsed: MessageType[];
+    outputThread: ReferencedMessageThreadRecord;
     metrics: Record<string, number>;
 }

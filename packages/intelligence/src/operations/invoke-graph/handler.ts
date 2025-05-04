@@ -5,21 +5,22 @@ export async function invokeGraphHandler(options: InvokeGraphParams) {
     const { database, graphId, input } = options;
 
     // Load the data
-    const graph = await database.table.agentGraph.getOrThrow(graphId);
-    const graphExecution = await database.table.agentGraphExecution.new(graphId);
+    const graph = await database.tables.agentGraph.get(graphId);
+    const logStream = await database.tables.logStream.new(graphId);
 
     // Port data
     const triggerValues: PortTriggerData<any>[] = [];
     let inputNodeId: string | undefined;
 
     // Find the event node we want to trigger
-    const onChatMessageNode = graph.nodes.find(node => node.nodeId === 'on-chat-message');
+    const onChatMessageNode = graph.nodesData.find(node => node.nodeId === 'on-chat-message');
 
     if (onChatMessageNode && input.type === 'onUserChat') {
         inputNodeId = onChatMessageNode.id;
 
-        const chat = await database.table.chatThread.getOrThrow(input.chatId);
-        const thread = await database.table.messageThread.getOrThrow(chat.threadId);
+        const chat = database.tables.chatThread.ref(input.chatId);
+        const chatData = await chat.get();
+        const thread = database.tables.messageThread.ref(chatData.threadId);
         const definition = Nodes.OnChatMessage.getDefinition();
         const ports = Object.values(definition.outputPorts);
 
@@ -56,6 +57,6 @@ export async function invokeGraphHandler(options: InvokeGraphParams) {
     }
 
     // Execute
-    const execution = new StateMachineExecution(graph, graphExecution, database);
+    const execution = new StateMachineExecution(graph, logStream, database);
     await execution.invoke(inputNodeId, triggerValues, input);
 }

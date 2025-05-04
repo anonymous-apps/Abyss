@@ -15,7 +15,7 @@
         "typescript": "^4.2.4",
         "vitest": "^3.0.9"
     },
-    "dependencies": {
+    "peerDependencies": {
         "sqlite3": "^5.1.7"
     }
 }

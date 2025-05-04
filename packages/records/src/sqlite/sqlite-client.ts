@@ -82,6 +82,12 @@ export class SQliteClient {
         });
     }
 
+    // Subscription handling
+
+    subscribeDatabase(callback: () => void) {
+        return this.events.subscribeDatabase(callback);
+    }
+
     // Migration handling
 
     private async applyMigration(id: string) {

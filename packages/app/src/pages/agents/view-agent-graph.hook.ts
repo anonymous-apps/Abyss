@@ -1,5 +1,5 @@
 import { GraphNodeDefinition, NodeHandler } from '@abyss/intelligence';
-import { AgentGraphEdge, AgentGraphNode, AgentGraphRecord } from '@abyss/records';
+import { AgentGraphEdge, AgentGraphNode, AgentGraphType } from '@abyss/records';
 import { Connection, Edge, addEdge, useEdgesState, useNodesState } from '@xyflow/react';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -10,12 +10,12 @@ import { RenderedGraphNode } from './graph-components/graph.types';
 export function useViewAgent() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const agent = useDatabaseRecord<AgentGraphRecord>('agentGraph', id || '');
+    const agent = useDatabaseRecord<AgentGraphType>('agentGraph', id || '');
     const [hasDoneInitialLoad, setHasDoneInitialLoad] = useState(false);
 
-    const handleUpdateAgent = (data: Partial<AgentGraphRecord>) => {
+    const handleUpdateAgent = (data: Partial<AgentGraphType>) => {
         if (agent) {
-            Database.table.agentGraph.update(id || '', data);
+            Database.tables.agentGraph.ref(id!).update(data);
         }
     };
 
@@ -81,8 +81,8 @@ export function useViewAgent() {
         (currentNodes: RenderedGraphNode[], currentEdges: Edge[]) => {
             if (agent && id) {
                 handleUpdateAgent({
-                    nodes: currentNodes.map(renderedToDbNode),
-                    edges: currentEdges.map(renderedToDbEdge),
+                    nodesData: currentNodes.map(renderedToDbNode),
+                    edgesData: currentEdges.map(renderedToDbEdge),
                 });
             }
         },
@@ -91,8 +91,8 @@ export function useViewAgent() {
 
     useEffect(() => {
         if (agent && nodes.length === 0 && edges.length === 0 && !hasDoneInitialLoad) {
-            setNodes(agent.nodes.map(node => dbToRenderedGraphNode(node)));
-            setEdges(agent.edges.map(edge => dbToRenderedGraphEdge(edge, agent.nodes)));
+            setNodes(agent.nodesData.map(node => dbToRenderedGraphNode(node)));
+            setEdges(agent.edgesData.map(edge => dbToRenderedGraphEdge(edge, agent.nodesData)));
             setHasDoneInitialLoad(true);
         }
     }, [agent]);

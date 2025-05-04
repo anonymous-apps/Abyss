@@ -13,13 +13,23 @@ export class ReferencedSettingsTable extends ReferencedSqliteTable<SettingsType>
     async default() {
         const defaultRef = new ReferencedSettingsRecord(ReferencedSettingsTable.DEFAULT_ID, this.client);
         const exists = await defaultRef.exists();
-        if (exists) return;
+        if (exists) return await defaultRef.get();
         const defaultSettings = await this.create({
             id: ReferencedSettingsTable.DEFAULT_ID,
             lastPage: '/',
             theme: '',
         });
         return defaultSettings;
+    }
+
+    async update(settings: Partial<SettingsType>) {
+        const defaultValue = await this.default();
+        const defaultRef = new ReferencedSettingsRecord(defaultValue!.id, this.client);
+        await defaultRef.update(settings);
+    }
+
+    ref() {
+        return new ReferencedSettingsRecord(ReferencedSettingsTable.DEFAULT_ID, this.client);
     }
 }
 

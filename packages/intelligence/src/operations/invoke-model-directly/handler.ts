@@ -3,30 +3,32 @@ import { InvokeModelDirectlyParams } from './types';
 
 export async function invokeModelDirectlyHandler(options: InvokeModelDirectlyParams) {
     const { database, modelConnectionId, chatId, humanMessage } = options;
-    const chatRef = database.table.chatThread.ref(chatId);
+    const chatRef = database.tables.chatThread.ref(chatId);
 
     try {
         // Add the human message to the chat
-        await chatRef.addHumanPartial({
+        await chatRef.addMessages({
+            senderId: 'user',
             type: 'text',
-            payload: {
+            payloadData: {
                 content: humanMessage,
             },
         });
         await chatRef.block(modelConnectionId);
 
         // Load the data
-        const modelConnectionData = await database.table.modelConnection.getOrThrow(modelConnectionId);
-        const chatData = await chatRef.getOrThrow();
-        const threadData = await database.table.messageThread.getOrThrow(chatData.threadId);
+        const modelConnectionData = await database.tables.modelConnection.get(modelConnectionId);
+        const chatData = await chatRef.get();
+        const threadData = database.tables.messageThread.ref(chatData.threadId);
 
         // Invoke the model
         const response = await invokeModelAgainstThread(modelConnectionData, threadData);
 
         // Update the chat with the response
-        await chatRef.addPartial(modelConnectionData.id, {
+        await chatRef.addMessages({
+            senderId: modelConnectionData.id,
             type: 'text',
-            payload: {
+            payloadData: {
                 content: response.outputString,
             },
         });

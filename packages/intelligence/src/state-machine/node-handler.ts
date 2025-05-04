@@ -46,9 +46,7 @@ export abstract class NodeHandler {
 
     // Resolution
     async resolve(data: ResolveNodeData): Promise<NodeExecutionResult> {
-        console.log('Starting node', this.id, data);
         const resolution = await this._resolve(data);
-        console.log('Resolved node', this.id, resolution);
         return resolution;
     }
     protected _resolve(data: ResolveNodeData): Promise<NodeExecutionResult> {

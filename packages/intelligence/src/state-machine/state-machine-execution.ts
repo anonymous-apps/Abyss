@@ -1,4 +1,4 @@
-import { AgentGraphExecutionRecord, AgentGraphType, PrismaConnection } from '@abyss/records';
+import { AgentGraphType, ReferencedLogStreamRecord, SQliteClient } from '@abyss/records';
 import { Log } from '../utils/logs';
 import { NodeHandler } from './node-handler';
 import './node-handlers';
@@ -11,15 +11,15 @@ export class StateMachineExecution {
 
     // References
     public readonly graph: AgentGraphType;
-    private executionRecord: AgentGraphExecutionRecord;
-    private database: PrismaConnection;
+    private executionRecord: ReferencedLogStreamRecord;
+    private database: SQliteClient;
 
     // Execution
     private evaluationQueue: string[] = [];
     private portValues: Record<string, Record<string, PortTriggerData<any>>> = {};
     private staticNodesEvaluated: Set<string> = new Set();
 
-    constructor(graph: AgentGraphType, executionRecord: AgentGraphExecutionRecord, database: PrismaConnection) {
+    constructor(graph: AgentGraphType, executionRecord: ReferencedLogStreamRecord, database: SQliteClient) {
         this.graph = graph;
         this.executionRecord = executionRecord;
         this.database = database;
@@ -76,11 +76,11 @@ export class StateMachineExecution {
     }
 
     private _getConnectionsOutofPort(nodeId: string, portId: string) {
-        return this.graph.edges.filter(e => e.sourceNodeId === nodeId && e.sourcePortId === portId);
+        return this.graph.edgesData.filter(e => e.sourceNodeId === nodeId && e.sourcePortId === portId);
     }
 
     private _getNode(nodeId: string) {
-        return this.graph.nodes.find(n => n.id === nodeId);
+        return this.graph.nodesData.find(n => n.id === nodeId);
     }
 
     private _nodeLacksInputPorts(nodeId: string) {
@@ -104,23 +104,22 @@ export class StateMachineExecution {
 
     public async invoke(inputNode: string, portData: PortTriggerData<any>[], eventRef: GraphInputEvent) {
         try {
-            Log.log('state-machine', `Invoking state machine execution ${this.executionRecord.id}`);
-            await this.executionRecord.beginExecution(eventRef.type, eventRef);
+            await this.executionRecord.log('state-machine', `Invoking state machine execution ${this.executionRecord.id}`, {
+                inputNode,
+            });
             await this._evaluateStaticNodes();
-            await this.executionRecord.addExecutionInfo(`Processed source event ${eventRef.type}, tracing results across graph`);
+            await this.executionRecord.log('state-machine', `Processed source event ${eventRef.type}, tracing results across graph`);
             await this._invoke(inputNode, portData);
-            await this.executionRecord.completeExecution();
+            await this.executionRecord.log('state-machine', `Completed state machine execution ${this.executionRecord.id}`);
+            await this.executionRecord.complete();
         } catch (error) {
-            Log.error(
+            await this.executionRecord.error(
                 'state-machine',
                 `Failed to invoke state machine execution ${this.executionRecord.id}, error: ${error}, stack: ${
                     error instanceof Error ? error.stack : undefined
                 }`
             );
-            await this.executionRecord.failExecution(
-                error instanceof Error ? error.message : 'Unknown error',
-                error instanceof Error ? error.stack : undefined
-            );
+            await this.executionRecord.fail();
         }
     }
 
@@ -133,8 +132,10 @@ export class StateMachineExecution {
     private async _evaluateStaticNodes() {
         Log.log('state-machine', `Evaluating static nodes for execution ${this.executionRecord.id}`);
         // Queue up all nodes that dont have any input ports
-        const staticNodes = this.graph.nodes.filter(n => this._getNodeDefinition(n.id).isStaticData());
-        await this.executionRecord.addExecutionInfo('Evaluating all static nodes first before processing source event', { staticNodes });
+        const staticNodes = this.graph.nodesData.filter(n => this._getNodeDefinition(n.id).isStaticData());
+        await this.executionRecord.log('state-machine', 'Evaluating all static nodes first before processing source event', {
+            staticNodes,
+        });
         for (const node of staticNodes) {
             const noInputPorts = this._nodeLacksInputPorts(node.id);
             if (noInputPorts) {
@@ -174,14 +175,18 @@ export class StateMachineExecution {
             const definition = this._getNodeDefinition(nodeId);
 
             // Begin node resolution
-            await this.executionRecord.beginNodeResolution(nodeId, node.nodeId, portMap);
+            await this.executionRecord.log('state-machine', `Beginning node resolution for node ${nodeId} (${node.nodeId})`, {
+                portMap,
+            });
 
             // Resolve node
             const result = await this._resolveNode(nodeId, definition, ports);
 
             // Complete node resolution
             const outputMap = this._getPortMap(result.portData);
-            await this.executionRecord.completeNodeResolution(nodeId, node.nodeId, outputMap);
+            await this.executionRecord.log('state-machine', `Completed node resolution for node ${nodeId} (${node.nodeId})`, {
+                outputMap,
+            });
         } catch (error) {
             Log.error(
                 'state-machine',
@@ -189,11 +194,11 @@ export class StateMachineExecution {
                     error instanceof Error ? error.stack : undefined
                 }`
             );
-            await this.executionRecord.failNodeResolution(
-                nodeId,
-                node.nodeId,
-                error instanceof Error ? error.message : 'Unknown error',
-                error instanceof Error ? error.stack : undefined
+            await this.executionRecord.error(
+                'state-machine',
+                `Failed to resolve node ${nodeId} (${node.nodeId}) for execution ${this.executionRecord.id}, error: ${error}, stack: ${
+                    error instanceof Error ? error.stack : undefined
+                }`
             );
         }
 

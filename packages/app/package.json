@@ -8,7 +8,7 @@
     "main": "dist-electron/main/index.mjs",
     "type": "module",
     "scripts": {
-        "dev": "vite",
+        "dev": "node scripts/copy-sqlite.cjs && vite",
         "build:mac": "vite build && node scripts/copy-prisma-artifacts.cjs && electron-builder build --mac ",
         "debug:mac": "npm run build:mac && dist/mac/Abyss.app/Contents/MacOS/Abyss",
         "debug:asar": "npx asar extract dist/mac/Abyss.app/Contents/Resources/app.asar ./tmp/extracted-app",
@@ -32,6 +32,7 @@
         "react-router-dom": "^7.2.0",
         "react18-json-view": "^0.2.9",
         "recharts": "^2.15.2",
+        "sqlite3": "^5.1.7",
         "uuid": "^11.1.0",
         "zustand": "^5.0.3"
     },

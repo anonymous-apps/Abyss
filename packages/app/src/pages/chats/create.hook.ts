@@ -28,7 +28,7 @@ export function useChatCreate() {
         if (!sourceId || !message) {
             return;
         }
-        const chatRecord = await Database.table.chatThread.new(sourceId);
+        const chatRecord = await Database.tables.chatThread.new(sourceId);
         if (chatType === 'model') {
             chatWithAiModel(message, sourceId, chatRecord.id);
         } else {

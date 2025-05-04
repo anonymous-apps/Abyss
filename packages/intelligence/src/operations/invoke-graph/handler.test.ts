@@ -1,17 +1,17 @@
-import { AgentGraphEdge, AgentGraphNode, PrismaConnection } from '@abyss/records';
+import { AgentGraphEdge, AgentGraphNode, SQliteClient } from '@abyss/records';
 import { describe, expect, it } from 'vitest';
 import { Nodes, StateMachineExecution } from '../../state-machine';
 
 describe('invokeGraph', () => {
     it('should invoke a graph', async () => {
-        const db = new PrismaConnection();
-        const modelConnection = await db.table.modelConnection.create({
+        const db = new SQliteClient('.test');
+        const modelConnection = await db.tables.modelConnection.create({
             name: 'test',
             description: 'test',
             accessFormat: 'static',
             providerId: 'test',
             modelId: 'test',
-            data: {
+            connectionData: {
                 response: 'test',
             },
         });
@@ -86,18 +86,18 @@ describe('invokeGraph', () => {
             targetPortId: 'chat',
         });
 
-        const agentGraph = await db.table.agentGraph.create({
+        const agentGraph = await db.tables.agentGraph.create({
             name: 'test',
             description: 'test',
-            nodes: nodes,
-            edges: edges,
+            nodesData: nodes,
+            edgesData: edges,
         });
-        const chatRef = await db.table.chatThread.new(agentGraph.id);
-        const chat = await chatRef.getOrThrow();
-        const thread = await db.table.messageThread.getOrThrow(chat.threadId);
-        const executionRecord = await db.table.agentGraphExecution.new(agentGraph.id);
-
-        const execution = new StateMachineExecution(agentGraph, executionRecord, db);
+        const chatRef = db.tables.chatThread.ref(agentGraph.id);
+        const chat = await chatRef.get();
+        const threadRef = db.tables.messageThread.ref(chat.threadId);
+        const thread = await threadRef.get();
+        const outputLogRef = await db.tables.logStream.new(agentGraph.id);
+        const execution = new StateMachineExecution(agentGraph, outputLogRef, db);
 
         const result = await execution.invoke(
             'onChatMessage',
@@ -120,12 +120,9 @@ describe('invokeGraph', () => {
             }
         );
 
-        const events = await db.table.agentGraphExecution.get(executionRecord.id);
-        const chatOutput = await db.table.chatThread.getOrThrow(chat.id);
-        const threadOutput = await db.table.messageThread.getOrThrow(chatOutput.threadId);
-
-        expect(threadOutput.turns[0].partials[0].payload).toEqual({
-            content: 'test',
-        });
+        const chatOutput = await db.tables.chatThread.get(chat.id);
+        const threadOutput = await db.tables.messageThread.get(chatOutput.threadId);
+        const messageOutput = await db.tables.message.get(threadOutput.messagesData[0].id);
+        expect(messageOutput.payloadData.content).toEqual('test');
     });
 });
