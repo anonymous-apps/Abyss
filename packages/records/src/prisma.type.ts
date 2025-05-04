@@ -1,12 +1,12 @@
+import { AgentGraphController } from './_records/agentGraph/agentGraph.controller';
+import { AgentGraphExecutionController } from './_records/agentGraphExecution/agentGraphExecution.controller';
+import { ChatThreadController } from './_records/chatThread/chatThread.controller';
+import { MessageThreadController } from './_records/messageThread/messageThread.controller';
+import { MetricController } from './_records/metric/metric.controller';
+import { ModelConnectionController } from './_records/modelConnection/modelConnection.controller';
+import { SettingsController } from './_records/settings/settings.controller';
+import { TextDocumentController } from './_records/textDocument/textDocument.controller';
 import { PrismaConnection } from './prisma';
-import { AgentGraphController } from './records/agentGraph/agentGraph.controller';
-import { AgentGraphExecutionController } from './records/agentGraphExecution/agentGraphExecution.controller';
-import { ChatThreadController } from './records/chatThread/chatThread.controller';
-import { MessageThreadController } from './records/messageThread/messageThread.controller';
-import { MetricController } from './records/metric/metric.controller';
-import { ModelConnectionController } from './records/modelConnection/modelConnection.controller';
-import { SettingsController } from './records/settings/settings.controller';
-import { TextDocumentController } from './records/textDocument/textDocument.controller';
 
 export interface TableReferences {
     textDocument: TextDocumentController;

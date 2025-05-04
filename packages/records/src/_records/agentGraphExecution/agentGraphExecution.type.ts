@@ -1,5 +1,5 @@
+import { Status } from '../../utils/shared.type';
 import { BaseRecordProps } from '../recordClass';
-import { Status } from '../shared.type';
 import { StateMachineEvent } from './agentGraphExecutionEvents.type';
 
 export interface AgentGraphExecutionType extends BaseRecordProps {

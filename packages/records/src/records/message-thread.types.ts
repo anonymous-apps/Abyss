@@ -1,14 +1,5 @@
-import { BaseRecordProps } from '../recordClass';
-import { Status } from '../shared.type';
-
-export interface MessageThreadType extends BaseRecordProps {
-    turns: MessageTurn[];
-}
-
-export interface MessageTurn extends BaseRecordProps {
-    senderId: string;
-    partials: MessagePartial[];
-}
+import { BaseSqliteRecord } from '../sqlite/sqlite.type';
+import { Status } from '../utils/shared.type';
 
 export interface TextPartial {
     type: 'text';
@@ -39,3 +30,12 @@ export interface ToolResponsePartial {
 }
 
 export type MessagePartial = TextPartial | ToolRequestPartial | ToolResponsePartial;
+
+export interface MessageTurn extends BaseSqliteRecord {
+    senderId: string;
+    partials: MessagePartial[];
+}
+
+export interface MessageThreadType extends BaseSqliteRecord {
+    turns: MessageTurn[];
+}

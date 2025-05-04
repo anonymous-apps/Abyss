@@ -1,3 +1,6 @@
+import { BaseSqliteRecord } from '../sqlite/sqlite.type';
+import { Status } from '../utils/shared.type';
+
 export interface BaseEvent {
     level: 'info' | 'error';
     timestamp: string;
@@ -56,3 +59,11 @@ export type StateMachineEvent =
     | NodeResolutionFailedEvent
     | ExecutionCompletedEvent
     | ExecutionFailedEvent;
+
+export interface AgentGraphExecutionType extends BaseSqliteRecord {
+    agentGraphId: string;
+    status: Status;
+    events: StateMachineEvent[];
+    startTime?: string;
+    endTime?: string;
+}
