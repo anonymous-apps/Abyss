@@ -3,9 +3,17 @@ import { ReferencedSqliteTable } from './reference-table';
 import { buildCleanDB } from './sqlite-client.test';
 import { SqliteTables } from './sqlite.type';
 
+type DebugRecord = {
+    id: string;
+    createdAt: number;
+    updatedAt: number;
+    jsonData?: Record<string, any>;
+};
+
 const createDebugTable = `
     CREATE TABLE IF NOT EXISTS Debug (
         id TEXT PRIMARY KEY,
+        jsonData TEXT NOT NULL,
         createdAt INTEGER NOT NULL,
         updatedAt INTEGER NOT NULL
     )
@@ -13,7 +21,7 @@ const createDebugTable = `
 
 async function createDbgDb() {
     const client = await buildCleanDB({ setupCommand: createDebugTable, skipMigrations: true });
-    const table = new ReferencedSqliteTable('debug' as keyof SqliteTables, 'test', client);
+    const table = new ReferencedSqliteTable<DebugRecord>('debug' as keyof SqliteTables, 'test', client);
     return table;
 }
 
@@ -32,6 +40,11 @@ describe('ReferencedTable::List', () => {
         await table.create({ id: 'test' });
         await table.create({ id: 'test2' });
         expect(await table.list()).toMatchObject([{ id: 'test' }, { id: 'test2' }]);
+    });
+    test('Happy: List table with serialized json data', async () => {
+        const table = await createDbgDb();
+        await table.create({ id: 'test', jsonData: { test: 'test' } });
+        expect(await table.list()).toMatchObject([{ id: 'test', jsonData: { test: 'test' } }]);
     });
 });
 
@@ -82,7 +95,7 @@ describe('ReferencedTable::PurgeAll', () => {
 describe('ReferencedTable::Get', () => {
     test('Happy: Get a record', async () => {
         const table = await createDbgDb();
-        await table.create({ id: 'test' });
-        expect(await table.get('test')).toMatchObject({ id: 'test' });
+        await table.create({ id: 'test', jsonData: { test: 'test' } });
+        expect(await table.get('test')).toMatchObject({ id: 'test', jsonData: { test: 'test' } });
     });
 });

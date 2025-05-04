@@ -8,7 +8,7 @@ describe('LogStream::create', () => {
             id: 'logstream::test',
             sourceId: 'source::test',
             status: 'inProgress',
-            messages: [],
+            messagesData: [],
         });
         expect(logstream).toBeDefined();
         expect(logstream.id).toBe('logstream::test');

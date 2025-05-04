@@ -17,7 +17,7 @@ export class ReferencedLogStreamRecord extends ReferencedSqliteRecord<LogStreamT
     public async addMessage(message: Omit<LogMessage, 'timestamp'>) {
         const data = await this.get();
         const newMessage = { ...message, timestamp: Date.now() };
-        data.messages.push(newMessage);
+        data.messagesData.push(newMessage);
         await this.update(data);
     }
 }

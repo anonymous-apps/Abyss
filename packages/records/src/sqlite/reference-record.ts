@@ -1,3 +1,4 @@
+import { ReferencedSqliteTable } from './reference-table';
 import { SQliteClient } from './sqlite-client';
 import { BaseSqliteRecord, SqliteTables } from './sqlite.type';
 
@@ -18,7 +19,7 @@ export class ReferencedSqliteRecord<IRecordType extends BaseSqliteRecord = BaseS
 
     async get(): Promise<IRecordType> {
         const raw = await this.client.execute(`SELECT * FROM ${this.tableId} WHERE id = ?`, [this.id]);
-        return (raw as IRecordType[])[0];
+        return ReferencedSqliteTable.deserialize<IRecordType>((raw as IRecordType[])[0]);
     }
 
     async delete() {
@@ -33,11 +34,12 @@ export class ReferencedSqliteRecord<IRecordType extends BaseSqliteRecord = BaseS
 
     async update(record: Partial<IRecordType>) {
         record.updatedAt = Date.now();
+        const serialized = ReferencedSqliteTable.serialize(record as IRecordType);
         await this.client.execute(
-            `UPDATE ${this.tableId} SET ${Object.keys(record)
+            `UPDATE ${this.tableId} SET ${Object.keys(serialized)
                 .map(key => `${key} = ?`)
                 .join(', ')} WHERE id = ?`,
-            [...Object.values(record), this.id]
+            [...Object.values(serialized), this.id]
         );
         this.client.events.notifyRecordChanged(this);
     }

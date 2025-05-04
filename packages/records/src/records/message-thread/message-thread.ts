@@ -20,8 +20,8 @@ export class ReferencedMessageThreadRecord extends ReferencedSqliteRecord<Messag
     public async addMessagesByReference(...messages: ReferencedMessageRecord[]) {
         const clone = await this.clone();
         const clonedData = await clone.get();
-        const newMessages = [...clonedData.messages, ...messages.map(m => ({ id: m.id }))];
-        await clone.update({ messages: newMessages });
+        const newMessages = [...clonedData.messagesData, ...messages.map(m => ({ id: m.id }))];
+        await clone.update({ messagesData: newMessages });
         return clone;
     }
 

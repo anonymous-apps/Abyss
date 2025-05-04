@@ -13,9 +13,31 @@ export class ReferencedSqliteTable<IRecordType extends BaseSqliteRecord = BaseSq
         this.description = description;
     }
 
+    public static serialize<T extends BaseSqliteRecord>(record: T): Record<string, any> {
+        const serialized: Record<string, any> = { ...record };
+        for (const key in serialized) {
+            if (key.endsWith('Data') && serialized[key] !== null && typeof serialized[key] === 'object') {
+                serialized[key] = JSON.stringify(serialized[key]);
+            }
+        }
+        return serialized;
+    }
+
+    public static deserialize<T extends BaseSqliteRecord>(record: Record<string, any>): T {
+        const deserialized = { ...record };
+        for (const key in deserialized) {
+            if (key.endsWith('Data') && typeof deserialized[key] === 'string') {
+                deserialized[key] = JSON.parse(deserialized[key]);
+            }
+        }
+        return deserialized as T;
+    }
+
     async list(limit: number = 9999): Promise<BaseSqliteRecord[]> {
         const raw = await this.client.execute(`SELECT * FROM ${this.tableId} ORDER BY createdAt LIMIT ?`, [limit]);
-        return raw as BaseSqliteRecord[];
+        const results = raw as Record<string, any>[];
+        const deserialized = results.map(r => ReferencedSqliteTable.deserialize(r));
+        return deserialized;
     }
 
     async count(): Promise<number> {
@@ -35,14 +57,15 @@ export class ReferencedSqliteTable<IRecordType extends BaseSqliteRecord = BaseSq
             updatedAt: Date.now(),
             ...record,
         };
+        const serialized = ReferencedSqliteTable.serialize(data as IRecordType);
         const raw = await this.client.execute(
-            `INSERT INTO ${this.tableId} (${Object.keys(data).join(', ')}) VALUES (${Object.values(data)
+            `INSERT INTO ${this.tableId} (${Object.keys(serialized).join(', ')}) VALUES (${Object.values(serialized)
                 .map(() => '?')
                 .join(', ')}) RETURNING *`,
-            [...Object.values(data)]
+            [...Object.values(serialized)]
         );
         this.client.events.notifyTableChanged(this);
-        return (raw as IRecordType[])[0];
+        return ReferencedSqliteTable.deserialize<IRecordType>((raw as IRecordType[])[0]);
     }
 
     async createMany(records: NewRecord<IRecordType>[]): Promise<IRecordType[]> {
@@ -57,11 +80,12 @@ export class ReferencedSqliteTable<IRecordType extends BaseSqliteRecord = BaseSq
             return [];
         }
 
-        const columns = Object.keys(data[0]).join(', ');
-        const placeholders = data
+        const serialized = data.map(r => ReferencedSqliteTable.serialize(r as IRecordType));
+        const columns = Object.keys(serialized[0]).join(', ');
+        const placeholders = serialized
             .map(
                 () =>
-                    `(${Object.keys(data[0])
+                    `(${Object.keys(serialized[0])
                         .map(() => '?')
                         .join(', ')})`
             )
@@ -69,16 +93,18 @@ export class ReferencedSqliteTable<IRecordType extends BaseSqliteRecord = BaseSq
 
         const raw = await this.client.execute(
             `INSERT INTO ${this.tableId} (${columns}) VALUES ${placeholders} RETURNING *`,
-            data.flatMap(record => Object.values(record))
+            data.flatMap(record => Object.values(ReferencedSqliteTable.serialize(record as IRecordType)))
         );
 
         this.client.events.notifyTableChanged(this);
-        return raw as IRecordType[];
+        const results = raw as Record<string, any>[];
+        return results.map(r => ReferencedSqliteTable.deserialize<IRecordType>(r));
     }
 
     async get(id: string): Promise<IRecordType> {
         const raw = await this.client.execute(`SELECT * FROM ${this.tableId} WHERE id = ?`, [id]);
-        return (raw as IRecordType[])[0];
+        const results = raw as Record<string, any>[];
+        return ReferencedSqliteTable.deserialize<IRecordType>(results[0]);
     }
 
     subscribeRecord(id: string, callback: (record: IRecordType) => void): () => void {

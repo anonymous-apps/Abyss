@@ -5,5 +5,5 @@ export interface ChatThreadType extends BaseSqliteRecord {
     description: string;
     threadId: string;
     participantId: string;
-    blocker?: string | null;
+    blockerId?: string | null;
 }

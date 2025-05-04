@@ -11,7 +11,7 @@ describe('ModelConnection::create', () => {
             accessFormat: 'openai',
             providerId: 'provider::test',
             modelId: 'model::test',
-            data: {
+            connectionData: {
                 apiKey: 'test-key',
             },
         });

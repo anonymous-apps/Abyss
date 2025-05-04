@@ -8,5 +8,5 @@ export interface ModelConnectionType extends BaseSqliteRecord {
     accessFormat: ModelConnectionAccessFormat;
     providerId: string;
     modelId: string;
-    data: any;
+    connectionData: any;
 }

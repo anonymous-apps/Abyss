@@ -16,31 +16,31 @@ export class ReferencedAgentGraphRecord extends ReferencedSqliteRecord<AgentGrap
 
     public async setNodeParameters(nodeId: string, parameters: Record<string, any>) {
         const data = await this.get();
-        const nodeIndex = data.nodes.findIndex(node => node.id === nodeId);
+        const nodeIndex = data.nodesData.findIndex(node => node.id === nodeId);
         if (nodeIndex === -1) {
             throw new Error(`Node with id ${nodeId} not found`);
         }
-        data.nodes[nodeIndex].parameters = parameters;
+        data.nodesData[nodeIndex].parameters = parameters;
         await this.update(data);
     }
 
     public async setNodePosition(nodeId: string, position: { x: number; y: number }) {
         const data = await this.get();
-        const nodeIndex = data.nodes.findIndex(node => node.id === nodeId);
+        const nodeIndex = data.nodesData.findIndex(node => node.id === nodeId);
         if (nodeIndex === -1) {
             throw new Error(`Node with id ${nodeId} not found`);
         }
-        data.nodes[nodeIndex].position = position;
+        data.nodesData[nodeIndex].position = position;
         await this.update(data);
     }
 
     public async setNodes(nodes: AgentGraphNode[]): Promise<ReferencedAgentGraphRecord> {
-        await this.update({ nodes });
+        await this.update({ nodesData: nodes });
         return this;
     }
 
     public async setConnections(connections: AgentGraphEdge[]): Promise<ReferencedAgentGraphRecord> {
-        await this.update({ edges: connections });
+        await this.update({ edgesData: connections });
         return this;
     }
 }

@@ -21,6 +21,6 @@ export interface AgentGraphEdge {
 export interface AgentGraphType extends BaseSqliteRecord {
     name: string;
     description: string;
-    nodes: AgentGraphNode[];
-    edges: AgentGraphEdge[];
+    nodesData: AgentGraphNode[];
+    edgesData: AgentGraphEdge[];
 }

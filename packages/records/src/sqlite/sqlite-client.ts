@@ -9,9 +9,9 @@ import { ReferencedMessageTable } from '../records/message/message';
 import { ReferencedMetricTable } from '../records/metric/metric';
 import { ReferencedModelConnectionTable } from '../records/model-connection/model-connection';
 import { ReferencedSettingsTable } from '../records/settings/settings';
+import { migrations } from '../schemas/migrations';
 import { DatabaseSubscriptionLayer } from './database-subscription-layer';
 import { ReferencedSqliteTable } from './reference-table';
-import { migrations } from './schemas/migrations';
 import { DBSidecarType, DefaultSidecar, SqliteTables } from './sqlite.type';
 
 export class SQliteClient {

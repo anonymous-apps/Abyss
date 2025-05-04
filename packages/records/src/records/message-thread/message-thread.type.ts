@@ -1,7 +1,7 @@
 import { BaseSqliteRecord } from '../../sqlite/sqlite.type';
 
 export interface MessageThreadType extends BaseSqliteRecord {
-    messages: {
+    messagesData: {
         id: string;
     }[];
 }

@@ -8,7 +8,7 @@ describe('AgentGraph::create', () => {
             id: 'agent-graph::test',
             name: 'Test Agent Graph',
             description: 'A test agent graph',
-            nodes: [
+            nodesData: [
                 {
                     id: 'node::test',
                     nodeId: 'node-type::test',
@@ -19,7 +19,7 @@ describe('AgentGraph::create', () => {
                     parameters: {},
                 },
             ],
-            edges: [],
+            edgesData: [],
         });
         expect(agentGraph).toBeDefined();
         expect(agentGraph.id).toBe('agent-graph::test');

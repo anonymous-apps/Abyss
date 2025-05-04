@@ -7,7 +7,7 @@ describe('Metric::create', () => {
         const metric = await client.tables.metric.create({
             id: 'metric::test',
             name: 'Test Metric',
-            dimensions: {
+            dimensionData: {
                 environment: 'test',
                 service: 'test-service',
             },

@@ -6,7 +6,7 @@ describe('MessageThread::create', () => {
         const client = await buildCleanDB();
         const messageThread = await client.tables.messageThread.create({
             id: 'message-thread::test',
-            messages: [],
+            messagesData: [],
         });
         expect(messageThread).toBeDefined();
         expect(messageThread.id).toBe('message-thread::test');

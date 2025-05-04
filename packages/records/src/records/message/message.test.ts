@@ -8,7 +8,7 @@ describe('Message::create', () => {
             id: 'message::test',
             type: 'text',
             senderId: 'user::test',
-            payload: {
+            payloadData: {
                 content: 'Test message content',
             },
         });
