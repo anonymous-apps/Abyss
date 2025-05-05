@@ -109,23 +109,25 @@ export class StateMachineExecution {
     // Invoke
 
     public async invoke(inputNode: string, portData: PortTriggerData<any>[], eventRef: GraphInputEvent) {
-        try {
-            await this.executionRecord.log('state-machine', `Invoking state machine`, {
-                inputNode,
-                machine: this,
-            });
-            await this._evaluateStaticNodes();
-            await this.executionRecord.log('state-machine', `Processed source event ${eventRef.type}, tracing results across graph`);
-            await this._invoke(inputNode, portData);
-            await this.executionRecord.log('state-machine', `Completed state machine execution`);
-            await this.executionRecord.success();
-        } catch (error) {
-            await this.executionRecord.error(
-                'state-machine',
-                `Failed to invoke state machine execution error: ${error}, stack: ${error instanceof Error ? error.stack : undefined}`
-            );
-            await this.executionRecord.fail();
-        }
+        return this.wrapSqliteMetric('agent-graph', {}, async () => {
+            try {
+                await this.executionRecord.log('state-machine', `Invoking state machine`, {
+                    inputNode,
+                    machine: this,
+                });
+                await this._evaluateStaticNodes();
+                await this.executionRecord.log('state-machine', `Processed source event ${eventRef.type}, tracing results across graph`);
+                await this._invoke(inputNode, portData);
+                await this.executionRecord.log('state-machine', `Completed state machine execution`);
+                await this.executionRecord.success();
+            } catch (error) {
+                await this.executionRecord.error(
+                    'state-machine',
+                    `Failed to invoke state machine execution error: ${error}, stack: ${error instanceof Error ? error.stack : undefined}`
+                );
+                await this.executionRecord.fail();
+            }
+        });
     }
 
     private async _invoke(inputNode: string, portData: PortTriggerData<any>[]) {
@@ -215,15 +217,48 @@ export class StateMachineExecution {
     }
 
     private async _resolveNode(nodeId: string, node: NodeHandler, portData: PortTriggerData<any>[]) {
-        const result = await node.resolve({
-            execution: this,
-            node: node.getDefinition(),
-            portData: portData,
-            resolvePort: (id: string) => portData.find(p => p.portId === id)?.inputValue,
-            parameters: this._getNode(nodeId)?.parameters ?? {},
-            database: this.database,
-        });
-        result.portData.forEach(p => this._setPortValue(nodeId, p.portId, p));
-        return result;
+        return this.wrapSqliteMetric(
+            'graph-node',
+            {
+                nodeType: node.getDefinition().type,
+            },
+            async () => {
+                const result = await node.resolve({
+                    execution: this,
+                    node: node.getDefinition(),
+                    portData: portData,
+                    resolvePort: (id: string) => portData.find(p => p.portId === id)?.inputValue,
+                    parameters: this._getNode(nodeId)?.parameters ?? {},
+                    database: this.database,
+                });
+                result.portData.forEach(p => this._setPortValue(nodeId, p.portId, p));
+                return result;
+            }
+        );
+    }
+
+    // Metrics
+
+    publishMetricObject(values: Record<string, number>, dimensions: Record<string, string>) {
+        const dimensionData = {
+            ...dimensions,
+            executionId: this.executionRecord.id,
+            graphId: this.graph.id,
+            graphName: this.graph.name,
+        };
+        this.database.tables.metric.publishMetricObject(values, dimensionData);
+    }
+
+    async wrapSqliteMetric<T>(metric: string, dimensions: Record<string, string>, handler: () => Promise<T> | T): Promise<T> {
+        return this.database.tables.metric.wrapSqliteMetric(
+            metric,
+            {
+                ...dimensions,
+                executionId: this.executionRecord.id,
+                graphId: this.graph.id,
+                graphName: this.graph.name,
+            },
+            handler
+        );
     }
 }

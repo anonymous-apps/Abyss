@@ -53,6 +53,7 @@ export class InvokeLanguageModelNode extends NodeHandler {
 
     protected async _resolve(data: ResolveNodeData): Promise<NodeExecutionResult> {
         const inputLanguageModel = data.resolvePort<ReferencedModelConnectionRecord>('chatModel');
+        const model = await inputLanguageModel.get();
         const thread = data.resolvePort<ReferencedMessageThreadRecord>('thread');
         const result = await invokeModelAgainstThread(inputLanguageModel, thread);
         const baseThreadRef = await data.database.tables.messageThread.ref(thread.id);
@@ -64,6 +65,11 @@ export class InvokeLanguageModelNode extends NodeHandler {
             },
         });
         const outThreadRef = await data.database.tables.messageThread.ref(outThread.id);
+
+        data.execution.publishMetricObject(result.metrics, {
+            modelId: model.modelId,
+            provider: model.providerId,
+        });
 
         return {
             portData: [
