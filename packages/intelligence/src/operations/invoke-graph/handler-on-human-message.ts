@@ -16,7 +16,7 @@ export async function handlerOnHumanMessage(options: HandlerOnHumanMessageParams
         // Block chat and add human message
         await chatRef.block(graphId);
         await chatRef.addMessages({
-            senderId: graphId,
+            senderId: 'user',
             type: 'text',
             payloadData: {
                 content: humanMessage,

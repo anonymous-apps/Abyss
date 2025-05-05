@@ -34,7 +34,7 @@ export class InputLanguageModelNode extends NodeHandler {
                 {
                     portId: 'chatModel',
                     dataType: 'chat-model',
-                    inputValue: data.parameters.chatModel,
+                    inputValue: data.database.tables.modelConnection.ref(data.parameters.chatModel),
                 },
             ],
         };

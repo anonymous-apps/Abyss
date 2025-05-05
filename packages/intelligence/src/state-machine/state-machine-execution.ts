@@ -47,11 +47,17 @@ export class StateMachineExecution {
         const node = this._getNode(nodeId);
         const nodeDefinition = NodeHandler.getById(node?.nodeId as string);
         if (nodeDefinition?.isSignalPort(portId)) {
+            this.executionRecord.log('state-machine', `Signal value changed, adding node ${nodeId} (${node?.nodeId}) to evaluation queue`);
             this._addEvaluationQueue(nodeId);
         }
 
         // If the target node is a static node, and its not been evaluated, and it has all its input ports resolved, add it to the evaluation queue
         if (nodeDefinition?.isStaticData() && !this.staticNodesEvaluated.has(nodeId) && this._nodeHasAllInputPortsResolved(nodeId)) {
+            this.executionRecord.log(
+                'state-machine',
+                `Static data node fufilled all dependencies, adding ${nodeId} (${node?.nodeId}) to evaluation queue`
+            );
+            this.staticNodesEvaluated.add(nodeId);
             this._addEvaluationQueue(nodeId);
         }
     }
@@ -60,7 +66,7 @@ export class StateMachineExecution {
         if (this.evaluationQueue.includes(nodeId)) {
             return;
         }
-        Log.log('state-machine', `Queue now is [${[...this.evaluationQueue, nodeId].join(', ')}] for execution ${this.executionRecord.id}`);
+        Log.log('state-machine', `Queue now is [${[...this.evaluationQueue, nodeId].join(', ')}]`);
         this.evaluationQueue.push(nodeId);
     }
 
@@ -104,33 +110,32 @@ export class StateMachineExecution {
 
     public async invoke(inputNode: string, portData: PortTriggerData<any>[], eventRef: GraphInputEvent) {
         try {
-            await this.executionRecord.log('state-machine', `Invoking state machine execution ${this.executionRecord.id}`, {
+            await this.executionRecord.log('state-machine', `Invoking state machine`, {
                 inputNode,
+                machine: this,
             });
             await this._evaluateStaticNodes();
             await this.executionRecord.log('state-machine', `Processed source event ${eventRef.type}, tracing results across graph`);
             await this._invoke(inputNode, portData);
-            await this.executionRecord.log('state-machine', `Completed state machine execution ${this.executionRecord.id}`);
-            await this.executionRecord.complete();
+            await this.executionRecord.log('state-machine', `Completed state machine execution`);
+            await this.executionRecord.success();
         } catch (error) {
             await this.executionRecord.error(
                 'state-machine',
-                `Failed to invoke state machine execution ${this.executionRecord.id}, error: ${error}, stack: ${
-                    error instanceof Error ? error.stack : undefined
-                }`
+                `Failed to invoke state machine execution error: ${error}, stack: ${error instanceof Error ? error.stack : undefined}`
             );
             await this.executionRecord.fail();
         }
     }
 
     private async _invoke(inputNode: string, portData: PortTriggerData<any>[]) {
-        Log.log('state-machine', `Consuming input node ${inputNode} and its port data for execution ${this.executionRecord.id}`);
+        Log.log('state-machine', `Consuming input node ${inputNode} and its port data`);
         portData.forEach(p => this._setPortValue(inputNode, p.portId, p));
         await this._progressEvaluationQueue();
     }
 
     private async _evaluateStaticNodes() {
-        Log.log('state-machine', `Evaluating static nodes for execution ${this.executionRecord.id}`);
+        Log.log('state-machine', `Evaluating static nodes`);
         // Queue up all nodes that dont have any input ports
         const staticNodes = this.graph.nodesData.filter(n => this._getNodeDefinition(n.id).isStaticData());
         await this.executionRecord.log('state-machine', 'Evaluating all static nodes first before processing source event', {
@@ -139,17 +144,18 @@ export class StateMachineExecution {
         for (const node of staticNodes) {
             const noInputPorts = this._nodeLacksInputPorts(node.id);
             if (noInputPorts) {
+                this.staticNodesEvaluated.add(node.id);
                 this._addEvaluationQueue(node.id);
             }
         }
         // Evaluate all nodes in the queue and all nodes they connect to
         await this._progressEvaluationQueue();
-        Log.log('state-machine', `Evaluated static nodes for execution ${this.executionRecord.id}`);
+        Log.log('state-machine', `Evaluated static nodes`);
     }
 
     private async _progressEvaluationQueue() {
         if (this.evaluationQueue.length === 0) {
-            Log.log('state-machine', `Evaluation queue is empty for execution ${this.executionRecord.id}, no more nodes to evaluate`);
+            Log.log('state-machine', `Evaluation queue is empty, no more nodes to evaluate`);
             return;
         }
         const nodeId = this.evaluationQueue.shift();
@@ -165,8 +171,8 @@ export class StateMachineExecution {
             throw new Error('Max invoke count reached');
         }
 
-        Log.log('state-machine', `Invoking node ${nodeId} (${node.nodeId}) for execution ${this.executionRecord.id}`);
-        Log.log('state-machine', `Queue now is [${[...this.evaluationQueue].join(', ')}] for execution ${this.executionRecord.id}`);
+        Log.log('state-machine', `Invoking node ${nodeId} (${node.nodeId})`);
+        Log.log('state-machine', `Queue now is [${[...this.evaluationQueue].join(', ')}]`);
 
         try {
             // Get port data
@@ -190,16 +196,17 @@ export class StateMachineExecution {
         } catch (error) {
             Log.error(
                 'state-machine',
-                `Failed to resolve node ${nodeId} (${node.nodeId}) for execution ${this.executionRecord.id}, error: ${error}, stack: ${
+                `Failed to resolve node ${nodeId} (${node.nodeId}), error: ${error}, stack: ${
                     error instanceof Error ? error.stack : undefined
                 }`
             );
             await this.executionRecord.error(
                 'state-machine',
-                `Failed to resolve node ${nodeId} (${node.nodeId}) for execution ${this.executionRecord.id}, error: ${error}, stack: ${
+                `Failed to resolve node ${nodeId} (${node.nodeId}), error: ${error}, stack: ${
                     error instanceof Error ? error.stack : undefined
                 }`
             );
+            throw error;
         }
 
         if (this.evaluationQueue.length > 0) {

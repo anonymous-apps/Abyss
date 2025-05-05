@@ -2,19 +2,20 @@ import { ChevronDown, ChevronRight } from 'lucide-react';
 import React, { useState } from 'react';
 
 export interface LogEntry {
+    timestamp: number;
     level: string;
-    startTime: string;
     scope: string;
     message: string;
-    metadata?: Record<string, any>;
+    data?: Record<string, any>;
 }
 
 interface LogViewProps {
     logs: LogEntry[];
+    startTime: number;
     className?: string;
 }
 
-export const LogView: React.FC<LogViewProps> = ({ logs, className = '' }) => {
+export const LogView: React.FC<LogViewProps> = ({ logs, startTime, className = '' }) => {
     const [expandedLogs, setExpandedLogs] = useState<Set<number>>(new Set());
 
     const toggleLog = (index: number) => {
@@ -42,9 +43,11 @@ export const LogView: React.FC<LogViewProps> = ({ logs, className = '' }) => {
         }
     };
 
-    const formatTime = (time: string) => {
-        const date = new Date(time);
-        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    const formatTime = (time: number) => {
+        const sinceStart = time - startTime;
+        const minutes = Math.floor(sinceStart / 60000);
+        const seconds = Math.floor((sinceStart % 60000) / 1000);
+        return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     };
 
     if (!logs || logs.length === 0) {
@@ -55,34 +58,33 @@ export const LogView: React.FC<LogViewProps> = ({ logs, className = '' }) => {
         <div className={`w-full rounded-sm ${className} p-2 bg-background-100`}>
             <div className="space-y-1">
                 {logs.map((log, index) => (
-                    <div key={index} className="transition-all duration-200 rounded-sm text-sm">
+                    <div key={index} className="duration-200 rounded-sm text-sm">
                         <div
                             className={`p-2 flex items-center gap-4 cursor-pointer hover:bg-background-200 transition-colors ${
                                 expandedLogs.has(index) ? 'bg-background-200' : ''
                             }`}
                             onClick={() => toggleLog(index)}
                         >
-                            <span className="text-text-700 text-xs w-20 text-right">{formatTime(log.startTime)}</span>
+                            <span className="text-text-700 text-xs w-10 text-right">{formatTime(log.timestamp)}</span>
                             <span className={`font-medium opacity-70 ${getLevelColor(log.level)} text-left`}>{log.level}</span>
                             <span className="text-text-700  truncate">{log.scope}</span>
                             <span className="text-text-300 flex-1 truncate">{log.message}</span>
 
                             {expandedLogs.has(index) ? (
-                                <ChevronDown className="w-4 h-4 text-text-300 transition-transform duration-200" />
+                                <ChevronDown className="w-4 h-4 text-text-300" />
                             ) : (
-                                <ChevronRight className="w-4 h-4 text-text-300 transition-transform duration-200" />
+                                <ChevronRight className="w-4 h-4 text-text-300" />
                             )}
                         </div>
-                        <div
-                            className={`overflow-hidden transition-all duration-200 ${
-                                expandedLogs.has(index) ? 'max-h-[500px]' : 'max-h-0'
-                            }`}
-                        >
-                            {log.metadata && (
-                                <div className="p-2 bg-background-300 border-t border-background-200">
-                                    <pre className="text-xs text-text-300 whitespace-pre-wrap">{JSON.stringify(log.metadata, null, 2)}</pre>
-                                </div>
-                            )}
+                        <div className={`overflow-hidden  ${expandedLogs.has(index) ? 'max-h-[500px]' : 'max-h-0'}`}>
+                            <div className="p-4 bg-background-300 border-t border-background-200">
+                                <pre className="text-xs text-text-300 whitespace-pre-wrap">{log.message}</pre>
+                                {log.data && Object.keys(log.data).length > 0 && (
+                                    <pre className="text-xs text-text-300 whitespace-pre-wrap mt-4">
+                                        {JSON.stringify(log.data, null, 2)}
+                                    </pre>
+                                )}
+                            </div>
                         </div>
                     </div>
                 ))}

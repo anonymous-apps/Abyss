@@ -34,18 +34,13 @@ export async function InvokeAnthropic(props: InvokeAnthropicProps): Promise<Invo
         const responseData = await response.json();
         const parsed = JSON.parse(JSON.stringify(responseData)) as AnthropicResponse;
 
-        if (!parsed?.content?.[0]?.text) {
-            throw new Error('No content in Anthropic response');
-        }
-
-        const responseText = parsed.content[0].text;
-
         // Create metrics
         const metrics = {
             inputTokens: parsed.usage?.input_tokens || 0,
             outputTokens: parsed.usage?.output_tokens || 0,
             totalTokens: (parsed.usage?.input_tokens || 0) + (parsed.usage?.output_tokens || 0),
         };
+        const responseText = parsed.content[0]?.text || '';
 
         // Return the result
         return {

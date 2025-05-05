@@ -9,6 +9,7 @@ export * from './content/MonospaceText';
 export * from './content/Tile';
 export * from './data/LabelValue';
 export * from './data/LogView';
+export * from './data/Status/Status';
 export * from './data/Table';
 export * from './inputs/Button';
 export * from './inputs/ButtonGroup';

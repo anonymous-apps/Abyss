@@ -2,6 +2,7 @@ import { ReferencedSqliteRecord } from '../../sqlite/reference-record';
 import { ReferencedSqliteTable } from '../../sqlite/reference-table';
 import { SQliteClient } from '../../sqlite/sqlite-client';
 import { generateId } from '../../utils/ids';
+import { safeSerialize } from '../../utils/serialization';
 import { LogMessage, LogStreamType } from './logstream.type';
 
 export class ReferencedLogStreamTable extends ReferencedSqliteTable<LogStreamType> {
@@ -23,14 +24,13 @@ export class ReferencedLogStreamTable extends ReferencedSqliteTable<LogStreamTyp
     public ref(id: string) {
         return new ReferencedLogStreamRecord(id, this.client);
     }
-
     public async scanOfType(type: string): Promise<LogStreamType[]> {
-        const data = await this.client.execute(`SELECT * FROM logStream WHERE sourceType = ?`, [type]);
+        const data = await this.client.execute(`SELECT * FROM logStream WHERE type = ? ORDER BY createdAt DESC`, [type]);
         return (data as any[]).map(row => ReferencedSqliteTable.deserialize<LogStreamType>(row));
     }
 
     public async scanBySourceId(sourceId: string): Promise<LogStreamType[]> {
-        const data = await this.client.execute(`SELECT * FROM logStream WHERE sourceId = ?`, [sourceId]);
+        const data = await this.client.execute(`SELECT * FROM logStream WHERE sourceId = ? ORDER BY createdAt DESC`, [sourceId]);
         return (data as any[]).map(row => ReferencedSqliteTable.deserialize<LogStreamType>(row));
     }
 }
@@ -43,6 +43,7 @@ export class ReferencedLogStreamRecord extends ReferencedSqliteRecord<LogStreamT
     public async addMessage(message: Omit<LogMessage, 'timestamp' | 'id'>) {
         const data = await this.get();
         const newMessage = { timestamp: Date.now(), id: generateId('logMessage'), ...message };
+        newMessage.data = safeSerialize(newMessage.data || {});
         data.messagesData.push(newMessage);
         await this.update(data);
     }
@@ -62,8 +63,8 @@ export class ReferencedLogStreamRecord extends ReferencedSqliteRecord<LogStreamT
         await this.addMessage({ scope, message, data, level: 'error' });
     }
 
-    public async complete() {
-        await this.update({ status: 'completed', completedAt: Date.now() });
+    public async success() {
+        await this.update({ status: 'success', completedAt: Date.now() });
     }
 
     public async fail() {

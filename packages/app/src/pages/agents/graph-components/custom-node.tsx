@@ -83,8 +83,6 @@ export function CustomAgentGraphNode({ id, data }: { id: string; data: RenderedG
         deleteElements({ nodes: [{ id: data.definition.id }] });
     };
 
-    const hasParameters = Object.keys(data.definition.parameters).length > 0;
-
     return (
         <div className="bg-background-200">
             <div

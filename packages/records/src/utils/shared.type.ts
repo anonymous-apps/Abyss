@@ -1,1 +1,1 @@
-export type Status = 'notStarted' | 'inProgress' | 'completed' | 'failed';
+export type Status = 'notStarted' | 'inProgress' | 'success' | 'failed';

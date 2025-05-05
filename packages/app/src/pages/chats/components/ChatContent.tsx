@@ -12,29 +12,29 @@ export function ChatHistoryRenderer({ thread }: { thread: MessageThreadTurn[] })
         elements.push(<SectionHeader key={'header-' + i} sender={turn.senderId} timestamp={new Date(turn.messages[0].createdAt)} />);
 
         // Render messages themselves
-        for (let i = 0; i < turn.messages.length; i++) {
-            const message = turn.messages[i];
+        for (let j = 0; j < turn.messages.length; j++) {
+            const message = turn.messages[j];
             if (turn.senderId.toLowerCase() === 'user') {
                 if (message.type === 'text') {
-                    elements.push(<UserMessageSection key={i} message={message} />);
+                    elements.push(<UserMessageSection key={'user-' + i + '-' + j} message={message} />);
                 } else {
                     console.error('Unknown user message type', message);
                 }
             } else if (turn.senderId.toLowerCase() === 'system') {
                 if (message.type === 'text') {
-                    elements.push(<SystemTextMessageSection key={i} message={message} />);
+                    elements.push(<SystemTextMessageSection key={'system-' + i + '-' + j} message={message} />);
                 } else {
                     console.error('Unknown system message type', message);
                 }
             } else if (turn.senderId.startsWith('agentGraph:')) {
                 if (message.type === 'text') {
-                    elements.push(<AiMessageTextSection key={i} message={message} />);
+                    elements.push(<AiMessageTextSection key={'agent-' + i + '-' + j} message={message} />);
                 } else {
                     console.error('Unknown agent graph message type', message);
                 }
             } else if (turn.senderId.startsWith('modelConnection:')) {
                 if (message.type === 'text') {
-                    elements.push(<AiMessageTextSection key={i} message={message} />);
+                    elements.push(<AiMessageTextSection key={'model-' + i + '-' + j} message={message} />);
                 } else {
                     console.error('Unknown model connection message type', message);
                 }
@@ -56,5 +56,8 @@ function UserMessageSection({ message }: { message: TextPartial }) {
 }
 
 function AiMessageTextSection({ message }: { message: TextPartial }) {
+    if (message.payloadData.content.length === 0) {
+        return <ChatMessageText text={'empty string'} className="opacity-40" />;
+    }
     return <ChatMessageText text={message.payloadData.content} />;
 }

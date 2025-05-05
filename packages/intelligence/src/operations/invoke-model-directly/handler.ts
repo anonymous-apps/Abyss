@@ -17,16 +17,16 @@ export async function invokeModelDirectlyHandler(options: InvokeModelDirectlyPar
         await chatRef.block(modelConnectionId);
 
         // Load the data
-        const modelConnectionData = await database.tables.modelConnection.get(modelConnectionId);
+        const modelConnectionRef = database.tables.modelConnection.ref(modelConnectionId);
         const chatData = await chatRef.get();
         const threadData = database.tables.messageThread.ref(chatData.threadId);
 
         // Invoke the model
-        const response = await invokeModelAgainstThread(modelConnectionData, threadData);
+        const response = await invokeModelAgainstThread(modelConnectionRef, threadData);
 
         // Update the chat with the response
         await chatRef.addMessages({
-            senderId: modelConnectionData.id,
+            senderId: modelConnectionRef.id,
             type: 'text',
             payloadData: {
                 content: response.outputString,

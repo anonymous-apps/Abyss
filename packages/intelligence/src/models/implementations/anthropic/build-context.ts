@@ -7,12 +7,14 @@ export async function buildAnthropicMessages(thread: ReferencedMessageThreadReco
     const messages: AnthropicMessage[] = [];
 
     for (const turn of conversationTurns) {
-        const role = turn.senderId.toLowerCase() === 'human' ? 'user' : 'assistant';
+        const role = turn.senderId.toLowerCase() === 'user' ? 'user' : 'assistant';
         const content: AnthropicContent[] = [];
 
         for (const partial of turn.messages) {
             if (partial.type === 'text') {
-                content.push({ type: 'text', text: partial.payloadData.content });
+                if (partial.payloadData.content) {
+                    content.push({ type: 'text', text: partial.payloadData.content });
+                }
             } else {
                 Log.warn('AnthropicSerializer', `Cant serialize partial: ${partial.type} as anthropic doesnt support it currently`);
             }

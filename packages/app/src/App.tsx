@@ -1,7 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router';
 import { HeaderBar } from './library/header-bar';
-import { AgentExecutionPage } from './pages/agents/agent-execution';
 import { AgentsPage } from './pages/agents/agents-page';
 import { ViewAgentGraphPage } from './pages/agents/view-agent-graph';
 import { ChatCreatePage } from './pages/chats/create.page';
@@ -10,6 +9,8 @@ import { ChatViewPage } from './pages/chats/view.page';
 import { ListTablesPage } from './pages/database/database.page';
 import { ViewTableRecordPage } from './pages/database/record.page';
 import { ViewTablePage } from './pages/database/table.page';
+import { LogListPage } from './pages/logs/log-list';
+import { LogViewPage } from './pages/logs/log-view';
 import { MainPage } from './pages/main/main';
 import { MetricsChartPage } from './pages/metrics/metrics-chart.page';
 import { MetricsPage } from './pages/metrics/metrics.page';
@@ -37,12 +38,13 @@ export function App() {
                         <Route path="/database/id/:id/record/:recordId" element={<ViewTableRecordPage />} />
                         <Route path="/metrics" element={<MetricsPage />} />
                         <Route path="/metrics/graph/:metricName" element={<MetricsChartPage />} />
+                        <Route path="/logs/id/:id" element={<LogViewPage />} />
+                        <Route path="/logs" element={<LogListPage />} />
                         <Route path="/models" element={<ModelProfileMainPage />} />
                         <Route path="/models/create" element={<ModelProfileCreatePage />} />
                         <Route path="/models/id/:id" element={<ModelProfileViewPage />} />
                         <Route path="/agents" element={<AgentsPage />} />
                         <Route path="/agents/id/:id" element={<ViewAgentGraphPage />} />
-                        <Route path="/agents/execution/:id" element={<AgentExecutionPage />} />
                         <Route path="/chats" element={<ChatMainPage />}>
                             <Route path="/chats/create" element={<ChatCreatePage />} />
                             <Route path="/chats/id/:id" element={<ChatViewPage />} />

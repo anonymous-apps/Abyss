@@ -34,7 +34,7 @@ export class ReferencedSqliteTable<IRecordType extends BaseSqliteRecord = BaseSq
     }
 
     async list(limit: number = 9999) {
-        const raw = await this.client.execute(`SELECT * FROM ${this.tableId} ORDER BY createdAt LIMIT ?`, [limit]);
+        const raw = await this.client.execute(`SELECT * FROM ${this.tableId} ORDER BY createdAt DESC LIMIT ?`, [limit]);
         const results = raw as Record<string, any>[];
         const deserialized = results.map(r => ReferencedSqliteTable.deserialize(r));
         return deserialized as IRecordType[];

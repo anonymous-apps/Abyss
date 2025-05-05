@@ -32,3 +32,7 @@ export function useScanTableChats() {
 export function useScanLogOfType(type: string) {
     return useDatabaseTableQuery<LogStreamType[]>('logStream', async database => database.tables.logStream.scanOfType(type));
 }
+
+export function useScanLogs() {
+    return useDatabaseTableScan<LogStreamType>('logStream');
+}

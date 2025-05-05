@@ -11,6 +11,9 @@ export interface SelectForAgentGraphProps {
 export function SelectForAgentGraph(props: SelectForAgentGraphProps) {
     if (props.port.dataType === 'chat-model') {
         const models = useScanTableModelConnections();
+        if (!props.value && models.data && models.data.length) {
+            props.onSelect(models.data[0].id);
+        }
         return (
             <select
                 value={props.value}
