@@ -15,7 +15,7 @@ export function useMetrics() {
                 time: formatDistanceToNow(metric.createdAt),
                 name: metric.name,
                 value: metric.value,
-                dimensions: Object.keys(metric.dimensions || {}).join(', '),
+                dimensions: Object.keys(metric.dimensionData || {}).join(', '),
                 'Graph it': `/metrics/graph/${metric.name}`,
             }));
         }, [metrics.data]) || [];

@@ -19,11 +19,11 @@ export function ChatViewPage() {
             actions={headerReference}
             breadcrumbs={breadcrumbs}
         >
-            <ChatHistoryRenderer thread={thread || undefined} />
+            <ChatHistoryRenderer thread={thread || []} />
             <br />
             <br />
-            {chat?.blocker && <div className="text-sm text-gray-500">Chat is responding...</div>}
-            {!chat?.blocker && (
+            {chat?.blockerId && <div className="text-sm text-gray-500">Chat is responding...</div>}
+            {!chat?.blockerId && (
                 <>
                     <InputArea
                         value={message}

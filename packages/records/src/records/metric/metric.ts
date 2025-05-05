@@ -32,9 +32,9 @@ export class ReferencedMetricTable extends ReferencedSqliteTable<MetricType> {
 
     async queryMetrics(metricName: string, dimensions: Record<string, string> = {}) {
         const data = await this.client.execute(`SELECT * FROM metric WHERE name = ?`, [metricName]);
-        const dataParsed = data as MetricType[];
+        const decodedData: MetricType[] = (data as Record<string, any>[]).map(row => ReferencedSqliteTable.deserialize(row));
         const results: MetricType[] = [];
-        for (const row of dataParsed) {
+        for (const row of decodedData) {
             let matches = true;
             for (const dimension of Object.keys(dimensions)) {
                 if (dimensions[dimension] && dimensions[dimension] !== row.dimensionData[dimension]) {

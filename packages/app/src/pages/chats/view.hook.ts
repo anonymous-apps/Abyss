@@ -1,15 +1,19 @@
-import { ChatThreadRecord, MessageThreadRecord } from '@abyss/records';
+import { ChatThreadType, MessageThreadTurn, ReferencedMessageThreadRecord } from '@abyss/records';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useDatabaseRecord } from '../../state/database-connection';
+import { useDatabaseRecord, useDatabaseRecordReferenceQuery } from '../../state/database-connection';
 import { chatWithAgentGraph, chatWithAiModel } from '../../state/operations';
 
 export function useChatView() {
     const { id } = useParams();
     const navigate = useNavigate();
 
-    const chat = useDatabaseRecord<ChatThreadRecord>('chatThread', id);
-    const thread = useDatabaseRecord<MessageThreadRecord>('messageThread', chat?.threadId);
+    const chat = useDatabaseRecord<ChatThreadType>('chatThread', id);
+    const thread = useDatabaseRecordReferenceQuery<ReferencedMessageThreadRecord, MessageThreadTurn[]>(
+        'messageThread',
+        chat?.threadId,
+        record => record.getTurns()
+    );
 
     const [message, setMessage] = useState('');
 

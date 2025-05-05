@@ -28,14 +28,12 @@ export function AgentsPage() {
                                 title={agent.name || 'Untitled'}
                                 onClick={() => navigate(`/agents/id/${agent.id}`)}
                                 icon={<Bot className="w-4 h-4" />}
-                                footer={agent.nodes.length + ' nodes'}
-                            >
-                                {agent.description || 'No description'}
-                            </Tile>
+                                footer={`${agent.nodesData.length} nodes`}
+                            ></Tile>
                         ))}
                     </TileGrid>
                 ) : (
-                    <div className="text-text-700">No agents found</div>
+                    <div className="text-text-700">No agents found, create a new agent graph to get started.</div>
                 )}
             </IconSection>
 

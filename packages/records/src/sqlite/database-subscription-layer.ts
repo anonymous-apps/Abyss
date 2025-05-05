@@ -55,7 +55,7 @@ export class DatabaseSubscriptionLayer {
         }
     }
 
-    public subscribeRecord(table: string, recordId: string, callback: RecordSubscriber): () => void {
+    public subscribeRecord(client: SQliteClient, table: string, recordId: string, callback: RecordSubscriber): () => void {
         if (!this.subscribersToRecords[table]) {
             this.subscribersToRecords[table] = {};
         }
@@ -66,6 +66,10 @@ export class DatabaseSubscriptionLayer {
 
         const id = randomId();
         this.subscribersToRecords[table][recordId][id] = callback;
+
+        client.tables[table as keyof typeof client.tables].get(recordId).then(record => {
+            callback(record);
+        });
 
         return () => this.removeRecordSubscriber(table, recordId, id);
     }

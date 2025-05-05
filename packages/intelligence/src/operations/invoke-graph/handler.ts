@@ -6,7 +6,7 @@ export async function invokeGraphHandler(options: InvokeGraphParams) {
 
     // Load the data
     const graph = await database.tables.agentGraph.get(graphId);
-    const logStream = await database.tables.logStream.new(graphId);
+    const logStream = await database.tables.logStream.new('graphExecution', graphId);
 
     // Port data
     const triggerValues: PortTriggerData<any>[] = [];

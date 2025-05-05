@@ -1,11 +1,10 @@
-import { AgentGraphExecutionType, AgentGraphType, ChatThreadType, ModelConnectionType, SettingsType } from '@abyss/records';
-import { TableReferences } from '@abyss/records/dist/prisma.type';
+import { AgentGraphType, ChatThreadType, LogStreamType, ModelConnectionType, SettingsType, SqliteTables } from '@abyss/records';
 import { useDatabaseQuery, useDatabaseRecord, useDatabaseTableQuery } from './database-connection';
 
 // General access
 
-export function useDatabaseTableScan<T>(table: keyof TableReferences) {
-    return useDatabaseTableQuery<T[]>(table, async database => database.table[table].scan() as unknown as Promise<T[]>);
+export function useDatabaseTableScan<T>(table: keyof SqliteTables) {
+    return useDatabaseTableQuery<T[]>(table, async database => database.tables[table].list() as unknown as Promise<T[]>);
 }
 
 export function useDatabaseTables() {
@@ -30,6 +29,6 @@ export function useScanTableChats() {
     return useDatabaseTableScan<ChatThreadType>('chatThread');
 }
 
-export function useScanTableAgentExecutions() {
-    return useDatabaseTableScan<AgentGraphExecutionType>('agentGraphExecution');
+export function useScanLogOfType(type: string) {
+    return useDatabaseTableQuery<LogStreamType[]>('logStream', async database => database.tables.logStream.scanOfType(type));
 }

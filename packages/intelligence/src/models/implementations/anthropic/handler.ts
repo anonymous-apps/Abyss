@@ -4,9 +4,11 @@ import { buildAnthropicMessages } from './build-context';
 import { AnthropicResponse, InvokeAnthropicProps } from './types';
 
 export async function InvokeAnthropic(props: InvokeAnthropicProps): Promise<InvokeModelInternalResult> {
-    const messages = buildAnthropicMessages(props.thread);
+    const messages = await buildAnthropicMessages(props.thread);
     const modelId = props.modelId;
     const apiKey = props.apiKey;
+
+    console.log('[InvokeAnthropic]', messages);
 
     try {
         const response = await fetch('https://api.anthropic.com/v1/messages', {

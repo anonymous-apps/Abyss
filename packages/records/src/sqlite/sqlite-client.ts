@@ -82,6 +82,20 @@ export class SQliteClient {
         });
     }
 
+    // Describe tables
+
+    async describeTables() {
+        const tables: Partial<Record<keyof SqliteTables, { rows: number; description: string }>> = {};
+        for (const table of Object.keys(this.tables)) {
+            const result = await this.tables[table as keyof SqliteTables].count();
+            tables[table as keyof SqliteTables] = {
+                rows: result,
+                description: this.tables[table as keyof SqliteTables].description,
+            };
+        }
+        return tables;
+    }
+
     // Subscription handling
 
     subscribeDatabase(callback: () => void) {

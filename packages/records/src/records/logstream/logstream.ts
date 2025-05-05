@@ -9,13 +9,29 @@ export class ReferencedLogStreamTable extends ReferencedSqliteTable<LogStreamTyp
         super('logStream', 'A stream of log messages from some execution', client);
     }
 
-    public async new(sourceId: string) {
-        const newLogStream = await this.create({ sourceId, status: 'inProgress', messagesData: [] });
+    public async new(sourceType: string, sourceId: string) {
+        const newLogStream = await this.create({
+            type: sourceType,
+            status: 'inProgress',
+            messagesData: [],
+            completedAt: 0,
+            sourceId,
+        });
         return new ReferencedLogStreamRecord(newLogStream.id, this.client);
     }
 
     public ref(id: string) {
         return new ReferencedLogStreamRecord(id, this.client);
+    }
+
+    public async scanOfType(type: string): Promise<LogStreamType[]> {
+        const data = await this.client.execute(`SELECT * FROM logStream WHERE sourceType = ?`, [type]);
+        return (data as any[]).map(row => ReferencedSqliteTable.deserialize<LogStreamType>(row));
+    }
+
+    public async scanBySourceId(sourceId: string): Promise<LogStreamType[]> {
+        const data = await this.client.execute(`SELECT * FROM logStream WHERE sourceId = ?`, [sourceId]);
+        return (data as any[]).map(row => ReferencedSqliteTable.deserialize<LogStreamType>(row));
     }
 }
 
@@ -47,10 +63,10 @@ export class ReferencedLogStreamRecord extends ReferencedSqliteRecord<LogStreamT
     }
 
     public async complete() {
-        await this.update({ status: 'completed' });
+        await this.update({ status: 'completed', completedAt: Date.now() });
     }
 
     public async fail() {
-        await this.update({ status: 'failed' });
+        await this.update({ status: 'failed', completedAt: Date.now() });
     }
 }

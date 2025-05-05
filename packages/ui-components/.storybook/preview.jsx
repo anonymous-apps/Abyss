@@ -18,7 +18,7 @@ const preview = {
             selector: 'select',
             list: [
                 { name: 'Abyss', value: 'abyss' },
-                { name: 'Etherial', value: 'etherial' },
+                { name: 'ethereal', value: 'ethereal' },
             ],
         },
     },
@@ -60,7 +60,7 @@ const preview = {
                 icon: 'paintbrush',
                 items: [
                     { value: 'abyss', title: 'Abyss' },
-                    { value: 'etherial', title: 'Etherial' },
+                    { value: 'ethereal', title: 'ethereal' },
                 ],
             },
         },

@@ -12,6 +12,7 @@ export function useModelProfileCreate() {
     const navigate = useNavigate();
 
     const handleCreateConnection = () => {
+        console.log(data);
         Database.tables.modelConnection.create({
             name: name,
             description: 'A model connection for ' + selectedProvider + ' ' + selectedModel,

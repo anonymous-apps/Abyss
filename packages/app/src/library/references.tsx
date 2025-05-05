@@ -16,7 +16,6 @@ export function getIconForSourceType(source: string): LucideIcon {
             return Box;
         case 'agentgraph':
             return Bot;
-        case 'human':
         case 'user':
             return User;
         case 'internal':
@@ -31,7 +30,7 @@ export function getIconForSourceType(source: string): LucideIcon {
 export function useRecordReference({ sourceId }: { sourceId: string }): RecordReference {
     const recordType = sourceId.toLowerCase().split('::')[0];
 
-    if (recordType === 'human') {
+    if (recordType === 'user') {
         const Icon = getIconForSourceType('user');
         return {
             icon: Icon,

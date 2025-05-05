@@ -33,7 +33,7 @@ export class ReferencedSqliteTable<IRecordType extends BaseSqliteRecord = BaseSq
         return deserialized as T;
     }
 
-    async list(limit: number = 9999): Promise<BaseSqliteRecord[]> {
+    async list(limit: number = 9999) {
         const raw = await this.client.execute(`SELECT * FROM ${this.tableId} ORDER BY createdAt LIMIT ?`, [limit]);
         const results = raw as Record<string, any>[];
         const deserialized = results.map(r => ReferencedSqliteTable.deserialize(r));
@@ -108,7 +108,7 @@ export class ReferencedSqliteTable<IRecordType extends BaseSqliteRecord = BaseSq
     }
 
     subscribeRecord(id: string, callback: (record: IRecordType) => void): () => void {
-        return this.client.events.subscribeRecord(this.tableId, id, callback as (record: BaseSqliteRecord) => void);
+        return this.client.events.subscribeRecord(this.client, this.tableId, id, callback as (record: BaseSqliteRecord) => void);
     }
 
     subscribeTable(callback: (table: ReferencedSqliteTable<IRecordType>) => void): () => void {

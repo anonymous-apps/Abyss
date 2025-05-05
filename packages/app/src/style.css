@@ -96,6 +96,6 @@
 }
 
 /* Light mode specific inversion */
-[data-theme='etherial'] .invert {
+[data-theme='ethereal'] .invert {
     filter: invert(0);
 }

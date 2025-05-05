@@ -6,7 +6,7 @@ export function useTable() {
     const navigate = useNavigate();
     const { id } = useParams();
 
-    const scanTable = useDatabaseTableScan(id as keyof typeof Database.table);
+    const scanTable = useDatabaseTableScan(id as keyof typeof Database.tables);
 
     const breadcrumbs = [
         { name: 'Home', onClick: () => navigate('/') },
@@ -15,7 +15,7 @@ export function useTable() {
     ];
 
     const onPurgeTable = () => {
-        Database.table[id as keyof typeof Database.table].purge();
+        Database.tables[id as keyof typeof Database.tables].purgeAll();
     };
 
     const onOpenRecordStr = (record: string) => {

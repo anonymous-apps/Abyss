@@ -6,9 +6,10 @@ describe('LogStream::create', () => {
         const client = await buildCleanDB();
         const logstream = await client.tables.logStream.create({
             id: 'logstream::test',
-            sourceId: 'source::test',
+            type: 'source::test',
             status: 'inProgress',
             messagesData: [],
+            sourceId: 'source::test',
         });
         expect(logstream).toBeDefined();
         expect(logstream.id).toBe('logstream::test');

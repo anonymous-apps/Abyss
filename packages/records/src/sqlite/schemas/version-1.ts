@@ -84,7 +84,9 @@ export const BaseLogStreamTable = `
         createdAt INTEGER NOT NULL,
         updatedAt INTEGER NOT NULL,
         sourceId TEXT NOT NULL,
+        type TEXT NOT NULL,
         status TEXT NOT NULL,
+        completedAt INTEGER,
         messagesData TEXT NOT NULL
     )
 `;

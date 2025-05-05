@@ -96,7 +96,7 @@ describe('invokeGraph', () => {
         const chat = await chatRef.get();
         const threadRef = db.tables.messageThread.ref(chat.threadId);
         const thread = await threadRef.get();
-        const outputLogRef = await db.tables.logStream.new(agentGraph.id);
+        const outputLogRef = await db.tables.logStream.new('graph-execution', agentGraph.id);
         const execution = new StateMachineExecution(agentGraph, outputLogRef, db);
 
         const result = await execution.invoke(

@@ -12,11 +12,11 @@ export function SettingsPage() {
             <IconSection icon={PaintBucket} title="App Theme">
                 <SelectDropdown
                     className="w-52"
-                    selectedId={record?.theme || 'etherial'}
+                    selectedId={record?.theme || 'ethereal'}
                     onSelect={onChangeAppTheme}
                     options={[
-                        { id: 'etherial', label: 'Etherial' },
                         { id: 'abyss', label: 'Abyss' },
+                        { id: 'ethereal', label: 'Ethereal' },
                     ]}
                 />
             </IconSection>

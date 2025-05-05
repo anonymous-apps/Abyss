@@ -11,6 +11,8 @@ export interface LogMessage {
 
 export interface LogStreamType extends BaseSqliteRecord {
     sourceId: string;
+    type: string;
     status: Status;
+    completedAt?: number;
     messagesData: LogMessage[];
 }
