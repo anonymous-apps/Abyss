@@ -1,5 +1,6 @@
 import { ReferencedMessageThreadRecord, ReferencedModelConnectionRecord } from '@abyss/records';
 import { invokeModelAgainstThread } from '../../models/handler';
+import { randomId } from '../../utils/ids';
 import { NodeHandler } from '../node-handler';
 import { NodeExecutionResult, ResolveNodeData } from '../type-base.type';
 import { GraphNodeDefinition } from '../type-definition.type';
@@ -17,6 +18,13 @@ export class InvokeLanguageModelNode extends NodeHandler {
             color: '#800080',
             parameters: {},
             inputPorts: {
+                trigger: {
+                    id: 'trigger',
+                    type: 'signal',
+                    dataType: 'signal',
+                    name: 'Invoke',
+                    description: 'Invoke the chat model',
+                },
                 chatModel: {
                     id: 'chatModel',
                     type: 'data',
@@ -26,7 +34,7 @@ export class InvokeLanguageModelNode extends NodeHandler {
                 },
                 thread: {
                     id: 'thread',
-                    type: 'signal',
+                    type: 'data',
                     dataType: 'thread',
                     name: 'Thread',
                     description: 'A thread',
@@ -46,6 +54,13 @@ export class InvokeLanguageModelNode extends NodeHandler {
                     dataType: 'thread',
                     name: 'New Thread',
                     description: 'The updated thread with the response from the chat model',
+                },
+                next: {
+                    id: 'next',
+                    type: 'signal',
+                    dataType: 'signal',
+                    name: 'Next',
+                    description: 'What to do next',
                 },
             },
         };
@@ -82,6 +97,11 @@ export class InvokeLanguageModelNode extends NodeHandler {
                     portId: 'newThread',
                     dataType: 'thread',
                     inputValue: outThreadRef,
+                },
+                {
+                    portId: 'next',
+                    dataType: 'signal',
+                    inputValue: randomId(),
                 },
             ],
         };

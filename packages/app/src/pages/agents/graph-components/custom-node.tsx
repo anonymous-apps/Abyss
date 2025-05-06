@@ -1,11 +1,13 @@
 import { Handle, Position, useReactFlow } from '@xyflow/react';
-import { ChevronDown, XIcon } from 'lucide-react';
+import { XIcon } from 'lucide-react';
 import React from 'react';
 import { SelectForAgentGraph } from './agent-graph-inputs';
 import { RenderedGraphNode } from './graph.types';
 import { IdsToIcons } from './ids-to-icons';
 
 export function CustomAgentGraphNode({ id, data }: { id: string; data: RenderedGraphNode['data'] }) {
+    let inputSignals: React.ReactNode[] = [];
+    let outputSignals: React.ReactNode[] = [];
     let leftHandles: React.ReactNode[] = [];
     let rightHandles: React.ReactNode[] = [];
     const { deleteElements, updateNodeData } = useReactFlow();
@@ -13,18 +15,23 @@ export function CustomAgentGraphNode({ id, data }: { id: string; data: RenderedG
     const Icon = IdsToIcons[data.definition.icon];
     const color = data.definition.color;
 
-    for (const input of Object.values(data.definition.inputPorts)) {
-        leftHandles.push(
+    // Get all nodes
+    const inputPorts = Object.values(data.definition.inputPorts);
+    const outputPorts = Object.values(data.definition.outputPorts);
+
+    // First all the signal nodes
+    const inputSignalPorts = inputPorts.filter(port => port.type === 'signal');
+    const outputSignalPorts = outputPorts.filter(port => port.type === 'signal');
+    const hasAnySignals = inputSignalPorts.length > 0 || outputSignalPorts.length > 0;
+
+    for (const input of inputSignalPorts) {
+        inputSignals.push(
             <div className="flex flex-col gap-1 relative" key={input.id}>
                 <div className="text-[8px] text-text-500 px-2 relative flex flex-row gap-1 justify-start">
-                    {input.name} <pre className="opacity-70">({input.dataType})</pre>
+                    {input.name}
                     <Handle
                         className={`bg-background-300 border-background-900`}
-                        style={{
-                            borderColor: input.type === 'signal' ? color : undefined,
-                            height: input.type === 'signal' ? '12px' : undefined,
-                            borderRadius: input.type === 'signal' ? '5px' : undefined,
-                        }}
+                        style={{ borderColor: color, height: '12px', borderRadius: '5px' }}
                         type="target"
                         position={Position.Left}
                         id={input.id}
@@ -35,12 +42,46 @@ export function CustomAgentGraphNode({ id, data }: { id: string; data: RenderedG
         );
     }
 
-    for (const output of Object.values(data.definition.outputPorts)) {
+    for (const output of outputSignalPorts) {
+        outputSignals.push(
+            <div className="flex flex-col gap-1 relative" key={output.id}>
+                <div className="text-[8px] text-text-500 px-2 flex flex-row gap-1 justify-end relative">
+                    {output.name}
+                    <Handle
+                        className={`bg-background-300 border-background-900`}
+                        type="source"
+                        position={Position.Right}
+                        id={output.id}
+                        style={{ borderColor: color, height: '12px', borderRadius: '5px' }}
+                    />
+                </div>
+                <div className="text-[6px] text-text-500 px-2">{output.description}</div>
+            </div>
+        );
+    }
+
+    // Then all non-signal ports
+
+    const inputDataPorts = inputPorts.filter(port => port.type === 'data');
+    const outputDataPorts = outputPorts.filter(port => port.type === 'data');
+
+    for (const input of inputDataPorts) {
+        leftHandles.push(
+            <div className="flex flex-col gap-1 relative" key={input.id}>
+                <div className="text-[8px] text-text-500 px-2 relative flex flex-row gap-1 justify-start">
+                    {input.name} <pre className="opacity-70">({input.dataType})</pre>
+                    <Handle className={`bg-background-300 border-background-900`} type="target" position={Position.Left} id={input.id} />
+                </div>
+                <div className="text-[6px] text-text-500 px-2">{input.description}</div>
+            </div>
+        );
+    }
+
+    for (const output of outputDataPorts) {
         if (output.userConfigurable) {
             rightHandles.push(
                 <div className="flex flex-col gap-1 relative" key={output.id}>
                     <div className="text-[8px] text-text-500 px-2 flex flex-row items-center gap-1 justify-end relative">
-                        <ChevronDown className="w-3 h-3 translate-x-5 translate-y-[1px]" />
                         <SelectForAgentGraph
                             port={output}
                             onSelect={value => {
@@ -107,6 +148,15 @@ export function CustomAgentGraphNode({ id, data }: { id: string; data: RenderedG
                     </div>
                     <div className="text-[8px] text-text-500 ml-6">{data.definition.description}</div>
                 </div>
+                {hasAnySignals && (
+                    <div
+                        className="flex flex-row gap-2 relative my-1 w-full border-b py-2"
+                        style={{ borderColor: data.definition.color + '70' }}
+                    >
+                        {inputSignals.length > 0 && <div className="flex flex-col gap-2 flex-1">{inputSignals}</div>}
+                        {outputSignals.length > 0 && <div className="flex flex-col gap-2 flex-1 text-right">{outputSignals}</div>}
+                    </div>
+                )}
                 <div className="flex flex-row gap-2 relative my-1 mt-2 w-full">
                     {leftHandles.length > 0 && <div className="flex flex-col gap-2 flex-1">{leftHandles}</div>}
                     {rightHandles.length > 0 && <div className="flex flex-col gap-2 flex-1 text-right">{rightHandles}</div>}

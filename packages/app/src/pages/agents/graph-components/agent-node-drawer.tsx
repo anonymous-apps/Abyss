@@ -18,8 +18,9 @@ export function AgentNodeDrawer({ onAddNode }: AgentNodeDrawerProps) {
                     icon={MessageCircle}
                     onClick={() => onAddNode(Nodes.OnChatMessage.getDefinition())}
                 />
-                <SidebarSection title="References" />
+                <SidebarSection title="Input" />
                 <SidebarButton label="Language Model" icon={Box} onClick={() => onAddNode(Nodes.InputLanguageModel.getDefinition())} />
+                <SidebarButton label="Constant String" icon={Box} onClick={() => onAddNode(Nodes.InputConstantString.getDefinition())} />
                 <SidebarSection title="Actions" />
                 <SidebarButton
                     label="Invoke Language Model"
@@ -27,9 +28,14 @@ export function AgentNodeDrawer({ onAddNode }: AgentNodeDrawerProps) {
                     onClick={() => onAddNode(Nodes.InvokeLanguageModel.getDefinition())}
                 />
                 <SidebarButton
-                    label="Write Chat Message"
+                    label="Write Agent Message"
                     icon={MessageCircle}
-                    onClick={() => onAddNode(Nodes.WriteChatMessage.getDefinition())}
+                    onClick={() => onAddNode(Nodes.WriteAgentMessage.getDefinition())}
+                />
+                <SidebarButton
+                    label="Write User Message"
+                    icon={MessageCircle}
+                    onClick={() => onAddNode(Nodes.WriteUserMessage.getDefinition())}
                 />
             </Sidebar>
         </div>

@@ -28,7 +28,11 @@ export function useViewAgent() {
     const [nodes, setNodes, onNodesChange] = useNodesState<RenderedGraphNode>([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
 
-    const dbToRenderedGraphNode = (node: AgentGraphNode): RenderedGraphNode => {
+    const dbToRenderedGraphNode = (node: AgentGraphNode): RenderedGraphNode | null => {
+        if (!NodeHandler.getById(node.nodeId)) {
+            console.error('Node handler not found for node:', node.nodeId);
+            return null;
+        }
         const definition = NodeHandler.getById(node.nodeId).getDefinition(node.id);
         return {
             id: node.id,
@@ -38,9 +42,17 @@ export function useViewAgent() {
         };
     };
 
-    const dbToRenderedGraphEdge = (edge: AgentGraphEdge, nodes: AgentGraphNode[]): Edge => {
+    const dbToRenderedGraphEdge = (edge: AgentGraphEdge, nodes: AgentGraphNode[]): Edge | null => {
         const targetNode = nodes.find(node => node.id === edge.targetNodeId);
+        if (!targetNode) {
+            console.error('Target node not found for edge:', edge);
+            return null;
+        }
         const definition = NodeHandler.getById(targetNode?.nodeId!);
+        if (!definition) {
+            console.error('Definition not found for edge:', edge);
+            return null;
+        }
         const isSignal = definition.isSignalPort(edge.targetPortId);
 
         return {
@@ -91,8 +103,8 @@ export function useViewAgent() {
 
     useEffect(() => {
         if (agent && nodes.length === 0 && edges.length === 0 && !hasDoneInitialLoad) {
-            setNodes(agent.nodesData.map(node => dbToRenderedGraphNode(node)));
-            setEdges(agent.edgesData.map(edge => dbToRenderedGraphEdge(edge, agent.nodesData)));
+            setNodes(agent.nodesData.map(node => dbToRenderedGraphNode(node)).filter(node => node !== null) as RenderedGraphNode[]);
+            setEdges(agent.edgesData.map(edge => dbToRenderedGraphEdge(edge, agent.nodesData)).filter(edge => edge !== null) as Edge[]);
             setHasDoneInitialLoad(true);
         }
     }, [agent]);

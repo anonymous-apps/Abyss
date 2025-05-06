@@ -2,26 +2,26 @@ import { NodeHandler } from '../node-handler';
 import { NodeExecutionResult, ResolveNodeData } from '../type-base.type';
 import { GraphNodeDefinition } from '../type-definition.type';
 
-export class InputLanguageModelNode extends NodeHandler {
+export class InputConstantStringNode extends NodeHandler {
     constructor() {
-        super('input-language-model', 'static');
+        super('input-constant-string', 'static');
     }
 
     protected _getDefinition(): Omit<GraphNodeDefinition, 'id' | 'type'> {
         return {
-            name: 'Chat Model',
+            name: 'Constant String',
             icon: 'model',
-            description: 'Reference to a chat-model from those you have configured',
+            description: 'A constant string value',
             color: '#101010',
             inputPorts: {},
             parameters: {},
             outputPorts: {
-                chatModel: {
-                    id: 'chatModel',
+                constantString: {
+                    id: 'constantString',
                     type: 'data',
-                    dataType: 'chat-model',
-                    name: 'Chat Model',
-                    description: 'A chat based model of intelligence',
+                    dataType: 'string',
+                    name: 'Constant String',
+                    description: 'A string value',
                     userConfigurable: true,
                 },
             },
@@ -32,9 +32,9 @@ export class InputLanguageModelNode extends NodeHandler {
         return {
             portData: [
                 {
-                    portId: 'chatModel',
-                    dataType: 'chat-model',
-                    inputValue: data.database.tables.modelConnection.ref(data.parameters.chatModel),
+                    portId: 'constantString',
+                    dataType: 'string',
+                    inputValue: data.parameters.constantString,
                 },
             ],
         };

@@ -1,11 +1,11 @@
-export type GraphDataType = 'string' | 'number' | 'boolean' | 'thread' | 'chat-model' | 'chat';
+export type GraphDataType = 'string' | 'number' | 'boolean' | 'thread' | 'chat-model' | 'chat' | 'signal';
 
 export interface GraphPortDefinition {
     id: string;
     type: 'data' | 'signal';
     dataType: GraphDataType;
     name: string;
-    description: string;
+    description?: string;
     userConfigurable?: boolean | undefined;
 }
 

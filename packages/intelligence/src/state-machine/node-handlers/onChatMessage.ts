@@ -36,6 +36,13 @@ export class OnChatMessageNode extends NodeHandler {
                     name: 'Chat',
                     description: 'The chat that the message was sent to',
                 },
+                onChatMessage: {
+                    id: 'onChatMessage',
+                    type: 'signal',
+                    dataType: 'signal',
+                    name: 'On Chat Message',
+                    description: 'What to do when a chat message is sent to a chat with this agent',
+                },
             },
         };
     }

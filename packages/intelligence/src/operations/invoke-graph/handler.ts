@@ -1,4 +1,5 @@
 import { Nodes, PortTriggerData, StateMachineExecution } from '../../state-machine';
+import { randomId } from '../../utils/ids';
 import { InvokeGraphParams } from './types';
 
 export async function invokeGraphHandler(options: InvokeGraphParams) {
@@ -27,6 +28,7 @@ export async function invokeGraphHandler(options: InvokeGraphParams) {
         const threadPort = ports.find(port => port.dataType === 'thread');
         const chatPort = ports.find(port => port.dataType === 'chat');
         const messagePort = ports.find(port => port.dataType === 'string');
+        const signalPort = ports.find(port => port.dataType === 'signal');
 
         if (threadPort) {
             triggerValues.push({
@@ -47,6 +49,14 @@ export async function invokeGraphHandler(options: InvokeGraphParams) {
                 portId: messagePort.id,
                 dataType: messagePort.dataType,
                 inputValue: input.message,
+            });
+        }
+
+        if (signalPort) {
+            triggerValues.push({
+                portId: signalPort.id,
+                dataType: signalPort.dataType,
+                inputValue: randomId(),
             });
         }
     }
