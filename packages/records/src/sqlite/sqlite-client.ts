@@ -9,6 +9,7 @@ import { ReferencedMessageTable } from '../records/message/message';
 import { ReferencedMetricTable } from '../records/metric/metric';
 import { ReferencedModelConnectionTable } from '../records/model-connection/model-connection';
 import { ReferencedSettingsTable } from '../records/settings/settings';
+import { ReferencedToolDefinitionTable } from '../records/tool-definition/tool-definition';
 import { DatabaseSubscriptionLayer } from './database-subscription-layer';
 import { ReferencedSqliteTable } from './reference-table';
 import { migrations } from './schemas/migrations';
@@ -44,6 +45,7 @@ export class SQliteClient {
             metric: new ReferencedMetricTable(this),
             message: new ReferencedMessageTable(this),
             logStream: new ReferencedLogStreamTable(this),
+            toolDefinition: new ReferencedToolDefinitionTable(this),
         };
     }
 

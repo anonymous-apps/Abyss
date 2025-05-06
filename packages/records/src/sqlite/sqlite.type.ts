@@ -6,6 +6,7 @@ import { ReferencedMessageTable } from '../records/message/message';
 import { ReferencedMetricTable } from '../records/metric/metric';
 import { ReferencedModelConnectionTable } from '../records/model-connection/model-connection';
 import { ReferencedSettingsTable } from '../records/settings/settings';
+import { ReferencedToolDefinitionTable } from '../records/tool-definition/tool-definition';
 
 export interface DBSidecarType {
     databaseVersionId: string;
@@ -34,4 +35,5 @@ export interface SqliteTables {
     metric: ReferencedMetricTable;
     message: ReferencedMessageTable;
     logStream: ReferencedLogStreamTable;
+    toolDefinition: ReferencedToolDefinitionTable;
 }

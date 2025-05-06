@@ -18,6 +18,7 @@ import { ModelProfileCreatePage } from './pages/models/create.page';
 import { ModelProfileMainPage } from './pages/models/main.page';
 import { ModelProfileViewPage } from './pages/models/view.page';
 import { SettingsPage } from './pages/settings/settings.page';
+import { ToolsPage } from './pages/tools/tools.page';
 import { WithAppSidebar } from './pages/withSidebar';
 import { useTheme } from './state/theme-state';
 
@@ -43,6 +44,7 @@ export function App() {
                         <Route path="/models" element={<ModelProfileMainPage />} />
                         <Route path="/models/create" element={<ModelProfileCreatePage />} />
                         <Route path="/models/id/:id" element={<ModelProfileViewPage />} />
+                        <Route path="/tools" element={<ToolsPage />} />
                         <Route path="/agents" element={<AgentsPage />} />
                         <Route path="/agents/id/:id" element={<ViewAgentGraphPage />} />
                         <Route path="/chats" element={<ChatMainPage />}>

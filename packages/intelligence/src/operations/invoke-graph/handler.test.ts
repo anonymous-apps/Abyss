@@ -22,7 +22,7 @@ describe('invokeGraph', () => {
         const languageModel = Nodes.InputLanguageModel.getDefinition('inputChatModel');
         const onChatMessage = Nodes.OnChatMessage.getDefinition('onChatMessage');
         const invokeLanguageModel = Nodes.InvokeLanguageModel.getDefinition('invokeChatModel');
-        const writeChatMessage = Nodes.WriteChatMessage.getDefinition('writeChatMessage');
+        const writeChatMessage = Nodes.WriteAgentMessage.getDefinition('writeChatMessage');
 
         nodes.push({
             id: 'onChatMessage',

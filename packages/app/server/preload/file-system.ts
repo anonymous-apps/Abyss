@@ -3,7 +3,7 @@ import path from 'node:path';
 
 window['abyss-fs'] = {
     // Open the database folder in the file system
-    openDbFolder: () => execSync(`open ${path.dirname(process.env.DATABASE_URL!)}`),
+    openDbFolder: () => execSync(`open ~/.abyss`),
 
     // Public paths
     assetPath: (asset: string) =>

@@ -19,7 +19,7 @@ export function useDatabasePage() {
     // Actions
     const openDbFolder = () => {
         // @ts-ignore
-        window.fs.openDbFolder();
+        window['abyss-fs'].openDbFolder();
     };
 
     return {

@@ -17,6 +17,7 @@ async function main() {
     await loadFromLastPage();
     await applyTheme();
     await CaptureMetric.ApplicationOpened();
+    await window['system-tools'].defineSystemToolsIfMissing();
 
     ReactDOM.createRoot(document.getElementById('root')!).render(
         <React.StrictMode>

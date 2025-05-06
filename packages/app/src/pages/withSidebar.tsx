@@ -1,5 +1,5 @@
 import { Sidebar as AbyssSidebar, SidebarButton as AbyssSidebarButton, SidebarSection as AbyssSidebarSection } from '@abyss/ui-components';
-import { Bot, Box, ChartLine, DatabaseIcon, List, MessageSquare, SettingsIcon } from 'lucide-react';
+import { Bot, Box, ChartLine, DatabaseIcon, Hammer, List, MessageSquare, SettingsIcon } from 'lucide-react';
 import React from 'react';
 import { useLocation, useNavigate, useOutlet } from 'react-router';
 import { useSidebarFadeStore } from '../state/sidebar-fade';
@@ -33,6 +33,7 @@ export function AppSidebar() {
                 <AbyssSidebarSection title="Configure" />
                 <AbyssSidebarButton label="Models" icon={Box} {...navProps('/models')} />
                 <AbyssSidebarButton label="Agents" icon={Bot} {...navProps('/agents')} />
+                <AbyssSidebarButton label="Tools" icon={Hammer} {...navProps('/tools')} />
                 <AbyssSidebarButton label="Settings" icon={SettingsIcon} {...navProps('/settings')} />
                 <AbyssSidebarSection title="Monitor" />
                 <AbyssSidebarButton label="Storage" icon={DatabaseIcon} {...navProps('/database')} />

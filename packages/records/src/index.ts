@@ -14,5 +14,7 @@ export * from './records/model-connection/model-connection';
 export * from './records/model-connection/model-connection.type';
 export * from './records/settings/settings';
 export * from './records/settings/settings.type';
+export * from './records/tool-definition/tool-definition';
+export * from './records/tool-definition/tool-definition.type';
 export * from './sqlite/sqlite-client';
 export * from './sqlite/sqlite.type';

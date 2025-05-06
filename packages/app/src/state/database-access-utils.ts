@@ -1,4 +1,12 @@
-import { AgentGraphType, ChatThreadType, LogStreamType, ModelConnectionType, SettingsType, SqliteTables } from '@abyss/records';
+import {
+    AgentGraphType,
+    ChatThreadType,
+    LogStreamType,
+    ModelConnectionType,
+    SettingsType,
+    SqliteTables,
+    ToolDefinitionType,
+} from '@abyss/records';
 import { useDatabaseQuery, useDatabaseRecord, useDatabaseTableQuery } from './database-connection';
 
 // General access
@@ -35,4 +43,8 @@ export function useScanLogOfType(type: string) {
 
 export function useScanLogs() {
     return useDatabaseTableScan<LogStreamType>('logStream');
+}
+
+export function useScanTableTools() {
+    return useDatabaseTableScan<ToolDefinitionType>('toolDefinition');
 }
