@@ -1,4 +1,4 @@
-import { ReferencedChatThreadRecord } from '@abyss/records';
+import { ReferencedChatThreadRecord, ReferencedMessageRecord } from '@abyss/records';
 import { randomId } from '../../utils/ids';
 import { NodeHandler } from '../node-handler';
 import { NodeExecutionResult, ResolveNodeData } from '../type-base.type';
@@ -55,13 +55,14 @@ export class WriteUserMessageNode extends NodeHandler {
         const message = data.resolvePort<string>('message');
         const chat = data.resolvePort<ReferencedChatThreadRecord>('chat');
 
-        await chat.addMessages({
+        const messageRef = await chat.client.tables.message.create({
             senderId: 'user',
             type: 'text',
             payloadData: {
                 content: message,
             },
         });
+        await chat.addMessages(new ReferencedMessageRecord(messageRef.id, chat.client));
 
         return {
             portData: [

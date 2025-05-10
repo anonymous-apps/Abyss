@@ -1,4 +1,4 @@
-import { ReferencedChatThreadRecord, ReferencedToolDefinitionRecord } from '@abyss/records';
+import { ReferencedChatThreadRecord, ReferencedMessageRecord, ReferencedToolDefinitionRecord } from '@abyss/records';
 import { randomId } from '../../utils/ids';
 import { NodeHandler } from '../node-handler';
 import { NodeExecutionResult, ResolveNodeData } from '../type-base.type';
@@ -65,7 +65,33 @@ export class AddToolsToThreadNode extends NodeHandler {
         const deltaToolDefinitions = await currentThread.getDeltaToolDefinitions(toolSet);
 
         // Add Messages to Chat
-        await chat.addMessagesByReference(deltaToolDefinitions.toolsToAddMessage, deltaToolDefinitions.toolsToRemoveMessage);
+        const toolsToAddRecords = await Promise.all(deltaToolDefinitions.toolsToAdd.map(t => t.get()));
+        const toolsToAddMessages = await chat.client.tables.message.create({
+            type: 'new-tool-definition',
+            senderId: 'system',
+            payloadData: {
+                tools: toolsToAddRecords.map(t => ({
+                    toolId: t.id,
+                    shortName: t.shortName,
+                    description: t.description,
+                    inputSchemaData: t.inputSchemaData,
+                    outputSchemaData: t.outputSchemaData,
+                })),
+            },
+        });
+        const toolsToRemoveRecords = await Promise.all(deltaToolDefinitions.toolsToRemove.map(t => t.get()));
+        const toolsToRemoveMessages = await chat.client.tables.message.create({
+            type: 'remove-tool-definition',
+            senderId: 'system',
+            payloadData: {
+                tools: toolsToRemoveRecords.map(t => t.id),
+            },
+        });
+
+        await chat.addMessages(
+            new ReferencedMessageRecord(toolsToAddMessages.id, chat.client),
+            new ReferencedMessageRecord(toolsToRemoveMessages.id, chat.client)
+        );
 
         return {
             portData: [

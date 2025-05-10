@@ -1,4 +1,4 @@
-import { SQliteClient } from '@abyss/records';
+import { ReferencedMessageRecord, SQliteClient } from '@abyss/records';
 import { invokeGraphHandler } from './handler';
 
 export interface HandlerOnHumanMessageParams {
@@ -15,13 +15,14 @@ export async function handlerOnHumanMessage(options: HandlerOnHumanMessageParams
     try {
         // Block chat and add human message
         await chatRef.block(graphId);
-        await chatRef.addMessages({
+        const messageRecord = await chatRef.client.tables.message.create({
             senderId: 'user',
             type: 'text',
             payloadData: {
                 content: humanMessage,
             },
         });
+        await chatRef.addMessages(new ReferencedMessageRecord(messageRecord.id, chatRef.client));
         // Send event to graph for it to process
         return await invokeGraphHandler({
             graphId,

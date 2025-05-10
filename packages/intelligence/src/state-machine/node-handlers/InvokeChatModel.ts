@@ -1,4 +1,4 @@
-import { ReferencedChatThreadRecord, ReferencedModelConnectionRecord } from '@abyss/records';
+import { ReferencedChatThreadRecord, ReferencedMessageRecord, ReferencedModelConnectionRecord } from '@abyss/records';
 import { invokeModelAgainstThread } from '../../models/handler';
 import { runUnproccessedToolCalls } from '../../tool-handlers/tool-router';
 import { randomId } from '../../utils/ids';
@@ -68,7 +68,8 @@ export class InvokeLanguageModelNode extends NodeHandler {
         const thread = await chat.getThread();
 
         // Tool
-        const tools = await thread.getAllActiveToolDefinitions();
+        const toolReferences = await thread.getAllActiveToolDefinitions();
+        const tools = await Promise.all(toolReferences.map(t => t.get()));
 
         // Model invoked
         const modelResponse = await invokeModelAgainstThread(inputLanguageModel, thread);
@@ -80,13 +81,14 @@ export class InvokeLanguageModelNode extends NodeHandler {
         // Add model response to chat
         for (const block of modelResponse.parsed) {
             if (block.type === 'text') {
-                await chat.addMessages({
+                const messageRecord = await chat.client.tables.message.create({
                     type: 'text',
                     payloadData: {
                         content: block.content,
                     },
                     senderId: data.execution.graph.id,
                 });
+                await chat.addMessages(new ReferencedMessageRecord(messageRecord.id, chat.client));
             }
             if (block.type === 'tool') {
                 const toolKey = Object.keys(block.content)[0];
@@ -94,7 +96,7 @@ export class InvokeLanguageModelNode extends NodeHandler {
                 if (!toolLookup) {
                     throw new Error(`Tool ${toolKey} not found`);
                 }
-                await chat.addMessages({
+                const messageRecord = await chat.client.tables.message.create({
                     type: 'tool-call-request',
                     payloadData: {
                         toolCallId: randomId(),
@@ -103,6 +105,7 @@ export class InvokeLanguageModelNode extends NodeHandler {
                     },
                     senderId: data.execution.graph.id,
                 });
+                await chat.addMessages(new ReferencedMessageRecord(messageRecord.id, chat.client));
             }
         }
 

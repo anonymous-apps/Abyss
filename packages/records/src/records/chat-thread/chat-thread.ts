@@ -1,10 +1,8 @@
 import { ReferencedSqliteRecord } from '../../sqlite/reference-record';
 import { ReferencedSqliteTable } from '../../sqlite/reference-table';
 import { SQliteClient } from '../../sqlite/sqlite-client';
-import { NewRecord } from '../../sqlite/sqlite.type';
 import { ReferencedMessageThreadRecord } from '../message-thread/message-thread';
 import { ReferencedMessageRecord } from '../message/message';
-import { MessageType } from '../message/message.type';
 import { ChatThreadType } from './chat-thread.type';
 
 export class ReferencedChatThreadTable extends ReferencedSqliteTable<ChatThreadType> {
@@ -32,19 +30,9 @@ export class ReferencedChatThreadRecord extends ReferencedSqliteRecord<ChatThrea
         super('chatThread', id, client);
     }
 
-    public async addMessagesByReference(...messages: ReferencedMessageRecord[]) {
-        const data = await this.get();
-        const messageThread = await this.client.tables.messageThread.get(data.threadId);
-        const messageThreadRef = new ReferencedMessageThreadRecord(messageThread.id, this.client);
-        const newThread = await messageThreadRef.addMessagesByReference(...messages);
-        await this.update({ threadId: newThread.id });
-    }
-
-    public async addMessages(...messages: NewRecord<MessageType>[]) {
-        const data = await this.get();
-        const messageThread = await this.client.tables.messageThread.get(data.threadId);
-        const messageThreadRef = new ReferencedMessageThreadRecord(messageThread.id, this.client);
-        const newThread = await messageThreadRef.addMessages(...messages);
+    public async addMessages(...messages: ReferencedMessageRecord[]) {
+        const thread = await this.getThread();
+        const newThread = await thread.addMessages(...messages);
         await this.update({ threadId: newThread.id });
     }
 

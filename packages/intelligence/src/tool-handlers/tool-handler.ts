@@ -35,7 +35,7 @@ export abstract class ToolHandler {
             },
         });
         const messageRef = new ReferencedMessageRecord(responseMessage.id, sqliteClient);
-        await chat.addMessages(responseMessage);
+        await chat.addMessages(messageRef);
 
         // Log the tool call
         const logRef = await sqliteClient.tables.logStream.new('tool-call', responseMessage.id);

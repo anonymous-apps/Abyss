@@ -17,6 +17,7 @@ export interface ToolDefinitionOutputProperty {
 
 export interface ToolDefinitionType extends BaseSqliteRecord {
     name: string;
+    shortName: string;
     description: string;
     handlerType: ToolDefinitionHandlerType;
     inputSchemaData: ToolDefinitionInputProperty[];

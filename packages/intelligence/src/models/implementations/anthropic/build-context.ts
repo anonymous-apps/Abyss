@@ -1,82 +1,51 @@
-import { NewToolDefinitionPartial, ReferencedMessageThreadRecord, RemoveToolDefinitionPartial, TextPartial } from '@abyss/records';
-import { Log } from '../../../utils/logs';
-import { AnthropicMessage, ConversationTurn } from './types';
+import { ReferencedMessageThreadRecord } from '@abyss/records';
+import { buildConversationPrompt } from '../../prompts/buildConversationPrompt';
+import { AnthropicMessage } from './types';
 
 export async function buildAnthropicMessages(thread: ReferencedMessageThreadRecord): Promise<AnthropicMessage[]> {
-    const messages = await thread.getAllMessages();
-    const message: ConversationTurn[] = [];
+    const conversationTurns = await buildConversationPrompt(thread, thread.client);
 
-    const consumeMessageTurn = (turn: ConversationTurn) => {
-        const lastTurn = message[message.length - 1];
+    const messages: AnthropicMessage[] = [];
 
-        if (!lastTurn) {
-            message.push(turn);
-            return;
+    for (const turn of conversationTurns) {
+        const isUser = turn.senderId === 'user';
+
+        const lastMessage = messages[messages.length - 1];
+        if (lastMessage && lastMessage.role === 'user' && isUser) {
+            messages.push({
+                role: 'assistant',
+                content: [{ type: 'text', text: 'understood' }],
+            });
+        }
+        if (lastMessage && lastMessage.role === 'assistant' && !isUser) {
+            messages.push({
+                role: 'user',
+                content: [{ type: 'text', text: 'continue' }],
+            });
         }
 
-        const lastTurnRole = lastTurn.role;
-        const thisTurnRole = turn.role;
-
-        if (lastTurnRole === thisTurnRole) {
-            lastTurn.content.push(...turn.content);
+        if (isUser) {
+            messages.push({
+                role: 'user',
+                content: [
+                    {
+                        type: 'text',
+                        text: turn.prompt.render(),
+                    },
+                ],
+            });
         } else {
-            message.push(turn);
-        }
-    };
-
-    for (const partial of messages) {
-        if (partial.type === 'text') {
-            consumeMessageTurn(serializeTextPartial(partial));
-        } else if (partial.type === 'new-tool-definition') {
-            consumeMessageTurn(serializeAddedToolDefinitions(partial));
-        } else if (partial.type === 'remove-tool-definition') {
-            consumeMessageTurn(serizleRemovedToolDefinitions(partial));
-        } else {
-            Log.warn('AnthropicSerializer', `Cant serialize partial: ${partial.type} as anthropic doesnt support it currently`);
+            messages.push({
+                role: 'assistant',
+                content: [
+                    {
+                        type: 'text',
+                        text: turn.prompt.render(),
+                    },
+                ],
+            });
         }
     }
 
-    return message;
-}
-
-function serializeTextPartial(partial: TextPartial): ConversationTurn {
-    return {
-        role: 'user',
-        content: [
-            {
-                type: 'text',
-                text: partial.payloadData.content,
-            },
-        ],
-    };
-}
-
-function serializeAddedToolDefinitions(partial: NewToolDefinitionPartial): ConversationTurn {
-    return {
-        role: 'user',
-        content: [
-            {
-                type: 'text',
-                text: `
-                You were just given access to the following tools:
-                ${partial.payloadData.tools.map(t => t.shortName).join(', ')}
-            `,
-            },
-        ],
-    };
-}
-
-function serizleRemovedToolDefinitions(partial: RemoveToolDefinitionPartial): ConversationTurn {
-    return {
-        role: 'user',
-        content: [
-            {
-                type: 'text',
-                text: `
-                You are no longer allowed to use the following tools:
-                ${partial.payloadData.tools.map(t => t).join(', ')}
-            `,
-            },
-        ],
-    };
+    return messages;
 }

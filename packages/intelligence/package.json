@@ -20,6 +20,7 @@
         "@abyss/records": "^0.0.2"
     },
     "dependencies": {
+        "@abyss/prompts": "^0.0.1",
         "fast-xml-parser": "^5.2.2"
     }
 }

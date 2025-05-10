@@ -6,6 +6,8 @@ import { SectionHeader } from './ChatSectionHeader';
 export function ChatHistoryRenderer({ thread }: { thread: MessageThreadTurn[] }) {
     const elements: React.ReactNode[] = [];
 
+    console.log(thread);
+
     for (let i = 0; i < thread.length; i++) {
         const turn = thread[i];
         const elementsThisTurn: React.ReactNode[] = [];

@@ -1,3 +1,4 @@
+import { ReferencedMessageRecord } from '@abyss/records';
 import { invokeModelAgainstThread } from '../../models/handler';
 import { InvokeModelDirectlyParams } from './types';
 
@@ -7,13 +8,14 @@ export async function invokeModelDirectlyHandler(options: InvokeModelDirectlyPar
 
     try {
         // Add the human message to the chat
-        await chatRef.addMessages({
+        const messageRecord = await chatRef.client.tables.message.create({
             senderId: 'user',
             type: 'text',
             payloadData: {
                 content: humanMessage,
             },
         });
+        await chatRef.addMessages(new ReferencedMessageRecord(messageRecord.id, chatRef.client));
         await chatRef.block(modelConnectionId);
 
         // Load the data
@@ -32,13 +34,14 @@ export async function invokeModelDirectlyHandler(options: InvokeModelDirectlyPar
         });
 
         // Update the chat with the response
-        await chatRef.addMessages({
+        const messageRecord2 = await chatRef.client.tables.message.create({
             senderId: modelConnectionRef.id,
             type: 'text',
             payloadData: {
                 content: response.outputString,
             },
         });
+        await chatRef.addMessages(new ReferencedMessageRecord(messageRecord2.id, chatRef.client));
     } catch (error) {
         console.error(error);
     } finally {

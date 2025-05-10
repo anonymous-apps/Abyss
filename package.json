@@ -5,7 +5,8 @@
         "packages/app",
         "packages/ui-components",
         "packages/intelligence",
-        "packages/records"
+        "packages/records",
+        "packages/prompts"
     ],
     "scripts": {
         "dev": "npm run dev --workspace=packages/app",

@@ -55,10 +55,10 @@ export class ReferencedMetricTable extends ReferencedSqliteTable<MetricType> {
         return dataParsed.map(row => row.name);
     }
 
-    publishMetricObject(values: Record<string, number>, dimensions: Record<string, string>) {
+    async publishMetricObject(values: Record<string, number>, dimensions: Record<string, string>) {
         for (const key of Object.keys(values)) {
             const value = values[key];
-            this.create({
+            await this.create({
                 name: key,
                 value,
                 dimensionData: dimensions,
