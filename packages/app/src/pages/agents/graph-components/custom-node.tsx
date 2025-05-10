@@ -125,7 +125,7 @@ export function CustomAgentGraphNode({ id, data }: { id: string; data: RenderedG
     };
 
     return (
-        <div className="bg-background-200">
+        <div className="bg-background-200 rounded-md">
             <div
                 className="border rounded-md"
                 style={{
@@ -146,7 +146,7 @@ export function CustomAgentGraphNode({ id, data }: { id: string; data: RenderedG
                             <XIcon className="w-3 h-3" />
                         </button>
                     </div>
-                    <div className="text-[8px] text-text-500 ml-6">{data.definition.description}</div>
+                    <div className="text-[8px] text-text-500 mx-6 max-w-[300px]">{data.definition.description}</div>
                 </div>
                 {hasAnySignals && (
                     <div

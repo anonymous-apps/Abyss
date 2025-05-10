@@ -18,5 +18,8 @@
     },
     "peerDependencies": {
         "@abyss/records": "^0.0.2"
+    },
+    "dependencies": {
+        "fast-xml-parser": "^5.2.2"
     }
 }

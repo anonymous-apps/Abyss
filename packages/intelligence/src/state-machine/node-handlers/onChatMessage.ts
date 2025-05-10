@@ -10,25 +10,11 @@ export class OnChatMessageNode extends NodeHandler {
         return {
             name: 'On Chat Message',
             icon: 'chat',
-            description: 'Triggered when a chat message is sent to a chat with this agent',
+            description: 'Triggered after a chat message is sent to a chat with this agent',
             color: '#FFA500',
             inputPorts: {},
             parameters: {},
             outputPorts: {
-                thread: {
-                    id: 'thread',
-                    type: 'data',
-                    dataType: 'thread',
-                    name: 'Thread',
-                    description: 'A thread representing the chat history with the newly sent user message',
-                },
-                message: {
-                    id: 'message',
-                    type: 'data',
-                    dataType: 'string',
-                    name: 'Message',
-                    description: 'The raw text message that was just sent to the chat',
-                },
                 chat: {
                     id: 'chat',
                     type: 'data',

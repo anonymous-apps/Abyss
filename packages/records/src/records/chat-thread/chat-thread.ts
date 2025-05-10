@@ -3,6 +3,7 @@ import { ReferencedSqliteTable } from '../../sqlite/reference-table';
 import { SQliteClient } from '../../sqlite/sqlite-client';
 import { NewRecord } from '../../sqlite/sqlite.type';
 import { ReferencedMessageThreadRecord } from '../message-thread/message-thread';
+import { ReferencedMessageRecord } from '../message/message';
 import { MessageType } from '../message/message.type';
 import { ChatThreadType } from './chat-thread.type';
 
@@ -31,6 +32,14 @@ export class ReferencedChatThreadRecord extends ReferencedSqliteRecord<ChatThrea
         super('chatThread', id, client);
     }
 
+    public async addMessagesByReference(...messages: ReferencedMessageRecord[]) {
+        const data = await this.get();
+        const messageThread = await this.client.tables.messageThread.get(data.threadId);
+        const messageThreadRef = new ReferencedMessageThreadRecord(messageThread.id, this.client);
+        const newThread = await messageThreadRef.addMessagesByReference(...messages);
+        await this.update({ threadId: newThread.id });
+    }
+
     public async addMessages(...messages: NewRecord<MessageType>[]) {
         const data = await this.get();
         const messageThread = await this.client.tables.messageThread.get(data.threadId);
@@ -45,5 +54,14 @@ export class ReferencedChatThreadRecord extends ReferencedSqliteRecord<ChatThrea
 
     public async unblock() {
         await this.update({ blockerId: null });
+    }
+
+    public async setThread(thread: ReferencedMessageThreadRecord) {
+        await this.update({ threadId: thread.id });
+    }
+
+    public async getThread() {
+        const data = await this.get();
+        return new ReferencedMessageThreadRecord(data.threadId, this.client);
     }
 }

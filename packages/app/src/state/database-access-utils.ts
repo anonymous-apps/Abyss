@@ -29,6 +29,10 @@ export function useScanTableModelConnections() {
     return useDatabaseTableScan<ModelConnectionType>('modelConnection');
 }
 
+export function useScanTableToolDefinitions() {
+    return useDatabaseTableScan<ToolDefinitionType>('toolDefinition');
+}
+
 export function useScanTableAgents() {
     return useDatabaseTableScan<AgentGraphType>('agentGraph');
 }

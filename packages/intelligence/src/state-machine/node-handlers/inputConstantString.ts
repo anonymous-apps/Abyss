@@ -10,9 +10,9 @@ export class InputConstantStringNode extends NodeHandler {
     protected _getDefinition(): Omit<GraphNodeDefinition, 'id' | 'type'> {
         return {
             name: 'Constant String',
-            icon: 'model',
+            icon: 'text',
             description: 'A constant string value',
-            color: '#101010',
+            color: '#515151',
             inputPorts: {},
             parameters: {},
             outputPorts: {

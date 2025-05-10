@@ -1,5 +1,6 @@
-import { ReferencedMessageThreadRecord, ReferencedModelConnectionRecord } from '@abyss/records';
+import { ReferencedChatThreadRecord, ReferencedModelConnectionRecord } from '@abyss/records';
 import { invokeModelAgainstThread } from '../../models/handler';
+import { runUnproccessedToolCalls } from '../../tool-handlers/tool-router';
 import { randomId } from '../../utils/ids';
 import { NodeHandler } from '../node-handler';
 import { NodeExecutionResult, ResolveNodeData } from '../type-base.type';
@@ -14,7 +15,8 @@ export class InvokeLanguageModelNode extends NodeHandler {
         return {
             name: 'Invoke Chat Model',
             icon: 'ai',
-            description: 'Invoke a chat model by giving it a thread and capturing the output',
+            description:
+                'Asks a chat model to respond in a chat. The model response is added to the chat and all tools requested are run automatically.',
             color: '#800080',
             parameters: {},
             inputPorts: {
@@ -25,6 +27,13 @@ export class InvokeLanguageModelNode extends NodeHandler {
                     name: 'Invoke',
                     description: 'Invoke the chat model',
                 },
+                chat: {
+                    id: 'chat',
+                    type: 'data',
+                    dataType: 'chat',
+                    name: 'Chat',
+                    description: 'A chat',
+                },
                 chatModel: {
                     id: 'chatModel',
                     type: 'data',
@@ -32,28 +41,14 @@ export class InvokeLanguageModelNode extends NodeHandler {
                     name: 'Chat Model',
                     description: 'A chat model',
                 },
-                thread: {
-                    id: 'thread',
-                    type: 'data',
-                    dataType: 'thread',
-                    name: 'Thread',
-                    description: 'A thread',
-                },
             },
             outputPorts: {
-                rawResponse: {
-                    id: 'rawResponse',
+                chat: {
+                    id: 'chat',
                     type: 'data',
-                    dataType: 'string',
-                    name: 'Raw Response',
-                    description: 'The raw response from the chat model',
-                },
-                newThread: {
-                    id: 'newThread',
-                    type: 'data',
-                    dataType: 'thread',
-                    name: 'New Thread',
-                    description: 'The updated thread with the response from the chat model',
+                    dataType: 'chat',
+                    name: 'Chat',
+                    description: 'A reference to the input chat',
                 },
                 next: {
                     id: 'next',
@@ -69,34 +64,57 @@ export class InvokeLanguageModelNode extends NodeHandler {
     protected async _resolve(data: ResolveNodeData): Promise<NodeExecutionResult> {
         const inputLanguageModel = data.resolvePort<ReferencedModelConnectionRecord>('chatModel');
         const model = await inputLanguageModel.get();
-        const thread = data.resolvePort<ReferencedMessageThreadRecord>('thread');
-        const result = await invokeModelAgainstThread(inputLanguageModel, thread);
-        const baseThreadRef = await data.database.tables.messageThread.ref(thread.id);
-        const outThread = await baseThreadRef.addMessages({
-            senderId: data.execution.graph.id,
-            type: 'text',
-            payloadData: {
-                content: result.outputString,
-            },
-        });
-        const outThreadRef = await data.database.tables.messageThread.ref(outThread.id);
+        const chat = data.resolvePort<ReferencedChatThreadRecord>('chat');
+        const thread = await chat.getThread();
 
-        data.execution.publishMetricObject(result.metrics, {
+        // Tool
+        const tools = await thread.getAllActiveToolDefinitions();
+
+        // Model invoked
+        const modelResponse = await invokeModelAgainstThread(inputLanguageModel, thread);
+        data.execution.publishMetricObject(modelResponse.metrics, {
             modelId: model.modelId,
             provider: model.providerId,
         });
 
+        // Add model response to chat
+        for (const block of modelResponse.parsed) {
+            if (block.type === 'text') {
+                await chat.addMessages({
+                    type: 'text',
+                    payloadData: {
+                        content: block.content,
+                    },
+                    senderId: data.execution.graph.id,
+                });
+            }
+            if (block.type === 'tool') {
+                const toolKey = Object.keys(block.content)[0];
+                const toolLookup = tools.find(t => t.shortName.toUpperCase() === toolKey.toUpperCase());
+                if (!toolLookup) {
+                    throw new Error(`Tool ${toolKey} not found`);
+                }
+                await chat.addMessages({
+                    type: 'tool-call-request',
+                    payloadData: {
+                        toolCallId: randomId(),
+                        toolId: toolLookup.id,
+                        parameters: block.content[toolKey] as Record<string, unknown>,
+                    },
+                    senderId: data.execution.graph.id,
+                });
+            }
+        }
+
+        // Run any unprocessed tool calls
+        await runUnproccessedToolCalls(chat, data.database);
+
         return {
             portData: [
                 {
-                    portId: 'rawResponse',
-                    dataType: 'string',
-                    inputValue: result.outputRaw,
-                },
-                {
-                    portId: 'newThread',
-                    dataType: 'thread',
-                    inputValue: outThreadRef,
+                    portId: 'chat',
+                    dataType: 'chat',
+                    inputValue: chat,
                 },
                 {
                     portId: 'next',

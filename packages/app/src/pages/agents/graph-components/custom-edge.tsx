@@ -43,7 +43,7 @@ export default function CustomEdge({
 
     return (
         <g>
-            <path d={edgePath} fill="none" stroke="transparent" strokeWidth={20} onClick={onEdgeClick} style={{ cursor: 'pointer' }} />
+            <path d={edgePath} fill="none" stroke="transparent" strokeWidth={30} onClick={onEdgeClick} style={{ cursor: 'pointer' }} />
             {isSignal ? (
                 <>
                     {/* Base path */}
@@ -51,7 +51,7 @@ export default function CustomEdge({
                         ref={pathRef}
                         d={edgePath}
                         fill="none"
-                        strokeWidth={style.strokeWidth || 2}
+                        strokeWidth={10}
                         markerEnd={markerEnd}
                         style={{
                             ...style,
@@ -65,7 +65,7 @@ export default function CustomEdge({
                     <path
                         d={edgePath}
                         fill="none"
-                        strokeWidth={style.strokeWidth || 3}
+                        strokeWidth={4}
                         strokeDasharray={`${pathLength * 0.1}, ${pathLength}`}
                         strokeDashoffset="0"
                         markerEnd={markerEnd}
@@ -96,7 +96,7 @@ export default function CustomEdge({
                     d={edgePath}
                     fill="none"
                     stroke={'var(--color-background-700)'}
-                    strokeWidth={style.strokeWidth || 2}
+                    strokeWidth={3}
                     markerEnd={markerEnd}
                     style={{
                         ...style,

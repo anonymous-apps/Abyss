@@ -27,3 +27,8 @@ export interface AnthropicTextContent {
     type: 'text';
     text?: string;
 }
+
+export interface ConversationTurn {
+    role: 'user' | 'assistant';
+    content: AnthropicContent[];
+}

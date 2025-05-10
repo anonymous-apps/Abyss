@@ -123,6 +123,7 @@ describe('invokeGraph', () => {
         const chatOutput = await db.tables.chatThread.get(chat.id);
         const threadOutput = await db.tables.messageThread.get(chatOutput.threadId);
         const messageOutput = await db.tables.message.get(threadOutput.messagesData[0].id);
+        //@ts-ignore
         expect(messageOutput.payloadData.content).toEqual('test');
     });
 });

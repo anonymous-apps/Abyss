@@ -5,7 +5,7 @@ import { BaseSqliteRecord, SqliteTables } from './sqlite.type';
 export class ReferencedSqliteRecord<IRecordType extends BaseSqliteRecord = BaseSqliteRecord> {
     public readonly tableId: keyof SqliteTables;
     public readonly id: string;
-    protected client: SQliteClient;
+    public readonly client: SQliteClient;
 
     constructor(tableId: keyof SqliteTables, recordId: string, client: SQliteClient) {
         this.tableId = tableId;

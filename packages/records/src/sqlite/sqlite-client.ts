@@ -78,7 +78,10 @@ export class SQliteClient {
     async execute(sql: string, params: any[] = []) {
         return new Promise((resolve, reject) => {
             this.db.all(sql, params, (err, rows) => {
-                if (err) reject(err);
+                if (err) {
+                    console.error('[SQliteClient]', sql, params, err);
+                    reject(err);
+                }
                 resolve(rows);
             });
         });

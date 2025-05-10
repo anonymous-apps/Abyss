@@ -1,4 +1,4 @@
-export type GraphDataType = 'string' | 'number' | 'boolean' | 'thread' | 'chat-model' | 'chat' | 'signal';
+export type GraphDataType = 'string' | 'number' | 'boolean' | 'thread' | 'chat-model' | 'chat' | 'signal' | 'tool-set';
 
 export interface GraphPortDefinition {
     id: string;

@@ -35,13 +35,14 @@ export function ViewAgentGraphPage() {
                         proOptions={{ hideAttribution: true }}
                         nodeTypes={{ custom: CustomAgentGraphNode }}
                         edgeTypes={{ custom: CustomEdge }}
+                        minZoom={0.3}
                     >
                         <Background
                             variant={BackgroundVariant.Dots}
                             gap={12}
                             size={1}
-                            className="bg-background-100"
-                            style={{ stroke: 'var(--color-background-400)' }}
+                            className="bg-background-400"
+                            style={{ stroke: 'var(--color-background-300)' }}
                         />
                     </ReactFlow>
                 </div>

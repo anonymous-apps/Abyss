@@ -1,7 +1,7 @@
 import { Nodes } from '@abyss/intelligence';
 import { GraphNodeDefinition } from '@abyss/intelligence/dist/state-machine/type-definition.type';
 import { Sidebar, SidebarButton, SidebarSection } from '@abyss/ui-components';
-import { Box, MessageCircle, Sparkles } from 'lucide-react';
+import { ArrowRight, MessageCircle, Sparkles } from 'lucide-react';
 import React from 'react';
 
 interface AgentNodeDrawerProps {
@@ -18,15 +18,31 @@ export function AgentNodeDrawer({ onAddNode }: AgentNodeDrawerProps) {
                     icon={MessageCircle}
                     onClick={() => onAddNode(Nodes.OnChatMessage.getDefinition())}
                 />
-                <SidebarSection title="Input" />
-                <SidebarButton label="Language Model" icon={Box} onClick={() => onAddNode(Nodes.InputLanguageModel.getDefinition())} />
-                <SidebarButton label="Constant String" icon={Box} onClick={() => onAddNode(Nodes.InputConstantString.getDefinition())} />
-                <SidebarSection title="Actions" />
+                <SidebarSection title="Constants" />
+                <SidebarButton
+                    label="Input String"
+                    icon={ArrowRight}
+                    onClick={() => onAddNode(Nodes.InputConstantString.getDefinition())}
+                />
+                <SidebarSection title="AI" />
+                <SidebarButton
+                    label="Input Language Model"
+                    icon={ArrowRight}
+                    onClick={() => onAddNode(Nodes.InputLanguageModel.getDefinition())}
+                />
                 <SidebarButton
                     label="Invoke Language Model"
                     icon={Sparkles}
                     onClick={() => onAddNode(Nodes.InvokeLanguageModel.getDefinition())}
                 />
+                <SidebarSection title="Tools" />
+                <SidebarButton label="Input Tools" icon={ArrowRight} onClick={() => onAddNode(Nodes.InputToolsSelection.getDefinition())} />
+                <SidebarButton
+                    label="Add Tools to Thread"
+                    icon={MessageCircle}
+                    onClick={() => onAddNode(Nodes.AddToolsToThread.getDefinition())}
+                />
+                <SidebarSection title="Chats" />
                 <SidebarButton
                     label="Write Agent Message"
                     icon={MessageCircle}

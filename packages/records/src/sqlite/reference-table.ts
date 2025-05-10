@@ -59,7 +59,7 @@ export class ReferencedSqliteTable<IRecordType extends BaseSqliteRecord = BaseSq
         };
         const serialized = ReferencedSqliteTable.serialize(data as IRecordType);
         const raw = await this.client.execute(
-            `INSERT INTO ${this.tableId} (${Object.keys(serialized).join(', ')}) VALUES (${Object.values(serialized)
+            `INSERT OR REPLACE INTO ${this.tableId} (${Object.keys(serialized).join(', ')}) VALUES (${Object.values(serialized)
                 .map(() => '?')
                 .join(', ')}) RETURNING *`,
             [...Object.values(serialized)]
@@ -92,7 +92,7 @@ export class ReferencedSqliteTable<IRecordType extends BaseSqliteRecord = BaseSq
             .join(', ');
 
         const raw = await this.client.execute(
-            `INSERT INTO ${this.tableId} (${columns}) VALUES ${placeholders} RETURNING *`,
+            `INSERT OR REPLACE INTO ${this.tableId} (${columns}) VALUES ${placeholders} RETURNING *`,
             data.flatMap(record => Object.values(ReferencedSqliteTable.serialize(record as IRecordType)))
         );
 

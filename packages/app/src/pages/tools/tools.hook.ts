@@ -12,9 +12,7 @@ export function useToolsPage() {
     const tools = useScanTableTools();
     const systemTools = tools.data?.filter(tool => tool.handlerType === 'abyss');
 
-    const viewTool = (toolId: string) => {
-        navigate(`/tools/id/${toolId}`);
-    };
+    const viewTool = (toolId: string) => {};
 
     return { breadcrumbs: pageBreadcrumbs, tools, systemTools, viewTool };
 }

@@ -53,15 +53,6 @@ export function App() {
                         </Route>
                     </Route>
 
-                    {/* <Route path="/" element={<WithAppSidebar />}>
-                        <Route path="/tools" element={<ToolsPage />} />
-                        <Route path="/tools/id/:id" element={<ToolViewPage />} />
-                        <Route path="/prompts" element={<PromptsPage />} />
-                        <Route path="/prompts/create" element={<CreatePromptPage />} />
-                        <Route path="/prompts/id/:id" element={<ViewPromptPage />} />
-                        <Route path="/documents" element={<DocumentsPage />} />
-                        <Route path="/documents/id/:id" element={<ViewDocumentPage />} />
-                    </Route> */}
                     <Route path="*" element={<MainPage />} />
                 </Routes>
             </BrowserRouter>

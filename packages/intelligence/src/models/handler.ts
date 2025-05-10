@@ -1,8 +1,16 @@
 import { ReferencedMessageThreadRecord, ReferencedModelConnectionRecord } from '@abyss/records';
+import { parseLLMOutput } from '../parser/parser';
 import { InvokeAnthropic } from './implementations/anthropic/handler';
 import { InvokeStatic } from './implementations/static/handler';
 
 export async function invokeModelAgainstThread(connectionRef: ReferencedModelConnectionRecord, thread: ReferencedMessageThreadRecord) {
+    const modelResponse = await invokeLLM(connectionRef, thread);
+    const parsedData = await parseLLMOutput(modelResponse.outputString);
+
+    return { ...modelResponse, parsed: parsedData };
+}
+
+async function invokeLLM(connectionRef: ReferencedModelConnectionRecord, thread: ReferencedMessageThreadRecord) {
     const connection = await connectionRef.get();
     if (connection.accessFormat.toLowerCase() === 'anthropic') {
         return InvokeAnthropic({

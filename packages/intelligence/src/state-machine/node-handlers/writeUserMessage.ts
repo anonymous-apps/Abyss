@@ -47,13 +47,6 @@ export class WriteUserMessageNode extends NodeHandler {
                     name: 'Next',
                     description: 'What to do next',
                 },
-                thread: {
-                    id: 'thread',
-                    type: 'data',
-                    dataType: 'thread',
-                    name: 'Thread',
-                    description: 'The thread with the new message added',
-                },
             },
         };
     }
@@ -70,20 +63,12 @@ export class WriteUserMessageNode extends NodeHandler {
             },
         });
 
-        const chatData = await chat.get();
-        const thread = data.database.tables.messageThread.ref(chatData.threadId);
-
         return {
             portData: [
                 {
                     portId: 'next',
                     dataType: 'signal',
                     inputValue: randomId(),
-                },
-                {
-                    portId: 'thread',
-                    dataType: 'thread',
-                    inputValue: thread,
                 },
             ],
         };
