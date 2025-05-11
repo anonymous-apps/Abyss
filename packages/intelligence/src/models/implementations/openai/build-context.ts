@@ -6,12 +6,6 @@ export async function buildOpenAIMessages(thread: ReferencedMessageThreadRecord)
     const conversationTurns = await buildConversationPrompt(thread, thread.client);
     const messages: OpenAIMessage[] = [];
 
-    // Add system message if needed
-    messages.push({
-        role: 'system',
-        content: 'You are a helpful AI assistant.',
-    });
-
     for (const turn of conversationTurns) {
         const isUser = turn.senderId === 'user';
 
