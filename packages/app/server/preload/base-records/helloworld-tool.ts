@@ -3,6 +3,7 @@ import { NewRecord, ToolDefinitionType } from '@abyss/records';
 export const HelloWorldTool: NewRecord<ToolDefinitionType> = {
     id: 'toolDefinition::helloworld-tool',
     name: 'Hello World',
+    shortName: 'helloworld',
     description: 'A debug tool that echos back the input when called',
     handlerType: 'abyss',
     inputSchemaData: [

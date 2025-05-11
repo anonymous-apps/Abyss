@@ -1,7 +1,7 @@
 import { Cell, CellHeader, CellHeader2, CellHeader3, CellSubPrompt, CellText, CellXMLElement } from './promptTemplate.types';
 
 export class CompiledPrompt {
-    constructor(private readonly cells: Cell[]) {}
+    constructor(public readonly cells: Cell[]) {}
 
     getCells(): Cell[] {
         return [...this.cells];

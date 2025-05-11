@@ -34,7 +34,9 @@ export async function buildConversationPrompt(thread: ReferencedMessageThreadRec
             const toolDefinitions = await Promise.all(
                 message.payloadData.tools.map(async tool => db.tables.toolDefinition.get(tool.toolId))
             );
-            prompt.addSubPrompt(addToolDefinitionPrompt.compile(toolDefinitions));
+            if (toolDefinitions.length > 0) {
+                prompt.addSubPrompt(addToolDefinitionPrompt.compile(toolDefinitions));
+            }
         }
     }
 

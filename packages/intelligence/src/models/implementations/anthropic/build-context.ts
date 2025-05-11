@@ -30,7 +30,7 @@ export async function buildAnthropicMessages(thread: ReferencedMessageThreadReco
                 content: [
                     {
                         type: 'text',
-                        text: turn.prompt.render(),
+                        text: turn.prompt.render() || 'continue',
                     },
                 ],
             });
@@ -40,7 +40,7 @@ export async function buildAnthropicMessages(thread: ReferencedMessageThreadReco
                 content: [
                     {
                         type: 'text',
-                        text: turn.prompt.render(),
+                        text: turn.prompt.render() || 'understood',
                     },
                 ],
             });
