@@ -14,6 +14,7 @@
         "build:ui": "npm run build --workspace=packages/ui-components",
         "build:intelligence": "npm run build --workspace=packages/intelligence",
         "build:records": "npm run build --workspace=packages/records",
+        "build:prompts": "npm run build --workspace=packages/prompts",
         "build:mac": "node scripts/generate-icons.js && npm run build:mac --workspace=packages/app && say 'Build complete'",
         "debug:mac": "npm run debug:mac --workspace=packages/app",
         "prisma": "npm run prisma --workspace=packages/app",

@@ -39,6 +39,7 @@ export async function InvokeAnthropic(props: InvokeAnthropicProps): Promise<Omit
                 model: modelId,
                 messages,
                 stream: false,
+                max_tokens: 9000,
             }),
         });
 
