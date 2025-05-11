@@ -20,7 +20,6 @@ export async function buildConversationPrompt(thread: ReferencedMessageThreadRec
         currentTurnId = senderId;
     };
 
-    let hasNewToolDefinition = false;
     for (const message of messages) {
         // Start new turn if needed
         if (message.senderId !== currentTurnId) {
