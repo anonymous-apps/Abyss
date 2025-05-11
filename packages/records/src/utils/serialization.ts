@@ -1,31 +1,44 @@
-export function safeSerialize(obj: any, depth: number = 3): any {
+export function safeSerialize(obj: any, depth: number = 100, seen: Set<any> = new Set()): any {
     if (depth <= 0) {
         return 'MAX_DEPTH_REACHED';
     }
 
-    if (typeof obj === 'object' && obj !== null) {
-        const result: any = {};
-        for (const key of Object.keys(obj)) {
-            if (typeof obj[key] === 'function') {
-                result[key] = 'FUNCTION';
-            } else if (obj[key] instanceof Date) {
-                result[key] = obj[key].toISOString();
-            } else if (typeof obj[key] === 'object' && obj[key] !== null) {
-                result[key] = safeSerialize(obj[key], depth - 1);
-            } else if (typeof obj[key] === 'string') {
-                result[key] = obj[key];
-            } else if (Array.isArray(obj[key])) {
-                result[key] = obj[key].map((item: any) => safeSerialize(item, depth - 1));
-            } else {
-                result[key] = obj[key];
-            }
-        }
+    // Handle primitive types directly
+    if (obj === null || typeof obj !== 'object') {
+        return obj;
+    }
+
+    // Check for circular references
+    if (seen.has(obj)) {
+        return 'RECURSIVE_BREAK';
+    }
+
+    // Add current object to seen set
+    seen.add(obj);
+
+    if (Array.isArray(obj)) {
+        const result = obj.map((item: any) => safeSerialize(item, depth - 1, seen));
         return result;
     }
 
-    if (Array.isArray(obj)) {
-        return obj.map((item: any) => safeSerialize(item, depth - 1));
+    if (obj instanceof Date) {
+        return obj.toISOString();
     }
 
-    return obj;
+    const result: any = {};
+    for (const key of Object.keys(obj)) {
+        const value = obj[key];
+
+        if (typeof value === 'function') {
+            result[key] = 'FUNCTION';
+        } else if (value instanceof Date) {
+            result[key] = value.toISOString();
+        } else if (typeof value === 'object' && value !== null) {
+            result[key] = safeSerialize(value, depth - 1, seen);
+        } else {
+            result[key] = value;
+        }
+    }
+
+    return result;
 }

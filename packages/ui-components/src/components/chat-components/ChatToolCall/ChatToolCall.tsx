@@ -121,20 +121,21 @@ export const ChatToolCall: React.FC<ChatToolCallProps> = ({
                             </Button>
                         </div>
                     )}
+                </div>
+            )}
 
-                    {actionItems.length > 0 && (
-                        <div className="flex gap-1 mt-2">
-                            {actionItems.map((action, index) => (
-                                <Button
-                                    key={index}
-                                    variant="secondary"
-                                    icon={action.icon}
-                                    tooltip={action.tooltip}
-                                    onClick={action.onClick}
-                                />
-                            ))}
-                        </div>
-                    )}
+            {actionItems.length > 0 && (
+                <div className="w-full flex justify-end gap-1 z-10 pointer-events-auto">
+                    {actionItems.map((action, index) => (
+                        <Button
+                            key={index}
+                            variant="secondary"
+                            icon={action.icon}
+                            tooltip={action.tooltip}
+                            onClick={action.onClick}
+                            className="p-1 h-5 w-5 min-w-0 min-h-0 flex items-center justify-center"
+                        />
+                    ))}
                 </div>
             )}
         </div>

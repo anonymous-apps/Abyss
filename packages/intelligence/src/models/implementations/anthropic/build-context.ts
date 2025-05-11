@@ -8,7 +8,7 @@ export async function buildAnthropicMessages(thread: ReferencedMessageThreadReco
     const messages: AnthropicMessage[] = [];
 
     for (const turn of conversationTurns) {
-        const isUser = turn.senderId === 'user';
+        const isUser = turn.senderId === 'user' || turn.senderId === 'system';
 
         const lastMessage = messages[messages.length - 1];
         if (lastMessage && lastMessage.role === 'user' && isUser) {

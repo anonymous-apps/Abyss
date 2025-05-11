@@ -55,10 +55,10 @@ export const LogView: React.FC<LogViewProps> = ({ logs, startTime, className = '
     }
 
     return (
-        <div className={`w-full rounded-sm ${className} p-2 bg-background-100`}>
+        <div className={`w-full rounded-sm ${className} p-2 bg-background-100 font-mono`}>
             <div className="space-y-1">
                 {logs.map((log, index) => (
-                    <div key={index} className="duration-200 rounded-sm text-sm">
+                    <div key={index} className="duration-200 rounded-sm text-xs">
                         <div
                             className={`p-2 flex items-center gap-4 cursor-pointer hover:bg-background-200 transition-colors ${
                                 expandedLogs.has(index) ? 'bg-background-200' : ''
@@ -76,8 +76,8 @@ export const LogView: React.FC<LogViewProps> = ({ logs, startTime, className = '
                                 <ChevronRight className="w-4 h-4 text-text-300" />
                             )}
                         </div>
-                        <div className={`overflow-hidden  ${expandedLogs.has(index) ? 'max-h-[500px]' : 'max-h-0'}`}>
-                            <div className="p-4 bg-background-300 border-t border-background-200">
+                        <div className={`overflow-auto  ${expandedLogs.has(index) ? 'max-h-[500px]' : 'max-h-0'}`}>
+                            <div className="p-4 bg-background-300 border-t border-background-200 font-mono">
                                 <pre className="text-xs text-text-300 whitespace-pre-wrap">{log.message}</pre>
                                 {log.data && Object.keys(log.data).length > 0 && (
                                     <pre className="text-xs text-text-300 whitespace-pre-wrap mt-4">

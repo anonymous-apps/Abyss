@@ -1,7 +1,8 @@
-import { ReferencedMessageThreadRecord } from '@abyss/records';
+import { ReferencedLogStreamRecord, ReferencedMessageThreadRecord } from '@abyss/records';
 
 export interface InvokeOpenAIProps {
     thread: ReferencedMessageThreadRecord;
+    logStream: ReferencedLogStreamRecord;
     modelId: string;
     apiKey: string;
 }

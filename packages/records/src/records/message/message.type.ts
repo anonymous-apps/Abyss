@@ -7,6 +7,7 @@ export interface TextPartial extends BaseSqliteRecord {
     payloadData: {
         content: string;
     };
+    referencedData?: Record<string, string>;
 }
 
 export interface NewToolDefinitionPartial extends BaseSqliteRecord {
@@ -21,6 +22,7 @@ export interface NewToolDefinitionPartial extends BaseSqliteRecord {
             outputSchemaData: Record<string, any>;
         }[];
     };
+    referencedData?: Record<string, string>;
 }
 
 export interface RemoveToolDefinitionPartial extends BaseSqliteRecord {
@@ -29,6 +31,7 @@ export interface RemoveToolDefinitionPartial extends BaseSqliteRecord {
     payloadData: {
         tools: string[];
     };
+    referencedData?: Record<string, string>;
 }
 
 export interface ToolCallRequestPartial extends BaseSqliteRecord {
@@ -39,6 +42,7 @@ export interface ToolCallRequestPartial extends BaseSqliteRecord {
         toolId: string;
         parameters: Record<string, any>;
     };
+    referencedData?: Record<string, string>;
 }
 
 export interface ToolCallResponsePartial extends BaseSqliteRecord {
@@ -49,6 +53,7 @@ export interface ToolCallResponsePartial extends BaseSqliteRecord {
         status: Status;
         result: string;
     };
+    referencedData?: Record<string, string>;
 }
 
 export type MessageType =

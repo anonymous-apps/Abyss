@@ -1,14 +1,26 @@
 import { Log } from '../../../utils/logs';
 import { InvokeModelInternalResult } from '../../types';
 import { buildOpenAIMessages } from './build-context';
-import { InvokeOpenAIProps, OpenAIResponse } from './types';
+import { InvokeOpenAIProps, OpenAIMessage, OpenAIResponse } from './types';
 
-export async function InvokeOpenAI(props: InvokeOpenAIProps): Promise<InvokeModelInternalResult> {
+function openaiMessageToRawString(message: OpenAIMessage[]): string {
+    let result: string = '';
+    for (const msg of message) {
+        result += '##### ROLE: ' + msg.role + '\n';
+        result += msg.content + '\n';
+    }
+    return result;
+}
+
+export async function InvokeOpenAI(props: InvokeOpenAIProps): Promise<Omit<InvokeModelInternalResult, 'logStream'>> {
     const messages = await buildOpenAIMessages(props.thread);
     const modelId = props.modelId;
     const apiKey = props.apiKey;
 
-    console.log('[InvokeOpenAI]', messages);
+    await props.logStream.log('openai-handler', 'Invoking OpenAI API', {
+        messages,
+    });
+    await props.logStream.log('openai-handler', 'OpenAI Raw prompt: \n\n' + openaiMessageToRawString(messages));
 
     try {
         const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -29,6 +41,10 @@ export async function InvokeOpenAI(props: InvokeOpenAIProps): Promise<InvokeMode
 
         const responseData = await response.json();
         const parsed = JSON.parse(JSON.stringify(responseData)) as OpenAIResponse;
+
+        await props.logStream.log('openai-handler', 'OpenAI API response', {
+            response: parsed,
+        });
 
         // Create metrics
         const metrics = {
