@@ -9,10 +9,6 @@ export function SectionHeader({ sender, timestamp }: { sender: string; timestamp
     const reference = useRecordReference({ sourceId: sender });
     const formattedTime = formatDistanceToNow(timestamp, { addSuffix: true });
 
-    if (sender === 'system') {
-        return null;
-    }
-
     return (
         <ChatTurnHeader
             icon={reference.icon}

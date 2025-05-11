@@ -1,5 +1,5 @@
-import { MessageThreadTurn, NewToolDefinitionPartial, RemoveToolDefinitionPartial, TextPartial } from '@abyss/records';
-import { ChatMessageSystemText, ChatMessageText } from '@abyss/ui-components';
+import { MessageThreadTurn, NewToolDefinitionPartial, RemoveToolDefinitionPartial, SystemErrorPartial, TextPartial } from '@abyss/records';
+import { ChatMessageSystemError, ChatMessageSystemText, ChatMessageText } from '@abyss/ui-components';
 import { Globe } from 'lucide-react';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -8,14 +8,23 @@ import { SectionHeader } from './ChatSectionHeader';
 export function ChatHistoryRenderer({ thread }: { thread: MessageThreadTurn[] }) {
     const elements: React.ReactNode[] = [];
     const navigate = useNavigate();
+    let lastTurn = '';
+    let lastRenderedTurn = '';
 
     for (let i = 0; i < thread.length; i++) {
         const turn = thread[i];
         const elementsThisTurn: React.ReactNode[] = [];
-        // Set header for section
-        elementsThisTurn.push(
-            <SectionHeader key={'header-' + i} sender={turn.senderId} timestamp={new Date(turn.messages[0].createdAt)} />
-        );
+
+        if (lastRenderedTurn === turn.senderId || turn.senderId === 'system') {
+            // skip header
+        } else {
+            // Set header for section
+            elementsThisTurn.push(
+                <SectionHeader key={'header-' + i} sender={turn.senderId} timestamp={new Date(turn.messages[0].createdAt)} />
+            );
+            lastRenderedTurn = turn.senderId;
+        }
+        lastTurn = turn.senderId;
 
         // Render messages themselves
         for (let j = 0; j < turn.messages.length; j++) {
@@ -32,19 +41,19 @@ export function ChatHistoryRenderer({ thread }: { thread: MessageThreadTurn[] })
                 } else if (message.type === 'new-tool-definition') {
                     if (message.payloadData.tools.length !== 0) {
                         elementsThisTurn.push(
-                            <NewToolDefinitionMessageSection key={'tool-definition-' + i + '-' + j} message={message} navigate={navigate} />
+                            <NewToolDefinition key={'tool-definition-' + i + '-' + j} message={message} navigate={navigate} />
                         );
                     }
                 } else if (message.type === 'remove-tool-definition') {
                     if (message.payloadData.tools.length !== 0) {
                         elementsThisTurn.push(
-                            <RemovedToolDefinitionMessageSection
-                                key={'tool-definition-' + i + '-' + j}
-                                message={message}
-                                navigate={navigate}
-                            />
+                            <RemovedToolDefinition key={'tool-definition-' + i + '-' + j} message={message} navigate={navigate} />
                         );
                     }
+                } else if (message.type === 'system-error') {
+                    elementsThisTurn.push(
+                        <SystemErrorMessageSection key={'system-error-' + i + '-' + j} message={message} navigate={navigate} />
+                    );
                 } else {
                     console.error('Unknown system message type', message);
                 }
@@ -65,9 +74,7 @@ export function ChatHistoryRenderer({ thread }: { thread: MessageThreadTurn[] })
             }
         }
 
-        if (elementsThisTurn.length > 1) {
-            elements.push(...elementsThisTurn);
-        }
+        elements.push(...elementsThisTurn);
     }
 
     return <div className="flex flex-col gap-2">{elements}</div>;
@@ -90,7 +97,16 @@ function SystemTextMessageSection({ message, navigate }: { message: TextPartial;
     return <ChatMessageSystemText text={message.payloadData.content} actionItems={getActionItems(message.referencedData, navigate)} />;
 }
 
-function NewToolDefinitionMessageSection({ message, navigate }: { message: NewToolDefinitionPartial; navigate: (path: string) => void }) {
+function SystemErrorMessageSection({ message, navigate }: { message: SystemErrorPartial; navigate: (path: string) => void }) {
+    return (
+        <ChatMessageSystemError
+            text={message.payloadData.error + ': ' + message.payloadData.message}
+            actionItems={getActionItems(message.referencedData, navigate)}
+            children={message.payloadData.body}
+        />
+    );
+}
+function NewToolDefinition({ message, navigate }: { message: NewToolDefinitionPartial; navigate: (path: string) => void }) {
     return (
         <ChatMessageSystemText
             text={'Added access to tools: ' + message.payloadData.tools.map(t => t.shortName).join(', ')}
@@ -99,13 +115,7 @@ function NewToolDefinitionMessageSection({ message, navigate }: { message: NewTo
     );
 }
 
-function RemovedToolDefinitionMessageSection({
-    message,
-    navigate,
-}: {
-    message: RemoveToolDefinitionPartial;
-    navigate: (path: string) => void;
-}) {
+function RemovedToolDefinition({ message, navigate }: { message: RemoveToolDefinitionPartial; navigate: (path: string) => void }) {
     return (
         <ChatMessageSystemText
             text={'Removed access to tools: ' + message.payloadData.tools.map(t => t).join(', ')}

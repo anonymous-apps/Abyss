@@ -56,9 +56,21 @@ export interface ToolCallResponsePartial extends BaseSqliteRecord {
     referencedData?: Record<string, string>;
 }
 
+export interface SystemErrorPartial extends BaseSqliteRecord {
+    type: 'system-error';
+    senderId: string;
+    payloadData: {
+        error: string;
+        message: string;
+        body: string;
+    };
+    referencedData?: Record<string, string>;
+}
+
 export type MessageType =
     | TextPartial
     | NewToolDefinitionPartial
     | RemoveToolDefinitionPartial
     | ToolCallRequestPartial
-    | ToolCallResponsePartial;
+    | ToolCallResponsePartial
+    | SystemErrorPartial;

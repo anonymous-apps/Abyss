@@ -6,7 +6,7 @@ import { AnthropicMessage, AnthropicResponse, InvokeAnthropicProps } from './typ
 function anthropicMessageToRawString(message: AnthropicMessage[]): string {
     let result: string = '';
     for (const msg of message) {
-        result += '##### ROLE: ' + msg.role + '\n';
+        result += `--------\n${msg.role}\n\n`;
         for (const content of msg.content) {
             if (content.type === 'text') {
                 result += content.text + '\n';

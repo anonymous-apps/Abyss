@@ -12,37 +12,13 @@ export async function buildAnthropicMessages(thread: ReferencedMessageThreadReco
 
         const lastMessage = messages[messages.length - 1];
         if (lastMessage && lastMessage.role === 'user' && isUser) {
-            messages.push({
-                role: 'assistant',
-                content: [{ type: 'text', text: 'understood' }],
-            });
-        }
-        if (lastMessage && lastMessage.role === 'assistant' && !isUser) {
-            messages.push({
-                role: 'user',
-                content: [{ type: 'text', text: 'continue' }],
-            });
-        }
-
-        if (isUser) {
-            messages.push({
-                role: 'user',
-                content: [
-                    {
-                        type: 'text',
-                        text: turn.prompt.render() || 'continue',
-                    },
-                ],
-            });
+            lastMessage.content.push({ type: 'text', text: turn.prompt.render() || 'continue' });
+        } else if (lastMessage && lastMessage.role === 'assistant' && !isUser) {
+            lastMessage.content.push({ type: 'text', text: turn.prompt.render() || 'understood' });
         } else {
             messages.push({
-                role: 'assistant',
-                content: [
-                    {
-                        type: 'text',
-                        text: turn.prompt.render() || 'understood',
-                    },
-                ],
+                role: isUser ? 'user' : 'assistant',
+                content: [{ type: 'text', text: turn.prompt.render() || 'continue' }],
             });
         }
     }
