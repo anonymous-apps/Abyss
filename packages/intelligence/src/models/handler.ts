@@ -1,6 +1,7 @@
 import { ReferencedMessageThreadRecord, ReferencedModelConnectionRecord } from '@abyss/records';
 import { parseLLMOutput } from '../parser/parser';
 import { InvokeAnthropic } from './implementations/anthropic/handler';
+import { InvokeOpenAI } from './implementations/openai/handler';
 import { InvokeStatic } from './implementations/static/handler';
 
 export async function invokeModelAgainstThread(connectionRef: ReferencedModelConnectionRecord, thread: ReferencedMessageThreadRecord) {
@@ -18,8 +19,13 @@ async function invokeLLM(connectionRef: ReferencedModelConnectionRecord, thread:
             modelId: connection.modelId,
             apiKey: connection.connectionData.apiKey,
         });
-    }
-    if (connection.accessFormat.toLowerCase() === 'static') {
+    } else if (connection.accessFormat.toLowerCase() === 'openai') {
+        return InvokeOpenAI({
+            thread,
+            modelId: connection.modelId,
+            apiKey: connection.connectionData.apiKey,
+        });
+    } else if (connection.accessFormat.toLowerCase() === 'static') {
         return InvokeStatic({
             thread,
             response: connection.connectionData.response,

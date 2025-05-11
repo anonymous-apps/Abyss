@@ -22,7 +22,6 @@ export async function InvokeAnthropic(props: InvokeAnthropicProps): Promise<Invo
             body: JSON.stringify({
                 model: modelId,
                 messages,
-                max_tokens: 4096,
                 stream: false,
             }),
         });
