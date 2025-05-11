@@ -1,7 +1,8 @@
 import { Sidebar as AbyssSidebar, SidebarButton as AbyssSidebarButton, SidebarSection as AbyssSidebarSection } from '@abyss/ui-components';
 import { Bot, Box, ChartLine, DatabaseIcon, Hammer, List, MessageSquare, SettingsIcon } from 'lucide-react';
 import React from 'react';
-import { useLocation, useNavigate, useOutlet } from 'react-router';
+import { ErrorBoundary } from 'react-error-boundary';
+import { Navigate, useLocation, useNavigate, useOutlet } from 'react-router';
 import { useSidebarFadeStore } from '../state/sidebar-fade';
 
 export function AppSidebar() {
@@ -47,10 +48,19 @@ export function AppSidebar() {
 export function WithAppSidebar() {
     const outlet = useOutlet();
 
+    const fallbackRedirect = (
+        <div className="flex flex-row max-h-[100vh]">
+            <AppSidebar />
+            <Navigate to="/" replace />
+        </div>
+    );
+
     return (
         <div className="flex flex-row max-h-[100vh]">
             <AppSidebar />
-            <div className="w-full h-[100vh] overflow-y-auto">{outlet}</div>
+            <ErrorBoundary fallback={fallbackRedirect}>
+                <div className="w-full h-[100vh] overflow-y-auto">{outlet}</div>
+            </ErrorBoundary>
         </div>
     );
 }

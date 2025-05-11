@@ -1,12 +1,13 @@
 import { MessageThreadTurn, NewToolDefinitionPartial, RemoveToolDefinitionPartial, TextPartial } from '@abyss/records';
 import { ChatMessageSystemText, ChatMessageText } from '@abyss/ui-components';
+import { Globe } from 'lucide-react';
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { SectionHeader } from './ChatSectionHeader';
 
 export function ChatHistoryRenderer({ thread }: { thread: MessageThreadTurn[] }) {
     const elements: React.ReactNode[] = [];
-
-    console.log(thread);
+    const navigate = useNavigate();
 
     for (let i = 0; i < thread.length; i++) {
         const turn = thread[i];
@@ -21,21 +22,27 @@ export function ChatHistoryRenderer({ thread }: { thread: MessageThreadTurn[] })
             const message = turn.messages[j];
             if (turn.senderId.toLowerCase() === 'user') {
                 if (message.type === 'text') {
-                    elementsThisTurn.push(<UserMessageSection key={'user-' + i + '-' + j} message={message} />);
+                    elementsThisTurn.push(<UserMessageSection key={'user-' + i + '-' + j} message={message} navigate={navigate} />);
                 } else {
                     console.error('Unknown user message type', message);
                 }
             } else if (turn.senderId.toLowerCase() === 'system') {
                 if (message.type === 'text') {
-                    elementsThisTurn.push(<SystemTextMessageSection key={'system-' + i + '-' + j} message={message} />);
+                    elementsThisTurn.push(<SystemTextMessageSection key={'system-' + i + '-' + j} message={message} navigate={navigate} />);
                 } else if (message.type === 'new-tool-definition') {
                     if (message.payloadData.tools.length !== 0) {
-                        elementsThisTurn.push(<NewToolDefinitionMessageSection key={'tool-definition-' + i + '-' + j} message={message} />);
+                        elementsThisTurn.push(
+                            <NewToolDefinitionMessageSection key={'tool-definition-' + i + '-' + j} message={message} navigate={navigate} />
+                        );
                     }
                 } else if (message.type === 'remove-tool-definition') {
                     if (message.payloadData.tools.length !== 0) {
                         elementsThisTurn.push(
-                            <RemovedToolDefinitionMessageSection key={'tool-definition-' + i + '-' + j} message={message} />
+                            <RemovedToolDefinitionMessageSection
+                                key={'tool-definition-' + i + '-' + j}
+                                message={message}
+                                navigate={navigate}
+                            />
                         );
                     }
                 } else {
@@ -43,13 +50,13 @@ export function ChatHistoryRenderer({ thread }: { thread: MessageThreadTurn[] })
                 }
             } else if (turn.senderId.startsWith('agentGraph:')) {
                 if (message.type === 'text') {
-                    elementsThisTurn.push(<AiMessageTextSection key={'agent-' + i + '-' + j} message={message} />);
+                    elementsThisTurn.push(<AiMessageTextSection key={'agent-' + i + '-' + j} message={message} navigate={navigate} />);
                 } else {
                     console.error('Unknown agent graph message type', message);
                 }
             } else if (turn.senderId.startsWith('modelConnection:')) {
                 if (message.type === 'text') {
-                    elementsThisTurn.push(<AiMessageTextSection key={'model-' + i + '-' + j} message={message} />);
+                    elementsThisTurn.push(<AiMessageTextSection key={'model-' + i + '-' + j} message={message} navigate={navigate} />);
                 } else {
                     console.error('Unknown model connection message type', message);
                 }
@@ -65,26 +72,57 @@ export function ChatHistoryRenderer({ thread }: { thread: MessageThreadTurn[] })
 
     return <div className="flex flex-col gap-2">{elements}</div>;
 }
+function getActionItems(message: Record<string, string> = {}, navigate: (path: string) => void) {
+    const map = {
+        logStreamId: (value: string) => ({
+            icon: Globe,
+            tooltip: 'LLM logs',
+            onClick: () => {
+                navigate(`/logs/id/${value}`);
+            },
+        }),
+    };
 
-function SystemTextMessageSection({ message }: { message: TextPartial }) {
-    return <ChatMessageSystemText text={message.payloadData.content} />;
+    return Object.keys(message || {}).map(key => map[key]?.(message[key]));
 }
 
-function NewToolDefinitionMessageSection({ message }: { message: NewToolDefinitionPartial }) {
-    return <ChatMessageSystemText text={'Added access to tools: ' + message.payloadData.tools.map(t => t.shortName).join(', ')} />;
+function SystemTextMessageSection({ message, navigate }: { message: TextPartial; navigate: (path: string) => void }) {
+    return <ChatMessageSystemText text={message.payloadData.content} actionItems={getActionItems(message.referencedData, navigate)} />;
 }
 
-function RemovedToolDefinitionMessageSection({ message }: { message: RemoveToolDefinitionPartial }) {
-    return <ChatMessageSystemText text={'Removed access to tools: ' + message.payloadData.tools.map(t => t).join(', ')} />;
+function NewToolDefinitionMessageSection({ message, navigate }: { message: NewToolDefinitionPartial; navigate: (path: string) => void }) {
+    return (
+        <ChatMessageSystemText
+            text={'Added access to tools: ' + message.payloadData.tools.map(t => t.shortName).join(', ')}
+            actionItems={getActionItems(message.referencedData, navigate)}
+        />
+    );
 }
 
-function UserMessageSection({ message }: { message: TextPartial }) {
-    return <ChatMessageText text={message.payloadData.content} />;
+function RemovedToolDefinitionMessageSection({
+    message,
+    navigate,
+}: {
+    message: RemoveToolDefinitionPartial;
+    navigate: (path: string) => void;
+}) {
+    return (
+        <ChatMessageSystemText
+            text={'Removed access to tools: ' + message.payloadData.tools.map(t => t).join(', ')}
+            actionItems={getActionItems(message.referencedData, navigate)}
+        />
+    );
 }
 
-function AiMessageTextSection({ message }: { message: TextPartial }) {
+function UserMessageSection({ message, navigate }: { message: TextPartial; navigate: (path: string) => void }) {
+    return <ChatMessageText text={message.payloadData.content} actionItems={getActionItems(message.referencedData, navigate)} />;
+}
+
+function AiMessageTextSection({ message, navigate }: { message: TextPartial; navigate: (path: string) => void }) {
     if (message.payloadData.content.length === 0) {
-        return <ChatMessageText text={'empty string'} className="opacity-40" />;
+        return (
+            <ChatMessageText text={'empty string'} className="opacity-40" actionItems={getActionItems(message.referencedData, navigate)} />
+        );
     }
-    return <ChatMessageText text={message.payloadData.content} />;
+    return <ChatMessageText text={message.payloadData.content} actionItems={getActionItems(message.referencedData, navigate)} />;
 }

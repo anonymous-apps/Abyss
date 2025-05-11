@@ -10,7 +10,7 @@
     ],
     "scripts": {
         "dev": "npm run dev --workspace=packages/app",
-        "build": "npm run build:ui && npm run build:intelligence && npm run build:records",
+        "build": "npm run build:ui && npm run build:records && npm run build:prompts && npm run build:intelligence",
         "build:ui": "npm run build --workspace=packages/ui-components",
         "build:intelligence": "npm run build --workspace=packages/intelligence",
         "build:records": "npm run build --workspace=packages/records",

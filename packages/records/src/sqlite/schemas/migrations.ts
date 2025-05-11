@@ -2,6 +2,8 @@ import { Migration } from './type';
 import * as version1 from './version-1';
 import * as version2 from './version-2';
 import * as version3 from './version-3';
+import * as version4 from './version-4';
+
 export const migrations: Migration[] = [
     {
         from: 'NONE',
@@ -17,5 +19,10 @@ export const migrations: Migration[] = [
         from: '0.0.2',
         to: '0.0.3',
         queries: Object.values(version3),
+    },
+    {
+        from: '0.0.3',
+        to: '0.0.4',
+        queries: Object.values(version4),
     },
 ];

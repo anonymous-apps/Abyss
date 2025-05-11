@@ -1,10 +1,11 @@
-import { MessageType, ReferencedMessageThreadRecord } from '@abyss/records';
+import { MessageType, ReferencedLogStreamRecord, ReferencedMessageThreadRecord } from '@abyss/records';
 
 export interface InvokeModelInternalResult {
     inputRaw: any;
     outputRaw: any;
     outputString: string;
     metrics: Record<string, number>;
+    logStream: ReferencedLogStreamRecord;
 }
 
 export interface InvokeModelChatResult {

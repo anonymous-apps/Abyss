@@ -79,6 +79,7 @@ export class InvokeLanguageModelNode extends NodeHandler {
         });
 
         // Add model response to chat
+        let lastMessageRef: ReferencedMessageRecord | undefined;
         for (const block of modelResponse.parsed) {
             if (block.type === 'text') {
                 const messageRecord = await chat.client.tables.message.create({
@@ -89,6 +90,7 @@ export class InvokeLanguageModelNode extends NodeHandler {
                     senderId: data.execution.graph.id,
                 });
                 await chat.addMessages(new ReferencedMessageRecord(messageRecord.id, chat.client));
+                lastMessageRef = new ReferencedMessageRecord(messageRecord.id, chat.client);
             }
             if (block.type === 'tool') {
                 const toolKey = Object.keys(block.content)[0];
@@ -106,8 +108,16 @@ export class InvokeLanguageModelNode extends NodeHandler {
                     senderId: data.execution.graph.id,
                 });
                 await chat.addMessages(new ReferencedMessageRecord(messageRecord.id, chat.client));
+                lastMessageRef = new ReferencedMessageRecord(messageRecord.id, chat.client);
             }
         }
+
+        // Add log stream to chat
+        await lastMessageRef?.update({
+            referencedData: {
+                logStreamId: modelResponse.logStream.id,
+            },
+        });
 
         // Run any unprocessed tool calls
         await runUnproccessedToolCalls(chat, data.database);

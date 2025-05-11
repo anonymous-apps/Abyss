@@ -9,7 +9,7 @@ export function SectionHeader({ sender, timestamp }: { sender: string; timestamp
     const reference = useRecordReference({ sourceId: sender });
     const formattedTime = formatDistanceToNow(timestamp, { addSuffix: true });
 
-    if (sender === 'SYSTEM') {
+    if (sender === 'system') {
         return null;
     }
 

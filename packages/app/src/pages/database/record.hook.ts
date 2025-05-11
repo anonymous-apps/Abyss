@@ -1,4 +1,3 @@
-import { RecordClass } from '@abyss/records';
 import { useNavigate, useParams } from 'react-router';
 import { Database } from '../../main';
 import { useDatabaseRecord } from '../../state/database-connection';
@@ -7,7 +6,7 @@ export function useRecordPage() {
     const { id, recordId } = useParams();
     const navigate = useNavigate();
 
-    const record = useDatabaseRecord<RecordClass<any>>(id as keyof typeof Database.table, recordId as string);
+    const record = useDatabaseRecord<any>(id as keyof typeof Database.tables, recordId as string);
 
     const breadcrumbs = [
         { name: 'Home', onClick: () => navigate('/') },

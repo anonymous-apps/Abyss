@@ -3,6 +3,8 @@ import { parseLLMOutput } from '../parser/parser';
 import { InvokeAnthropic } from './implementations/anthropic/handler';
 import { InvokeOpenAI } from './implementations/openai/handler';
 import { InvokeStatic } from './implementations/static/handler';
+import { buildConversationPrompt } from './prompts/buildConversationPrompt';
+import { InvokeModelInternalResult } from './types';
 
 export async function invokeModelAgainstThread(connectionRef: ReferencedModelConnectionRecord, thread: ReferencedMessageThreadRecord) {
     const modelResponse = await invokeLLM(connectionRef, thread);
@@ -11,26 +13,65 @@ export async function invokeModelAgainstThread(connectionRef: ReferencedModelCon
     return { ...modelResponse, parsed: parsedData };
 }
 
-async function invokeLLM(connectionRef: ReferencedModelConnectionRecord, thread: ReferencedMessageThreadRecord) {
+async function invokeLLM(
+    connectionRef: ReferencedModelConnectionRecord,
+    thread: ReferencedMessageThreadRecord
+): Promise<InvokeModelInternalResult> {
+    // Create log stream
     const connection = await connectionRef.get();
-    if (connection.accessFormat.toLowerCase() === 'anthropic') {
-        return InvokeAnthropic({
-            thread,
-            modelId: connection.modelId,
-            apiKey: connection.connectionData.apiKey,
-        });
-    } else if (connection.accessFormat.toLowerCase() === 'openai') {
-        return InvokeOpenAI({
-            thread,
-            modelId: connection.modelId,
-            apiKey: connection.connectionData.apiKey,
-        });
-    } else if (connection.accessFormat.toLowerCase() === 'static') {
-        return InvokeStatic({
-            thread,
-            response: connection.connectionData.response,
-        });
-    }
+    const modelInvokeLogStream = await connectionRef.client.tables.logStream.new('modelInvoke', connectionRef.id);
+    await modelInvokeLogStream.log('modelInvoke', 'Starting model invocation', {
+        threadId: thread.id,
+        connectionId: connectionRef.id,
+        connectionProvider: connection.providerId,
+        connectionModel: connection.modelId,
+    });
 
-    throw new Error(`Unknown AI access format: ${connection.accessFormat}`);
+    // Build conversation prompt
+    const turns = await buildConversationPrompt(thread, thread.client);
+    await modelInvokeLogStream.log('modelInvoke', 'Conversation prompt built', turns);
+
+    // Invoke LLM
+    try {
+        if (connection.accessFormat.toLowerCase() === 'anthropic') {
+            await modelInvokeLogStream.log('modelInvoke', 'Invoking Anthropic API handler');
+            const anthropicResult = await InvokeAnthropic({
+                logStream: modelInvokeLogStream,
+                thread,
+                modelId: connection.modelId,
+                apiKey: connection.connectionData.apiKey,
+            });
+            await modelInvokeLogStream.log('modelInvoke', 'Anthropic API handler invoked', anthropicResult);
+            modelInvokeLogStream.success();
+            return { ...anthropicResult, logStream: modelInvokeLogStream };
+        }
+        if (connection.accessFormat.toLowerCase() === 'static') {
+            await modelInvokeLogStream.log('modelInvoke', 'Invoking Static API handler');
+            const staticResult = await InvokeStatic({
+                thread,
+                response: connection.connectionData.response,
+            });
+            await modelInvokeLogStream.log('modelInvoke', 'Static API handler invoked', staticResult);
+            modelInvokeLogStream.success();
+            return { ...staticResult, logStream: modelInvokeLogStream };
+        }
+        if (connection.accessFormat.toLowerCase() === 'openai') {
+            await modelInvokeLogStream.log('modelInvoke', 'Invoking OpenAI API handler');
+            const openaiResult = await InvokeOpenAI({
+                thread,
+                modelId: connection.modelId,
+                apiKey: connection.connectionData.apiKey,
+                logStream: modelInvokeLogStream,
+            });
+            await modelInvokeLogStream.log('modelInvoke', 'OpenAI API handler invoked', openaiResult);
+            modelInvokeLogStream.success();
+            return { ...openaiResult, logStream: modelInvokeLogStream };
+        }
+
+        throw new Error(`Unknown AI access format: ${connection.accessFormat}`);
+    } catch (error) {
+        modelInvokeLogStream.error('modelInvoke', 'Error invoking LLM', { error });
+        modelInvokeLogStream.fail();
+        throw error;
+    }
 }

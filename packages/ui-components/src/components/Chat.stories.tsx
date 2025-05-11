@@ -27,11 +27,21 @@ type Story = StoryObj;
 type TextMessage = {
     type: 'text';
     content: string;
+    actionItems?: {
+        icon: LucideIcon;
+        tooltip: string;
+        onClick: () => void;
+    }[];
 };
 
 type SystemTextMessage = {
     type: 'system_text';
     content: string;
+    actionItems?: {
+        icon: LucideIcon;
+        tooltip: string;
+        onClick: () => void;
+    }[];
 };
 
 type SystemEventMessage = {
@@ -39,12 +49,22 @@ type SystemEventMessage = {
     icon: LucideIcon; // 'info' | 'terminal' | 'file' etc.
     text: string;
     details?: string;
+    actionItems?: {
+        icon: LucideIcon;
+        tooltip: string;
+        onClick: () => void;
+    }[];
 };
 
 type SystemErrorMessage = {
     type: 'system_error';
     text: string;
     details?: string;
+    actionItems?: {
+        icon: LucideIcon;
+        tooltip: string;
+        onClick: () => void;
+    }[];
 };
 
 type ToolMessage = {
@@ -53,6 +73,11 @@ type ToolMessage = {
     input: any;
     status: 'idle' | 'running' | 'complete' | 'failed';
     output?: string;
+    actionItems?: {
+        icon: LucideIcon;
+        tooltip: string;
+        onClick: () => void;
+    }[];
 };
 
 type ChatMessage = TextMessage | SystemTextMessage | SystemEventMessage | SystemErrorMessage | ToolMessage;
@@ -72,6 +97,13 @@ const sampleConversation: ChatTurn[] = [
             {
                 type: 'system_text',
                 content: 'Chat session started. Connected to Terminal Helper assistant.',
+                actionItems: [
+                    {
+                        icon: Copy,
+                        tooltip: 'Copy to clipboard',
+                        onClick: () => console.log('Copy clicked'),
+                    },
+                ],
             },
         ],
     },
@@ -82,6 +114,13 @@ const sampleConversation: ChatTurn[] = [
             {
                 type: 'text',
                 content: 'Could you help me list the files in my current directory and then create a simple README.md file?',
+                actionItems: [
+                    {
+                        icon: Copy,
+                        tooltip: 'Copy to clipboard',
+                        onClick: () => console.log('Copy clicked'),
+                    },
+                ],
             },
         ],
     },
@@ -92,6 +131,18 @@ const sampleConversation: ChatTurn[] = [
             {
                 type: 'text',
                 content: "I'll help you list the files in your current directory and create a README.md file.",
+                actionItems: [
+                    {
+                        icon: Copy,
+                        tooltip: 'Copy to clipboard',
+                        onClick: () => console.log('Copy clicked'),
+                    },
+                    {
+                        icon: ThumbsUp,
+                        tooltip: 'Thumbs up',
+                        onClick: () => console.log('Thumbs up clicked'),
+                    },
+                ],
             },
             {
                 type: 'tool',
@@ -99,17 +150,48 @@ const sampleConversation: ChatTurn[] = [
                 input: { command: 'ls -la' },
                 status: 'complete',
                 output: 'total 16\ndrwxr-xr-x  4 user  staff   128 Oct 20 14:25 .\ndrwxr-xr-x  8 user  staff   256 Oct 20 14:20 ..\n-rw-r--r--  1 user  staff  2489 Oct 20 14:22 package.json\ndrwxr-xr-x 12 user  staff   384 Oct 20 14:25 node_modules\ndrwxr-xr-x  8 user  staff   256 Oct 20 14:22 src',
+                actionItems: [
+                    {
+                        icon: Copy,
+                        tooltip: 'Copy to clipboard',
+                        onClick: () => console.log('Copy clicked'),
+                    },
+                    {
+                        icon: FileIcon,
+                        tooltip: 'Save output',
+                        onClick: () => console.log('Save clicked'),
+                    },
+                ],
             },
             {
                 type: 'system_event',
                 icon: Terminal,
                 text: 'Command executed successfully',
                 details: 'Command: ls -la\nExecution time: 23ms\nExit code: 0',
+                actionItems: [
+                    {
+                        icon: Copy,
+                        tooltip: 'Copy to clipboard',
+                        onClick: () => console.log('Copy clicked'),
+                    },
+                ],
             },
             {
                 type: 'text',
                 content:
                     "I can see your directory contains package.json, a node_modules folder, and a src folder. Now I'll create a README.md file for your project.",
+                actionItems: [
+                    {
+                        icon: Copy,
+                        tooltip: 'Copy to clipboard',
+                        onClick: () => console.log('Copy clicked'),
+                    },
+                    {
+                        icon: ThumbsUp,
+                        tooltip: 'Thumbs up',
+                        onClick: () => console.log('Thumbs up clicked'),
+                    },
+                ],
             },
             {
                 type: 'tool',
@@ -121,6 +203,18 @@ const sampleConversation: ChatTurn[] = [
                 },
                 status: 'complete',
                 output: 'File README.md created successfully.',
+                actionItems: [
+                    {
+                        icon: Copy,
+                        tooltip: 'Copy to clipboard',
+                        onClick: () => console.log('Copy clicked'),
+                    },
+                    {
+                        icon: FileIcon,
+                        tooltip: 'View file',
+                        onClick: () => console.log('View clicked'),
+                    },
+                ],
             },
             {
                 type: 'system_event',
@@ -128,6 +222,18 @@ const sampleConversation: ChatTurn[] = [
                 text: 'File created: README.md',
                 details:
                     "# Project Title\n\nA brief description of what this project does and who it's for.\n\n## Installation\n\n```bash\nnpm install\n```\n\n## Usage\n\n```bash\nnpm start\n```\n\n## Features\n\n- Feature 1\n- Feature 2\n- Feature 3",
+                actionItems: [
+                    {
+                        icon: Copy,
+                        tooltip: 'Copy to clipboard',
+                        onClick: () => console.log('Copy clicked'),
+                    },
+                    {
+                        icon: FileIcon,
+                        tooltip: 'View file',
+                        onClick: () => console.log('View clicked'),
+                    },
+                ],
             },
         ],
     },
@@ -138,6 +244,13 @@ const sampleConversation: ChatTurn[] = [
             {
                 type: 'text',
                 content: 'Thanks! Now try installing a non-existent package.',
+                actionItems: [
+                    {
+                        icon: Copy,
+                        tooltip: 'Copy to clipboard',
+                        onClick: () => console.log('Copy clicked'),
+                    },
+                ],
             },
         ],
     },
@@ -148,6 +261,13 @@ const sampleConversation: ChatTurn[] = [
             {
                 type: 'text',
                 content: "I'll try to install a non-existent package to demonstrate an error condition.",
+                actionItems: [
+                    {
+                        icon: Copy,
+                        tooltip: 'Copy to clipboard',
+                        onClick: () => console.log('Copy clicked'),
+                    },
+                ],
             },
             {
                 type: 'tool',
@@ -155,11 +275,30 @@ const sampleConversation: ChatTurn[] = [
                 input: { command: 'npm install non-existent-package-12345' },
                 status: 'failed',
                 output: "npm ERR! code E404\nnpm ERR! 404 Not Found - GET https://registry.npmjs.org/non-existent-package-12345 - Not found\nnpm ERR! 404 \nnpm ERR! 404  'non-existent-package-12345@latest' is not in this registry.\nnpm ERR! 404 \nnpm ERR! 404 Note that you can also install from a\nnpm ERR! 404 tarball, folder, http url, or git url.\n\nnpm ERR! A complete log of this run can be found in:\nnpm ERR!     /Users/.npm/_logs/2023-10-20T14_31_40_325Z-debug.log",
+                actionItems: [
+                    {
+                        icon: Copy,
+                        tooltip: 'Copy to clipboard',
+                        onClick: () => console.log('Copy clicked'),
+                    },
+                ],
             },
             {
                 type: 'system_error',
                 text: 'Package installation failed',
                 details: 'Error code: E404\nPackage: non-existent-package-12345\nThe specified package does not exist in the npm registry.',
+                actionItems: [
+                    {
+                        icon: Copy,
+                        tooltip: 'Copy to clipboard',
+                        onClick: () => console.log('Copy clicked'),
+                    },
+                    {
+                        icon: FileIcon,
+                        tooltip: 'View error log',
+                        onClick: () => console.log('View log clicked'),
+                    },
+                ],
             },
         ],
     },
@@ -170,6 +309,13 @@ const sampleConversation: ChatTurn[] = [
             {
                 type: 'system_text',
                 content: 'Connection idle for 30 seconds. The assistant is waiting for your next input.',
+                actionItems: [
+                    {
+                        icon: Copy,
+                        tooltip: 'Copy to clipboard',
+                        onClick: () => console.log('Copy clicked'),
+                    },
+                ],
             },
         ],
     },
@@ -224,7 +370,13 @@ export const Chat: Story = {
 
                                         {turn.messages.map((message, msgIndex) => {
                                             if (message.type === 'text') {
-                                                return <ChatMessageText key={`${turnIndex}-${msgIndex}`} text={message.content} />;
+                                                return (
+                                                    <ChatMessageText
+                                                        key={`${turnIndex}-${msgIndex}`}
+                                                        text={message.content}
+                                                        actionItems={message.actionItems}
+                                                    />
+                                                );
                                             } else if (message.type === 'tool') {
                                                 return (
                                                     <ChatToolCall
@@ -233,20 +385,38 @@ export const Chat: Story = {
                                                         status={message.status}
                                                         inputData={message.input}
                                                         outputText={message.output || ''}
+                                                        actionItems={message.actionItems}
                                                     />
                                                 );
                                             } else if (message.type === 'system_text') {
-                                                return <ChatMessageSystemText key={`${turnIndex}-${msgIndex}`} text={message.content} />;
+                                                return (
+                                                    <ChatMessageSystemText
+                                                        key={`${turnIndex}-${msgIndex}`}
+                                                        text={message.content}
+                                                        actionItems={message.actionItems}
+                                                    />
+                                                );
                                             } else if (message.type === 'system_event') {
                                                 return (
                                                     <ChatMessageSystemEvent
                                                         key={`${turnIndex}-${msgIndex}`}
                                                         icon={message.icon}
                                                         text={message.text}
-                                                    />
+                                                        actionItems={message.actionItems}
+                                                    >
+                                                        {message.details}
+                                                    </ChatMessageSystemEvent>
                                                 );
                                             } else if (message.type === 'system_error') {
-                                                return <ChatMessageSystemError key={`${turnIndex}-${msgIndex}`} text={message.text} />;
+                                                return (
+                                                    <ChatMessageSystemError
+                                                        key={`${turnIndex}-${msgIndex}`}
+                                                        text={message.text}
+                                                        actionItems={message.actionItems}
+                                                    >
+                                                        {message.details}
+                                                    </ChatMessageSystemError>
+                                                );
                                             }
                                             return null;
                                         })}
