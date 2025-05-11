@@ -49,7 +49,7 @@ const defaultActionItems = [
 export const Idle: Story = {
     args: {
         toolName: 'list-files',
-        status: 'idle',
+        status: 'notStarted',
         inputData: {
             path: '/home/user/documents',
             includeHidden: false,
@@ -62,7 +62,7 @@ export const Idle: Story = {
 export const Running: Story = {
     args: {
         toolName: 'search-database',
-        status: 'running',
+        status: 'inProgress',
         inputData: {
             query: 'SELECT * FROM users WHERE active = true',
             limit: 10,
@@ -82,7 +82,7 @@ export const Running: Story = {
 export const Complete: Story = {
     args: {
         toolName: 'execute-command',
-        status: 'complete',
+        status: 'success',
         inputData: {
             command: 'echo "Hello World"',
             timeout: 5000,
@@ -120,7 +120,7 @@ export const Failed: Story = {
 export const ComplexInput: Story = {
     args: {
         toolName: 'transform-data',
-        status: 'complete',
+        status: 'success',
         inputData: {
             data: {
                 users: [

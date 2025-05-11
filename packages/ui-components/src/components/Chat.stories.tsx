@@ -71,7 +71,7 @@ type ToolMessage = {
     type: 'tool';
     tool: string;
     input: any;
-    status: 'idle' | 'running' | 'complete' | 'failed';
+    status: 'notStarted' | 'inProgress' | 'success' | 'failed';
     output?: string;
     actionItems?: {
         icon: LucideIcon;
@@ -148,7 +148,7 @@ const sampleConversation: ChatTurn[] = [
                 type: 'tool',
                 tool: 'run_terminal_cmd',
                 input: { command: 'ls -la' },
-                status: 'complete',
+                status: 'success',
                 output: 'total 16\ndrwxr-xr-x  4 user  staff   128 Oct 20 14:25 .\ndrwxr-xr-x  8 user  staff   256 Oct 20 14:20 ..\n-rw-r--r--  1 user  staff  2489 Oct 20 14:22 package.json\ndrwxr-xr-x 12 user  staff   384 Oct 20 14:25 node_modules\ndrwxr-xr-x  8 user  staff   256 Oct 20 14:22 src',
                 actionItems: [
                     {
@@ -201,7 +201,7 @@ const sampleConversation: ChatTurn[] = [
                     content:
                         "# Project Title\n\nA brief description of what this project does and who it's for.\n\n## Installation\n\n```bash\nnpm install\n```\n\n## Usage\n\n```bash\nnpm start\n```\n\n## Features\n\n- Feature 1\n- Feature 2\n- Feature 3",
                 },
-                status: 'complete',
+                status: 'success',
                 output: 'File README.md created successfully.',
                 actionItems: [
                     {

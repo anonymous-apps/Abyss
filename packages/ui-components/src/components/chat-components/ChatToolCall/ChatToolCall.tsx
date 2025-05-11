@@ -6,7 +6,7 @@ import { MonospaceText } from '../../content/MonospaceText/MonospaceText';
 import Button from '../../inputs/Button';
 import { ActionItem } from '../ChatMessageText';
 
-export type ToolCallStatus = 'idle' | 'running' | 'complete' | 'failed';
+export type ToolCallStatus = 'notStarted' | 'inProgress' | 'success' | 'failed';
 
 export interface ChatToolCallProps {
     /**
@@ -51,10 +51,10 @@ export const ChatToolCall: React.FC<ChatToolCallProps> = ({
     const [isExpanded, setIsExpanded] = useState(true);
     const [activeTab, setActiveTab] = useState<'input' | 'output'>('input');
 
-    const canInvoke = status === 'idle';
-    const isRunning = status === 'running';
+    const canInvoke = status === 'notStarted';
+    const isRunning = status === 'inProgress';
     const isError = status === 'failed';
-    const isComplete = status === 'complete';
+    const isComplete = status === 'success';
 
     const formatToolName = (name: string) => {
         return name.split('-').join(' ');
@@ -89,8 +89,8 @@ export const ChatToolCall: React.FC<ChatToolCallProps> = ({
                         </span>
                         <span
                             className={`cursor-pointer ${activeTab === 'output' ? 'text-primary-500 font-medium' : 'text-text-400'} 
-                            ${!outputText && status !== 'running' ? 'opacity-50' : ''}`}
-                            onClick={() => (outputText || status === 'running' ? setActiveTab('output') : null)}
+                            ${!outputText && status !== 'inProgress' ? 'opacity-50' : ''}`}
+                            onClick={() => (outputText || status === 'inProgress' ? setActiveTab('output') : null)}
                         >
                             Output
                         </span>
@@ -108,7 +108,7 @@ export const ChatToolCall: React.FC<ChatToolCallProps> = ({
                                 <MonospaceText text={outputText} />
                             ) : (
                                 <div className="italic text-text-400">
-                                    {status === 'running' ? 'Execution in progress...' : 'No output available'}
+                                    {status === 'inProgress' ? 'Execution in progress...' : 'No output available'}
                                 </div>
                             )}
                         </div>

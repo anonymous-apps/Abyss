@@ -1,5 +1,13 @@
-import { MessageThreadTurn, NewToolDefinitionPartial, RemoveToolDefinitionPartial, SystemErrorPartial, TextPartial } from '@abyss/records';
-import { ChatMessageSystemError, ChatMessageSystemText, ChatMessageText } from '@abyss/ui-components';
+import {
+    MessageThreadTurn,
+    NewToolDefinitionPartial,
+    RemoveToolDefinitionPartial,
+    SystemErrorPartial,
+    TextPartial,
+    ToolCallRequestPartial,
+    ToolCallResponsePartial,
+} from '@abyss/records';
+import { ChatMessageSystemError, ChatMessageSystemText, ChatMessageText, ChatToolCall } from '@abyss/ui-components';
 import { Globe } from 'lucide-react';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -10,6 +18,16 @@ export function ChatHistoryRenderer({ thread }: { thread: MessageThreadTurn[] })
     const navigate = useNavigate();
     let lastTurn = '';
     let lastRenderedTurn = '';
+
+    const findToolResponse = (callId: string) => {
+        for (const turn of thread) {
+            for (const message of turn.messages) {
+                if (message.type === 'tool-call-response' && message.payloadData.toolCallId === callId) {
+                    return message;
+                }
+            }
+        }
+    };
 
     for (let i = 0; i < thread.length; i++) {
         const turn = thread[i];
@@ -60,6 +78,15 @@ export function ChatHistoryRenderer({ thread }: { thread: MessageThreadTurn[] })
             } else if (turn.senderId.startsWith('agentGraph:')) {
                 if (message.type === 'text') {
                     elementsThisTurn.push(<AiMessageTextSection key={'agent-' + i + '-' + j} message={message} navigate={navigate} />);
+                } else if (message.type === 'tool-call-request') {
+                    elementsThisTurn.push(
+                        <ToolCallRequestSection
+                            key={'tool-call-request-' + i + '-' + j}
+                            request={message}
+                            response={findToolResponse(message.payloadData.toolCallId)}
+                            navigate={navigate}
+                        />
+                    );
                 } else {
                     console.error('Unknown agent graph message type', message);
                 }
@@ -106,6 +133,7 @@ function SystemErrorMessageSection({ message, navigate }: { message: SystemError
         />
     );
 }
+
 function NewToolDefinition({ message, navigate }: { message: NewToolDefinitionPartial; navigate: (path: string) => void }) {
     return (
         <ChatMessageSystemText
@@ -126,6 +154,26 @@ function RemovedToolDefinition({ message, navigate }: { message: RemoveToolDefin
 
 function UserMessageSection({ message, navigate }: { message: TextPartial; navigate: (path: string) => void }) {
     return <ChatMessageText text={message.payloadData.content} actionItems={getActionItems(message.referencedData, navigate)} />;
+}
+
+function ToolCallRequestSection({
+    request,
+    response,
+    navigate,
+}: {
+    request: ToolCallRequestPartial;
+    response?: ToolCallResponsePartial;
+    navigate: (path: string) => void;
+}) {
+    return (
+        <ChatToolCall
+            toolName={request.payloadData.toolId}
+            status={response?.payloadData.status ?? 'notStarted'}
+            inputData={request.payloadData.parameters}
+            outputText={response?.payloadData.result || ''}
+            actionItems={getActionItems(request?.referencedData || {}, navigate)}
+        />
+    );
 }
 
 function AiMessageTextSection({ message, navigate }: { message: TextPartial; navigate: (path: string) => void }) {
