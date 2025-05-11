@@ -47,5 +47,12 @@ export async function buildAnthropicMessages(thread: ReferencedMessageThreadReco
         }
     }
 
+    if (messages.at(-1)?.role === 'assistant') {
+        messages.push({
+            role: 'user',
+            content: [{ type: 'text', text: 'continue' }],
+        });
+    }
+
     return messages;
 }

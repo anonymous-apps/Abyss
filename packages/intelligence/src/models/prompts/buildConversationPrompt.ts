@@ -38,5 +38,6 @@ export async function buildConversationPrompt(thread: ReferencedMessageThreadRec
         }
     }
 
+    startNewTurn('assistant');
     return result;
 }
