@@ -43,6 +43,7 @@ export async function buildConversationPrompt(thread: ReferencedMessageThreadRec
     const activeToolDefinitions = await thread.getAllActiveToolDefinitions();
 
     if (!!activeToolDefinitions.length) {
+        prompt.addHeader2('Tool Use Instructions');
         prompt.addText(`
             Here is how you can use the tools you have been given:
             Respond with XML in the format of 

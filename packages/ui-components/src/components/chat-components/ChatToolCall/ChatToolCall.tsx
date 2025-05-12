@@ -48,7 +48,7 @@ export const ChatToolCall: React.FC<ChatToolCallProps> = ({
     actionItems = [],
     className = '',
 }) => {
-    const [isExpanded, setIsExpanded] = useState(true);
+    const [isExpanded, setIsExpanded] = useState(false);
     const [activeTab, setActiveTab] = useState<'input' | 'output'>('input');
 
     const canInvoke = status === 'notStarted';
