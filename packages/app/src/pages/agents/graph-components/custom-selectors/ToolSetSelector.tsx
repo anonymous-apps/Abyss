@@ -1,4 +1,4 @@
-import { CheckIcon, XIcon } from 'lucide-react';
+import { CheckIcon, SquareDashedIcon } from 'lucide-react';
 import React from 'react';
 import { useScanTableToolDefinitions } from '../../../../state/database-access-utils';
 
@@ -9,17 +9,8 @@ export interface ToolSetSelectorProps {
 }
 
 export function ToolSetSelector(props: ToolSetSelectorProps) {
-    const [searchTerm, setSearchTerm] = React.useState('');
     const [selectedTools, setSelectedTools] = React.useState<string[]>(props.value ? props.value : []);
     const { data: tools } = useScanTableToolDefinitions();
-
-    const filteredTools = React.useMemo(() => {
-        return (tools || []).filter(
-            tool =>
-                tool.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                tool.description.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-    }, [tools, searchTerm]);
 
     const handleToolToggle = (toolId: string) => {
         const newSelectedTools = selectedTools.includes(toolId) ? selectedTools.filter(id => id !== toolId) : [...selectedTools, toolId];
@@ -40,46 +31,32 @@ export function ToolSetSelector(props: ToolSetSelectorProps) {
 
     return (
         <div className="w-full">
-            <div className="mb-1">
-                <input
-                    type="text"
-                    placeholder="Search tools..."
-                    value={searchTerm}
-                    onChange={e => setSearchTerm(e.target.value)}
-                    className="w-full px-2 py-1 text-xs rounded border-transparent border focus:border-primary-300"
-                    style={{ backgroundColor: props.color + '10' }}
-                />
-            </div>
-
-            <div className="max-h-48 overflow-y-auto rounded mb-2 bg-background-transparent">
-                {filteredTools.length === 0 ? (
-                    <div className="p-2 text-xs text-text-500">No tools found</div>
+            <div className="max-h-48 overflow-y-auto mb-2">
+                {!tools || tools.length === 0 ? (
+                    <div className="p-2 text-xs">No tools available</div>
                 ) : (
-                    filteredTools.map(tool => {
+                    tools.map(tool => {
                         const isSelected = selectedTools.includes(tool.id);
                         return (
                             <div
                                 key={tool.id}
-                                className="flex items-center justify-between p-2 cursor-pointer"
+                                className={`flex gap-2 px-2 items-center justify-between w-fit p-1 cursor-pointer transition-colors duration-150 hover:bg-primary-200 rounded-sm border ${
+                                    isSelected ? 'bg-primary-100 border-primary-200' : 'border-transparent'
+                                }`}
                                 onClick={() => handleToolToggle(tool.id)}
-                                style={{ fontSize: 10 }}
                             >
-                                <div className="">{tool.name}</div>
                                 <div className="flex items-center">
                                     {isSelected ? (
-                                        <CheckIcon size={12} className="text-primary-500 bg-primary-100 rounded" />
+                                        <CheckIcon size={10} className="text-primary-500" />
                                     ) : (
-                                        <XIcon size={12} className="text-primary-500 rounded" />
+                                        <SquareDashedIcon size={10} className="text-text-500" />
                                     )}
                                 </div>
+                                <div className="text-[8px] font-medium">{tool.name}</div>
                             </div>
                         );
                     })
                 )}
-            </div>
-
-            <div className="text-xs text-right" style={{ fontSize: 10, padding: '2px 4px', borderRadius: '2px' }}>
-                {selectedTools.length} tool{selectedTools.length !== 1 ? 's' : ''} selected
             </div>
         </div>
     );
