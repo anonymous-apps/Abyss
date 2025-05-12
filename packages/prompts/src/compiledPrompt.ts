@@ -1,3 +1,4 @@
+import { dedent } from './dedent';
 import { Cell, CellHeader, CellHeader2, CellHeader3, CellSubPrompt, CellText, CellXMLElement } from './promptTemplate.types';
 
 export class CompiledPrompt {
@@ -8,7 +9,7 @@ export class CompiledPrompt {
     }
 
     private renderText(cell: CellText): string {
-        return cell.content;
+        return dedent(cell.content);
     }
 
     private renderHeader(cell: CellHeader): string {

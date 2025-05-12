@@ -7,7 +7,7 @@ import {
     ToolCallRequestPartial,
     ToolCallResponsePartial,
 } from '@abyss/records';
-import { ChatMessageSystemError, ChatMessageSystemText, ChatMessageText, ChatToolCall } from '@abyss/ui-components';
+import { ActionItem, ChatMessageSystemError, ChatMessageSystemText, ChatMessageText, ChatToolCall } from '@abyss/ui-components';
 import { Globe } from 'lucide-react';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -72,6 +72,8 @@ export function ChatHistoryRenderer({ thread }: { thread: MessageThreadTurn[] })
                     elementsThisTurn.push(
                         <SystemErrorMessageSection key={'system-error-' + i + '-' + j} message={message} navigate={navigate} />
                     );
+                } else if (message.type === 'tool-call-response') {
+                    // no-op
                 } else {
                     console.error('Unknown system message type', message);
                 }
@@ -117,7 +119,17 @@ function getActionItems(message: Record<string, string> = {}, navigate: (path: s
         }),
     };
 
-    return Object.keys(message || {}).map(key => map[key]?.(message[key]));
+    const result: ActionItem[] = [];
+
+    for (const key of Object.keys(message || {})) {
+        const actionItem = map[key]?.(message[key]);
+        if (!actionItem) {
+            console.error('Unknown action item key', key);
+        } else {
+            result.push(actionItem);
+        }
+    }
+    return result;
 }
 
 function SystemTextMessageSection({ message, navigate }: { message: TextPartial; navigate: (path: string) => void }) {
@@ -171,7 +183,13 @@ function ToolCallRequestSection({
             status={response?.payloadData.status ?? 'notStarted'}
             inputData={request.payloadData.parameters}
             outputText={response?.payloadData.result || ''}
-            actionItems={getActionItems(request?.referencedData || {}, navigate)}
+            actionItems={getActionItems(
+                {
+                    ...request.referencedData,
+                    ...response?.referencedData,
+                },
+                navigate
+            )}
         />
     );
 }
