@@ -9,7 +9,6 @@
         "packages/prompts"
     ],
     "scripts": {
-        "dev": "npm run dev --workspace=packages/app",
         "build": "npm run build:ui && npm run build:records && npm run build:prompts && npm run build:intelligence",
         "build:ui": "npm run build --workspace=packages/ui-components",
         "build:intelligence": "npm run build --workspace=packages/intelligence",
@@ -22,7 +21,8 @@
         "publish:mac": "node scripts/generate-icons.js && `npm run publish:mac --workspace=packages/app",
         "generate-icons": "node scripts/generate-icons.js",
         "bump": "npm run bump --workspace=packages/app",
-        "test": "npm run test --workspace=packages/intelligence"
+        "test": "npm run test --workspace=packages/intelligence",
+        "dev": "concurrently \"npm run watch --workspace=packages/ui-components\" \"npm run watch --workspace=packages/intelligence\" \"npm run watch --workspace=packages/records\" \"npm run watch --workspace=packages/prompts\" \"npm run dev --workspace=packages/app\""
     },
     "devDependencies": {
         "@storybook/addon-essentials": "^7.6.17",
@@ -35,6 +35,7 @@
         "@storybook/react-vite": "^7.6.17",
         "@storybook/test": "^7.6.17",
         "@vitejs/plugin-react": "^4.2.1",
+        "concurrently": "^9.1.2",
         "icon-gen": "^3.0.1",
         "sharp": "^0.33.2",
         "storybook": "^7.6.17",
