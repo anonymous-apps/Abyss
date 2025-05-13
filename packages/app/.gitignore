@@ -1,9 +1,6 @@
 node_modules
 dist-electron
 dist
-prisma/dev.*
 dist-vite
 *.db
 .env
-prisma/schema.prisma
-prisma

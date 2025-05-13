@@ -6,11 +6,12 @@ import { AppController } from './app-controller';
 
 // Setup __filename and __dirname for ES modules
 const __filename = fileURLToPath(import.meta.url);
-export const electronDataPath = dirname(__filename);
+const electronSrcPath = dirname(__filename); // Path inside asar in prod
 
-process.env.DIST_ELECTRON = join(electronDataPath, '../');
-process.env.DIST = join(process.env.DIST_ELECTRON, '../dist-vite');
-process.env.VITE_PUBLIC = process.env.VITE_DEV_SERVER_URL ? join(process.env.DIST_ELECTRON, '../public') : process.env.DIST;
+process.env.DIST_ELECTRON = join(electronSrcPath, '../');
+const isDev = !!process.env.VITE_DEV_SERVER_URL;
+process.env.DIST = isDev ? join(process.env.DIST_ELECTRON, '../dist-vite') : join(app.getAppPath(), '../dist-vite');
+process.env.VITE_PUBLIC = isDev ? join(process.env.DIST_ELECTRON, '../public') : join(app.getAppPath(), '../dist-vite'); // Tentative for VITE_PUBLIC
 
 // Compute a safe user data location (e.g. ~/.abyss)
 const userDataPath = path.join(process.env.HOME || process.env.USERPROFILE || '', '.abyss');
@@ -22,15 +23,20 @@ if (!fs.existsSync(userDataPath)) {
 const appController = new AppController();
 
 // Env
-const preload = join(electronDataPath, '../preload/index.mjs');
-const url = process.env.VITE_DEV_SERVER_URL;
-const indexHtml = join(process.env.DIST!, 'index.html');
+const preload = join(electronSrcPath, '../preload/index.mjs');
+const devServerUrl = process.env.VITE_DEV_SERVER_URL; // Keep this for clarity
 
 // Create the main application window
 async function createWindow() {
+    // Calculate production paths here, as app is ready
+    const unpackedDistPath = join(app.getAppPath(), '..', 'app.asar.unpacked', 'dist-vite'); // Path to unpacked dir
+    const finalIndexHtmlPath = isDev
+        ? join(process.env.DIST_ELECTRON!, '../dist-vite', 'index.html')
+        : join(unpackedDistPath, 'index.html'); // Use unpacked path
+
     const window = new BrowserWindow({
         title: 'Abyss',
-        icon: join(process.env.VITE_PUBLIC!, 'favicon.ico'),
+        icon: join(isDev ? process.env.VITE_PUBLIC! : unpackedDistPath, 'favicon.ico'), // Use unpacked path
         webPreferences: {
             preload,
             nodeIntegration: true,
@@ -62,10 +68,10 @@ async function createWindow() {
     appController.setupAppInfoHandlers();
     window.setWindowButtonVisibility(false);
 
-    if (url) {
-        window.loadURL(url);
+    if (isDev && devServerUrl) {
+        window.loadURL(devServerUrl);
     } else {
-        window.loadFile(indexHtml);
+        window.loadFile(finalIndexHtmlPath);
     }
 }
 
@@ -102,6 +108,12 @@ app.on('activate', () => {
 });
 
 ipcMain.handle('open-win', (_, arg) => {
+    // Path to unpacked dir for child windows
+    const unpackedDistPathForChild = join(app.getAppPath(), '..', 'app.asar.unpacked', 'dist-vite');
+    const finalIndexHtmlPathForChild = isDev
+        ? join(process.env.DIST_ELECTRON!, '../dist-vite', 'index.html')
+        : join(unpackedDistPathForChild, 'index.html'); // Use unpacked path
+
     const childWindow = new BrowserWindow({
         webPreferences: {
             preload,
@@ -110,9 +122,9 @@ ipcMain.handle('open-win', (_, arg) => {
         },
     });
 
-    if (process.env.VITE_DEV_SERVER_URL) {
-        childWindow.loadURL(`${url}#${arg}`);
+    if (isDev && devServerUrl) {
+        childWindow.loadURL(`${devServerUrl}#${arg}`);
     } else {
-        childWindow.loadFile(indexHtml, { hash: arg });
+        childWindow.loadFile(finalIndexHtmlPathForChild, { hash: arg });
     }
 });

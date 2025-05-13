@@ -1,9 +1,5 @@
 .env
 dist
-prisma/prisma
-prisma/dev.db
-prisma/dev.db-journal
-prisma/schema.prisma
 plan.md
 test
 .test-artifacts

@@ -9,7 +9,7 @@
     "type": "module",
     "scripts": {
         "dev": "node scripts/copy-sqlite.cjs && vite",
-        "build:mac": "vite build && node scripts/copy-prisma-artifacts.cjs && electron-builder build --mac ",
+        "build:mac": "vite build && electron-builder build --mac --arm64",
         "debug:mac": "npm run build:mac && dist/mac/Abyss.app/Contents/MacOS/Abyss",
         "debug:asar": "npx asar extract dist/mac/Abyss.app/Contents/Resources/app.asar ./tmp/extracted-app",
         "publish:mac": "vite build && electron-builder build --mac --publish always && npm run publish:checksums",
@@ -42,7 +42,7 @@
         "@octokit/rest": "^21.1.1",
         "@vitejs/plugin-react": "^4.2.1",
         "autoprefixer": "^10.4.20",
-        "electron": "^34.2.0",
+        "electron": "34.2.0",
         "electron-builder": "^23.6.0",
         "js-yaml": "^4.1.0",
         "postcss": "^8.5.3",
@@ -52,5 +52,31 @@
         "vite": "^6.1.1",
         "vite-plugin-electron": "^0.28.0",
         "vite-plugin-electron-renderer": "^0.14.5"
+    },
+    "build": {
+        "appId": "com.abyss.app",
+        "productName": "Abyss",
+        "npmRebuild": true,
+        "afterPack": "scripts/after-pack.cjs",
+        "mac": {
+            "icon": "../../build/icon.icns",
+            "target": [
+                "dmg"
+            ],
+            "category": "public.app-category.developer-tools",
+            "hardenedRuntime": true,
+            "gatekeeperAssess": false,
+            "entitlements": "mac/entitlements.mac.plist",
+            "entitlementsInherit": "mac/entitlements.mac.plist"
+        },
+        "files": [
+            "dist-vite/**/*",
+            "dist-electron/**/*"
+        ],
+        "asarUnpack": [
+            "**/node_modules/sqlite3/**/*",
+            "**/node_modules/@abyss/records/**/*",
+            "dist-vite/**/*"
+        ]
     }
 }

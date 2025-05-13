@@ -31,12 +31,6 @@ git clone https://github.com/anonymous-apps/Abyss
 cd Abyss
 npm i
 
-# Build all the sub-packages
-npm run build
-
-# We use prisma for Sqlite management.
-npm run prisma
-
 # Boot the app!
 npm run dev
 ```

@@ -16,7 +16,6 @@
         "build:prompts": "npm run build --workspace=packages/prompts",
         "build:mac": "node scripts/generate-icons.js && npm run build:mac --workspace=packages/app && say 'Build complete'",
         "debug:mac": "npm run debug:mac --workspace=packages/app",
-        "prisma": "npm run prisma --workspace=packages/app",
         "publish": "npm run build && npm run build:mac && npm run publish:mac",
         "publish:mac": "node scripts/generate-icons.js && `npm run publish:mac --workspace=packages/app",
         "generate-icons": "node scripts/generate-icons.js",
