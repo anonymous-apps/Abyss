@@ -3,14 +3,16 @@
 # Abyss
 
 The Best AI Desktop Client
-![Abyss](./docs/home.png)
+![Abyss](./assets/agent.png)
 
 ## Features
 
 -   Fully open source, no login, no accounts, no tracking. Its yours.
--   Connect to, chat with, and build agents with LLMs
+-   Connect to, chat with, and build agents with LLMs from various providers
+-   All data stored locally on your machine in a fully accessible sqlite database
+-   Agent builder with drag and drop interface
 
-![Abyss](./docs/chat.png)
+![Abyss](./assets/chat.png)
 
 ## [Download](https://github.com/anonymous-apps/abyss/releases)
 
@@ -40,7 +42,7 @@ npm run dev
 Build your own version of the app.
 
 ```bash
-npm run build
+npm run build:mac
 ```
 
 You will find the build in the `/packages/app/dist/mac` folder.
