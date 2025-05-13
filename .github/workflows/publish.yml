@@ -5,7 +5,7 @@ name: My app - build, sign, release
 on:
     push:
         branches:
-            - release
+            - main
 jobs:
     release_direct:
         runs-on: macos-latest
