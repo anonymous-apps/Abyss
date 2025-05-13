@@ -13,15 +13,15 @@ export class CompiledPrompt {
     }
 
     private renderHeader(cell: CellHeader): string {
-        return `# ${cell.content}`;
+        return `\n\n\n# ${cell.content}`;
     }
 
     private renderHeader2(cell: CellHeader2): string {
-        return `## ${cell.content}`;
+        return `\n\n## ${cell.content}`;
     }
 
     private renderHeader3(cell: CellHeader3): string {
-        return `### ${cell.content}`;
+        return `\n### ${cell.content}`;
     }
 
     private renderXMLElement(cell: CellXMLElement): string {
@@ -32,17 +32,19 @@ export class CompiledPrompt {
                 if (obj.hasOwnProperty(key)) {
                     const value = obj[key];
                     if (typeof value === 'object' && value !== null) {
-                        lines.push(`${'    '.repeat(indent)}<${key}>`);
+                        lines.push(`${'  '.repeat(indent)}<${key}>`);
                         lines.push(...handleObject(value, indent + 2));
-                        lines.push(`${'    '.repeat(indent)}</${key}>`);
+                        lines.push(`${'  '.repeat(indent)}</${key}>`);
+                    } else if (typeof value === 'string') {
+                        lines.push(`${'  '.repeat(indent)}<${key}>${dedent(value)}</${key}>`);
                     } else {
-                        lines.push(`${'    '.repeat(indent)}<${key}>${value}</${key}>`);
+                        lines.push(`${'  '.repeat(indent)}<${key}>${value}</${key}>`);
                     }
                 }
             }
             return lines;
         };
-        return handleObject(cell.content).join('\n');
+        return '\n' + handleObject(cell.content).join('\n') + '\n';
     }
 
     private renderSubPrompt(cell: CellSubPrompt): string {

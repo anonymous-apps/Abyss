@@ -95,30 +95,18 @@ export class InvokeLanguageModelNode extends NodeHandler {
             if (block.type === 'tool') {
                 const toolKey = Object.keys(block.content)[0];
                 const toolLookup = tools.find(t => t.shortName.toUpperCase() === toolKey.toUpperCase());
-                if (!toolLookup) {
-                    const messageRecord = await chat.client.tables.message.create({
-                        type: 'system-error',
-                        payloadData: {
-                            error: 'Tool not found',
-                            message: `Model requested tool ${toolKey} but it was not in the list of available tools`,
-                            body: JSON.stringify(block.content, null, 2),
-                        },
-                        senderId: 'system',
-                    });
-                    await chat.addMessages(new ReferencedMessageRecord(messageRecord.id, chat.client));
-                } else {
-                    const messageRecord = await chat.client.tables.message.create({
-                        type: 'tool-call-request',
-                        payloadData: {
-                            toolCallId: randomId(),
-                            toolId: toolLookup.id,
-                            parameters: block.content[toolKey] as Record<string, unknown>,
-                        },
-                        senderId: data.execution.graph.id,
-                    });
-                    await chat.addMessages(new ReferencedMessageRecord(messageRecord.id, chat.client));
-                    lastMessageRef = new ReferencedMessageRecord(messageRecord.id, chat.client);
-                }
+                const messageRecord = await chat.client.tables.message.create({
+                    type: 'tool-call-request',
+                    payloadData: {
+                        toolCallId: randomId(),
+                        shortName: toolLookup?.shortName ?? toolKey,
+                        toolId: toolLookup?.id ?? '',
+                        parameters: block.content[toolKey] as Record<string, unknown>,
+                    },
+                    senderId: data.execution.graph.id,
+                });
+                await chat.addMessages(new ReferencedMessageRecord(messageRecord.id, chat.client));
+                lastMessageRef = new ReferencedMessageRecord(messageRecord.id, chat.client);
             }
         }
 

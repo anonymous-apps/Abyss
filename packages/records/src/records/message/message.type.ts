@@ -38,6 +38,7 @@ export interface ToolCallRequestPartial extends BaseSqliteRecord {
     type: 'tool-call-request';
     senderId: string;
     payloadData: {
+        shortName: string;
         toolCallId: string;
         toolId: string;
         parameters: Record<string, any>;
@@ -50,6 +51,7 @@ export interface ToolCallResponsePartial extends BaseSqliteRecord {
     senderId: string;
     payloadData: {
         toolCallId: string;
+        shortName: string;
         status: Status;
         result: string;
     };

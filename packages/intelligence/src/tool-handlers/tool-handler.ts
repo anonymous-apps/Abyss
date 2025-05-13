@@ -30,6 +30,7 @@ export abstract class ToolHandler {
             senderId: 'system',
             payloadData: {
                 toolCallId: request.toolCallId,
+                shortName: this.toolDefinition.shortName,
                 status: 'inProgress',
                 result: '',
             },
@@ -48,6 +49,7 @@ export abstract class ToolHandler {
             await messageRef.update({
                 payloadData: {
                     toolCallId: request.toolCallId,
+                    shortName: this.toolDefinition.shortName,
                     result,
                     status: 'success',
                 },
@@ -57,6 +59,7 @@ export abstract class ToolHandler {
             await messageRef.update({
                 payloadData: {
                     toolCallId: request.toolCallId,
+                    shortName: this.toolDefinition.shortName,
                     result: (error as Error).message,
                     status: 'failed',
                 },

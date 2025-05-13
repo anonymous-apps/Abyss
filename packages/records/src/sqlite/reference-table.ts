@@ -107,6 +107,11 @@ export class ReferencedSqliteTable<IRecordType extends BaseSqliteRecord = BaseSq
         return ReferencedSqliteTable.deserialize<IRecordType>(results[0]);
     }
 
+    async exists(id: string): Promise<boolean> {
+        const raw = await this.client.execute(`SELECT COUNT(*) as count FROM ${this.tableId} WHERE id = ?`, [id]);
+        return (raw as { count: number }[])[0].count > 0;
+    }
+
     subscribeRecord(id: string, callback: (record: IRecordType) => void): () => void {
         return this.client.events.subscribeRecord(this.client, this.tableId, id, callback as (record: BaseSqliteRecord) => void);
     }

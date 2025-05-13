@@ -1,5 +1,7 @@
 import { CompiledPrompt, PromptTemplate } from '@abyss/prompts';
-import { ReferencedMessageThreadRecord, SQliteClient } from '@abyss/records';
+import { ReferencedMessageThreadRecord, SQliteClient, ToolCallRequestPartial } from '@abyss/records';
+import { systemErrorPrompt } from './errors.prompt';
+import { toolCallRequestPrompt, toolCallResponsePrompt, toolUseInstructionsPrompt } from './toolCall.prompt';
 import { addToolDefinitionPrompt } from './toolDefinition.prompt';
 
 type ConversationTurn = {
@@ -13,6 +15,7 @@ export async function buildConversationPrompt(thread: ReferencedMessageThreadRec
     let result: ConversationTurn[] = [];
     let currentTurnId = 'user';
     let prompt = new PromptTemplate();
+    let hasToolInstructions = false;
 
     const startNewTurn = (senderId: string) => {
         result.push({ senderId: currentTurnId, prompt: prompt.compile({}) });
@@ -37,30 +40,30 @@ export async function buildConversationPrompt(thread: ReferencedMessageThreadRec
             if (toolDefinitions.length > 0) {
                 prompt.addSubPrompt(addToolDefinitionPrompt.compile(toolDefinitions));
             }
+            if (!hasToolInstructions) {
+                prompt.addSubPrompt(toolUseInstructionsPrompt.compile({}));
+                hasToolInstructions = true;
+            }
         }
-    }
-
-    const activeToolDefinitions = await thread.getAllActiveToolDefinitions();
-
-    if (!!activeToolDefinitions.length) {
-        prompt.addHeader2('Tool Use Instructions');
-        prompt.addText(`
-            Here is how you can use the tools you have been given:
-            Respond with XML in the format of 
-            <tool-name-1>
-                <param-name-1>param-value-1</param-name-1>
-                <param-name-2>param-value-2</param-name-2>
-                ...
-            </tool-name-1>
-            <tool-name-2>
-                <param-name-1>param-value-1</param-name-1>
-                <param-name-2>param-value-2</param-name-2>
-                ...
-            </tool-name-2>
-            ...
-            (Note: There may be no parameters for a tool)
-            With that format, we will be able to use the tool in the next turn.
-        `);
+        if (message.type === 'tool-call-request') {
+            prompt.addSubPrompt(toolCallRequestPrompt.compile(message));
+        }
+        if (message.type === 'system-error') {
+            prompt.addSubPrompt(systemErrorPrompt.compile(message));
+        }
+        if (message.type === 'tool-call-response') {
+            const request = messages.find(
+                m => m.type === 'tool-call-request' && m.payloadData.toolCallId === message.payloadData.toolCallId
+            );
+            if (request) {
+                prompt.addSubPrompt(
+                    toolCallResponsePrompt.compile({
+                        request: request as ToolCallRequestPartial,
+                        response: message,
+                    })
+                );
+            }
+        }
     }
 
     startNewTurn('assistant');

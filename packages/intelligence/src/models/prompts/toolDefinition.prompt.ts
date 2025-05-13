@@ -26,13 +26,14 @@ const buildExampleUsageFromProperties = (properties: ToolDefinitionInputProperty
 };
 
 export const toolDefinitionTemplate = new PromptTemplate<ToolDefinitionType>()
-    .addHeader3(params => `TOOL: ${params.shortName}`)
+    .addHeader3(params => `${params.shortName} (new tool definition)`)
     .addText(params => params.description)
     .addXMLElement((params: ToolDefinitionType) => ({ 'input-schema': buildObjectFromProperties(params.inputSchemaData) }))
     .addXMLElement((params: ToolDefinitionType) => ({ 'output-schema': buildObjectFromProperties(params.outputSchemaData) }))
-    .addXMLElement((params: ToolDefinitionType) => ({ 'example-usage': buildExampleUsageFromProperties(params.inputSchemaData) }));
+    .addText('If you want to use this tool, you could respond with data like below')
+    .addXMLElement((params: ToolDefinitionType) => ({ [params.shortName]: buildExampleUsageFromProperties(params.inputSchemaData) }));
 
 export const addToolDefinitionPrompt = new PromptTemplate<ToolDefinitionType[]>()
-    .addHeader2('New Tools')
-    .addText('You were just given access to the following new tools, they are accessable to you now:')
+    .addHeader2('Tool Definitions Added')
+    .addText('You were just given access to the following new tool definitions, below are the details on how to use them')
     .addSubPrompt(params => params.map(tool => toolDefinitionTemplate.compile(tool)));
