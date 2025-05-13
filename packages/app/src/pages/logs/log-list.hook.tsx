@@ -18,6 +18,7 @@ export function useLogList() {
         for (const log of logs.data || []) {
             results.push({
                 status: <Status status={log.status} />,
+                type: log.type,
                 start: new Date(log.createdAt).toLocaleString(),
                 duration: log.completedAt ? formatDuration(log.completedAt - log.createdAt) : 'ongoing',
                 agent: log.sourceId,

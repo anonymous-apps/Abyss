@@ -31,7 +31,7 @@ export function ToolSetSelector(props: ToolSetSelectorProps) {
 
     return (
         <div className="w-full">
-            <div className="max-h-48 overflow-y-auto mb-2">
+            <div className="flex flex-wrap flex-row gap-2 max-h-48 overflow-y-auto mb-2">
                 {!tools || tools.length === 0 ? (
                     <div className="p-2 text-xs">No tools available</div>
                 ) : (
@@ -40,8 +40,10 @@ export function ToolSetSelector(props: ToolSetSelectorProps) {
                         return (
                             <div
                                 key={tool.id}
-                                className={`flex gap-2 px-2 items-center justify-between w-fit p-1 cursor-pointer transition-colors duration-150 hover:bg-primary-200 rounded-sm border ${
-                                    isSelected ? 'bg-primary-100 border-primary-200' : 'border-transparent'
+                                className={`flex gap-2 px-2 items-center justify-between w-fit p-1 cursor-pointer transition-colors duration-150  rounded-sm border ${
+                                    isSelected
+                                        ? 'bg-primary-100 border-primary-200 hover:bg-primary-200'
+                                        : 'border-transparent hover:bg-background-200'
                                 }`}
                                 onClick={() => handleToolToggle(tool.id)}
                             >

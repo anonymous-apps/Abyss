@@ -6,6 +6,7 @@ import {
     ToolDefinitionType,
 } from '@abyss/records';
 import { HelloWorldToolHandler } from './system/hello-world';
+import { LabelChatToolHandler } from './system/label-chat';
 
 function getToolHandler(toolDefinition: ToolDefinitionType) {
     // If its one of ours
@@ -13,6 +14,8 @@ function getToolHandler(toolDefinition: ToolDefinitionType) {
         switch (toolDefinition.id) {
             case 'toolDefinition::helloworld-tool':
                 return new HelloWorldToolHandler(toolDefinition);
+            case 'toolDefinition::labelchat-tool':
+                return new LabelChatToolHandler(toolDefinition);
             default:
                 throw new Error(`No tool handler found for tool definition ${toolDefinition.id}`);
         }
@@ -44,7 +47,7 @@ export async function runUnproccessedToolCalls(chatRef: ReferencedChatThreadReco
                 type: 'tool-call-response',
                 payloadData: {
                     toolCallId: toolCallData.payloadData.toolCallId,
-                    shortName: toolCallData.payloadData.toolCallId,
+                    shortName: toolCallData.payloadData.shortName,
                     status: 'failed',
                     result: (error as Error).message,
                 },

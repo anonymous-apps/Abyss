@@ -7,6 +7,19 @@ import {
     ToolDefinitionType,
 } from '@abyss/records';
 
+export interface ToolHandlerExecution {
+    chat: ReferencedChatThreadRecord;
+    request: ToolCallRequestPartial['payloadData'];
+    sqliteClient: SQliteClient;
+}
+
+export interface ToolHandlerExecutionInternal {
+    chat: ReferencedChatThreadRecord;
+    request: ToolCallRequestPartial['payloadData'];
+    sqliteClient: SQliteClient;
+    log: ReferencedLogStreamRecord;
+}
+
 export abstract class ToolHandler {
     constructor(private readonly toolDefinition: ToolDefinitionType) {}
 
@@ -15,40 +28,36 @@ export abstract class ToolHandler {
             toolDefintion: this.toolDefinition.name,
         };
         return await sqliteClient.tables.metric.wrapSqliteMetric('tool-handler', dimensions, async () => {
-            await this.handleExecute(chat, request, sqliteClient);
+            await this.handleExecute({ chat, request, sqliteClient });
         });
     }
 
-    private async handleExecute(
-        chat: ReferencedChatThreadRecord,
-        request: ToolCallRequestPartial['payloadData'],
-        sqliteClient: SQliteClient
-    ) {
+    private async handleExecute(params: ToolHandlerExecution) {
         // Create a new message for this tool call
-        const responseMessage = await sqliteClient.tables.message.create({
+        const responseMessage = await params.sqliteClient.tables.message.create({
             type: 'tool-call-response',
             senderId: 'system',
             payloadData: {
-                toolCallId: request.toolCallId,
+                toolCallId: params.request.toolCallId,
                 shortName: this.toolDefinition.shortName,
                 status: 'inProgress',
                 result: '',
             },
         });
-        const messageRef = new ReferencedMessageRecord(responseMessage.id, sqliteClient);
-        await chat.addMessages(messageRef);
+        const messageRef = new ReferencedMessageRecord(responseMessage.id, params.sqliteClient);
+        await params.chat.addMessages(messageRef);
 
         // Log the tool call
-        const logRef = await sqliteClient.tables.logStream.new('tool-call', responseMessage.id);
+        const logRef = await params.sqliteClient.tables.logStream.new('tool-call', responseMessage.id);
 
         try {
             // Execute the tool
-            const result = await this._execute(request, logRef);
+            const result = await this._execute({ ...params, log: logRef });
 
             // Update the message with the success
             await messageRef.update({
                 payloadData: {
-                    toolCallId: request.toolCallId,
+                    toolCallId: params.request.toolCallId,
                     shortName: this.toolDefinition.shortName,
                     result,
                     status: 'success',
@@ -58,7 +67,7 @@ export abstract class ToolHandler {
         } catch (error) {
             await messageRef.update({
                 payloadData: {
-                    toolCallId: request.toolCallId,
+                    toolCallId: params.request.toolCallId,
                     shortName: this.toolDefinition.shortName,
                     result: (error as Error).message,
                     status: 'failed',
@@ -69,5 +78,5 @@ export abstract class ToolHandler {
         }
     }
 
-    protected abstract _execute(request: ToolCallRequestPartial['payloadData'], log: ReferencedLogStreamRecord): Promise<string>;
+    protected abstract _execute(params: ToolHandlerExecutionInternal): Promise<string>;
 }
