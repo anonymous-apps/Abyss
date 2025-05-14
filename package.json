@@ -21,7 +21,8 @@
         "generate-icons": "node scripts/generate-icons.js",
         "bump": "npm run bump --workspace=packages/app",
         "test": "npm run test --workspace=packages/intelligence",
-        "dev": "concurrently \"npm run watch --workspace=packages/ui-components\" \"npm run watch --workspace=packages/intelligence\" \"npm run watch --workspace=packages/records\" \"npm run watch --workspace=packages/prompts\" \"npm run dev --workspace=packages/app\""
+        "watch": "concurrently \"npm run watch --workspace=packages/ui-components\" \"npm run watch --workspace=packages/intelligence\" \"npm run watch --workspace=packages/records\" \"npm run watch --workspace=packages/prompts\"",
+        "dev": "npm run dev --workspace=packages/app"
     },
     "devDependencies": {
         "@storybook/addon-essentials": "^7.6.17",

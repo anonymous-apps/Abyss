@@ -110,12 +110,15 @@ export class InvokeLanguageModelNode extends NodeHandler {
             }
         }
 
-        // Add log stream to chat
-        await lastMessageRef?.update({
-            referencedData: {
-                logStreamId: modelResponse.logStream.id,
-            },
-        });
+        // Add references to chat
+        let referencedData: any = {};
+        if (modelResponse.logStream) {
+            referencedData['logStreamId'] = modelResponse.logStream.id;
+        }
+        if (modelResponse.snapshot) {
+            referencedData['chatSnapshotId'] = modelResponse.snapshot.id;
+        }
+        await lastMessageRef?.update({ referencedData });
 
         // Run any unprocessed tool calls
         await runUnproccessedToolCalls(chat, data.database);

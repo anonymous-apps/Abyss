@@ -29,7 +29,10 @@ export const toolDefinitionTemplate = new PromptTemplate<ToolDefinitionType>()
     .addHeader3(params => `${params.shortName} (new tool definition)`)
     .addText(params => params.description)
     .addXMLElement((params: ToolDefinitionType) => ({ 'input-schema': buildObjectFromProperties(params.inputSchemaData) }))
-    .addXMLElement((params: ToolDefinitionType) => ({ 'output-schema': buildObjectFromProperties(params.outputSchemaData) }))
+    .addXMLElement(
+        (params: ToolDefinitionType) =>
+            Object.keys(params.outputSchemaData).length > 0 && { 'output-schema': buildObjectFromProperties(params.outputSchemaData) }
+    )
     .addText('If you want to use this tool, you could respond with data like below')
     .addXMLElement((params: ToolDefinitionType) => ({ [params.shortName]: buildExampleUsageFromProperties(params.inputSchemaData) }));
 

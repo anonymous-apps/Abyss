@@ -2,7 +2,9 @@ import { existsSync, promises as fs, mkdirSync } from 'fs';
 import { join } from 'path';
 import sqlite3 from 'sqlite3';
 import { ReferencedAgentGraphTable } from '../records/agent-graph/agent-graph';
+import { ReferencedChatSnapshotTable } from '../records/chat-snapshot/chat-snapshot';
 import { ReferencedChatThreadTable } from '../records/chat-thread/chat-thread';
+import { ReferencedDocumentTable } from '../records/document/document';
 import { ReferencedLogStreamTable } from '../records/logstream/logstream';
 import { ReferencedMessageThreadTable } from '../records/message-thread/message-thread';
 import { ReferencedMessageTable } from '../records/message/message';
@@ -46,6 +48,8 @@ export class SQliteClient {
             message: new ReferencedMessageTable(this),
             logStream: new ReferencedLogStreamTable(this),
             toolDefinition: new ReferencedToolDefinitionTable(this),
+            document: new ReferencedDocumentTable(this),
+            chatSnapshot: new ReferencedChatSnapshotTable(this),
         };
     }
 
@@ -115,7 +119,11 @@ export class SQliteClient {
             return false;
         }
         for (const query of migration.queries) {
-            await this.execute(query);
+            try {
+                await this.execute(query);
+            } catch (e) {
+                console.error('[SQliteClient]', query, e);
+            }
         }
         await this.setSidecar({ databaseVersionId: migration.to });
         return true;

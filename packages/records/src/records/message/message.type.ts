@@ -69,10 +69,19 @@ export interface SystemErrorPartial extends BaseSqliteRecord {
     referencedData?: Record<string, string>;
 }
 
+export interface ReadonlyDocumentPartial extends BaseSqliteRecord {
+    type: 'readonly-document';
+    senderId: string;
+    payloadData: {
+        documentIds: string[];
+    };
+}
+
 export type MessageType =
     | TextPartial
     | NewToolDefinitionPartial
     | RemoveToolDefinitionPartial
     | ToolCallRequestPartial
     | ToolCallResponsePartial
+    | ReadonlyDocumentPartial
     | SystemErrorPartial;

@@ -1,5 +1,18 @@
 import { ActionItem } from '@abyss/ui-components';
-import { Bell, BinaryIcon, Bot, Box, Cog, Globe, Hammer, LucideIcon, MessageCircleQuestion, NotepadText, User } from 'lucide-react';
+import {
+    Bell,
+    BinaryIcon,
+    Bot,
+    Box,
+    CheckCheck,
+    Cog,
+    Globe,
+    Hammer,
+    LucideIcon,
+    MessageCircleQuestion,
+    NotepadText,
+    User,
+} from 'lucide-react';
 import { useNavigate } from 'react-router';
 
 export interface RecordReference {
@@ -14,6 +27,8 @@ export function getIconForSourceType(source: string): LucideIcon {
             return Cog;
         case 'modelconnection':
             return Box;
+        case 'completion':
+            return CheckCheck;
         case 'agentgraph':
             return Bot;
         case 'user':
@@ -61,6 +76,14 @@ export function useRecordReference({ sourceId }: { sourceId: string }): RecordRe
             icon: Icon,
             label: 'Agent Graph',
             link: `/agents/id/${sourceId}`,
+        };
+    }
+
+    if (recordType === 'completion') {
+        const Icon = getIconForSourceType('completion');
+        return {
+            icon: Icon,
+            label: 'Completion',
         };
     }
 

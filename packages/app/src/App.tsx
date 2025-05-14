@@ -9,6 +9,7 @@ import { ChatViewPage } from './pages/chats/view.page';
 import { ListTablesPage } from './pages/database/database.page';
 import { ViewTableRecordPage } from './pages/database/record.page';
 import { ViewTablePage } from './pages/database/table.page';
+import { DocumentsPage } from './pages/documents/documents.page';
 import { LogListPage } from './pages/logs/log-list';
 import { LogViewPage } from './pages/logs/log-view';
 import { MainPage } from './pages/main/main';
@@ -18,6 +19,7 @@ import { ModelProfileCreatePage } from './pages/models/create.page';
 import { ModelProfileMainPage } from './pages/models/main.page';
 import { ModelProfileViewPage } from './pages/models/view.page';
 import { SettingsPage } from './pages/settings/settings.page';
+import { ViewSnapshotPage } from './pages/snapshots/view-snapshot.page';
 import { ToolsPage } from './pages/tools/tools.page';
 import { WithAppSidebar } from './pages/withSidebar';
 import { useTheme } from './state/theme-state';
@@ -44,6 +46,8 @@ export function App() {
                         <Route path="/models" element={<ModelProfileMainPage />} />
                         <Route path="/models/create" element={<ModelProfileCreatePage />} />
                         <Route path="/models/id/:id" element={<ModelProfileViewPage />} />
+                        <Route path="/documents" element={<DocumentsPage />} />
+                        <Route path="/snapshots/id/:id" element={<ViewSnapshotPage />} />
                         <Route path="/tools" element={<ToolsPage />} />
                         <Route path="/agents" element={<AgentsPage />} />
                         <Route path="/agents/id/:id" element={<ViewAgentGraphPage />} />

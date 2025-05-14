@@ -1,5 +1,6 @@
 import { CompiledPrompt, PromptTemplate } from '@abyss/prompts';
 import { ReferencedMessageThreadRecord, SQliteClient, ToolCallRequestPartial } from '@abyss/records';
+import { ReferencedDocumentRecord } from '@abyss/records/dist/records/document/document';
 import { systemErrorPrompt } from './errors.prompt';
 import { toolCallRequestPrompt, toolCallResponsePrompt, toolUseInstructionsPrompt } from './toolCall.prompt';
 import { addToolDefinitionPrompt } from './toolDefinition.prompt';
@@ -32,6 +33,22 @@ export async function buildConversationPrompt(thread: ReferencedMessageThreadRec
         // Add text to prompt
         if (message.type === 'text') {
             prompt.addText(message.payloadData.content);
+        }
+        if (message.type === 'readonly-document') {
+            const strings = await Promise.all(
+                message.payloadData.documentIds.map(async id => {
+                    const document = new ReferencedDocumentRecord(id, db);
+                    return await document.toRenderedString();
+                })
+            );
+            if (strings.length > 0) {
+                prompt
+                    .addHeader2('Additional Documents')
+                    .addText('The following documents might be useful and were added for your reference:');
+                for (const string of strings) {
+                    prompt.addText(string);
+                }
+            }
         }
         if (message.type === 'new-tool-definition') {
             const toolDefinitions = await Promise.all(

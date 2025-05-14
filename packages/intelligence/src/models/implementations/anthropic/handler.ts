@@ -1,3 +1,4 @@
+import { ReferencedChatSnapshotRecord } from '@abyss/records/dist/records/chat-snapshot/chat-snapshot';
 import { Log } from '../../../utils/logs';
 import { InvokeModelInternalResult } from '../../types';
 import { buildAnthropicMessages } from './build-context';
@@ -62,12 +63,28 @@ export async function InvokeAnthropic(props: InvokeAnthropicProps): Promise<Omit
         };
         const responseText = parsed.content[0]?.text || '';
 
+        // Create snapshot
+        const snapshot = await props.thread.client.tables.chatSnapshot.create({
+            messagesData: [
+                ...messages.map(m => ({
+                    type: m.role,
+                    content: m.content.map(a => a.text).join('\n'),
+                })),
+                {
+                    type: 'completion',
+                    content: responseText,
+                },
+            ],
+        });
+        const snapshotRef = new ReferencedChatSnapshotRecord(snapshot.id, props.thread.client);
+
         // Return the result
         return {
             inputRaw: messages,
             outputRaw: responseText,
             outputString: responseText,
             metrics: metrics,
+            snapshot: snapshotRef,
         };
     } catch (error) {
         Log.error(modelId, `Error: ${error}`);

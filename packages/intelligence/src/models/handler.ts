@@ -1,7 +1,6 @@
 import { ReferencedMessageThreadRecord, ReferencedModelConnectionRecord } from '@abyss/records';
 import { parseLLMOutput } from '../parser/parser';
 import { InvokeAnthropic } from './implementations/anthropic/handler';
-import { InvokeOpenAI } from './implementations/openai/handler';
 import { InvokeStatic } from './implementations/static/handler';
 import { buildConversationPrompt } from './prompts/buildConversationPrompt';
 import { InvokeModelInternalResult } from './types';
@@ -54,18 +53,6 @@ async function invokeLLM(
             await modelInvokeLogStream.log('modelInvoke', 'Static API handler invoked', staticResult);
             modelInvokeLogStream.success();
             return { ...staticResult, logStream: modelInvokeLogStream };
-        }
-        if (connection.accessFormat.toLowerCase() === 'openai') {
-            await modelInvokeLogStream.log('modelInvoke', 'Invoking OpenAI API handler');
-            const openaiResult = await InvokeOpenAI({
-                thread,
-                modelId: connection.modelId,
-                apiKey: connection.connectionData.apiKey,
-                logStream: modelInvokeLogStream,
-            });
-            await modelInvokeLogStream.log('modelInvoke', 'OpenAI API handler invoked', openaiResult);
-            modelInvokeLogStream.success();
-            return { ...openaiResult, logStream: modelInvokeLogStream };
         }
 
         throw new Error(`Unknown AI access format: ${connection.accessFormat}`);

@@ -59,7 +59,7 @@ async function createWindow() {
     });
 
     if (process.env.NODE_ENV === 'development') {
-        window.webContents.openDevTools();
+        // window.webContents.openDevTools();
     }
 
     appController.setMainWindow(window);

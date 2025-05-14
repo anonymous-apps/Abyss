@@ -13,7 +13,7 @@ export interface ChatTurnHeaderProps {
     /**
      * Timestamp for the chat turn
      */
-    timestamp: string;
+    timestamp?: string;
     /**
      * Click handler for the icon and label
      */
@@ -36,7 +36,7 @@ export const ChatTurnHeader: React.FC<ChatTurnHeaderProps> = ({ icon: Icon, labe
                 <Icon className="h-4 w-4 text-primary-500" />
                 <span className="font-medium text-text-400">{label}</span>
             </div>
-            <span className=" text-text-600">{timestamp}</span>
+            {timestamp && <span className=" text-text-600">{timestamp}</span>}
         </div>
     );
 };

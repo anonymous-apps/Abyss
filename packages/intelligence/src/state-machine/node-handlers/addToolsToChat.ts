@@ -88,9 +88,19 @@ export class AddToolsToThreadNode extends NodeHandler {
             },
         });
 
+        // Add linked documents to chat
+        const linkedDocuments = toolsToAddRecords.flatMap(t => t.linkedDocumentData || []);
+        const missingDocuments = await currentThread.getDeltaReadonlyDocuments(linkedDocuments);
+        const linkedDocumentsMessages = await chat.client.tables.message.create({
+            type: 'readonly-document',
+            senderId: 'system',
+            payloadData: { documentIds: missingDocuments },
+        });
+
         await chat.addMessages(
             new ReferencedMessageRecord(toolsToAddMessages.id, chat.client),
-            new ReferencedMessageRecord(toolsToRemoveMessages.id, chat.client)
+            new ReferencedMessageRecord(toolsToRemoveMessages.id, chat.client),
+            new ReferencedMessageRecord(linkedDocumentsMessages.id, chat.client)
         );
 
         return {

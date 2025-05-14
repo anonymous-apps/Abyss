@@ -1,6 +1,7 @@
 import {
     MessageThreadTurn,
     NewToolDefinitionPartial,
+    ReadonlyDocumentPartial,
     RemoveToolDefinitionPartial,
     SystemErrorPartial,
     TextPartial,
@@ -8,7 +9,7 @@ import {
     ToolCallResponsePartial,
 } from '@abyss/records';
 import { ActionItem, ChatMessageSystemError, ChatMessageSystemText, ChatMessageText, ChatToolCall } from '@abyss/ui-components';
-import { Globe } from 'lucide-react';
+import { AlignLeft, Globe } from 'lucide-react';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SectionHeader } from './ChatSectionHeader';
@@ -74,6 +75,10 @@ export function ChatHistoryRenderer({ thread }: { thread: MessageThreadTurn[] })
                     );
                 } else if (message.type === 'tool-call-response') {
                     // no-op
+                } else if (message.type === 'readonly-document') {
+                    elementsThisTurn.push(
+                        <ReadonlyDocumentSection key={'readonly-document-' + i + '-' + j} message={message} navigate={navigate} />
+                    );
                 } else {
                     console.error('Unknown system message type', message);
                 }
@@ -117,6 +122,13 @@ function getActionItems(message: Record<string, string> = {}, navigate: (path: s
                 navigate(`/logs/id/${value}`);
             },
         }),
+        chatSnapshotId: (value: string) => ({
+            icon: AlignLeft,
+            tooltip: 'Chat Snapshot',
+            onClick: () => {
+                navigate(`/snapshots/id/${value}`);
+            },
+        }),
     };
 
     const result: ActionItem[] = [];
@@ -144,6 +156,10 @@ function SystemErrorMessageSection({ message, navigate }: { message: SystemError
             children={message.payloadData.body}
         />
     );
+}
+
+function ReadonlyDocumentSection({ message, navigate }: { message: ReadonlyDocumentPartial; navigate: (path: string) => void }) {
+    return <ChatMessageSystemText text={`Added readonly references to documents: ${message.payloadData.documentIds.join(', ')}`} />;
 }
 
 function NewToolDefinition({ message, navigate }: { message: NewToolDefinitionPartial; navigate: (path: string) => void }) {

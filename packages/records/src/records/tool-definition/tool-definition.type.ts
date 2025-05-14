@@ -1,7 +1,7 @@
 import { BaseSqliteRecord } from '../../sqlite/sqlite.type';
 
 export type ToolDefinitionHandlerType = 'abyss';
-export type ToolDefinitionPropertyType = 'string' | 'number' | 'boolean';
+export type ToolDefinitionPropertyType = 'string' | 'number' | 'boolean' | 'raw-json';
 
 export interface ToolDefinitionInputProperty {
     name: string;
@@ -22,4 +22,5 @@ export interface ToolDefinitionType extends BaseSqliteRecord {
     handlerType: ToolDefinitionHandlerType;
     inputSchemaData: ToolDefinitionInputProperty[];
     outputSchemaData: ToolDefinitionOutputProperty[];
+    linkedDocumentData?: string[];
 }

@@ -80,6 +80,20 @@ export class ReferencedMessageThreadRecord extends ReferencedSqliteRecord<Messag
         return { toolsToAdd, toolsToRemove };
     }
 
+    public async getDeltaReadonlyDocuments(documentIds: string[]) {
+        const messages = await this.getAllMessages();
+        const foundDocuments: Set<string> = new Set();
+        for (const message of messages) {
+            if (message.type === 'readonly-document') {
+                for (const documentId of message.payloadData.documentIds) {
+                    foundDocuments.add(documentId);
+                }
+            }
+        }
+        const missingDocuments = documentIds.filter(id => !foundDocuments.has(id));
+        return missingDocuments;
+    }
+
     public async getUnprocessedToolCalls() {
         const messages = await this.getAllMessages();
         const getUnprocessedToolCalls: Record<string, ReferencedMessageRecord> = {};

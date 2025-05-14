@@ -1,5 +1,5 @@
 import { Sidebar as AbyssSidebar, SidebarButton as AbyssSidebarButton, SidebarSection as AbyssSidebarSection } from '@abyss/ui-components';
-import { Bot, Box, ChartLine, DatabaseIcon, Hammer, List, MessageSquare, SettingsIcon } from 'lucide-react';
+import { Bot, Box, ChartLine, DatabaseIcon, Hammer, List, MessageSquare, NotebookText, SettingsIcon } from 'lucide-react';
 import React from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Navigate, useLocation, useNavigate, useOutlet } from 'react-router';
@@ -31,6 +31,7 @@ export function AppSidebar() {
             <AbyssSidebar className="" title="Abyss">
                 <AbyssSidebarSection title="Activity" />
                 <AbyssSidebarButton label="Chats" icon={MessageSquare} {...navProps('/chats')} />
+                <AbyssSidebarButton label="Documents" icon={NotebookText} {...navProps('/documents')} />
                 <AbyssSidebarSection title="Configure" />
                 <AbyssSidebarButton label="Models" icon={Box} {...navProps('/models')} />
                 <AbyssSidebarButton label="Agents" icon={Bot} {...navProps('/agents')} />

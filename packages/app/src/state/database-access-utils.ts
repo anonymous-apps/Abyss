@@ -7,6 +7,7 @@ import {
     SqliteTables,
     ToolDefinitionType,
 } from '@abyss/records';
+import { DocumentType } from '@abyss/records/dist/records/document/document.type';
 import { useDatabaseQuery, useDatabaseRecord, useDatabaseTableQuery } from './database-connection';
 
 // General access
@@ -21,6 +22,10 @@ export function useDatabaseTables() {
 
 export function useDatabaseSettings() {
     return useDatabaseRecord<SettingsType>('settings', 'settings::default');
+}
+
+export function useDatabaseDocuments() {
+    return useDatabaseTableScan<DocumentType>('document');
 }
 
 // Specific access
