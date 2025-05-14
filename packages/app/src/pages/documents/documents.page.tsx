@@ -4,7 +4,7 @@ import React from 'react';
 import { useDocumentsPage } from './documents.hook';
 
 export function DocumentsPage() {
-    const { breadcrumbs, documents, systemDocuments, viewDocument } = useDocumentsPage();
+    const { breadcrumbs, documents, systemDocuments, dynamicDocuments, viewDocument } = useDocumentsPage();
 
     return (
         <PageCrumbed title={'Abyss Documents'} breadcrumbs={breadcrumbs} loading={documents === undefined}>
@@ -29,6 +29,25 @@ export function DocumentsPage() {
                             No system documents defined currently, this is an odd state as abyss should create these for you.
                         </div>
                     )}
+                </TileGrid>
+            </IconSection>
+
+            <IconSection
+                icon={NotebookText}
+                title="Dynamic Documents"
+                subtitle="These documents were created by the system and are not editable."
+            >
+                <TileGrid>
+                    {dynamicDocuments?.map(document => (
+                        <Tile
+                            key={document.id}
+                            title={document.name}
+                            onClick={() => viewDocument(document.id)}
+                            icon={<NotebookText className="w-4 h-4" />}
+                        >
+                            {document.name}
+                        </Tile>
+                    ))}
                 </TileGrid>
             </IconSection>
         </PageCrumbed>

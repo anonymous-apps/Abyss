@@ -16,7 +16,7 @@ export const DocumentCreateTool: NewRecord<ToolDefinitionType> = {
             type: 'raw-json',
             name: 'documentData',
             description:
-                'The content of the document to create, in JSON format. This will be an array of cells like [{ "type": "text", "content": "Hello, world!" } ... ]',
+                'The content of the document to create, in stringified JSON format. This will be an array of cells like [{ "type": "text", "content": "Hello, world!" } ... ]',
         },
     ],
     outputSchemaData: [],

@@ -5,6 +5,7 @@ import {
     ToolCallRequestPartial,
     ToolDefinitionType,
 } from '@abyss/records';
+import { DocumentCreateToolHandler } from './system/document-create';
 import { HelloWorldToolHandler } from './system/hello-world';
 import { LabelChatToolHandler } from './system/label-chat';
 
@@ -16,6 +17,8 @@ function getToolHandler(toolDefinition: ToolDefinitionType) {
                 return new HelloWorldToolHandler(toolDefinition);
             case 'toolDefinition::labelchat-tool':
                 return new LabelChatToolHandler(toolDefinition);
+            case 'toolDefinition::document-create-tool':
+                return new DocumentCreateToolHandler(toolDefinition);
             default:
                 throw new Error(`No tool handler found for tool definition ${toolDefinition.id}`);
         }
@@ -24,7 +27,7 @@ function getToolHandler(toolDefinition: ToolDefinitionType) {
     throw new Error(`No tool handler found for tool definition ${toolDefinition.id}`);
 }
 
-export async function runUnproccessedToolCalls(chatRef: ReferencedChatThreadRecord, sqliteClient: SQliteClient) {
+export async function runUnproccessedToolCalls(callerId: string, chatRef: ReferencedChatThreadRecord, sqliteClient: SQliteClient) {
     const thread = await chatRef.getThread();
     const unprocessedToolCalls = await thread.getUnprocessedToolCalls();
     const activeToolDefinitions = await thread.getAllActiveToolDefinitions();
@@ -41,7 +44,7 @@ export async function runUnproccessedToolCalls(chatRef: ReferencedChatThreadReco
             }
             const toolDefinition = await sqliteClient.tables.toolDefinition.get(toolCallData.payloadData.toolId);
             const toolHandler = getToolHandler(toolDefinition);
-            await toolHandler.execute(chatRef, toolCallData.payloadData, sqliteClient);
+            await toolHandler.execute(callerId, chatRef, toolCallData.payloadData, sqliteClient);
         } catch (error) {
             const messageRecord = await chatRef.client.tables.message.create({
                 type: 'tool-call-response',

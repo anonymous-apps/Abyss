@@ -76,9 +76,11 @@ export function ChatHistoryRenderer({ thread }: { thread: MessageThreadTurn[] })
                 } else if (message.type === 'tool-call-response') {
                     // no-op
                 } else if (message.type === 'readonly-document') {
-                    elementsThisTurn.push(
-                        <ReadonlyDocumentSection key={'readonly-document-' + i + '-' + j} message={message} navigate={navigate} />
-                    );
+                    if (message.payloadData.documentIds.length > 0) {
+                        elementsThisTurn.push(
+                            <ReadonlyDocumentSection key={'readonly-document-' + i + '-' + j} message={message} navigate={navigate} />
+                        );
+                    }
                 } else {
                     console.error('Unknown system message type', message);
                 }

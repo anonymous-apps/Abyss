@@ -49,17 +49,14 @@ export class ReferencedLogStreamRecord extends ReferencedSqliteRecord<LogStreamT
     }
 
     public async log(scope: string, message: string, data: Record<string, any> = {}) {
-        console.log(scope, message, data);
         await this.addMessage({ scope, message, data, level: 'info' });
     }
 
     public async warn(scope: string, message: string, data: Record<string, any> = {}) {
-        console.warn(scope, message, data);
         await this.addMessage({ scope, message, data, level: 'warning' });
     }
 
     public async error(scope: string, message: string, data: Record<string, any> = {}) {
-        console.error(scope, message, data);
         await this.addMessage({ scope, message, data, level: 'error' });
     }
 

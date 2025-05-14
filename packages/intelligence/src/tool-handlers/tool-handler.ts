@@ -8,12 +8,14 @@ import {
 } from '@abyss/records';
 
 export interface ToolHandlerExecution {
+    callerId: string;
     chat: ReferencedChatThreadRecord;
     request: ToolCallRequestPartial['payloadData'];
     sqliteClient: SQliteClient;
 }
 
 export interface ToolHandlerExecutionInternal {
+    callerId: string;
     chat: ReferencedChatThreadRecord;
     request: ToolCallRequestPartial['payloadData'];
     sqliteClient: SQliteClient;
@@ -23,12 +25,17 @@ export interface ToolHandlerExecutionInternal {
 export abstract class ToolHandler {
     constructor(private readonly toolDefinition: ToolDefinitionType) {}
 
-    async execute(chat: ReferencedChatThreadRecord, request: ToolCallRequestPartial['payloadData'], sqliteClient: SQliteClient) {
+    async execute(
+        callerId: string,
+        chat: ReferencedChatThreadRecord,
+        request: ToolCallRequestPartial['payloadData'],
+        sqliteClient: SQliteClient
+    ) {
         const dimensions = {
             toolDefintion: this.toolDefinition.name,
         };
         return await sqliteClient.tables.metric.wrapSqliteMetric('tool-handler', dimensions, async () => {
-            await this.handleExecute({ chat, request, sqliteClient });
+            await this.handleExecute({ callerId, chat, request, sqliteClient });
         });
     }
 

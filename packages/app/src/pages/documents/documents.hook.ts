@@ -16,5 +16,6 @@ export function useDocumentsPage() {
     };
 
     const systemDocuments = documents.data?.filter(document => document.type === 'system');
-    return { breadcrumbs: pageBreadcrumbs, documents, systemDocuments, viewDocument };
+    const dynamicDocuments = documents.data?.filter(document => document.type === 'dynamic');
+    return { breadcrumbs: pageBreadcrumbs, documents, systemDocuments, dynamicDocuments, viewDocument };
 }

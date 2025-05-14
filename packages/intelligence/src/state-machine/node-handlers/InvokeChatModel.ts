@@ -121,7 +121,7 @@ export class InvokeLanguageModelNode extends NodeHandler {
         await lastMessageRef?.update({ referencedData });
 
         // Run any unprocessed tool calls
-        await runUnproccessedToolCalls(chat, data.database);
+        await runUnproccessedToolCalls(data.execution.graph.id, chat, data.database);
 
         return {
             portData: [
