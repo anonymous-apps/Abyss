@@ -87,7 +87,7 @@ describe('Document Record', () => {
             const replacedCell = updatedDocument.documentContentData.find(c => c.id === 'cell1');
             expect(replacedCell).toBeDefined();
             expect(replacedCell?.type).toBe('header');
-            expect((replacedCell as any).content).toBe('new header');
+            expect(replacedCell?.content).toBe('new header');
             expect(replacedCell?.authorId).toBe('user2');
         });
     });
@@ -100,7 +100,7 @@ describe('Document Record', () => {
             const updatedDocument = await documentRef.get();
             expect(updatedDocument.documentContentData.length).toBe(1);
             expect(updatedDocument.documentContentData[0].type).toBe('text');
-            expect((updatedDocument.documentContentData[0] as any).content).toBe('first cell');
+            expect(updatedDocument.documentContentData[0].content).toBe('first cell');
         });
 
         test('if the document has cells, addCellAtStart will add the cell at the start of the document, shifting the existing cells down', async () => {
@@ -117,7 +117,7 @@ describe('Document Record', () => {
             const updatedDocument = await documentRef.get();
             expect(updatedDocument.documentContentData.length).toBe(2);
             expect(updatedDocument.documentContentData[0].type).toBe('header');
-            expect((updatedDocument.documentContentData[0] as any).content).toBe('new first cell');
+            expect(updatedDocument.documentContentData[0].content).toBe('new first cell');
             expect(updatedDocument.documentContentData[1].id).toBe('cell1');
         });
     });
@@ -130,7 +130,7 @@ describe('Document Record', () => {
             const updatedDocument = await documentRef.get();
             expect(updatedDocument.documentContentData.length).toBe(1);
             expect(updatedDocument.documentContentData[0].type).toBe('text');
-            expect((updatedDocument.documentContentData[0] as any).content).toBe('first cell');
+            expect(updatedDocument.documentContentData[0].content).toBe('first cell');
         });
 
         test('if the document has cells, addCellAtEnd will add the cell at the end of the document, shifting the existing cells up', async () => {
@@ -147,7 +147,7 @@ describe('Document Record', () => {
             const updatedDocument = await documentRef.get();
             expect(updatedDocument.documentContentData.length).toBe(2);
             expect(updatedDocument.documentContentData[1].type).toBe('header');
-            expect((updatedDocument.documentContentData[1] as any).content).toBe('new last cell');
+            expect(updatedDocument.documentContentData[1].content).toBe('new last cell');
             expect(updatedDocument.documentContentData[0].id).toBe('cell1');
         });
     });
@@ -169,7 +169,7 @@ describe('Document Record', () => {
             expect(updatedDocument.documentContentData.length).toBe(3);
             expect(updatedDocument.documentContentData[0].id).toBe('cell1');
             expect(updatedDocument.documentContentData[1].type).toBe('header');
-            expect((updatedDocument.documentContentData[1] as any).content).toBe('inserted cell');
+            expect(updatedDocument.documentContentData[1].content).toBe('inserted cell');
             expect(updatedDocument.documentContentData[2].id).toBe('cell2');
         });
     });
@@ -191,7 +191,7 @@ describe('Document Record', () => {
             expect(updatedDocument.documentContentData.length).toBe(3);
             expect(updatedDocument.documentContentData[0].id).toBe('cell1');
             expect(updatedDocument.documentContentData[1].type).toBe('header');
-            expect((updatedDocument.documentContentData[1] as any).content).toBe('inserted cell');
+            expect(updatedDocument.documentContentData[1].content).toBe('inserted cell');
             expect(updatedDocument.documentContentData[2].id).toBe('cell2');
         });
     });
