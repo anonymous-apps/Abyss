@@ -16,7 +16,7 @@ export class ReferencedMetricTable extends ReferencedSqliteTable<MetricType> {
     // Metric creation
     //
 
-    async publishMetricObject(values: Record<string, number>, dimensions: Record<string, string>) {
+    async publishMetricObject(values: Record<string, number>, dimensions: Record<string, string> = {}) {
         for (const key of Object.keys(values)) {
             const value = values[key];
             await this.create({

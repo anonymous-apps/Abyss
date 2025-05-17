@@ -3,6 +3,8 @@ import { ReferencedSqliteTable } from '../../sqlite/reference-table';
 import type { SQliteClient } from '../../sqlite/sqlite-client';
 import type { ModelConnectionType } from './model-connection.type';
 
+export type NewModelConnectionArgs = Omit<ModelConnectionType, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'deleted'>;
+
 export class ReferencedModelConnectionTable extends ReferencedSqliteTable<ModelConnectionType> {
     constructor(client: SQliteClient) {
         super('modelConnection', 'A connection to a AI model including the model name, API key, and other relevant information', client);
@@ -10,6 +12,10 @@ export class ReferencedModelConnectionTable extends ReferencedSqliteTable<ModelC
 
     public ref(id: string) {
         return new ReferencedModelConnectionRecord(id, this.client);
+    }
+
+    public async newModelConnection(args: NewModelConnectionArgs): Promise<ModelConnectionType> {
+        return this.create(args);
     }
 }
 

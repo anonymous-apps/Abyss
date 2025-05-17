@@ -1,55 +1,75 @@
 import { describe, expect, test } from 'vitest';
+import type { SQliteClient } from '../../sqlite/sqlite-client';
 import { buildCleanDB } from '../../sqlite/sqlite-client.mock';
 
 describe('Settings Table Reference', () => {
-    test('when we get the default settings, it will return the default settings object', async () => {
-        const client = await buildCleanDB();
-        // Calling default() gets or creates the settings
-        const settings = await client.tables.settings.default();
-        expect(settings).toBeDefined();
-        expect(settings.id).toEqual('settings::default');
-        // Add more specific assertions about default values if necessary
-        expect(settings.lastPage).toEqual('/');
-        expect(settings.theme).toEqual('');
-    });
+    let client: SQliteClient;
 
-    test("when we get the default settings it will create the default settings if they don't exist", async () => {
-        const client = await buildCleanDB();
-        // Calling default() will create them if they don't exist
-        const settings = await client.tables.settings.default();
-        expect(settings).toBeDefined();
-        expect(settings.id).toEqual('settings::default');
-
-        // Verify it was actually created by trying to get it again
-        const settingsAgain = await client.tables.settings.default();
-        expect(settingsAgain).toEqual(settings);
-    });
-
-    test('when we update the default settings, it will update the default settings object', async () => {
-        const client = await buildCleanDB();
-        await client.tables.settings.default(); // Ensure defaults are created
-
-        const newThemeValue = 'dark';
-        const newLastPage = '/new-page';
-
-        // The update method is on the table directly for default settings
-        await client.tables.settings.update({
-            theme: newThemeValue,
-            lastPage: newLastPage,
+    describe('when we get the default settings', () => {
+        test('it will return the default settings object if it already exists', async () => {
+            client = await buildCleanDB();
+            // First, create the default settings to ensure they exist
+            await client.tables.settings.create({ id: 'settings::default', lastPage: '/initial', theme: 'dark' });
+            const settings = await client.tables.settings.default();
+            expect(settings.id).toEqual('settings::default');
+            expect(settings.lastPage).toEqual('/initial');
+            expect(settings.theme).toEqual('dark');
         });
 
-        const fetchedSettings = await client.tables.settings.default();
-        expect(fetchedSettings.theme).toEqual(newThemeValue);
-        expect(fetchedSettings.lastPage).toEqual(newLastPage);
+        test("it will create the default settings if they don't exist", async () => {
+            client = await buildCleanDB();
+            const settings = await client.tables.settings.default();
+            expect(settings.id).toEqual('settings::default');
+            expect(settings.lastPage).toEqual('/'); // Default value from ReferencedSettingsTable constructor
+            expect(settings.theme).toEqual(''); // Default value from ReferencedSettingsTable constructor
+        });
     });
 
-    test('when we call ref() it will return a reference to the default settings', async () => {
-        const client = await buildCleanDB();
-        await client.tables.settings.default(); // Ensure defaults are created
+    describe('when we update the default settings', () => {
+        test('it will update the default settings object if it already exists', async () => {
+            client = await buildCleanDB();
+            // First, create the default settings to ensure they exist
+            await client.tables.settings.create({ id: 'settings::default', lastPage: '/initial', theme: 'light' });
+            await client.tables.settings.update({ lastPage: '/updated', theme: 'dark' });
+            const updatedSettings = await client.tables.settings.default(); // .default() will retrieve existing after update
+            expect(updatedSettings.id).toEqual('settings::default');
+            expect(updatedSettings.lastPage).toEqual('/updated');
+            expect(updatedSettings.theme).toEqual('dark');
+        });
 
-        const ref = client.tables.settings.ref();
-        const settings = await ref.get();
-        expect(settings).toBeDefined();
-        expect(settings.id).toEqual('settings::default');
+        test("it will create the default settings if they don't exist", async () => {
+            client = await buildCleanDB();
+            // Attempting to update when no settings exist should create them
+            await client.tables.settings.update({ lastPage: '/new-page', theme: 'system' });
+            const createdSettings = await client.tables.settings.default(); // .default() will retrieve the newly created settings
+            expect(createdSettings.id).toEqual('settings::default');
+            expect(createdSettings.lastPage).toEqual('/new-page');
+            expect(createdSettings.theme).toEqual('system');
+        });
+    });
+
+    describe('when we call ref()', () => {
+        test('it will return a reference to the default settings', async () => {
+            client = await buildCleanDB();
+            const settingsRef = client.tables.settings.ref();
+            expect(settingsRef.id).toEqual('settings::default');
+
+            // Check it doesn't exist yet in the DB via the reference
+            let exists = await settingsRef.exists();
+            expect(exists).toBe(false);
+
+            // Create the default settings (e.g., by calling .default())
+            await client.tables.settings.default();
+
+            // Now it should exist in the DB
+            exists = await settingsRef.exists();
+            expect(exists).toBe(true);
+
+            // Get the settings via the reference
+            const settings = await settingsRef.get();
+            expect(settings.id).toEqual('settings::default');
+            expect(settings.lastPage).toEqual('/'); // Default value upon creation
+            expect(settings.theme).toEqual(''); // Default value upon creation
+        });
     });
 });

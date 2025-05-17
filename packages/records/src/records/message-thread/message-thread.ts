@@ -20,6 +20,7 @@ export class ReferencedMessageThreadTable extends ReferencedSqliteTable<MessageT
         return await this.create({ messagesData: [] });
     }
 }
+
 export class ReferencedMessageThreadRecord extends ReferencedSqliteRecord<MessageThreadType> {
     constructor(id: string, client: SQliteClient) {
         super('messageThread', id, client);
