@@ -18,8 +18,8 @@ export interface NewToolDefinitionPartial extends BaseSqliteRecord {
             toolId: string;
             shortName: string;
             description: string;
-            inputSchemaData: Record<string, any>;
-            outputSchemaData: Record<string, any>;
+            inputSchemaData: Record<string, unknown>;
+            outputSchemaData: Record<string, unknown>;
         }[];
     };
     referencedData?: Record<string, string>;
@@ -41,7 +41,7 @@ export interface ToolCallRequestPartial extends BaseSqliteRecord {
         shortName: string;
         toolCallId: string;
         toolId: string;
-        parameters: Record<string, any>;
+        parameters: Record<string, unknown>;
     };
     referencedData?: Record<string, string>;
 }

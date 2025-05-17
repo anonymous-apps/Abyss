@@ -7,7 +7,7 @@ export interface AgentGraphNode {
         x: number;
         y: number;
     };
-    parameters: any;
+    parameters: Record<string, unknown>;
 }
 
 export interface AgentGraphEdge {

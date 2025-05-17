@@ -24,7 +24,10 @@ export class ReferencedSettingsTable extends ReferencedSqliteTable<SettingsType>
 
     async update(settings: Partial<SettingsType>) {
         const defaultValue = await this.default();
-        const defaultRef = new ReferencedSettingsRecord(defaultValue!.id, this.client);
+        if (!defaultValue || !defaultValue.id) {
+            throw new Error('Default settings or default settings ID not found');
+        }
+        const defaultRef = new ReferencedSettingsRecord(defaultValue.id, this.client);
         await defaultRef.update(settings);
     }
 

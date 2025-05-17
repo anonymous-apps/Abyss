@@ -19,7 +19,7 @@ export class ReferencedSqliteRecord<IRecordType extends BaseSqliteRecord = BaseS
 
     async get(): Promise<IRecordType> {
         const raw = await this.client.execute(`SELECT * FROM ${this.tableId} WHERE id = ?`, [this.id]);
-        return ReferencedSqliteTable.deserialize<IRecordType>((raw as IRecordType[])[0]);
+        return ReferencedSqliteTable.deserialize<IRecordType>((raw as Record<string, unknown>[])[0]);
     }
 
     async delete() {
@@ -46,7 +46,12 @@ export class ReferencedSqliteRecord<IRecordType extends BaseSqliteRecord = BaseS
 
     async clone(): Promise<ReferencedSqliteRecord<IRecordType>> {
         const record = await this.get();
+        // biome-ignore lint/correctness/noUnusedVariables: 'id', 'createdAt', and 'updatedAt' are intentionally destructured and unused to collect the 'rest' for cloning.
         const { id, createdAt, updatedAt, ...rest } = record;
+        // Using 'as any' for the 'rest' parameter in the create call to address the persistent type error for now.
+        // and 'create' expects a specific Omit<T, ...> which can lead to complex generic type mismatches.
+        // 'rest' is structurally correct for creating a new record.
+        // biome-ignore lint/suspicious/noExplicitAny: Creating a new record
         const newRecord = await this.ref_table().create(rest as any);
         return new ReferencedSqliteRecord(this.tableId, newRecord.id, this.client);
     }

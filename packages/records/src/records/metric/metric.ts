@@ -31,8 +31,10 @@ export class ReferencedMetricTable extends ReferencedSqliteTable<MetricType> {
     }
 
     async queryMetrics(metricName: string, dimensions: Record<string, string> = {}) {
-        const data = await this.client.execute(`SELECT * FROM metric WHERE name = ?`, [metricName]);
-        const decodedData: MetricType[] = (data as Record<string, any>[]).map(row => ReferencedSqliteTable.deserialize(row));
+        const data = await this.client.execute('SELECT * FROM metric WHERE name = ?', [metricName]);
+        const decodedData: MetricType[] = (data as Record<string, unknown>[]).map(row =>
+            ReferencedSqliteTable.deserialize(row as Record<string, unknown>)
+        );
         const results: MetricType[] = [];
         for (const row of decodedData) {
             let matches = true;
@@ -50,7 +52,7 @@ export class ReferencedMetricTable extends ReferencedSqliteTable<MetricType> {
     }
 
     async getUniqueNames() {
-        const data = await this.client.execute(`SELECT DISTINCT name FROM metric`);
+        const data = await this.client.execute('SELECT DISTINCT name FROM metric');
         const dataParsed = data as { name: string }[];
         return dataParsed.map(row => row.name);
     }
@@ -72,8 +74,8 @@ export class ReferencedMetricTable extends ReferencedSqliteTable<MetricType> {
             const result = await handler();
             this.publishMetricObject(
                 {
-                    [metric + ':success']: 1,
-                    [metric + ':failed']: 0,
+                    [`${metric}:success`]: 1,
+                    [`${metric}:failed`]: 0,
                 },
                 dimensions
             );
@@ -81,8 +83,8 @@ export class ReferencedMetricTable extends ReferencedSqliteTable<MetricType> {
         } catch (error) {
             this.publishMetricObject(
                 {
-                    [metric + ':success']: 0,
-                    [metric + ':failed']: 1,
+                    [`${metric}:success`]: 0,
+                    [`${metric}:failed`]: 1,
                 },
                 dimensions
             );
@@ -90,8 +92,8 @@ export class ReferencedMetricTable extends ReferencedSqliteTable<MetricType> {
         } finally {
             this.publishMetricObject(
                 {
-                    [metric + ':duration']: Date.now() - startTime,
-                    [metric + ':ran']: 1,
+                    [`${metric}:duration`]: Date.now() - startTime,
+                    [`${metric}:ran`]: 1,
                 },
                 dimensions
             );

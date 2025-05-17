@@ -2,8 +2,8 @@ import { describe, expect, test } from 'vitest';
 import { wait } from '../utils/wait';
 import { ReferencedSqliteRecord } from './reference-record';
 import { ReferencedSqliteTable } from './reference-table';
-import { buildCleanDB } from './sqlite-client.test';
 import type { BaseSqliteRecord, SqliteTables } from './sqlite.type';
+import { buildCleanDB } from './sqlite-client.mock';
 
 interface DebugType extends BaseSqliteRecord {
     name: string;

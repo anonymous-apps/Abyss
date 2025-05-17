@@ -1,13 +1,13 @@
 import { describe, expect, test } from 'vitest';
 import { ReferencedSqliteTable } from './reference-table';
-import { buildCleanDB } from './sqlite-client.test';
 import type { SqliteTables } from './sqlite.type';
+import { buildCleanDB } from './sqlite-client.mock';
 
 type DebugRecord = {
     id: string;
     createdAt: number;
     updatedAt: number;
-    jsonData?: Record<string, any>;
+    jsonData?: Record<string, unknown>;
 };
 
 const createDebugTable = `

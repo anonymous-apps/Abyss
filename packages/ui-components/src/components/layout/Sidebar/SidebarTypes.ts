@@ -75,7 +75,7 @@ export interface SidebarButtonProps {
      * Close handler (only used when isClosable is true)
      */
     onClose?: () => void;
-    
+
     /**
      * Additional className for styling
      */

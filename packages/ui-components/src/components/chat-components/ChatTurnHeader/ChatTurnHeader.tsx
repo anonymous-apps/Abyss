@@ -25,7 +25,6 @@ export interface ChatTurnHeaderProps {
 }
 
 export const ChatTurnHeader: React.FC<ChatTurnHeaderProps> = ({ icon: Icon, label, timestamp, onClick, className = '' }) => {
-
     const content = (
         <>
             <Icon className="h-4 w-4 text-primary-500" />

@@ -1,5 +1,5 @@
-import { existsSync, promises as fs, mkdirSync } from 'fs';
-import { join } from 'path';
+import { existsSync, promises as fs, mkdirSync } from 'node:fs';
+import { join } from 'node:path';
 import sqlite3 from 'sqlite3';
 import { ReferencedAgentGraphTable } from '../records/agent-graph/agent-graph';
 import { ReferencedChatSnapshotTable } from '../records/chat-snapshot/chat-snapshot';
@@ -15,7 +15,7 @@ import { ReferencedToolDefinitionTable } from '../records/tool-definition/tool-d
 import { DatabaseSubscriptionLayer } from './database-subscription-layer';
 import type { ReferencedSqliteTable } from './reference-table';
 import { migrations } from './schemas/migrations';
-import { type DBSidecarType, DefaultSidecar, type SqliteTables } from './sqlite.type';
+import { type DBSidecarType, DefaultSidecar, type SqliteTables, type BaseSqliteRecord } from './sqlite.type';
 
 export class SQliteClient {
     // Disk locations
@@ -53,8 +53,9 @@ export class SQliteClient {
         };
     }
 
-    async overrideTable(tableId: keyof SqliteTables, table: ReferencedSqliteTable<any>) {
-        this.tables[tableId] = table as any;
+    async overrideTable(tableId: keyof SqliteTables, table: ReferencedSqliteTable<BaseSqliteRecord>) {
+        // biome-ignore lint/suspicious/noExplicitAny: Overriding the table with a new instance
+        this.tables[tableId] = table as unknown as any;
     }
 
     async initialize() {
@@ -69,7 +70,7 @@ export class SQliteClient {
         try {
             const content = await fs.readFile(this.sidecarPath, 'utf8');
             return JSON.parse(content) as DBSidecarType;
-        } catch (e) {
+        } catch (_e) {
             return DefaultSidecar;
         }
     }
@@ -79,7 +80,7 @@ export class SQliteClient {
         await fs.writeFile(this.sidecarPath, JSON.stringify({ ...current, ...sidecar }, null, 2));
     }
 
-    async execute(sql: string, params: any[] = []) {
+    async execute(sql: string, params: unknown[] = []) {
         return new Promise((resolve, reject) => {
             this.db.all(sql, params, (err, rows) => {
                 if (err) {

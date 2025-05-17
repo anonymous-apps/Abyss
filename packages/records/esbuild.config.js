@@ -1,14 +1,15 @@
 const esbuild = require('esbuild');
-const { execSync } = require('child_process');
+const { execSync } = require('node:child_process');
 
 /** @type {import('esbuild').BuildOptions} */
 const commonConfig = {
     entryPoints: ['src/index.ts'],
     bundle: true,
     platform: 'node',
-    target: 'node18',
-    format: 'esm',
+    target: 'node14',
+    format: 'cjs',
     outfile: 'dist/index.js',
+    external: ['sqlite3'],
     sourcemap: true,
     minify: process.env.NODE_ENV === 'production',
 };

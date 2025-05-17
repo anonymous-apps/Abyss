@@ -1,6 +1,5 @@
-import { mkdirSync, rmdirSync, unlinkSync } from 'fs';
-import { join } from 'path';
-import { expect, test } from 'vitest';
+import { mkdirSync, rmdirSync, unlinkSync } from 'node:fs';
+import { join } from 'node:path';
 import { randomId } from '../utils/ids';
 import { wait } from '../utils/wait';
 import { SQliteClient } from './sqlite-client';
@@ -30,7 +29,3 @@ export async function buildCleanDB({ setupCommand, doMigrations = true }: { setu
     await wait();
     return client;
 }
-
-test('true', () => {
-    expect(true).toBe(true);
-});

@@ -25,13 +25,13 @@ export class ReferencedLogStreamTable extends ReferencedSqliteTable<LogStreamTyp
         return new ReferencedLogStreamRecord(id, this.client);
     }
     public async scanOfType(type: string): Promise<LogStreamType[]> {
-        const data = await this.client.execute(`SELECT * FROM logStream WHERE type = ? ORDER BY createdAt DESC`, [type]);
-        return (data as any[]).map(row => ReferencedSqliteTable.deserialize<LogStreamType>(row));
+        const data = await this.client.execute('SELECT * FROM logStream WHERE type = ? ORDER BY createdAt DESC', [type]);
+        return (data as unknown[]).map(row => ReferencedSqliteTable.deserialize<LogStreamType>(row as Record<string, unknown>));
     }
 
     public async scanBySourceId(sourceId: string): Promise<LogStreamType[]> {
-        const data = await this.client.execute(`SELECT * FROM logStream WHERE sourceId = ? ORDER BY createdAt DESC`, [sourceId]);
-        return (data as any[]).map(row => ReferencedSqliteTable.deserialize<LogStreamType>(row));
+        const data = await this.client.execute('SELECT * FROM logStream WHERE sourceId = ? ORDER BY createdAt DESC', [sourceId]);
+        return (data as unknown[]).map(row => ReferencedSqliteTable.deserialize<LogStreamType>(row as Record<string, unknown>));
     }
 }
 
@@ -43,20 +43,20 @@ export class ReferencedLogStreamRecord extends ReferencedSqliteRecord<LogStreamT
     public async addMessage(message: Omit<LogMessage, 'timestamp' | 'id'>) {
         const data = await this.get();
         const newMessage = { timestamp: Date.now(), id: generateId('logMessage'), ...message };
-        newMessage.data = safeSerialize(newMessage.data || {});
+        newMessage.data = safeSerialize(newMessage.data || {}) as Record<string, unknown>;
         data.messagesData.push(newMessage);
         await this.update(data);
     }
 
-    public async log(scope: string, message: string, data: Record<string, any> = {}) {
+    public async log(scope: string, message: string, data: Record<string, unknown> = {}) {
         await this.addMessage({ scope, message, data, level: 'info' });
     }
 
-    public async warn(scope: string, message: string, data: Record<string, any> = {}) {
+    public async warn(scope: string, message: string, data: Record<string, unknown> = {}) {
         await this.addMessage({ scope, message, data, level: 'warning' });
     }
 
-    public async error(scope: string, message: string, data: Record<string, any> = {}) {
+    public async error(scope: string, message: string, data: Record<string, unknown> = {}) {
         await this.addMessage({ scope, message, data, level: 'error' });
     }
 

@@ -42,7 +42,9 @@ export const SidebarButton: React.FC<SidebarButtonProps> = ({
             {isClosable && (
                 <button
                     type="button"
-                    className={'absolute right-2 h-5 w-5 p-0.5 px-1 flex items-center justify-center opacity-0 group-hover:opacity-100 hover:text-primary-500 transition-opacity hidden group-hover:block'}
+                    className={
+                        'absolute right-2 h-5 w-5 p-0.5 px-1 flex items-center justify-center opacity-0 group-hover:opacity-100 hover:text-primary-500 transition-opacity hidden group-hover:block'
+                    }
                     onClick={e => {
                         e.stopPropagation();
                         onClose?.();
@@ -54,6 +56,5 @@ export const SidebarButton: React.FC<SidebarButtonProps> = ({
         </button>
     );
 };
-
 
 export default SidebarButton;

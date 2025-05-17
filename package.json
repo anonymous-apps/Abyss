@@ -10,38 +10,48 @@
     ],
     "scripts": {
         "dev": "npm run dev --workspace=packages/app",
-
-        "build": "npm run build:ui && npm run build:records && npm run build:prompts && npm run build:intelligence",
-        "build:ui": "npm run build --workspace=packages/ui-components",
-        "build:intelligence": "npm run build --workspace=packages/intelligence",
-        "build:records": "npm run build --workspace=packages/records",
-        "build:prompts": "npm run build --workspace=packages/prompts",
-        "build:mac": "npm run build:mac --workspace=packages/app && say 'Build complete'",
-
         "publish": "npm run build && npm run build:mac && npm run publish:mac",
-        "publish:mac": "npm run publish:generate-icons && `npm run publish:mac --workspace=packages/app",
+        "publish:mac": "npm run publish:generate-icons && npm run publish:mac --workspace=packages/app",
         "publish:generate-icons": "node scripts/generate-icons.js",
-
+        "ci": "npm-run-all lint format test",
+        "ci:app": "npm-run-all lint:app format:app",
+        "ci:ui": "npm-run-all lint:ui format:ui",
+        "ci:records": "npm-run-all lint:records format:records test:records",
+        "ci:intelligence": "npm-run-all lint:intelligence format:intelligence test:intelligence",
+        "ci:prompts": "npm-run-all lint:prompts format:prompts test:prompts",
+        "test": "npm-run-all --parallel test:records test:intelligence test:prompts",
+        "test:records": "npm run test --workspace=packages/records",
+        "test:intelligence": "npm run test --workspace=packages/intelligence",
+        "test:prompts": "npm run test --workspace=packages/prompts",
         "format": "biome format --fix .",
         "format:app": "biome format --fix packages/app",
         "format:ui": "biome format --fix packages/ui-components",
         "format:intelligence": "biome format --fix packages/intelligence",
         "format:records": "biome format --fix packages/records",
         "format:prompts": "biome format --fix packages/prompts",
-
         "lint": "biome lint .",
         "lint:app": "biome lint packages/app",
         "lint:ui": "biome lint packages/ui-components",
         "lint:intelligence": "biome lint packages/intelligence",
         "lint:records": "biome lint packages/records",
         "lint:prompts": "biome lint packages/prompts",
-
-
-        "watch:ui": "npm run watch --workspace=packages/ui-components"
+        "build": "npm-run-all build:ui build:records build:prompts build:intelligence",
+        "build:ui": "npm run build --workspace=packages/ui-components",
+        "build:intelligence": "npm run build --workspace=packages/intelligence",
+        "build:records": "npm run build --workspace=packages/records",
+        "build:prompts": "npm run build --workspace=packages/prompts",
+        "build:mac": "npm run build:mac --workspace=packages/app && say 'Build complete'",
+        "watch": "concurrently \"npm run watch:ui\" \"npm run watch:records\" ",
+        "watch:ui": "npm run watch --workspace=packages/ui-components",
+        "watch:app": "npm run watch --workspace=packages/app",
+        "watch:intelligence": "npm run watch --workspace=packages/intelligence",
+        "watch:records": "npm run watch --workspace=packages/records",
+        "watch:prompts": "npm run watch --workspace=packages/prompts"
     },
     "devDependencies": {
         "@biomejs/biome": "2.0.0-beta.4",
         "icon-gen": "^3.0.1",
+        "npm-run-all": "^4.1.5",
         "sharp": "^0.33.2"
     },
     "dependencies": {

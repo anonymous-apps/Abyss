@@ -17,8 +17,8 @@ export class ReferencedChatThreadTable extends ReferencedSqliteTable<ChatThreadT
     public async new(sourceId: string) {
         const thread = await this.client.tables.messageThread.new();
         return await this.create({
-            name: `New Chat Thread`,
-            description: `New Chat Thread`,
+            name: 'New Chat Thread',
+            description: 'New Chat Thread',
             participantId: sourceId,
             threadId: thread.id,
         });

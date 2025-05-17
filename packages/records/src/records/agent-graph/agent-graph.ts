@@ -18,7 +18,7 @@ export class ReferencedAgentGraphRecord extends ReferencedSqliteRecord<AgentGrap
         super('agentGraph', id, client);
     }
 
-    public async setNodeParameters(nodeId: string, parameters: Record<string, any>) {
+    public async setNodeParameters(nodeId: string, parameters: Record<string, unknown>) {
         const data = await this.get();
         const nodeIndex = data.nodesData.findIndex(node => node.id === nodeId);
         if (nodeIndex === -1) {

@@ -6,7 +6,7 @@ export interface LogMessage {
     scope: string;
     message: string;
     timestamp: number;
-    data?: Record<string, any>;
+    data?: Record<string, unknown>;
 }
 
 export interface LogStreamType extends BaseSqliteRecord {

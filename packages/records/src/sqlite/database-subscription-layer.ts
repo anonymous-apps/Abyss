@@ -45,7 +45,7 @@ export class DatabaseSubscriptionLayer {
     }
 
     private removeTableSubscriber(table: string, id: string): void {
-        if (this.subscribersToTable[table] && this.subscribersToTable[table][id]) {
+        if (this.subscribersToTable[table]?.[id]) {
             delete this.subscribersToTable[table][id];
 
             // Clean up empty objects
@@ -75,11 +75,7 @@ export class DatabaseSubscriptionLayer {
     }
 
     private removeRecordSubscriber(table: string, recordId: string, id: string): void {
-        if (
-            this.subscribersToRecords[table] &&
-            this.subscribersToRecords[table][recordId] &&
-            this.subscribersToRecords[table][recordId][id]
-        ) {
+        if (this.subscribersToRecords[table]?.[recordId]?.[id]) {
             delete this.subscribersToRecords[table][recordId][id];
 
             // Clean up empty objects

@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { buildCleanDB } from '../../sqlite/sqlite-client.test';
+import { buildCleanDB } from '../../sqlite/sqlite-client.mock';
 
 describe('ModelConnection::create', () => {
     test('Happy: Create model connection record', async () => {

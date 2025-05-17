@@ -13,8 +13,8 @@ export class ReferencedSqliteTable<IRecordType extends BaseSqliteRecord = BaseSq
         this.description = description;
     }
 
-    public static serialize<T extends BaseSqliteRecord>(record: T): Record<string, any> {
-        const serialized: Record<string, any> = { ...record };
+    public static serialize<T extends BaseSqliteRecord>(record: T): Record<string, unknown> {
+        const serialized: Record<string, unknown> = { ...record } as Record<string, unknown>;
         for (const key in serialized) {
             if (key.endsWith('Data') && serialized[key] !== null && typeof serialized[key] === 'object') {
                 serialized[key] = JSON.stringify(serialized[key]);
@@ -23,11 +23,15 @@ export class ReferencedSqliteTable<IRecordType extends BaseSqliteRecord = BaseSq
         return serialized;
     }
 
-    public static deserialize<T extends BaseSqliteRecord>(record: Record<string, any>): T {
-        const deserialized = { ...record };
+    public static deserialize<T extends BaseSqliteRecord>(record: Record<string, unknown>): T {
+        const deserialized = { ...record } as Record<string, unknown>;
         for (const key in deserialized) {
             if (key.endsWith('Data') && typeof deserialized[key] === 'string') {
-                deserialized[key] = JSON.parse(deserialized[key]);
+                try {
+                    deserialized[key] = JSON.parse(deserialized[key] as string);
+                } catch (error) {
+                    console.error(`Error parsing JSON for key ${key}:`, error);
+                }
             }
         }
         return deserialized as T;
@@ -35,7 +39,7 @@ export class ReferencedSqliteTable<IRecordType extends BaseSqliteRecord = BaseSq
 
     async list(limit = 9999) {
         const raw = await this.client.execute(`SELECT * FROM ${this.tableId} ORDER BY createdAt DESC LIMIT ?`, [limit]);
-        const results = raw as Record<string, any>[];
+        const results = raw as Record<string, unknown>[];
         const deserialized = results.map(r => ReferencedSqliteTable.deserialize(r));
         return deserialized as IRecordType[];
     }
@@ -65,7 +69,7 @@ export class ReferencedSqliteTable<IRecordType extends BaseSqliteRecord = BaseSq
             [...Object.values(serialized)]
         );
         this.client.events.notifyTableChanged(this);
-        return ReferencedSqliteTable.deserialize<IRecordType>((raw as IRecordType[])[0]);
+        return ReferencedSqliteTable.deserialize<IRecordType>((raw as Record<string, unknown>[])[0]);
     }
 
     async createMany(records: NewRecord<IRecordType>[]): Promise<IRecordType[]> {
@@ -80,12 +84,12 @@ export class ReferencedSqliteTable<IRecordType extends BaseSqliteRecord = BaseSq
             return [];
         }
 
-        const serialized = data.map(r => ReferencedSqliteTable.serialize(r as IRecordType));
-        const columns = Object.keys(serialized[0]).join(', ');
-        const placeholders = serialized
+        const serializedRecords = data.map(r => ReferencedSqliteTable.serialize(r as unknown as IRecordType));
+        const columns = Object.keys(serializedRecords[0]).join(', ');
+        const placeholders = serializedRecords
             .map(
                 () =>
-                    `(${Object.keys(serialized[0])
+                    `(${Object.keys(serializedRecords[0])
                         .map(() => '?')
                         .join(', ')})`
             )
@@ -93,30 +97,25 @@ export class ReferencedSqliteTable<IRecordType extends BaseSqliteRecord = BaseSq
 
         const raw = await this.client.execute(
             `INSERT OR REPLACE INTO ${this.tableId} (${columns}) VALUES ${placeholders} RETURNING *`,
-            data.flatMap(record => Object.values(ReferencedSqliteTable.serialize(record as IRecordType)))
+            serializedRecords.flatMap(sr => Object.values(sr))
         );
 
         this.client.events.notifyTableChanged(this);
-        const results = raw as Record<string, any>[];
+        const results = raw as Record<string, unknown>[];
         return results.map(r => ReferencedSqliteTable.deserialize<IRecordType>(r));
     }
 
     async get(id: string): Promise<IRecordType> {
         const raw = await this.client.execute(`SELECT * FROM ${this.tableId} WHERE id = ?`, [id]);
-        const results = raw as Record<string, any>[];
-        return ReferencedSqliteTable.deserialize<IRecordType>(results[0]);
+        const results = raw as Record<string, unknown>[];
+        if (results && results.length > 0) {
+            return ReferencedSqliteTable.deserialize<IRecordType>(results[0]);
+        }
+        throw new Error(`Record with id ${id} not found in table ${this.tableId}`);
     }
 
     async exists(id: string): Promise<boolean> {
         const raw = await this.client.execute(`SELECT COUNT(*) as count FROM ${this.tableId} WHERE id = ?`, [id]);
         return (raw as { count: number }[])[0].count > 0;
-    }
-
-    subscribeRecord(id: string, callback: (record: IRecordType) => void): () => void {
-        return this.client.events.subscribeRecord(this.client, this.tableId, id, callback as (record: BaseSqliteRecord) => void);
-    }
-
-    subscribeTable(callback: (table: ReferencedSqliteTable<IRecordType>) => void): () => void {
-        return this.client.events.subscribeTable(this.tableId, callback as (table: ReferencedSqliteTable) => void);
     }
 }
