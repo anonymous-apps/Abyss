@@ -5,7 +5,7 @@ export interface LabelValueProps {
      * Data object containing key-value pairs to display
      * Values can be strings, numbers, objects, arrays, or React nodes
      */
-    data: Record<string, any>;
+    data: Record<string, unknown>;
     /**
      * Optional CSS class name
      */
@@ -24,21 +24,27 @@ export const LabelValue: React.FC<LabelValueProps> = ({ data, className = '', ig
         return <div className="text-text-400 text-xs p-2">No data available</div>;
     }
 
-    const renderValue = (value: any) => {
+    const renderValue = (value: unknown): React.ReactNode => {
         if (React.isValidElement(value)) {
             return value;
         }
+        if (value === null) {
+            return 'null';
+        }
+        if (value === undefined) {
+            return 'undefined';
+        }
         if (typeof value === 'object') {
             try {
-                return JSON.stringify(value);
-            } catch (error) {
+                return JSON.stringify(value, null, 2);
+            } catch (_error) {
                 return 'UNRENDERABLE';
             }
         }
         if (typeof value === 'function') {
             return 'FUNCTION';
         }
-        return value;
+        return String(value);
     };
 
     return (
@@ -52,5 +58,3 @@ export const LabelValue: React.FC<LabelValueProps> = ({ data, className = '', ig
         </div>
     );
 };
-
-export default LabelValue;

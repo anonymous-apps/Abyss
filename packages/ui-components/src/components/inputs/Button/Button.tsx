@@ -37,14 +37,19 @@ export const Button: React.FC<ButtonProps> = ({ children, variant = 'primary', i
     const baseStyles = 'inline-flex items-center justify-center font-medium rounded-sm transition-all';
     const paddingStyles = isIconOnly ? 'p-1' : 'px-3 py-1 text-sm';
     const providedStyles = className;
-
     if (variant === 'primary') {
-        return <PrimaryButton {...props} className={`${baseStyles} ${paddingStyles} ${providedStyles}`} children={children} icon={Icon} />;
+        return (
+            <PrimaryButton {...props} className={`${baseStyles} ${paddingStyles} ${providedStyles}`} icon={Icon}>
+                {children}
+            </PrimaryButton>
+        );
     }
 
     if (variant === 'secondary') {
         return (
-            <SecondaryButton {...props} className={`${baseStyles} ${paddingStyles} ${providedStyles}`} children={children} icon={Icon} />
+            <SecondaryButton {...props} className={`${baseStyles} ${paddingStyles} ${providedStyles}`} icon={Icon}>
+                {children}
+            </SecondaryButton>
         );
     }
 
@@ -72,7 +77,7 @@ const PrimaryButton: React.FC<ButtonProps> = ({
                     ${
                         !isLoading && !isDisabled
                             ? `${isInactive ? 'bg-primary-300' : 'bg-primary-500'} hover:bg-primary-600 hover:shadow-lg`
-                            : `cursor-not-allowed bg-background-500`
+                            : 'cursor-not-allowed bg-background-500'
                     }
                     text-text-900
                 `}

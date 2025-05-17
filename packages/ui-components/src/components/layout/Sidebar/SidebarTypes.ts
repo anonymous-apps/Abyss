@@ -1,3 +1,4 @@
+import type { LucideIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
 
 export interface SidebarProps {
@@ -48,7 +49,7 @@ export interface SidebarButtonProps {
     /**
      * Icon component to display
      */
-    icon: React.ComponentType<any>;
+    icon?: LucideIcon;
 
     /**
      * Whether the button is in active state
@@ -74,7 +75,7 @@ export interface SidebarButtonProps {
      * Close handler (only used when isClosable is true)
      */
     onClose?: () => void;
-
+    
     /**
      * Additional className for styling
      */

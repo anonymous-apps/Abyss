@@ -27,7 +27,17 @@
         "format:ui": "biome format --fix packages/ui-components",
         "format:intelligence": "biome format --fix packages/intelligence",
         "format:records": "biome format --fix packages/records",
-        "format:prompts": "biome format --fix packages/prompts"
+        "format:prompts": "biome format --fix packages/prompts",
+
+        "lint": "biome lint .",
+        "lint:app": "biome lint packages/app",
+        "lint:ui": "biome lint packages/ui-components",
+        "lint:intelligence": "biome lint packages/intelligence",
+        "lint:records": "biome lint packages/records",
+        "lint:prompts": "biome lint packages/prompts",
+
+
+        "watch:ui": "npm run watch --workspace=packages/ui-components"
     },
     "devDependencies": {
         "@biomejs/biome": "2.0.0-beta.4",

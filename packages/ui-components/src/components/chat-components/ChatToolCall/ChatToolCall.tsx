@@ -21,7 +21,7 @@ export interface ChatToolCallProps {
     /**
      * Input data for the tool (raw JSON)
      */
-    inputData: any;
+    inputData: unknown;
     /**
      * Output text from the tool execution
      */
@@ -70,31 +70,35 @@ export const ChatToolCall: React.FC<ChatToolCallProps> = ({
 
     return (
         <div className={`relative w-full rounded text-xs ${className}`}>
-            <div
-                className={`flex items-center gap-2 py-2 px-2 text-text-500 bg-background-200 rounded-t cursor-pointer hover:bg-background-200`}
+            <button
+                type="button"
+                className="flex items-center gap-2 py-2 px-2 text-text-500 bg-background-200 rounded-t cursor-pointer hover:bg-background-200 w-full text-left"
                 onClick={() => setIsExpanded(!isExpanded)}
             >
                 {getStatusIcon()}
                 <span className="capitalize flex-grow">{formatToolName(toolName)}</span>
                 {isExpanded ? <ChevronDown className="w-3 h-3 text-text-400" /> : <ChevronRight className="w-3 h-3 text-text-400" />}
-            </div>
+            </button>
 
             {isExpanded && (
                 <div className=" relative overflow-hidden transition-all duration-300 ease-in-out border-background-300 w-full ">
                     <div className="flex items-center gap-4 mb-2 text-xs absolute top-2 right-2 bg-background-200 rounded-b p-1">
-                        <span
+                        <button
+                            type="button"
                             className={`cursor-pointer ${activeTab === 'input' ? 'text-primary-500 font-medium' : 'text-text-400'}`}
                             onClick={() => setActiveTab('input')}
                         >
                             Input
-                        </span>
-                        <span
+                        </button>
+                        <button
+                            type="button"
                             className={`cursor-pointer ${activeTab === 'output' ? 'text-primary-500 font-medium' : 'text-text-400'} 
                             ${!outputText && status !== 'inProgress' ? 'opacity-50' : ''}`}
                             onClick={() => (outputText || status === 'inProgress' ? setActiveTab('output') : null)}
+                            disabled={!(outputText || status === 'inProgress')}
                         >
                             Output
-                        </span>
+                        </button>
                     </div>
 
                     {activeTab === 'input' && (

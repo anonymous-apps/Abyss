@@ -40,7 +40,7 @@ export interface PageCrumbedProps {
 export const PageCrumbed: React.FC<PageCrumbedProps> = ({ children, title, subtitle, breadcrumbs, icon, actions, loading = false }) => {
     return (
         <div className="flex flex-row text-text-300 h-full w-full bg-background-300 overflow-y-scroll scrollbar-gutter-stable base-font">
-            <div className={`w-full px-5 pt-[20px] pb-[60px] mx-auto max-w-5xl `}>
+            <div className={'w-full px-5 pt-[20px] pb-[60px] mx-auto max-w-5xl '}>
                 <div className="flex justify-between items-center mb-2">
                     <div className="flex items-center">
                         {icon && <div className="mr-2">{icon}</div>}
@@ -55,6 +55,7 @@ export const PageCrumbed: React.FC<PageCrumbedProps> = ({ children, title, subti
                             <React.Fragment key={index}>
                                 {index > 0 && <span>/</span>}
                                 <button
+                                    type="button"
                                     onClick={crumb.onClick}
                                     className={`hover:underline capitalize ${
                                         index === breadcrumbs.length - 1

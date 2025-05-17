@@ -22,7 +22,7 @@ export const ButtonGroup: React.FC<ButtonGroupProps> = ({ children, className = 
                 // Clone button element to modify its className
                 const child = React.Children.only(button) as React.ReactElement;
                 let additionalClass = '';
-                const additionalProps: Record<string, any> = {};
+                const additionalProps: Record<string, unknown> = {};
 
                 // First button should only round left corners
                 if (index === 0) {

@@ -25,17 +25,29 @@ export interface ChatTurnHeaderProps {
 }
 
 export const ChatTurnHeader: React.FC<ChatTurnHeaderProps> = ({ icon: Icon, label, timestamp, onClick, className = '' }) => {
+
+    const content = (
+        <>
+            <Icon className="h-4 w-4 text-primary-500" />
+            <span className="font-medium text-text-400">{label}</span>
+        </>
+    );
+
     return (
         <div className={`flex items-center gap-2 ${className} text-xs`}>
-            <div
-                className={`flex items-center justify-center p-1 rounded-sm gap-2 bg-primary-100 px-2 ${
-                    onClick ? 'cursor-pointer hover:bg-primary-200' : ''
-                }`}
+            <button
+                type="button"
+                className={`flex items-center justify-center p-1 rounded-sm gap-2 bg-primary-100 px-2 ${onClick ? 'cursor-pointer hover:bg-primary-200' : ''}`}
                 onClick={onClick}
+                onKeyDown={e => {
+                    if (onClick && (e.key === 'Enter' || e.key === ' ')) {
+                        onClick();
+                    }
+                }}
+                disabled={!onClick}
             >
-                <Icon className="h-4 w-4 text-primary-500" />
-                <span className="font-medium text-text-400">{label}</span>
-            </div>
+                {content}
+            </button>
             {timestamp && <span className=" text-text-600">{timestamp}</span>}
         </div>
     );

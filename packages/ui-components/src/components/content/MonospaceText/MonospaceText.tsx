@@ -16,7 +16,7 @@ export interface MonospaceTextProps {
 }
 
 export const MonospaceText: React.FC<MonospaceTextProps> = ({ text, showLineNumbers = true, className }) => {
-    const lines = (text + '').trim().split('\n');
+    const lines = `${text}`.trim().split('\n');
 
     return (
         <div className={`text-xs font-mono whitespace-pre-wrap overflow-x-auto text-text-300 ${className || ''}`}>

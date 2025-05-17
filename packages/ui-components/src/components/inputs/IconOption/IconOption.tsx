@@ -34,12 +34,13 @@ export const IconOption: React.FC<IconOptionProps> = ({ title, icon: Icon, child
     const isClickable = !!onClick && !isDisabled;
 
     return (
-        <div
+        <button
+            type="button"
             className={`
-                flex items-center p-4 rounded-md transition-all duration-200 w-full
-                ${isClickable ? 'border border-transparent hover:bg-primary-100 cursor-pointer' : ''}
+                flex items-center p-2 rounded-md text-text-200 bg-background-200
+                ${isClickable ? 'cursor-pointer hover:bg-background-300' : ''}
                 ${isDisabled ? 'opacity-50 cursor-not-allowed bg-background-300' : ''}
-                ${className}
+                ${className || ''}
             `}
             onClick={isClickable ? onClick : undefined}
         >
@@ -48,7 +49,7 @@ export const IconOption: React.FC<IconOptionProps> = ({ title, icon: Icon, child
                 <h3 className="text-sm xl:text-lg mb-1">{title}</h3>
                 <div className="text-xs xl:text-sm">{children}</div>
             </div>
-        </div>
+        </button>
     );
 };
 

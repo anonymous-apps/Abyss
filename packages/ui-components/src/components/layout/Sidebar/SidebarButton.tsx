@@ -16,15 +16,17 @@ export const SidebarButton: React.FC<SidebarButtonProps> = ({
     className = '',
 }) => {
     return (
-        <div
+        <button
+            type="button"
             className={`
                 group relative flex items-center px-2 py-1 cursor-pointer select-none font-thin transition-all duration-500
+                w-full text-left rounded-md 
                 ${isActive ? 'bg-sidebar-section' : 'hover:bg-background-800'}
                 ${className}
             `}
             onClick={onClick}
         >
-            <Icon className="h-4 w-4 flex-shrink-0 mr-2" />
+            {Icon && <Icon className="h-4 w-4 flex-shrink-0 mr-2" />}
             <span className="text-sm flex-grow">{label}</span>
 
             {isActive && <div className="absolute right-0 w-[2px] h-full bg-primary-500" />}
@@ -38,18 +40,20 @@ export const SidebarButton: React.FC<SidebarButtonProps> = ({
             )}
 
             {isClosable && (
-                <div
-                    className={`absolute right-2 h-5 w-5 p-0.5 px-1 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 hover:text-primary-500 transition-opacity hidden group-hover:block`}
+                <button
+                    type="button"
+                    className={'absolute right-2 h-5 w-5 p-0.5 px-1 flex items-center justify-center opacity-0 group-hover:opacity-100 hover:text-primary-500 transition-opacity hidden group-hover:block'}
                     onClick={e => {
                         e.stopPropagation();
                         onClose?.();
                     }}
                 >
                     <X className="h-4 w-4 stroke-2" />
-                </div>
+                </button>
             )}
-        </div>
+        </button>
     );
 };
+
 
 export default SidebarButton;

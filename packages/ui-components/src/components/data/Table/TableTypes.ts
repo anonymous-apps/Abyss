@@ -5,7 +5,7 @@ export interface TableCellProps {
     /**
      * The cell value to display
      */
-    value: any;
+    value: unknown;
     /**
      * Table name (for reference links)
      */
@@ -31,11 +31,11 @@ export interface TableProps {
     /**
      * Array of data records to display
      */
-    data: Record<string, any>[];
+    data: Record<string, unknown>[];
     /**
      * Optional click handler for rows
      */
-    onRowClick?: (record: Record<string, any>) => void;
+    onRowClick?: (record: Record<string, unknown>) => void;
     /**
      * Optional click handler for records
      */

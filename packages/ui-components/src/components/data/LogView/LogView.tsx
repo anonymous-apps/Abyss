@@ -7,7 +7,7 @@ export interface LogEntry {
     level: string;
     scope: string;
     message: string;
-    data?: Record<string, any>;
+    data?: Record<string, unknown>;
 }
 
 interface LogViewProps {
@@ -60,8 +60,9 @@ export const LogView: React.FC<LogViewProps> = ({ logs, startTime, className = '
             <div className="space-y-1">
                 {logs.map((log, index) => (
                     <div key={index} className="duration-200 rounded-sm text-xs">
-                        <div
-                            className={`p-2 flex items-center gap-4 cursor-pointer hover:bg-background-200 transition-colors ${
+                        <button
+                            type="button"
+                            className={`p-2 flex items-center gap-4 cursor-pointer hover:bg-background-200 transition-colors w-full text-left ${
                                 expandedLogs.has(index) ? 'bg-background-200' : ''
                             }`}
                             onClick={() => toggleLog(index)}
@@ -76,7 +77,7 @@ export const LogView: React.FC<LogViewProps> = ({ logs, startTime, className = '
                             ) : (
                                 <ChevronRight className="w-4 h-4 text-text-300" />
                             )}
-                        </div>
+                        </button>
                         <div className={`overflow-auto  ${expandedLogs.has(index) ? 'max-h-[500px]' : 'max-h-0'}`}>
                             <div className="p-4 bg-background-300 border-t border-background-200 font-mono">
                                 <pre className="text-xs text-text-300 whitespace-pre-wrap">{log.message}</pre>

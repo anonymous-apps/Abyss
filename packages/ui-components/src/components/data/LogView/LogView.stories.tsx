@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import LogView, { type LogEntry } from './LogView';
+import { type LogEntry, LogView } from './LogView';
 
 const meta: Meta<typeof LogView> = {
     title: 'Data/LogView',
@@ -12,13 +12,15 @@ const meta: Meta<typeof LogView> = {
 export default meta;
 type Story = StoryObj<typeof LogView>;
 
+const baseTimestamp = new Date('2024-04-22T10:00:00Z').getTime();
+
 const sampleLogs: LogEntry[] = [
     {
         level: 'INFO',
-        startTime: '2024-04-22T10:00:00Z',
+        timestamp: baseTimestamp,
         scope: 'System',
         message: 'Application started successfully',
-        metadata: {
+        data: {
             version: '1.0.0',
             environment: 'production',
             uptime: 1000,
@@ -26,10 +28,10 @@ const sampleLogs: LogEntry[] = [
     },
     {
         level: 'WARNING',
-        startTime: '2024-04-22T10:05:00Z',
+        timestamp: baseTimestamp + 5 * 60 * 1000,
         scope: 'Database',
         message: 'Connection pool running low',
-        metadata: {
+        data: {
             currentConnections: 95,
             maxConnections: 100,
             lastReset: '2024-04-22T09:00:00Z',
@@ -37,10 +39,10 @@ const sampleLogs: LogEntry[] = [
     },
     {
         level: 'ERROR',
-        startTime: '2024-04-22T10:10:00Z',
+        timestamp: baseTimestamp + 10 * 60 * 1000,
         scope: 'API',
         message: 'Failed to process request',
-        metadata: {
+        data: {
             requestId: 'req-12345',
             endpoint: '/api/users',
             statusCode: 500,
@@ -49,10 +51,10 @@ const sampleLogs: LogEntry[] = [
     },
     {
         level: 'DEBUG',
-        startTime: '2024-04-22T10:15:00Z',
+        timestamp: baseTimestamp + 15 * 60 * 1000,
         scope: 'Cache',
         message: 'Cache miss for key: user:123',
-        metadata: {
+        data: {
             key: 'user:123',
             cacheSize: 1024,
             ttl: 3600,
@@ -63,11 +65,13 @@ const sampleLogs: LogEntry[] = [
 export const Default: Story = {
     args: {
         logs: sampleLogs,
+        startTime: baseTimestamp,
     },
 };
 
 export const Empty: Story = {
     args: {
         logs: [],
+        startTime: baseTimestamp,
     },
 };

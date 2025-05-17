@@ -70,7 +70,7 @@ type SystemErrorMessage = {
 type ToolMessage = {
     type: 'tool';
     tool: string;
-    input: any;
+    input: Record<string, unknown>;
     status: 'notStarted' | 'inProgress' | 'success' | 'failed';
     output?: string;
     actionItems?: {
@@ -346,10 +346,10 @@ export const Chat: Story = {
                         ]}
                         actions={
                             <div className="flex gap-2">
-                                <button className="text-text-600 hover:text-text-900">
+                                <button type="button" className="text-text-600 hover:text-text-900">
                                     <Copy size={16} />
                                 </button>
-                                <button className="text-text-600 hover:text-text-900">
+                                <button type="button" className="text-text-600 hover:text-text-900">
                                     <ThumbsUp size={16} />
                                 </button>
                             </div>
@@ -377,7 +377,8 @@ export const Chat: Story = {
                                                         actionItems={message.actionItems}
                                                     />
                                                 );
-                                            } else if (message.type === 'tool') {
+                                            }
+                                            if (message.type === 'tool') {
                                                 return (
                                                     <ChatToolCall
                                                         key={`${turnIndex}-${msgIndex}`}
@@ -388,7 +389,8 @@ export const Chat: Story = {
                                                         actionItems={message.actionItems}
                                                     />
                                                 );
-                                            } else if (message.type === 'system_text') {
+                                            }
+                                            if (message.type === 'system_text') {
                                                 return (
                                                     <ChatMessageSystemText
                                                         key={`${turnIndex}-${msgIndex}`}
@@ -396,7 +398,8 @@ export const Chat: Story = {
                                                         actionItems={message.actionItems}
                                                     />
                                                 );
-                                            } else if (message.type === 'system_event') {
+                                            }
+                                            if (message.type === 'system_event') {
                                                 return (
                                                     <ChatMessageSystemEvent
                                                         key={`${turnIndex}-${msgIndex}`}
@@ -407,7 +410,8 @@ export const Chat: Story = {
                                                         {message.details}
                                                     </ChatMessageSystemEvent>
                                                 );
-                                            } else if (message.type === 'system_error') {
+                                            }
+                                            if (message.type === 'system_error') {
                                                 return (
                                                     <ChatMessageSystemError
                                                         key={`${turnIndex}-${msgIndex}`}

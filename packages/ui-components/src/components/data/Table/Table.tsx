@@ -2,7 +2,7 @@ import { SquareArrowOutUpRight } from 'lucide-react';
 import React from 'react';
 import type { TableCellProps, TableProps } from './TableTypes';
 
-export const TableCell: React.FC<TableCellProps> = ({ value, table, column, onRecordClick }) => {
+export const TableCell: React.FC<TableCellProps> = ({ value, onRecordClick }) => {
     if (value === null || value === undefined) {
         return <>-</>;
     }
@@ -14,33 +14,40 @@ export const TableCell: React.FC<TableCellProps> = ({ value, table, column, onRe
     if (typeof value === 'object') {
         try {
             return <>{JSON.stringify(value)}</>;
-        } catch (error) {
+        } catch (_error) {
             return <>Error parsing object</>;
         }
     }
 
     // Check if value is a reference (format: tableName::id)
-    if (table && value && value.toString().split('::').length === 2) {
+    if (value && value.toString().split('::').length === 2) {
         const [recordTable, recordId] = value.toString().split('::');
         const [recordSegment] = recordId.split('-');
         return (
-            <span
+            <button
+                type="button"
                 className="text-text-300 flex items-center gap-1 hover:underline hover:text-primary-500 cursor-pointer capitalize"
                 onClick={e => {
                     e.stopPropagation();
-                    onRecordClick?.(value);
+                    onRecordClick?.(value.toString());
+                }}
+                onKeyDown={e => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.stopPropagation();
+                        onRecordClick?.(value.toString());
+                    }
                 }}
             >
                 <SquareArrowOutUpRight className="w-3 h-3 inline-block" />
                 {recordTable} {recordSegment}
-            </span>
+            </button>
         );
     }
 
     return <>{value.toString()}</>;
 };
 
-export const Table: React.FC<TableProps> = ({ table, data, onRowClick, className = '', ignoreColumns = [], onRecordClick }) => {
+export const Table: React.FC<TableProps> = ({ data, onRowClick, className = '', ignoreColumns = [], onRecordClick }) => {
     if (!data || data.length === 0) {
         return <div className="text-text-700 p-4 text-center">No data available</div>;
     }
@@ -48,7 +55,7 @@ export const Table: React.FC<TableProps> = ({ table, data, onRowClick, className
     // Get columns from the first record
     const columns = Object.keys(data[0]).filter(column => !ignoreColumns.includes(column));
 
-    const handleRowClick = (record: Record<string, any>) => {
+    const handleRowClick = (record: Record<string, unknown>) => {
         if (onRowClick) {
             onRowClick(record);
         }
@@ -78,12 +85,12 @@ export const Table: React.FC<TableProps> = ({ table, data, onRowClick, className
                                 className={`${onRowClick ? 'hover:bg-primary-100 transition-colors cursor-pointer' : ''}`}
                                 onClick={() => handleRowClick(record)}
                             >
-                                {columns.map(column => (
+                                {columns.map((column, indexCol) => (
                                     <td
-                                        key={column}
+                                        key={indexCol}
                                         className="p-2 text-text-300 max-w-[250px] truncate border-b border-background-100 border-opacity-50"
                                     >
-                                        <TableCell value={record[column]} table={table} column={column} onRecordClick={onRecordClick} />
+                                        <TableCell value={record[column]} onRecordClick={onRecordClick} />
                                     </td>
                                 ))}
                             </tr>

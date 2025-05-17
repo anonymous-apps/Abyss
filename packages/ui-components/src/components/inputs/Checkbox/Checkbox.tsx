@@ -39,6 +39,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
 
     return (
         <div
+            role="tooltip"
             className="relative inline-block"
             onMouseEnter={() => tooltip && setShowTooltip(true)}
             onMouseLeave={() => tooltip && setShowTooltip(false)}

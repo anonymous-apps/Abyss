@@ -39,20 +39,26 @@ export const ChatMessageSystemEvent: React.FC<ChatMessageSystemEventProps> = ({
 
     return (
         <div className={`relative w-full rounded-sm text-xs ${className}`}>
-            <div
-                className={`flex items-center gap-2 py-2 px-2 text-text-500 bg-background-200
+            <button
+                type="button"
+                className={`flex items-center gap-2 py-2 px-2 text-text-500 bg-background-200 w-full text-left 
                     ${isExpanded ? 'rounded-t border-b border-background-300' : 'rounded'}
                 ${hasChildren ? 'cursor-pointer hover:bg-background-200' : ''}`}
                 onClick={() => hasChildren && setIsExpanded(!isExpanded)}
+                onKeyDown={e => {
+                    if (hasChildren && (e.key === 'Enter' || e.key === ' ')) {
+                        setIsExpanded(!isExpanded);
+                    }
+                }}
             >
                 {hasChildren &&
                     (isExpanded ? <ChevronDown className="w-3 h-3 text-text-400" /> : <ChevronRight className="w-3 h-3 text-text-400" />)}
                 <Icon className="w-4 h-4 text-text-500" />
                 <span className="">{text}</span>
-            </div>
+            </button>
 
             {isExpanded && children && (
-                <div className={`overflow-hidden transition-all duration-300 ease-in-out py-2 px-2 px-6 bg-background-200 pt-1 rounded-b`}>
+                <div className="overflow-hidden transition-all duration-300 ease-in-out py-2 px-2 px-6 bg-background-200 pt-1 rounded-b">
                     {children}
                 </div>
             )}
