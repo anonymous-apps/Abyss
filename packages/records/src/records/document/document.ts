@@ -53,6 +53,10 @@ export class ReferencedDocumentRecord extends ReferencedSqliteRecord<DocumentTyp
 
     public async replaceCell(id: string, newData: NewCellType) {
         const data = await this.get();
+        const cellExists = data.documentContentData.some(cell => cell.id === id);
+        if (!cellExists) {
+            throw new Error(`Cell with id ${id} not found.`);
+        }
         const updatedContent = data.documentContentData.map(cell =>
             cell.id === id ? { ...cell, ...newData, editedAt: Date.now() } : cell
         );
@@ -76,7 +80,9 @@ export class ReferencedDocumentRecord extends ReferencedSqliteRecord<DocumentTyp
     public async addCellAfter(cellId: string, newCellData: NewCellType) {
         const data = await this.get();
         const index = data.documentContentData.findIndex(cell => cell.id === cellId);
-        if (index === -1) return;
+        if (index === -1) {
+            throw new Error(`Cell with id ${cellId} not found.`);
+        }
 
         const updatedContent = [...data.documentContentData];
         updatedContent.splice(index + 1, 0, { ...newCellData, editedAt: Date.now(), id: randomId() });
@@ -86,7 +92,9 @@ export class ReferencedDocumentRecord extends ReferencedSqliteRecord<DocumentTyp
     public async addCellBefore(cellId: string, newCellData: NewCellType) {
         const data = await this.get();
         const index = data.documentContentData.findIndex(cell => cell.id === cellId);
-        if (index === -1) return;
+        if (index === -1) {
+            throw new Error(`Cell with id ${cellId} not found.`);
+        }
 
         const updatedContent = [...data.documentContentData];
         updatedContent.splice(index, 0, { ...newCellData, editedAt: Date.now(), id: randomId() });
@@ -95,17 +103,19 @@ export class ReferencedDocumentRecord extends ReferencedSqliteRecord<DocumentTyp
 
     public async deleteCell(cellId: string) {
         const data = await this.get();
+        const cellExists = data.documentContentData.some(cell => cell.id === cellId);
+        if (!cellExists) {
+            throw new Error(`Cell with id ${cellId} not found.`);
+        }
         const updatedContent = data.documentContentData.filter(cell => cell.id !== cellId);
         await this.update({ documentContentData: updatedContent });
     }
 
-    public async toRenderedString() {
-        const data = await this.get();
-        return serializeDocument(data);
-    }
-
     public async saveVersion() {
         const currentData = await this.get();
+        if (currentData.nextVersionId) {
+            throw new Error('Cannot save a new version; a next version already exists.');
+        }
         const nextVersion = await this.client.tables.document.create({
             name: currentData.name,
             type: currentData.type,
