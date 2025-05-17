@@ -1,7 +1,8 @@
 import { ReferencedSqliteRecord } from '../../sqlite/reference-record';
 import { ReferencedSqliteTable } from '../../sqlite/reference-table';
 import type { SQliteClient } from '../../sqlite/sqlite-client';
-import type { ToolDefinitionType } from './tool-definition.type';
+import { randomId } from '../../utils/ids';
+import type { NewToolDefinitionInput, ToolDefinitionType } from './tool-definition.type';
 
 export class ReferencedToolDefinitionTable extends ReferencedSqliteTable<ToolDefinitionType> {
     constructor(client: SQliteClient) {
@@ -10,6 +11,14 @@ export class ReferencedToolDefinitionTable extends ReferencedSqliteTable<ToolDef
 
     public ref(id: string) {
         return new ReferencedToolDefinitionRecord(id, this.client);
+    }
+
+    public newToolDefinition(input: NewToolDefinitionInput) {
+        const shortName = `${input.name.toLowerCase().replace(/ /g, '-')}-${randomId()}`;
+        return this.create({
+            ...input,
+            shortName,
+        });
     }
 }
 

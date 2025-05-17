@@ -1,7 +1,9 @@
 import { ReferencedSqliteRecord } from '../../sqlite/reference-record';
 import { ReferencedSqliteTable } from '../../sqlite/reference-table';
+import type { NewRecord } from '../../sqlite/sqlite.type';
 import type { SQliteClient } from '../../sqlite/sqlite-client';
 import { ReferencedMessageRecord } from '../message/message';
+import type { MessageType } from '../message/message.type';
 import { ReferencedToolDefinitionRecord } from '../tool-definition/tool-definition';
 import type { MessageThreadTurn, MessageThreadType } from './message-thread.type';
 
@@ -23,12 +25,15 @@ export class ReferencedMessageThreadRecord extends ReferencedSqliteRecord<Messag
         super('messageThread', id, client);
     }
 
+    public async addMessagePartials(...messages: NewRecord<MessageType>[]) {
+        const newMessages = await Promise.all(messages.map(m => this.client.tables.message.create(m)));
+        await this.addMessages(...newMessages.map(m => this.client.tables.message.ref(m.id)));
+    }
+
     public async addMessages(...messages: ReferencedMessageRecord[]) {
-        const clone = await this.clone();
-        const clonedData = await clone.get();
-        const newMessages = [...clonedData.messagesData, ...messages.map(m => ({ id: m.id }))];
-        await clone.update({ messagesData: newMessages });
-        return clone;
+        const data = await this.get();
+        const newMessages = [...data.messagesData, ...messages.map(m => ({ id: m.id }))];
+        await this.update({ messagesData: newMessages });
     }
 
     public async getAllMessages() {

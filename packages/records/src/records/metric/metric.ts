@@ -12,6 +12,57 @@ export class ReferencedMetricTable extends ReferencedSqliteTable<MetricType> {
         return new ReferencedMetricRecord(id, this.client);
     }
 
+    //
+    // Metric creation
+    //
+
+    async publishMetricObject(values: Record<string, number>, dimensions: Record<string, string>) {
+        for (const key of Object.keys(values)) {
+            const value = values[key];
+            await this.create({
+                name: key,
+                value,
+                dimensionData: dimensions,
+            });
+        }
+    }
+
+    async wrapSqliteMetric<T>(metric: string, dimensions: Record<string, string>, handler: () => Promise<T> | T): Promise<T> {
+        const startTime = Date.now();
+        try {
+            const result = await handler();
+            this.publishMetricObject(
+                {
+                    [`${metric}:success`]: 1,
+                    [`${metric}:failed`]: 0,
+                },
+                dimensions
+            );
+            return result;
+        } catch (error) {
+            this.publishMetricObject(
+                {
+                    [`${metric}:success`]: 0,
+                    [`${metric}:failed`]: 1,
+                },
+                dimensions
+            );
+            throw error;
+        } finally {
+            this.publishMetricObject(
+                {
+                    [`${metric}:duration`]: Date.now() - startTime,
+                    [`${metric}:ran`]: 1,
+                },
+                dimensions
+            );
+        }
+    }
+
+    //
+    // Metric querying
+    //
+
     async getUniqueDimensionsForMetric(metricName: string) {
         const allData = await this.queryMetrics(metricName);
         const allDimensions: Record<string, Set<string>> = {};
@@ -55,49 +106,6 @@ export class ReferencedMetricTable extends ReferencedSqliteTable<MetricType> {
         const data = await this.client.execute('SELECT DISTINCT name FROM metric');
         const dataParsed = data as { name: string }[];
         return dataParsed.map(row => row.name);
-    }
-
-    async publishMetricObject(values: Record<string, number>, dimensions: Record<string, string>) {
-        for (const key of Object.keys(values)) {
-            const value = values[key];
-            await this.create({
-                name: key,
-                value,
-                dimensionData: dimensions,
-            });
-        }
-    }
-
-    async wrapSqliteMetric<T>(metric: string, dimensions: Record<string, string>, handler: () => Promise<T> | T): Promise<T> {
-        const startTime = Date.now();
-        try {
-            const result = await handler();
-            this.publishMetricObject(
-                {
-                    [`${metric}:success`]: 1,
-                    [`${metric}:failed`]: 0,
-                },
-                dimensions
-            );
-            return result;
-        } catch (error) {
-            this.publishMetricObject(
-                {
-                    [`${metric}:success`]: 0,
-                    [`${metric}:failed`]: 1,
-                },
-                dimensions
-            );
-            throw error;
-        } finally {
-            this.publishMetricObject(
-                {
-                    [`${metric}:duration`]: Date.now() - startTime,
-                    [`${metric}:ran`]: 1,
-                },
-                dimensions
-            );
-        }
     }
 }
 

@@ -1,5 +1,6 @@
 import type { BaseSqliteRecord } from '../../sqlite/sqlite.type';
 import type { Status } from '../../utils/shared.type';
+import type { ToolDefinitionInputProperty, ToolDefinitionOutputProperty } from '../tool-definition/tool-definition.type';
 
 export interface TextPartial extends BaseSqliteRecord {
     type: 'text';
@@ -18,8 +19,8 @@ export interface NewToolDefinitionPartial extends BaseSqliteRecord {
             toolId: string;
             shortName: string;
             description: string;
-            inputSchemaData: Record<string, unknown>;
-            outputSchemaData: Record<string, unknown>;
+            inputSchemaData: ToolDefinitionInputProperty[];
+            outputSchemaData: ToolDefinitionOutputProperty[];
         }[];
     };
     referencedData?: Record<string, string>;

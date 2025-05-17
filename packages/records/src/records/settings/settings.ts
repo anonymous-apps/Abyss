@@ -11,22 +11,20 @@ export class ReferencedSettingsTable extends ReferencedSqliteTable<SettingsType>
     }
 
     async default() {
-        const defaultRef = new ReferencedSettingsRecord(ReferencedSettingsTable.DEFAULT_ID, this.client);
+        const defaultRef = this.ref();
         const exists = await defaultRef.exists();
-        if (exists) return await defaultRef.get();
-        const defaultSettings = await this.create({
+        if (exists) {
+            return await defaultRef.get();
+        }
+        return await this.create({
             id: ReferencedSettingsTable.DEFAULT_ID,
             lastPage: '/',
             theme: '',
         });
-        return defaultSettings;
     }
 
     async update(settings: Partial<SettingsType>) {
         const defaultValue = await this.default();
-        if (!defaultValue || !defaultValue.id) {
-            throw new Error('Default settings or default settings ID not found');
-        }
         const defaultRef = new ReferencedSettingsRecord(defaultValue.id, this.client);
         await defaultRef.update(settings);
     }

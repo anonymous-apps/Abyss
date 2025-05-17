@@ -24,3 +24,11 @@ export interface ToolDefinitionType extends BaseSqliteRecord {
     outputSchemaData: ToolDefinitionOutputProperty[];
     linkedDocumentData?: string[];
 }
+
+export interface NewToolDefinitionInput {
+    name: string;
+    description: string;
+    handlerType: ToolDefinitionHandlerType;
+    inputSchemaData: ToolDefinitionInputProperty[];
+    outputSchemaData: ToolDefinitionOutputProperty[];
+}
