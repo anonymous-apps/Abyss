@@ -6,11 +6,13 @@ export class ReferencedSqliteTable<IRecordType extends BaseSqliteRecord = BaseSq
     public readonly tableId: keyof SqliteTables;
     public readonly client: SQliteClient;
     public readonly description: string;
+    public readonly tables: SqliteTables;
 
     constructor(tableId: keyof SqliteTables, description: string, client: SQliteClient) {
         this.tableId = tableId;
         this.client = client;
         this.description = description;
+        this.tables = client.tables;
     }
 
     public static serialize<T extends BaseSqliteRecord>(record: T): Record<string, unknown> {
@@ -51,7 +53,7 @@ export class ReferencedSqliteTable<IRecordType extends BaseSqliteRecord = BaseSq
 
     async purgeAll(): Promise<void> {
         await this.client.execute(`DELETE FROM ${this.tableId}`);
-        this.client.events.notifyTableChanged(this);
+        await this.client.events.notifyTableChanged(this);
     }
 
     async create(record: NewRecord<IRecordType>): Promise<IRecordType> {
@@ -68,7 +70,7 @@ export class ReferencedSqliteTable<IRecordType extends BaseSqliteRecord = BaseSq
                 .join(', ')}) RETURNING *`,
             [...Object.values(serialized)]
         );
-        this.client.events.notifyTableChanged(this);
+        await this.client.events.notifyTableChanged(this);
         return ReferencedSqliteTable.deserialize<IRecordType>((raw as Record<string, unknown>[])[0]);
     }
 
@@ -100,7 +102,7 @@ export class ReferencedSqliteTable<IRecordType extends BaseSqliteRecord = BaseSq
             serializedRecords.flatMap(sr => Object.values(sr))
         );
 
-        this.client.events.notifyTableChanged(this);
+        await this.client.events.notifyTableChanged(this);
         const results = raw as Record<string, unknown>[];
         return results.map(r => ReferencedSqliteTable.deserialize<IRecordType>(r));
     }
@@ -117,5 +119,9 @@ export class ReferencedSqliteTable<IRecordType extends BaseSqliteRecord = BaseSq
     async exists(id: string): Promise<boolean> {
         const raw = await this.client.execute(`SELECT COUNT(*) as count FROM ${this.tableId} WHERE id = ?`, [id]);
         return (raw as { count: number }[])[0].count > 0;
+    }
+
+    async subscribe(callback: () => void) {
+        return this.client.events.subscribeTable(this.tableId, callback);
     }
 }

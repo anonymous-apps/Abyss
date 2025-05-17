@@ -34,7 +34,7 @@ async function createRecord() {
 describe('ReferencedRecord::RefTable', () => {
     test('Happy: Get reference to table', async () => {
         const refRecord = await createRecord();
-        const table = refRecord.ref_table();
+        const table = refRecord.table;
         expect(table.tableId).toBe('debug');
     });
 });
@@ -86,6 +86,6 @@ describe('ReferencedRecord::Clone', () => {
         expect(cloned.id).not.toBe('test');
         const clonedRecord = await cloned.get();
         expect(clonedRecord.name).toBe('test');
-        expect(await refRecord.ref_table().count()).toBe(2);
+        expect(await refRecord.table.count()).toBe(2);
     });
 });

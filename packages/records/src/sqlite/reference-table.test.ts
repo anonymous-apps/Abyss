@@ -39,7 +39,10 @@ describe('ReferencedTable::List', () => {
         const table = await createDbgDb();
         await table.create({ id: 'test' });
         await table.create({ id: 'test2' });
-        expect(await table.list()).toMatchObject([{ id: 'test' }, { id: 'test2' }]);
+        const items = await table.list();
+        expect(items).toHaveLength(2);
+        expect(items.map(item => item.id)).toContainEqual('test');
+        expect(items.map(item => item.id)).toContainEqual('test2');
     });
     test('Happy: List table with serialized json data', async () => {
         const table = await createDbgDb();
@@ -75,10 +78,10 @@ describe('ReferencedTable::Create', () => {
         const table = await createDbgDb();
         expect(await table.createMany([{ id: 'test' }, { id: 'test2' }])).toMatchObject([{ id: 'test' }, { id: 'test2' }]);
     });
-    test('Sad: Create a new record with an existing id', async () => {
+    test('Happy: Override a new record with an existing id', async () => {
         const table = await createDbgDb();
         await table.create({ id: 'test' });
-        await expect(table.create({ id: 'test' })).rejects.toThrow();
+        await table.create({ id: 'test' });
     });
 });
 

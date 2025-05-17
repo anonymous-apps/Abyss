@@ -9,6 +9,8 @@ import type { ReferencedMetricTable } from '../records/metric/metric';
 import type { ReferencedModelConnectionTable } from '../records/model-connection/model-connection';
 import type { ReferencedSettingsTable } from '../records/settings/settings';
 import type { ReferencedToolDefinitionTable } from '../records/tool-definition/tool-definition';
+import type { ReferencedSqliteRecord } from './reference-record';
+import type { SQliteClient } from './sqlite-client';
 
 export interface DBSidecarType {
     databaseVersionId: string;
@@ -25,6 +27,12 @@ export interface BaseSqliteRecord {
     createdAt: number;
     updatedAt: number;
 }
+
+export type SqliteRecordClass<Ref = ReferencedSqliteRecord> = new (
+    tableId: keyof SqliteTables,
+    recordId: string,
+    client: SQliteClient
+) => Ref;
 
 export type NewRecord<T extends BaseSqliteRecord> = Omit<T, 'id' | 'createdAt' | 'updatedAt'> & { id?: string };
 
