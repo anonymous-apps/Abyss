@@ -22,12 +22,12 @@
         "publish:mac": "npm run publish:generate-icons && `npm run publish:mac --workspace=packages/app",
         "publish:generate-icons": "node scripts/generate-icons.js",
 
-        "format": "biome format --write .",
-        "format:app": "biome format --write packages/app",
-        "format:ui": "biome format --write packages/ui-components",
-        "format:intelligence": "biome format --write packages/intelligence",
-        "format:records": "biome format --write packages/records",
-        "format:prompts": "biome format --write packages/prompts"
+        "format": "biome format --fix .",
+        "format:app": "biome format --fix packages/app",
+        "format:ui": "biome format --fix packages/ui-components",
+        "format:intelligence": "biome format --fix packages/intelligence",
+        "format:records": "biome format --fix packages/records",
+        "format:prompts": "biome format --fix packages/prompts"
     },
     "devDependencies": {
         "@biomejs/biome": "2.0.0-beta.4",
