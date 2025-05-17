@@ -1,49 +1,94 @@
 import { CompiledPrompt } from './compiledPrompt';
-import type { Cell, PromptHandlerParams, UncompiledCell } from './promptTemplate.types';
+import type {
+    Cell,
+    CellHeader2Params,
+    CellHeader3Params,
+    CellHeaderParams,
+    CellTextParams,
+    CellXMLElementParams,
+    DynamicCellTemplate,
+    PromptHandlerParams,
+    StaticCellTemplate,
+} from './promptTemplate.types';
 
-export class PromptTemplate<IParams = Record<string, any>> {
-    private cells: UncompiledCell<IParams>[] = [];
+export class PromptTemplate<IParams = Record<string, unknown>> {
+    private cells: DynamicCellTemplate<Cell, IParams>[] = [];
 
-    private addCell(type: Cell['type'], params: PromptHandlerParams<any, IParams>) {
-        if (Array.isArray(params)) {
-            // Convert array of strings to array of cells
-            this.cells.push(...params.map(content => ({ type, content })));
-        } else if (typeof params === 'function') {
-            this.cells.push({ outType: type, compile: params });
-        } else if (!params) {
-            return;
-        } else {
-            this.cells.push({ type, content: params });
+    private addCell(cell: DynamicCellTemplate<Cell, IParams>) {
+        this.cells.push(cell);
+    }
+
+    private extractCells(template: StaticCellTemplate<Cell>): Cell[] {
+        if (!template) {
+            return [];
         }
+        if (Array.isArray(template)) {
+            return template;
+        }
+        return [template];
     }
 
-    addText(params: PromptHandlerParams<string, IParams>) {
-        this.addCell('text', params);
+    private addPromptResult(result: PromptHandlerParams<Cell, IParams>) {
+        if (!result) {
+            return;
+        }
+        if (Array.isArray(result)) {
+            for (const c of result) {
+                this.addCell({
+                    type: 'static',
+                    data: c,
+                });
+            }
+            return;
+        }
+
+        if (typeof result === 'function') {
+            this.addCell({
+                type: 'dynamic',
+                outType: 'text',
+                compile: result,
+            });
+            return;
+        }
+
+        this.addCell({
+            type: 'static',
+            data: result,
+        });
+    }
+
+    addText(params: CellTextParams<IParams>) {
+        this.addPromptResult(params);
         return this;
     }
 
-    addHeader(params: PromptHandlerParams<string, IParams>) {
-        this.addCell('header', params);
+    addHeader(params: CellHeaderParams<IParams>) {
+        this.addPromptResult(params);
         return this;
     }
 
-    addHeader2(params: PromptHandlerParams<string, IParams>) {
-        this.addCell('header2', params);
+    addHeader2(params: CellHeader2Params<IParams>) {
+        this.addPromptResult(params);
         return this;
     }
 
-    addHeader3(params: PromptHandlerParams<string, IParams>) {
-        this.addCell('header3', params);
+    addHeader3(params: CellHeader3Params<IParams>) {
+        this.addPromptResult(params);
         return this;
     }
 
-    addXMLElement(params: PromptHandlerParams<any, IParams>) {
-        this.addCell('xmlElement', params);
+    addXMLElement(params: CellXMLElementParams<IParams>) {
+        this.addPromptResult(params);
         return this;
     }
 
-    addSubPrompt(params: PromptHandlerParams<CompiledPrompt, IParams>) {
-        this.addCell('subPrompt', params);
+    addSubPrompt(prompt: CompiledPrompt) {
+        for (const cell of prompt.cells) {
+            this.addCell({
+                type: 'static',
+                data: cell,
+            });
+        }
         return this;
     }
 
@@ -51,27 +96,13 @@ export class PromptTemplate<IParams = Record<string, any>> {
         const resultCells: Cell[] = [];
 
         for (const cell of this.cells) {
-            if ('type' in cell) {
-                resultCells.push(cell as Cell);
-            } else if ('compile' in cell) {
-                const renderFn = cell.compile as (params: IParams) => any[] | any | undefined;
-                const compiledCell = renderFn(params);
+            if (cell.type === 'static') {
+                resultCells.push(cell.data);
+            }
 
-                if (compiledCell) {
-                    if (Array.isArray(compiledCell)) {
-                        for (const c of compiledCell) {
-                            resultCells.push({
-                                type: cell.outType,
-                                content: c,
-                            });
-                        }
-                    } else {
-                        resultCells.push({
-                            type: cell.outType,
-                            content: compiledCell,
-                        });
-                    }
-                }
+            if (cell.type === 'dynamic') {
+                const compiledCells = this.extractCells(cell.compile(params));
+                resultCells.push(...compiledCells);
             }
         }
 

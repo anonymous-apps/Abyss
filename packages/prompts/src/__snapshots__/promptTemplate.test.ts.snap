@@ -1,0 +1,212 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`PromptTemplate > Edge Cases and Complex Scenarios > should handle dynamic cell functions returning an empty array > included 1`] = `
+"Included Text 1
+Included Text 2
+Footer text"
+`;
+
+exports[`PromptTemplate > Edge Cases and Complex Scenarios > should handle dynamic cell functions returning an empty array > not_included 1`] = `"Footer text"`;
+
+exports[`PromptTemplate > Edge Cases and Complex Scenarios > should handle dynamic cell functions returning undefined > hidden 1`] = `"Always shown"`;
+
+exports[`PromptTemplate > Edge Cases and Complex Scenarios > should handle dynamic cell functions returning undefined > shown 1`] = `
+"Shown
+Always shown"
+`;
+
+exports[`PromptTemplate > Edge Cases and Complex Scenarios > should handle special characters in XML content (via CDATA or escaping) 1`] = `
+"
+<note>
+  <!CDATA[Content with <>&"' characters and newlines.
+Must be preserved.]>
+</note>
+<escaped_tag><test>value</test></escaped_tag>
+"
+`;
+
+exports[`PromptTemplate > Edge Cases and Complex Scenarios > should handle special characters in text and headers 1`] = `
+"
+
+
+# Title with <>&"' characters
+Text with
+newlines,	tabs, and <>&"' special chars."
+`;
+
+exports[`PromptTemplate > Edge Cases and Complex Scenarios > should render a complex nested prompt with mixed types and dynamic content > complex_no_extra 1`] = `
+"
+
+
+# Complex Test Main Title
+Introduction to the main prompt.
+
+### Dynamic Sub Section
+
+<data>Sub-prompt data</data>
+<value number="123" />
+
+Item: Nested Dynamic Item
+
+<final_notes>
+  <note1>abc</note1>
+  <note2 boolean="true" />
+  <note3 null="true" />
+</final_notes>
+"
+`;
+
+exports[`PromptTemplate > Edge Cases and Complex Scenarios > should render a complex nested prompt with mixed types and dynamic content 1`] = `
+"
+
+
+# Complex Test Main Title
+Introduction to the main prompt.
+
+### Dynamic Sub Section
+
+<data>Sub-prompt data</data>
+<value number="123" />
+
+Item: Nested Dynamic Item
+Extra content is shown!
+
+<final_notes>
+  <note1>abc</note1>
+  <note2 boolean="true" />
+  <note3 null="true" />
+</final_notes>
+"
+`;
+
+exports[`PromptTemplate > Edge Cases and Complex Scenarios > should render a template with only XML 1`] = `
+"
+<data>XML Only Content</data>
+"
+`;
+
+exports[`PromptTemplate > Edge Cases and Complex Scenarios > should render a template with only headers 1`] = `
+"
+
+
+# Header Only
+
+
+## Sub-header Only"
+`;
+
+exports[`PromptTemplate > Edge Cases and Complex Scenarios > should render a template with only sub-prompts 1`] = `
+"Sub 1
+Sub 2"
+`;
+
+exports[`PromptTemplate > Edge Cases and Complex Scenarios > should render an empty template 1`] = `""`;
+
+exports[`PromptTemplate > Header Rendering > should render a header (h1) 1`] = `
+"
+
+
+# Main Title"
+`;
+
+exports[`PromptTemplate > Header Rendering > should render a header2 (h2) 1`] = `
+"
+
+## Subtitle"
+`;
+
+exports[`PromptTemplate > Header Rendering > should render a header3 (h3) 1`] = `
+"
+### Minor Section"
+`;
+
+exports[`PromptTemplate > Header Rendering > should render headers from a function 1`] = `
+"
+
+
+# Title: Dynamic Header"
+`;
+
+exports[`PromptTemplate > Header Rendering > should render multiple headers 1`] = `
+"
+
+
+# Document Title
+Some introductory text.
+
+
+## Chapter 1"
+`;
+
+exports[`PromptTemplate > Sub-Prompt Rendering > should render a prompt with a sub-prompt 1`] = `
+"
+
+
+# Main Prompt
+This is a sub-prompt.
+
+### Sub-header
+Text after sub-prompt."
+`;
+
+exports[`PromptTemplate > Sub-Prompt Rendering > should render a sub-prompt with dynamic content (sub-prompt compiled with its own params) 1`] = `
+"Main content starts.
+User: TestUser"
+`;
+
+exports[`PromptTemplate > Sub-Prompt Rendering > should render multiple sub-prompts 1`] = `
+"Content before sub-prompts.
+First sub-prompt content.
+Content between sub-prompts.
+
+<item>Sub-prompt XML</item>
+
+Content after sub-prompts."
+`;
+
+exports[`PromptTemplate > Text Rendering > should render a simple text prompt 1`] = `"Hello, world!"`;
+
+exports[`PromptTemplate > Text Rendering > should render multiple text segments 1`] = `
+"This is the first sentence.
+This is the second sentence."
+`;
+
+exports[`PromptTemplate > Text Rendering > should render text from a function 1`] = `"Hello, Alice!"`;
+
+exports[`PromptTemplate > XML Rendering > should render XML from a function 1`] = `
+"
+<tool_description>
+  <name>Calculator</name>
+  <purpose>Performs arithmetic operations</purpose>
+</tool_description>
+"
+`;
+
+exports[`PromptTemplate > XML Rendering > should render XML with various data types 1`] = `
+"
+<query>sushi</query>
+<count number="10" />
+<is_premium boolean="true" />
+<location null="true" />
+<details>
+  <!CDATA[Include spicy options
+and vegan rolls.]>
+</details>
+"
+`;
+
+exports[`PromptTemplate > XML Rendering > should render a simple XML element 1`] = `
+"
+<user_request>Find Italian restaurants</user_request>
+"
+`;
+
+exports[`PromptTemplate > XML Rendering > should render nested XML elements 1`] = `
+"
+<search_parameters>
+  <keyword>coffee shop</keyword>
+  <radius_km number="5" />
+  <open_now boolean="true" />
+</search_parameters>
+"
+`;

@@ -28,5 +28,19 @@ export function dedent(text: string): string {
     }
 
     // Remove the common indentation from all lines
-    return lines.map(line => (line.length > 0 ? line.substring(minIndent) : line)).join('\n');
+    const lineArray = lines.map(line => (line.length > 0 ? line.substring(minIndent) : line));
+    while (true) {
+        if (lineArray[0] === '') {
+            lineArray.shift();
+        } else if (lineArray[lineArray.length - 1] === '') {
+            lineArray.pop();
+        } else {
+            break;
+        }
+    }
+
+    // Remove trailing spaces from each line
+    const trimmedLineArray = lineArray.map(line => line.trimEnd());
+
+    return trimmedLineArray.join('\n');
 }

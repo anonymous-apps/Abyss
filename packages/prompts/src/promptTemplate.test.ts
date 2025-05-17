@@ -1,367 +1,326 @@
 import { describe, expect, it } from 'vitest';
-import { CompiledPrompt } from './compiledPrompt';
 import { PromptTemplate } from './promptTemplate';
 
 describe('PromptTemplate', () => {
-    describe('Static Content', () => {
-        it('should create a template with static text', () => {
+    describe('Text Rendering', () => {
+        it('should render a simple text prompt', () => {
             const template = new PromptTemplate();
-            template.addText('Hello World');
-
-            const result = template.compile({});
-            const cells = result.getCells();
-            expect(cells).toHaveLength(1);
-            expect(cells[0]).toEqual({
-                type: 'text',
-                content: 'Hello World',
-            });
+            template.addText({ type: 'text', content: 'Hello, world!' });
+            const compiledPrompt = template.compile({}); // Pass empty object for params
+            const rendered = compiledPrompt.render();
+            expect(rendered).toMatchSnapshot();
         });
 
-        it('should create a template with multiple static cells', () => {
+        it('should render multiple text segments', () => {
             const template = new PromptTemplate();
-            template.addHeader('Title').addText('Some text').addHeader2('Subtitle').addHeader3('Small Title');
-
-            const result = template.compile({});
-            const cells = result.getCells();
-            expect(cells).toHaveLength(4);
-            expect(cells).toEqual([
-                { type: 'header', content: 'Title' },
-                { type: 'text', content: 'Some text' },
-                { type: 'header2', content: 'Subtitle' },
-                { type: 'header3', content: 'Small Title' },
-            ]);
+            template.addText({ type: 'text', content: 'This is the first sentence.' });
+            template.addText({ type: 'text', content: 'This is the second sentence.' });
+            const compiledPrompt = template.compile({}); // Pass empty object for params
+            const rendered = compiledPrompt.render();
+            expect(rendered).toMatchSnapshot();
         });
 
-        it('should handle array of text', () => {
-            const template = new PromptTemplate();
-            template.addText(['First', 'Second']);
-
-            const result = template.compile({});
-            const cells = result.getCells();
-            expect(cells).toHaveLength(2);
-            expect(cells).toEqual([
-                { type: 'text', content: 'First' },
-                { type: 'text', content: 'Second' },
-            ]);
-        });
-
-        it('should handle empty array', () => {
-            const template = new PromptTemplate();
-            template.addText([]);
-
-            const result = template.compile({});
-            const cells = result.getCells();
-            expect(cells).toHaveLength(0);
-        });
-
-        it('should handle undefined cells', () => {
-            const template = new PromptTemplate();
-            template.addText(undefined);
-            template.addText('Valid text');
-
-            const result = template.compile({});
-            const cells = result.getCells();
-            expect(cells).toHaveLength(1);
-            expect(cells[0]).toEqual({
-                type: 'text',
-                content: 'Valid text',
-            });
-        });
-
-        it('should handle null cells', () => {
-            const template = new PromptTemplate();
-            template.addText(null as any);
-            template.addText('Valid text');
-
-            const result = template.compile({});
-            const cells = result.getCells();
-            expect(cells).toHaveLength(1);
-            expect(cells[0]).toEqual({
-                type: 'text',
-                content: 'Valid text',
-            });
-        });
-
-        it('should handle empty string', () => {
-            const template = new PromptTemplate();
-            template.addText('');
-
-            const result = template.compile({});
-            const cells = result.getCells();
-            expect(cells).toHaveLength(0);
+        it('should render text from a function', () => {
+            const template = new PromptTemplate<{ name: string }>();
+            template.addText(params => ({ type: 'text', content: `Hello, ${params.name}!` }));
+            const compiledPrompt = template.compile({ name: 'Alice' });
+            const rendered = compiledPrompt.render();
+            expect(rendered).toMatchSnapshot();
         });
     });
 
-    describe('Dynamic Content', () => {
-        it('should handle dynamic content with parameters', () => {
-            interface Params {
-                name: string;
-                age: number;
-            }
-
-            const template = new PromptTemplate<Params>();
-            template.addText(params => `Hello ${params.name}`).addHeader2(params => `Age: ${params.age}`);
-
-            const result = template.compile({ name: 'John', age: 30 });
-            const cells = result.getCells();
-            expect(cells).toHaveLength(2);
-            expect(cells).toEqual([
-                { type: 'text', content: 'Hello John' },
-                { type: 'header2', content: 'Age: 30' },
-            ]);
-        });
-
-        it('should handle dynamic array of text', () => {
-            interface Params {
-                items: string[];
-            }
-
-            const template = new PromptTemplate<Params>();
-            template.addText(params => params.items);
-
-            const result = template.compile({ items: ['One', 'Two', 'Three'] });
-            const cells = result.getCells();
-            expect(cells).toHaveLength(3);
-            expect(cells).toEqual([
-                { type: 'text', content: 'One' },
-                { type: 'text', content: 'Two' },
-                { type: 'text', content: 'Three' },
-            ]);
-        });
-
-        it('should handle dynamic undefined cells', () => {
-            interface Params {
-                show: boolean;
-            }
-
-            const template = new PromptTemplate<Params>();
-            template.addText(params => (params.show ? 'Visible' : undefined)).addText('Always visible');
-
-            const result = template.compile({ show: false });
-            const cells = result.getCells();
-            expect(cells).toHaveLength(1);
-            expect(cells[0]).toEqual({
-                type: 'text',
-                content: 'Always visible',
-            });
-        });
-
-        it('should handle dynamic cell objects', () => {
-            interface Params {
-                title: string;
-            }
-
-            const template = new PromptTemplate<Params>();
-            template.addText(params => `Title: ${params.title}`);
-
-            const result = template.compile({ title: 'Test' });
-            const cells = result.getCells();
-            expect(cells).toHaveLength(1);
-            expect(cells[0]).toEqual({
-                type: 'text',
-                content: 'Title: Test',
-            });
-        });
-
-        it('should handle dynamic array of cell objects', () => {
-            interface Params {
-                items: string[];
-            }
-
-            const template = new PromptTemplate<Params>();
-            template.addText(params => params.items.map(item => `Item: ${item}`));
-
-            const result = template.compile({ items: ['One', 'Two'] });
-            const cells = result.getCells();
-            expect(cells).toHaveLength(2);
-            expect(cells).toEqual([
-                { type: 'text', content: 'Item: One' },
-                { type: 'text', content: 'Item: Two' },
-            ]);
-        });
-
-        it('should handle mixed dynamic content', () => {
-            interface Params {
-                name: string;
-                items: string[];
-            }
-
-            const template = new PromptTemplate<Params>();
-            template
-                .addHeader(params => `Hello ${params.name}`)
-                .addText(params => params.items)
-                .addHeader2('Static Header')
-                .addText(params => `Last item: ${params.items[params.items.length - 1]}`);
-
-            const result = template.compile({ name: 'John', items: ['One', 'Two'] });
-            const cells = result.getCells();
-            expect(cells).toHaveLength(5);
-            expect(cells).toEqual([
-                { type: 'header', content: 'Hello John' },
-                { type: 'text', content: 'One' },
-                { type: 'text', content: 'Two' },
-                { type: 'header2', content: 'Static Header' },
-                { type: 'text', content: 'Last item: Two' },
-            ]);
-        });
-
-        it('should handle empty dynamic arrays', () => {
-            interface Params {
-                items: string[];
-            }
-
-            const template = new PromptTemplate<Params>();
-            template.addText(params => params.items);
-
-            const result = template.compile({ items: [] });
-            const cells = result.getCells();
-            expect(cells).toHaveLength(0);
-        });
-
-        it('should handle dynamic content with missing parameters', () => {
-            interface Params {
-                name?: string;
-            }
-
-            const template = new PromptTemplate<Params>();
-            template.addText(params => `Hello ${params.name ?? 'Anonymous'}`);
-
-            const result = template.compile({});
-            const cells = result.getCells();
-            expect(cells).toHaveLength(1);
-            expect(cells[0]).toEqual({
-                type: 'text',
-                content: 'Hello Anonymous',
-            });
-        });
-
-        it('should handle dynamic content with null parameters', () => {
-            interface Params {
-                name: string | null;
-            }
-
-            const template = new PromptTemplate<Params>();
-            template.addText(params => `Hello ${params.name ?? 'Anonymous'}`);
-
-            const result = template.compile({ name: null });
-            const cells = result.getCells();
-            expect(cells).toHaveLength(1);
-            expect(cells[0]).toEqual({
-                type: 'text',
-                content: 'Hello Anonymous',
-            });
-        });
-    });
-
-    describe('Error Handling', () => {
-        it('should handle invalid cell type', () => {
+    describe('Header Rendering', () => {
+        it('should render a header (h1)', () => {
             const template = new PromptTemplate();
-            template.addText('Test');
-
-            const result = template.compile({});
-            const cells = result.getCells();
-            expect(cells).toHaveLength(1);
-            expect(cells[0]).toEqual({
-                type: 'text',
-                content: 'Test',
-            });
+            template.addHeader({ type: 'header', content: 'Main Title' });
+            const compiledPrompt = template.compile({});
+            const rendered = compiledPrompt.render();
+            expect(rendered).toMatchSnapshot();
         });
 
-        it('should handle invalid dynamic content', () => {
-            interface Params {
-                value: any;
-            }
-
-            const template = new PromptTemplate<Params>();
-            template.addText(params => params.value);
-
-            const result = template.compile({ value: { invalid: 'object' } });
-            const cells = result.getCells();
-            expect(cells).toHaveLength(1);
-            expect(cells[0]).toEqual({
-                type: 'text',
-                content: { invalid: 'object' },
-            });
+        it('should render a header2 (h2)', () => {
+            const template = new PromptTemplate();
+            template.addHeader2({ type: 'header2', content: 'Subtitle' });
+            const compiledPrompt = template.compile({});
+            const rendered = compiledPrompt.render();
+            expect(rendered).toMatchSnapshot();
         });
 
-        it('should handle invalid dynamic array content', () => {
-            interface Params {
-                items: any[];
-            }
+        it('should render a header3 (h3)', () => {
+            const template = new PromptTemplate();
+            template.addHeader3({ type: 'header3', content: 'Minor Section' });
+            const compiledPrompt = template.compile({});
+            const rendered = compiledPrompt.render();
+            expect(rendered).toMatchSnapshot();
+        });
 
-            const template = new PromptTemplate<Params>();
-            template.addText(params => params.items);
+        it('should render multiple headers', () => {
+            const template = new PromptTemplate();
+            template.addHeader({ type: 'header', content: 'Document Title' });
+            template.addText({ type: 'text', content: 'Some introductory text.' });
+            template.addHeader2({ type: 'header2', content: 'Chapter 1' });
+            const compiledPrompt = template.compile({});
+            const rendered = compiledPrompt.render();
+            expect(rendered).toMatchSnapshot();
+        });
 
-            const result = template.compile({ items: [{ invalid: 'object' }, 'valid'] });
-            const cells = result.getCells();
-            expect(cells).toHaveLength(2);
-            expect(cells).toEqual([
-                { type: 'text', content: { invalid: 'object' } },
-                { type: 'text', content: 'valid' },
-            ]);
+        it('should render headers from a function', () => {
+            const template = new PromptTemplate<{ title: string }>();
+            template.addHeader(params => ({ type: 'header', content: `Title: ${params.title}` }));
+            const compiledPrompt = template.compile({ title: 'Dynamic Header' });
+            const rendered = compiledPrompt.render();
+            expect(rendered).toMatchSnapshot();
         });
     });
 
-    describe('CompiledPrompt', () => {
-        it('should return a new array when getting cells', () => {
-            const cells = [
-                { type: 'text' as const, content: 'Test' },
-                { type: 'header' as const, content: 'Header' },
-            ];
-            const prompt = new CompiledPrompt(cells);
-            const result = prompt.getCells();
-
-            expect(result).toEqual(cells);
-            expect(result).not.toBe(cells); // Should be a new array
+    describe('XML Rendering', () => {
+        it('should render a simple XML element', () => {
+            const template = new PromptTemplate();
+            template.addXMLElement({ type: 'xmlElement', content: { user_request: 'Find Italian restaurants' } });
+            const compiledPrompt = template.compile({});
+            const rendered = compiledPrompt.render();
+            expect(rendered).toMatchSnapshot();
         });
 
-        it('should handle empty cells array', () => {
-            const prompt = new CompiledPrompt([]);
-            const result = prompt.getCells();
+        it('should render XML with various data types', () => {
+            const template = new PromptTemplate();
+            template.addXMLElement({
+                type: 'xmlElement',
+                content: {
+                    query: 'sushi',
+                    count: 10,
+                    is_premium: true,
+                    location: null,
+                    details: 'Include spicy options\nand vegan rolls.',
+                },
+            });
+            const compiledPrompt = template.compile({});
+            const rendered = compiledPrompt.render();
+            expect(rendered).toMatchSnapshot();
+        });
 
-            expect(result).toEqual([]);
-            expect(result).not.toBe([]); // Should be a new array
+        it('should render nested XML elements', () => {
+            const template = new PromptTemplate();
+            template.addXMLElement({
+                type: 'xmlElement',
+                content: {
+                    search_parameters: {
+                        keyword: 'coffee shop',
+                        radius_km: 5,
+                        open_now: true,
+                    },
+                },
+            });
+            const compiledPrompt = template.compile({});
+            const rendered = compiledPrompt.render();
+            expect(rendered).toMatchSnapshot();
+        });
+
+        it('should render XML from a function', () => {
+            const template = new PromptTemplate<{ toolName: string; description: string }>();
+            template.addXMLElement(params => ({
+                type: 'xmlElement',
+                content: {
+                    tool_description: {
+                        name: params.toolName,
+                        purpose: params.description,
+                    },
+                },
+            }));
+            const compiledPrompt = template.compile({ toolName: 'Calculator', description: 'Performs arithmetic operations' });
+            const rendered = compiledPrompt.render();
+            expect(rendered).toMatchSnapshot();
         });
     });
 
-    describe('CompiledPrompt.render', () => {
-        it('should render text cells', () => {
-            const prompt = new CompiledPrompt([
-                { type: 'text', content: 'Hello' },
-                { type: 'text', content: 'World' },
-            ]);
-            expect(prompt.render()).toBe('Hello\nWorld');
+    describe('Sub-Prompt Rendering', () => {
+        it('should render a prompt with a sub-prompt', () => {
+            const subTemplate = new PromptTemplate();
+            subTemplate.addText({ type: 'text', content: 'This is a sub-prompt.' });
+            subTemplate.addHeader3({ type: 'header3', content: 'Sub-header' });
+            const compiledSubPrompt = subTemplate.compile({});
+
+            const mainTemplate = new PromptTemplate();
+            mainTemplate.addHeader({ type: 'header', content: 'Main Prompt' });
+            mainTemplate.addSubPrompt(compiledSubPrompt);
+            mainTemplate.addText({ type: 'text', content: 'Text after sub-prompt.' });
+
+            const compiledMainPrompt = mainTemplate.compile({});
+            const rendered = compiledMainPrompt.render();
+            expect(rendered).toMatchSnapshot();
         });
 
-        it('should render header cells', () => {
-            const prompt = new CompiledPrompt([
-                { type: 'header', content: 'Main Title' },
-                { type: 'header2', content: 'Subtitle' },
-                { type: 'header3', content: 'Small Title' },
-            ]);
-            expect(prompt.render()).toBe('# Main Title\n## Subtitle\n### Small Title');
+        it('should render multiple sub-prompts', () => {
+            const subTemplate1 = new PromptTemplate();
+            subTemplate1.addText({ type: 'text', content: 'First sub-prompt content.' });
+            const compiledSubPrompt1 = subTemplate1.compile({});
+
+            const subTemplate2 = new PromptTemplate();
+            subTemplate2.addXMLElement({ type: 'xmlElement', content: { item: 'Sub-prompt XML' } });
+            const compiledSubPrompt2 = subTemplate2.compile({});
+
+            const mainTemplate = new PromptTemplate();
+            mainTemplate.addText({ type: 'text', content: 'Content before sub-prompts.' });
+            mainTemplate.addSubPrompt(compiledSubPrompt1);
+            mainTemplate.addText({ type: 'text', content: 'Content between sub-prompts.' });
+            mainTemplate.addSubPrompt(compiledSubPrompt2);
+            mainTemplate.addText({ type: 'text', content: 'Content after sub-prompts.' });
+
+            const compiledMainPrompt = mainTemplate.compile({});
+            const rendered = compiledMainPrompt.render();
+            expect(rendered).toMatchSnapshot();
         });
 
-        it('should render mixed content', () => {
-            const prompt = new CompiledPrompt([
-                { type: 'header', content: 'Main Title' },
-                { type: 'text', content: 'Intro' },
-                { type: 'header2', content: 'Section' },
-                { type: 'text', content: 'Details' },
-            ]);
-            expect(prompt.render()).toBe('# Main Title\nIntro\n## Section\nDetails');
+        it('should render a sub-prompt with dynamic content (sub-prompt compiled with its own params)', () => {
+            const subTemplate = new PromptTemplate<{ user: string }>();
+            subTemplate.addText(params => ({ type: 'text', content: `User: ${params.user}` }));
+            const compiledSubPrompt = subTemplate.compile({ user: 'TestUser' });
+
+            const mainTemplate = new PromptTemplate();
+            mainTemplate.addText({ type: 'text', content: 'Main content starts.' });
+            mainTemplate.addSubPrompt(compiledSubPrompt);
+
+            const compiledMainPrompt = mainTemplate.compile({});
+            const rendered = compiledMainPrompt.render();
+            expect(rendered).toMatchSnapshot();
+        });
+    });
+
+    describe('Edge Cases and Complex Scenarios', () => {
+        it('should render an empty template', () => {
+            const template = new PromptTemplate();
+            const compiledPrompt = template.compile({});
+            const rendered = compiledPrompt.render();
+            expect(rendered).toMatchSnapshot(); // Expect empty string or minimal structure
         });
 
-        it('should render XML element cells', () => {
-            const prompt = new CompiledPrompt([{ type: 'xmlElement', content: { root: { child: 'value' } } }]);
-            expect(prompt.render()).toContain('<root>');
-            expect(prompt.render()).toContain('<child>value</child>');
-            expect(prompt.render()).toContain('</root>');
+        it('should render a template with only headers', () => {
+            const template = new PromptTemplate();
+            template.addHeader({ type: 'header', content: 'Header Only' });
+            template.addHeader2({ type: 'header2', content: 'Sub-header Only' });
+            const compiledPrompt = template.compile({});
+            const rendered = compiledPrompt.render();
+            expect(rendered).toMatchSnapshot();
         });
 
-        it('should render empty prompt as empty string', () => {
-            const prompt = new CompiledPrompt([]);
-            expect(prompt.render()).toBe('');
+        it('should render a template with only XML', () => {
+            const template = new PromptTemplate();
+            template.addXMLElement({ type: 'xmlElement', content: { data: 'XML Only Content' } });
+            const compiledPrompt = template.compile({});
+            const rendered = compiledPrompt.render();
+            expect(rendered).toMatchSnapshot();
+        });
+
+        it('should render a template with only sub-prompts', () => {
+            const subTemplate1 = new PromptTemplate();
+            subTemplate1.addText({ type: 'text', content: 'Sub 1' });
+            const compiledSub1 = subTemplate1.compile({});
+
+            const subTemplate2 = new PromptTemplate();
+            subTemplate2.addText({ type: 'text', content: 'Sub 2' });
+            const compiledSub2 = subTemplate2.compile({});
+
+            const mainTemplate = new PromptTemplate();
+            mainTemplate.addSubPrompt(compiledSub1);
+            mainTemplate.addSubPrompt(compiledSub2);
+            const compiledPrompt = mainTemplate.compile({});
+            const rendered = compiledPrompt.render();
+            expect(rendered).toMatchSnapshot();
+        });
+
+        it('should handle special characters in text and headers', () => {
+            const template = new PromptTemplate();
+            template.addHeader({ type: 'header', content: 'Title with <>&"\' characters' });
+            template.addText({ type: 'text', content: 'Text with\nnewlines,\ttabs, and <>&"\' special chars.' });
+            const compiledPrompt = template.compile({});
+            const rendered = compiledPrompt.render();
+            expect(rendered).toMatchSnapshot();
+        });
+
+        it('should handle special characters in XML content (via CDATA or escaping)', () => {
+            const template = new PromptTemplate();
+            template.addXMLElement({
+                type: 'xmlElement',
+                content: {
+                    note: 'Content with <>&"\' characters and newlines.\nMust be preserved.',
+                    escaped_tag: '<test>value</test>',
+                },
+            });
+            const compiledPrompt = template.compile({});
+            const rendered = compiledPrompt.render();
+            expect(rendered).toMatchSnapshot();
+        });
+
+        it('should handle dynamic cell functions returning undefined', () => {
+            const template = new PromptTemplate<{ show: boolean }>();
+            template.addText(params => {
+                if (params.show) {
+                    return { type: 'text', content: 'Shown' };
+                }
+                return undefined; // Explicitly return undefined
+            });
+            template.addText({ type: 'text', content: 'Always shown' });
+
+            const compiledPrompt1 = template.compile({ show: true });
+            expect(compiledPrompt1.render()).toMatchSnapshot('shown');
+
+            const compiledPrompt2 = template.compile({ show: false });
+            expect(compiledPrompt2.render()).toMatchSnapshot('hidden');
+        });
+
+        it('should handle dynamic cell functions returning an empty array', () => {
+            const template = new PromptTemplate<{ include: boolean }>();
+            template.addText(params => {
+                if (params.include) {
+                    return [
+                        { type: 'text', content: 'Included Text 1' },
+                        { type: 'text', content: 'Included Text 2' },
+                    ];
+                }
+                return []; // Return empty array
+            });
+            template.addText({ type: 'text', content: 'Footer text' });
+
+            const compiledPrompt1 = template.compile({ include: true });
+            expect(compiledPrompt1.render()).toMatchSnapshot('included');
+
+            const compiledPrompt2 = template.compile({ include: false });
+            expect(compiledPrompt2.render()).toMatchSnapshot('not_included');
+        });
+
+        it('should render a complex nested prompt with mixed types and dynamic content', () => {
+            const innerSubTemplate = new PromptTemplate<{ item: string }>();
+            innerSubTemplate.addText(params => ({ type: 'text', content: `Item: ${params.item}` }));
+            const compiledInnerSub = innerSubTemplate.compile({ item: 'Nested Dynamic Item' });
+
+            const subTemplate = new PromptTemplate<{ section_title: string }>();
+            subTemplate.addHeader3(params => ({ type: 'header3', content: params.section_title }));
+            subTemplate.addXMLElement({ type: 'xmlElement', content: { data: 'Sub-prompt data', value: 123 } });
+            subTemplate.addSubPrompt(compiledInnerSub);
+            const compiledSub = subTemplate.compile({ section_title: 'Dynamic Sub Section' });
+
+            const mainTemplate = new PromptTemplate<{ main_title: string; show_extra: boolean }>();
+            mainTemplate.addHeader(params => ({ type: 'header', content: params.main_title }));
+            mainTemplate.addText({ type: 'text', content: 'Introduction to the main prompt.' });
+            mainTemplate.addSubPrompt(compiledSub);
+            mainTemplate.addText(params => {
+                if (params.show_extra) {
+                    return { type: 'text', content: 'Extra content is shown!' };
+                }
+                return undefined;
+            });
+            mainTemplate.addXMLElement({
+                type: 'xmlElement',
+                content: { final_notes: { note1: 'abc', note2: true, note3: null } },
+            });
+
+            const compiledPrompt = mainTemplate.compile({ main_title: 'Complex Test Main Title', show_extra: true });
+            const rendered = compiledPrompt.render();
+            expect(rendered).toMatchSnapshot();
+
+            const compiledPromptNoExtra = mainTemplate.compile({ main_title: 'Complex Test Main Title', show_extra: false });
+            const renderedNoExtra = compiledPromptNoExtra.render();
+            expect(renderedNoExtra).toMatchSnapshot('complex_no_extra');
         });
     });
 });

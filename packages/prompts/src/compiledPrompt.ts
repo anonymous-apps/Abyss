@@ -1,11 +1,12 @@
-import { dedent } from './dedent';
-import type { Cell, CellHeader, CellHeader2, CellHeader3, CellSubPrompt, CellText, CellXMLElement } from './promptTemplate.types';
+import type { Cell, CellHeader, CellHeader2, CellHeader3, CellText, CellXMLElement } from './promptTemplate.types';
+import { dedent } from './utils/dedent';
+import { renderXmlCell } from './utils/render-xml';
 
 export class CompiledPrompt {
-    constructor(public readonly cells: Cell[]) {}
+    public readonly cells: Cell[] = [];
 
-    getCells(): Cell[] {
-        return [...this.cells];
+    constructor(cells: Cell[]) {
+        this.cells = cells;
     }
 
     private renderText(cell: CellText): string {
@@ -25,30 +26,7 @@ export class CompiledPrompt {
     }
 
     private renderXMLElement(cell: CellXMLElement): string {
-        const handleObject = (obj: any, indent = 0): string[] => {
-            const lines: string[] = [];
-            const keys = Object.keys(obj);
-            for (const key of keys) {
-                if (Object.hasOwn(obj, key)) {
-                    const value = obj[key];
-                    if (typeof value === 'object' && value !== null) {
-                        lines.push(`${'  '.repeat(indent)}<${key}>`);
-                        lines.push(...handleObject(value, indent + 2));
-                        lines.push(`${'  '.repeat(indent)}</${key}>`);
-                    } else if (typeof value === 'string') {
-                        lines.push(`${'  '.repeat(indent)}<${key}>${dedent(value)}</${key}>`);
-                    } else {
-                        lines.push(`${'  '.repeat(indent)}<${key}>${value}</${key}>`);
-                    }
-                }
-            }
-            return lines;
-        };
-        return '\n' + handleObject(cell.content).join('\n') + '\n';
-    }
-
-    private renderSubPrompt(cell: CellSubPrompt): string {
-        return cell.content.render();
+        return renderXmlCell(cell);
     }
 
     render(): string {
@@ -65,8 +43,6 @@ export class CompiledPrompt {
                         return this.renderHeader3(cell);
                     case 'xmlElement':
                         return this.renderXMLElement(cell);
-                    case 'subPrompt':
-                        return this.renderSubPrompt(cell);
                 }
             })
             .join('\n');

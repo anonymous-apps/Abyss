@@ -1,0 +1,61 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`renderXmlCell > should handle string values with dedent 1`] = `
+"
+<data>
+  <!CDATA[This is a
+multiline string.]>
+</data>
+"
+`;
+
+exports[`renderXmlCell > should render a nested xml element 1`] = `
+"
+<name>test</name>
+<value>
+  <childName>nestedTest</childName>
+  <childValue>nestedValue</childValue>
+</value>
+"
+`;
+
+exports[`renderXmlCell > should render a simple xml element 1`] = `
+"
+<name>test</name>
+<value>test</value>
+"
+`;
+
+exports[`renderXmlCell > should render an empty content object as an empty string with newlines 1`] = `
+"
+
+"
+`;
+
+exports[`renderXmlCell > should render deeply nested xml elements 1`] = `
+"
+<level1>
+  <level2>
+    <level3>
+      <text>deep value</text>
+    </level3>
+  </level2>
+</level1>
+"
+`;
+
+exports[`renderXmlCell > should render multiple sibling elements 1`] = `
+"
+<item1>first</item1>
+<item2>second</item2>
+<item3>third</item3>
+"
+`;
+
+exports[`renderXmlCell > should render non-string primitive values 1`] = `
+"
+<count number="123" />
+<isActive boolean="true" />
+<isNull null="true" />
+"
+`;
