@@ -13,8 +13,7 @@
         "debug:mac": "npm run build:mac && dist/mac/Abyss.app/Contents/MacOS/Abyss",
         "debug:asar": "npx asar extract dist/mac/Abyss.app/Contents/Resources/app.asar ./tmp/extracted-app",
         "publish:mac": "vite build && electron-builder build --mac --publish always && npm run publish:checksums",
-        "publish:checksums": "node scripts/update-checksums.cjs && node scripts/publish-new-checksums.mjs",
-        "bump": "npm version patch"
+        "publish:checksums": "node scripts/update-checksums.cjs && node scripts/publish-new-checksums.mjs"
     },
     "dependencies": {
         "@abyss/intelligence": "^0.0.1",

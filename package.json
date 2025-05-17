@@ -9,22 +9,42 @@
         "packages/prompts"
     ],
     "scripts": {
+        "dev": "npm run dev --workspace=packages/app",
+        
         "build": "npm run build:ui && npm run build:records && npm run build:prompts && npm run build:intelligence",
         "build:ui": "npm run build --workspace=packages/ui-components",
         "build:intelligence": "npm run build --workspace=packages/intelligence",
         "build:records": "npm run build --workspace=packages/records",
         "build:prompts": "npm run build --workspace=packages/prompts",
-        "build:mac": "node scripts/generate-icons.js && npm run build:mac --workspace=packages/app && say 'Build complete'",
-        "debug:mac": "npm run debug:mac --workspace=packages/app",
+        "build:mac": "npm run build:mac --workspace=packages/app && say 'Build complete'",
+
         "publish": "npm run build && npm run build:mac && npm run publish:mac",
-        "publish:mac": "node scripts/generate-icons.js && `npm run publish:mac --workspace=packages/app",
-        "generate-icons": "node scripts/generate-icons.js",
-        "bump": "npm run bump --workspace=packages/app",
-        "test": "npm run test --workspace=packages/intelligence",
-        "watch": "concurrently \"npm run watch --workspace=packages/ui-components\" \"npm run watch --workspace=packages/intelligence\" \"npm run watch --workspace=packages/records\" \"npm run watch --workspace=packages/prompts\"",
-        "dev": "npm run dev --workspace=packages/app"
+        "publish:mac": "npm run publish:generate-icons && `npm run publish:mac --workspace=packages/app",
+        "publish:generate-icons": "node scripts/generate-icons.js",
+
+        "format": "biome format --write .",
+        "format:app": "biome format --write packages/app",
+        "format:ui": "biome format --write packages/ui-components",
+        "format:intelligence": "biome format --write packages/intelligence",
+        "format:records": "biome format --write packages/records",
+        "format:prompts": "biome format --write packages/prompts",
+
+        "lint": "biome lint .",
+        "lint:app": "biome lint packages/app",
+        "lint:ui": "biome lint packages/ui-components",
+        "lint:intelligence": "biome lint packages/intelligence",
+        "lint:records": "biome lint packages/records",
+        "lint:prompts": "biome lint packages/prompts",
+
+        "check": "biome check --apply .",
+        "check:app": "biome check --apply packages/app",
+        "check:ui": "biome check --apply packages/ui-components",
+        "check:intelligence": "biome check --apply packages/intelligence",
+        "check:records": "biome check --apply packages/records",
+        "check:prompts": "biome check --apply packages/prompts"
     },
     "devDependencies": {
+        "@biomejs/biome": "2.0.0-beta.4",
         "@storybook/addon-essentials": "^7.6.17",
         "@storybook/addon-interactions": "^7.6.17",
         "@storybook/addon-links": "^7.6.17",
@@ -36,6 +56,7 @@
         "@storybook/test": "^7.6.17",
         "@vitejs/plugin-react": "^4.2.1",
         "concurrently": "^9.1.2",
+        "glob": "^11.0.2",
         "icon-gen": "^3.0.1",
         "sharp": "^0.33.2",
         "storybook": "^7.6.17",
