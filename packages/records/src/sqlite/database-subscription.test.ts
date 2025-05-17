@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { EventValidator } from './events-recorder.test';
+import { EventValidator } from './events-recorder';
 import { ReferencedSqliteRecord } from './reference-record';
 import { ReferencedSqliteTable } from './reference-table';
 import type { BaseSqliteRecord, SqliteTables } from './sqlite.type';
