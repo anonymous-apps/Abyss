@@ -3,7 +3,6 @@ import { join } from 'node:path';
 import sqlite3 from 'sqlite3';
 import { ReferencedAgentGraphTable } from '../records/agent-graph/agent-graph';
 import { ReferencedChatSnapshotTable } from '../records/chat-snapshot/chat-snapshot';
-import { ReferencedChatThreadTable } from '../records/chat-thread/chat-thread';
 import { ReferencedDocumentTable } from '../records/document/document';
 import { ReferencedLogStreamTable } from '../records/logstream/logstream';
 import { ReferencedMessageTable } from '../records/message/message';
@@ -42,7 +41,6 @@ export class SQliteClient {
             settings: new ReferencedSettingsTable(this),
             modelConnection: new ReferencedModelConnectionTable(this),
             agentGraph: new ReferencedAgentGraphTable(this),
-            chatThread: new ReferencedChatThreadTable(this),
             messageThread: new ReferencedMessageThreadTable(this),
             metric: new ReferencedMetricTable(this),
             message: new ReferencedMessageTable(this),

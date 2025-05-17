@@ -17,7 +17,10 @@ export class ReferencedMessageThreadTable extends ReferencedSqliteTable<MessageT
     }
 
     public async new() {
-        return await this.create({ messagesData: [] });
+        return await this.create({
+            name: 'New Message Thread',
+            messagesData: [],
+        });
     }
 }
 
@@ -26,15 +29,23 @@ export class ReferencedMessageThreadRecord extends ReferencedSqliteRecord<Messag
         super('messageThread', id, client);
     }
 
+    //
+    // Messages
+    //
+
+    private async _internalAddMessagesByIds(ids: string[]): Promise<void> {
+        const data = await this.get();
+        const newMessagesData = [...data.messagesData, ...ids.map(id => ({ id }))];
+        await this.update({ messagesData: newMessagesData });
+    }
+
     public async addMessagePartials(...messages: NewRecord<MessageType>[]) {
-        const newMessages = await Promise.all(messages.map(m => this.client.tables.message.create(m)));
-        await this.addMessages(...newMessages.map(m => this.client.tables.message.ref(m.id)));
+        const createdMessages = await Promise.all(messages.map(m => this.client.tables.message.create(m)));
+        await this._internalAddMessagesByIds(createdMessages.map(m => m.id));
     }
 
     public async addMessages(...messages: ReferencedMessageRecord[]) {
-        const data = await this.get();
-        const newMessages = [...data.messagesData, ...messages.map(m => ({ id: m.id }))];
-        await this.update({ messagesData: newMessages });
+        await this._internalAddMessagesByIds(messages.map(m => m.id));
     }
 
     public async getAllMessages() {
@@ -42,6 +53,30 @@ export class ReferencedMessageThreadRecord extends ReferencedSqliteRecord<Messag
         const refs = data.messagesData.map(m => new ReferencedMessageRecord(m.id, this.client));
         return await Promise.all(refs.map(r => r.get()));
     }
+
+    //
+    // Modify
+    //
+
+    public async setName(name: string) {
+        await this.update({ name });
+    }
+
+    public async setParticipantId(participantId: string) {
+        await this.update({ participantId });
+    }
+
+    public async block(blockerId: string) {
+        await this.update({ blockerId });
+    }
+
+    public async unblock() {
+        await this.update({ blockerId: null });
+    }
+
+    //
+    // Metadata
+    //
 
     public async getTurns() {
         const turns: MessageThreadTurn[] = [];

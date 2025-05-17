@@ -17,6 +17,11 @@ Useful Utilities:
  - we can read from the thread
    - we can get all messages
    - we can group messages by sender id in turns
+ - we can modify the thread
+   - we can set the name
+   - we can set the participant id
+   - we can block the thread
+   - we can unblock the thread
  - we can get metadata computed from the thread
    - we can get the active tool definitions in the thread
     - when there have been no tool definitions added to the thread, we get an empty array

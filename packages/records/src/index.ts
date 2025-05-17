@@ -1,7 +1,5 @@
 export * from './records/agent-graph/agent-graph';
 export * from './records/agent-graph/agent-graph.type';
-export * from './records/chat-thread/chat-thread';
-export * from './records/chat-thread/chat-thread.type';
 export * from './records/logstream/logstream';
 export * from './records/logstream/logstream.type';
 export * from './records/message/message';

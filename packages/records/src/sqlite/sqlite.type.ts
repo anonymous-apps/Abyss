@@ -1,6 +1,5 @@
 import type { ReferencedAgentGraphTable } from '../records/agent-graph/agent-graph';
 import type { ReferencedChatSnapshotTable } from '../records/chat-snapshot/chat-snapshot';
-import type { ReferencedChatThreadTable } from '../records/chat-thread/chat-thread';
 import type { ReferencedDocumentTable } from '../records/document/document';
 import type { ReferencedLogStreamTable } from '../records/logstream/logstream';
 import type { ReferencedMessageTable } from '../records/message/message';
@@ -40,7 +39,6 @@ export interface SqliteTables {
     settings: ReferencedSettingsTable;
     modelConnection: ReferencedModelConnectionTable;
     agentGraph: ReferencedAgentGraphTable;
-    chatThread: ReferencedChatThreadTable;
     messageThread: ReferencedMessageThreadTable;
     metric: ReferencedMetricTable;
     message: ReferencedMessageTable;

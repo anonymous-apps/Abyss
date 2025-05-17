@@ -126,6 +126,41 @@ describe('Message Thread Record', () => {
         });
     });
 
+    describe('we can modify the thread', () => {
+        test('we can set the name', async () => {
+            const thread = await client.tables.messageThread.new();
+            const threadRef = client.tables.messageThread.ref(thread.id);
+            await threadRef.setName('New Thread Name');
+            const updatedThread = await threadRef.get();
+            expect(updatedThread.name).toBe('New Thread Name');
+        });
+
+        test('we can set the participant id', async () => {
+            const thread = await client.tables.messageThread.new();
+            const threadRef = client.tables.messageThread.ref(thread.id);
+            await threadRef.setParticipantId('participant-123');
+            const updatedThread = await threadRef.get();
+            expect(updatedThread.participantId).toBe('participant-123');
+        });
+
+        test('we can block the thread', async () => {
+            const thread = await client.tables.messageThread.new();
+            const threadRef = client.tables.messageThread.ref(thread.id);
+            await threadRef.block('blocker-456');
+            const updatedThread = await threadRef.get();
+            expect(updatedThread.blockerId).toBe('blocker-456');
+        });
+
+        test('we can unblock the thread', async () => {
+            const thread = await client.tables.messageThread.new();
+            const threadRef = client.tables.messageThread.ref(thread.id);
+            await threadRef.block('blocker-789'); // First block it
+            await threadRef.unblock();
+            const updatedThread = await threadRef.get();
+            expect(updatedThread.blockerId).toBeNull();
+        });
+    });
+
     describe('we can get metadata computed from the thread', () => {
         describe('we can get the active tool definitions in the thread', () => {
             test('when there have been no tool definitions added to the thread, we get an empty array', async () => {
@@ -256,15 +291,9 @@ describe('Message Thread Record', () => {
                     inputSchemaData: [],
                     outputSchemaData: [],
                 });
-                const toolDef2 = await client.tables.toolDefinition.newToolDefinition({
-                    name: 'Tool 2',
-                    description: 'Desc 2',
-                    handlerType: 'abyss',
-                    inputSchemaData: [],
-                    outputSchemaData: [],
-                });
-                const toolDefRef2 = client.tables.toolDefinition.ref(toolDef2.id);
+                const toolDefRef1 = client.tables.toolDefinition.ref(toolDef1.id);
 
+                // Add and then remove toolDef1
                 await threadRef.addMessagePartials(
                     {
                         type: 'new-tool-definition',
@@ -288,13 +317,13 @@ describe('Message Thread Record', () => {
                     }
                 );
 
-                const delta = await threadRef.getDeltaToolDefinitions([toolDefRef2]);
+                const delta = await threadRef.getDeltaToolDefinitions([toolDefRef1]);
                 expect(delta.toolsToAdd.length).toBe(1);
-                expect(delta.toolsToAdd[0].id).toBe(toolDef2.id);
+                expect(delta.toolsToAdd[0].id).toBe(toolDef1.id);
                 expect(delta.toolsToRemove.length).toBe(0);
             });
 
-            test('when there have are tool definitions we also want to keep, we only get the additional tool definitions that are not already in the thread', async () => {
+            test('when there are tool definitions we also want to keep, we only get the additional tool definitions that are not already in the thread', async () => {
                 const thread = await client.tables.messageThread.new();
                 const threadRef = client.tables.messageThread.ref(thread.id);
                 const toolDef1 = await client.tables.toolDefinition.newToolDefinition({
@@ -314,6 +343,7 @@ describe('Message Thread Record', () => {
                 const toolDefRef1 = client.tables.toolDefinition.ref(toolDef1.id);
                 const toolDefRef2 = client.tables.toolDefinition.ref(toolDef2.id);
 
+                // Add toolDef1 to the thread
                 await threadRef.addMessagePartials({
                     type: 'new-tool-definition',
                     senderId: 'system',
@@ -330,6 +360,7 @@ describe('Message Thread Record', () => {
                     },
                 });
 
+                // We want to keep toolDef1 and add toolDef2
                 const delta = await threadRef.getDeltaToolDefinitions([toolDefRef1, toolDefRef2]);
                 expect(delta.toolsToAdd.length).toBe(1);
                 expect(delta.toolsToAdd[0].id).toBe(toolDef2.id);
@@ -353,8 +384,9 @@ describe('Message Thread Record', () => {
                     inputSchemaData: [],
                     outputSchemaData: [],
                 });
-                const toolDefRef2 = client.tables.toolDefinition.ref(toolDef2.id);
+                const toolDefRef2 = client.tables.toolDefinition.ref(toolDef2.id); // We only want toolDef2
 
+                // Add toolDef1 and toolDef2 to the thread initially
                 await threadRef.addMessagePartials({
                     type: 'new-tool-definition',
                     senderId: 'system',
@@ -367,13 +399,20 @@ describe('Message Thread Record', () => {
                                 inputSchemaData: toolDef1.inputSchemaData,
                                 outputSchemaData: toolDef1.outputSchemaData,
                             },
+                            {
+                                toolId: toolDef2.id,
+                                shortName: toolDef2.shortName,
+                                description: toolDef2.description,
+                                inputSchemaData: toolDef2.inputSchemaData,
+                                outputSchemaData: toolDef2.outputSchemaData,
+                            },
                         ],
                     },
                 });
 
+                // We only want toolDef2, so toolDef1 should be in toolsToRemove
                 const delta = await threadRef.getDeltaToolDefinitions([toolDefRef2]);
-                expect(delta.toolsToAdd.length).toBe(1);
-                expect(delta.toolsToAdd[0].id).toBe(toolDef2.id);
+                expect(delta.toolsToAdd.length).toBe(0);
                 expect(delta.toolsToRemove.length).toBe(1);
                 expect(delta.toolsToRemove[0].id).toBe(toolDef1.id);
             });
