@@ -1,4 +1,4 @@
-import { ChatSnapshot } from '@abyss/records/dist/records/chat-snapshot/chat-snapshot.type';
+import type { ChatSnapshot } from '@abyss/records/dist/records/chat-snapshot/chat-snapshot.type';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { useDatabaseRecord } from '../../state/database-connection';

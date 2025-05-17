@@ -1,6 +1,5 @@
 import { IconSection, PageCrumbed, Tile, TileGrid } from '@abyss/ui-components';
 import { NotebookText } from 'lucide-react';
-import React from 'react';
 import { useDocumentsPage } from './documents.hook';
 
 export function DocumentsPage() {

@@ -1,5 +1,5 @@
-import { BaseSqliteRecord } from '../../sqlite/sqlite.type';
-import { Status } from '../../utils/shared.type';
+import type { BaseSqliteRecord } from '../../sqlite/sqlite.type';
+import type { Status } from '../../utils/shared.type';
 
 export interface LogMessage {
     level: 'info' | 'error' | 'warning';

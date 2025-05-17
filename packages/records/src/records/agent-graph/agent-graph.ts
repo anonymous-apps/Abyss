@@ -1,7 +1,7 @@
 import { ReferencedSqliteRecord } from '../../sqlite/reference-record';
 import { ReferencedSqliteTable } from '../../sqlite/reference-table';
-import { SQliteClient } from '../../sqlite/sqlite-client';
-import { AgentGraphEdge, AgentGraphNode, AgentGraphType } from './agent-graph.type';
+import type { SQliteClient } from '../../sqlite/sqlite-client';
+import type { AgentGraphEdge, AgentGraphNode, AgentGraphType } from './agent-graph.type';
 
 export class ReferencedAgentGraphTable extends ReferencedSqliteTable<AgentGraphType> {
     constructor(client: SQliteClient) {

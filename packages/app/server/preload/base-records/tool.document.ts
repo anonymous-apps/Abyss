@@ -1,4 +1,4 @@
-import { NewRecord, ToolDefinitionType } from '@abyss/records';
+import type { NewRecord, ToolDefinitionType } from '@abyss/records';
 
 export const DocumentCreateTool: NewRecord<ToolDefinitionType> = {
     id: 'toolDefinition::document-create-tool',

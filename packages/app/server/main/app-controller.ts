@@ -1,4 +1,4 @@
-import { app, BrowserWindow, IpcMain, IpcMainInvokeEvent } from 'electron';
+import { app, type BrowserWindow, type IpcMain, type IpcMainInvokeEvent } from 'electron';
 import { setupAutoUpdater } from './handlers/auto-update';
 export class AppController {
     private mainWindow: BrowserWindow | null;

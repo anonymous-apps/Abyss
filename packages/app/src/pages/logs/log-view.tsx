@@ -1,6 +1,5 @@
 import { IconSection, LogView, PageCrumbed } from '@abyss/ui-components';
 import { List } from 'lucide-react';
-import React from 'react';
 import { useLogView } from './log-view.hook';
 
 export function LogViewPage() {

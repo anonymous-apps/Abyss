@@ -1,4 +1,4 @@
-import { NewRecord, ToolDefinitionType } from '@abyss/records';
+import type { NewRecord, ToolDefinitionType } from '@abyss/records';
 
 export const HelloWorldTool: NewRecord<ToolDefinitionType> = {
     id: 'toolDefinition::helloworld-tool',

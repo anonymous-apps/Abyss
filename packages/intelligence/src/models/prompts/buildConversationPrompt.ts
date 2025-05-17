@@ -1,5 +1,5 @@
-import { CompiledPrompt, PromptTemplate } from '@abyss/prompts';
-import { ReferencedMessageThreadRecord, SQliteClient, ToolCallRequestPartial } from '@abyss/records';
+import { type CompiledPrompt, PromptTemplate } from '@abyss/prompts';
+import type { ReferencedMessageThreadRecord, SQliteClient, ToolCallRequestPartial } from '@abyss/records';
 import { ReferencedDocumentRecord } from '@abyss/records/dist/records/document/document';
 import { systemErrorPrompt } from './errors.prompt';
 import { toolCallRequestPrompt, toolCallResponsePrompt, toolUseInstructionsPrompt } from './toolCall.prompt';
@@ -13,7 +13,7 @@ type ConversationTurn = {
 export async function buildConversationPrompt(thread: ReferencedMessageThreadRecord, db: SQliteClient): Promise<ConversationTurn[]> {
     const messages = await thread.getAllMessages();
 
-    let result: ConversationTurn[] = [];
+    const result: ConversationTurn[] = [];
     let currentTurnId = 'user';
     let prompt = new PromptTemplate();
     let hasToolInstructions = false;

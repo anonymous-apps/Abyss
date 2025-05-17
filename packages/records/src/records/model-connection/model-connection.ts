@@ -1,7 +1,7 @@
 import { ReferencedSqliteRecord } from '../../sqlite/reference-record';
 import { ReferencedSqliteTable } from '../../sqlite/reference-table';
-import { SQliteClient } from '../../sqlite/sqlite-client';
-import { ModelConnectionType } from './model-connection.type';
+import type { SQliteClient } from '../../sqlite/sqlite-client';
+import type { ModelConnectionType } from './model-connection.type';
 
 export class ReferencedModelConnectionTable extends ReferencedSqliteTable<ModelConnectionType> {
     constructor(client: SQliteClient) {

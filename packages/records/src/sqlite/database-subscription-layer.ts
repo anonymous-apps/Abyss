@@ -1,8 +1,8 @@
 import { randomId } from '../utils/ids';
 import { ReferencedSqliteRecord } from './reference-record';
-import { ReferencedSqliteTable } from './reference-table';
-import { SQliteClient } from './sqlite-client';
-import { BaseSqliteRecord } from './sqlite.type';
+import type { ReferencedSqliteTable } from './reference-table';
+import type { SQliteClient } from './sqlite-client';
+import type { BaseSqliteRecord } from './sqlite.type';
 
 type DatabaseSubscriber = () => void;
 type TableSubscriber = (table: ReferencedSqliteTable) => void;

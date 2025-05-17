@@ -1,13 +1,13 @@
-import { NewRecord } from '@abyss/records';
-import { DocumentType, NewCellType } from '@abyss/records/dist/records/document/document.type';
+import type { NewRecord } from '@abyss/records';
+import type { DocumentType, NewCellType } from '@abyss/records/dist/records/document/document.type';
 
-let document: NewRecord<DocumentType> = {
+const document: NewRecord<DocumentType> = {
     id: 'document::prompt-document',
     type: 'system',
     name: 'How documents are structured',
     documentContentData: [],
 };
-let cells: NewCellType[] = [
+const cells: NewCellType[] = [
     {
         authorId: 'system',
         type: 'text',

@@ -1,4 +1,4 @@
-import { SQliteClient } from '@abyss/records';
+import type { SQliteClient } from '@abyss/records';
 
 export interface InvokeModelDirectlyParams {
     modelConnectionId: string;

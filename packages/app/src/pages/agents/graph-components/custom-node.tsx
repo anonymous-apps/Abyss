@@ -1,15 +1,15 @@
 import { Handle, Position, useReactFlow } from '@xyflow/react';
 import { XIcon } from 'lucide-react';
-import React from 'react';
+import type React from 'react';
 import { SelectForAgentGraph } from './agent-graph-inputs';
-import { RenderedGraphNode } from './graph.types';
+import type { RenderedGraphNode } from './graph.types';
 import { IdsToIcons } from './ids-to-icons';
 
 export function CustomAgentGraphNode({ id, data }: { id: string; data: RenderedGraphNode['data'] }) {
-    let inputSignals: React.ReactNode[] = [];
-    let outputSignals: React.ReactNode[] = [];
-    let leftHandles: React.ReactNode[] = [];
-    let rightHandles: React.ReactNode[] = [];
+    const inputSignals: React.ReactNode[] = [];
+    const outputSignals: React.ReactNode[] = [];
+    const leftHandles: React.ReactNode[] = [];
+    const rightHandles: React.ReactNode[] = [];
     const { deleteElements, updateNodeData } = useReactFlow();
 
     const Icon = IdsToIcons[data.definition.icon];

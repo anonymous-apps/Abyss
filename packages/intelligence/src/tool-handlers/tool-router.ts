@@ -1,9 +1,9 @@
 import {
-    ReferencedChatThreadRecord,
+    type ReferencedChatThreadRecord,
     ReferencedMessageRecord,
-    SQliteClient,
-    ToolCallRequestPartial,
-    ToolDefinitionType,
+    type SQliteClient,
+    type ToolCallRequestPartial,
+    type ToolDefinitionType,
 } from '@abyss/records';
 import { DocumentCreateToolHandler } from './system/document-create';
 import { HelloWorldToolHandler } from './system/hello-world';

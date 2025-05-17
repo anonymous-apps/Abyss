@@ -1,14 +1,14 @@
-import { ReferencedAgentGraphTable } from '../records/agent-graph/agent-graph';
-import { ReferencedChatSnapshotTable } from '../records/chat-snapshot/chat-snapshot';
-import { ReferencedChatThreadTable } from '../records/chat-thread/chat-thread';
-import { ReferencedDocumentTable } from '../records/document/document';
-import { ReferencedLogStreamTable } from '../records/logstream/logstream';
-import { ReferencedMessageThreadTable } from '../records/message-thread/message-thread';
-import { ReferencedMessageTable } from '../records/message/message';
-import { ReferencedMetricTable } from '../records/metric/metric';
-import { ReferencedModelConnectionTable } from '../records/model-connection/model-connection';
-import { ReferencedSettingsTable } from '../records/settings/settings';
-import { ReferencedToolDefinitionTable } from '../records/tool-definition/tool-definition';
+import type { ReferencedAgentGraphTable } from '../records/agent-graph/agent-graph';
+import type { ReferencedChatSnapshotTable } from '../records/chat-snapshot/chat-snapshot';
+import type { ReferencedChatThreadTable } from '../records/chat-thread/chat-thread';
+import type { ReferencedDocumentTable } from '../records/document/document';
+import type { ReferencedLogStreamTable } from '../records/logstream/logstream';
+import type { ReferencedMessageThreadTable } from '../records/message-thread/message-thread';
+import type { ReferencedMessageTable } from '../records/message/message';
+import type { ReferencedMetricTable } from '../records/metric/metric';
+import type { ReferencedModelConnectionTable } from '../records/model-connection/model-connection';
+import type { ReferencedSettingsTable } from '../records/settings/settings';
+import type { ReferencedToolDefinitionTable } from '../records/tool-definition/tool-definition';
 
 export interface DBSidecarType {
     databaseVersionId: string;

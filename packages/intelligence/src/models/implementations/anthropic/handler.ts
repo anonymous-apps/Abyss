@@ -1,11 +1,11 @@
 import { ReferencedChatSnapshotRecord } from '@abyss/records/dist/records/chat-snapshot/chat-snapshot';
 import { Log } from '../../../utils/logs';
-import { InvokeModelInternalResult } from '../../types';
+import type { InvokeModelInternalResult } from '../../types';
 import { buildAnthropicMessages } from './build-context';
-import { AnthropicMessage, AnthropicResponse, InvokeAnthropicProps } from './types';
+import type { AnthropicMessage, AnthropicResponse, InvokeAnthropicProps } from './types';
 
 function anthropicMessageToRawString(message: AnthropicMessage[]): string {
-    let result: string = '';
+    let result = '';
     for (const msg of message) {
         result += `--------\n${msg.role}\n\n`;
         for (const content of msg.content) {

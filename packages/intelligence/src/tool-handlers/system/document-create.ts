@@ -1,5 +1,5 @@
 import { ReferencedDocumentRecord } from '@abyss/records/dist/records/document/document';
-import { ToolHandler, ToolHandlerExecutionInternal } from '../tool-handler';
+import { ToolHandler, type ToolHandlerExecutionInternal } from '../tool-handler';
 
 interface DocumentCreateToolParameters {
     name: string;

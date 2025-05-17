@@ -1,7 +1,8 @@
-import { ChevronDown, ChevronRight, LucideIcon } from 'lucide-react';
-import React, { useState } from 'react';
+import { ChevronDown, ChevronRight, type LucideIcon } from 'lucide-react';
+import type React from 'react';
+import { useState } from 'react';
 import Button from '../../inputs/Button/Button';
-import { ActionItem } from '../ChatMessageText/ChatMessageText';
+import type { ActionItem } from '../ChatMessageText/ChatMessageText';
 
 export interface ChatMessageSystemEventProps {
     /**

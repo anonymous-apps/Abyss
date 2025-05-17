@@ -1,5 +1,5 @@
 import { CompiledPrompt } from './compiledPrompt';
-import { Cell, PromptHandlerParams, UncompiledCell } from './promptTemplate.types';
+import type { Cell, PromptHandlerParams, UncompiledCell } from './promptTemplate.types';
 
 export class PromptTemplate<IParams = Record<string, any>> {
     private cells: UncompiledCell<IParams>[] = [];

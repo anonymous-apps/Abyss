@@ -1,9 +1,9 @@
-import { ReferencedMessageThreadRecord, ReferencedModelConnectionRecord } from '@abyss/records';
+import type { ReferencedMessageThreadRecord, ReferencedModelConnectionRecord } from '@abyss/records';
 import { parseLLMOutput } from '../parser/parser';
 import { InvokeAnthropic } from './implementations/anthropic/handler';
 import { InvokeStatic } from './implementations/static/handler';
 import { buildConversationPrompt } from './prompts/buildConversationPrompt';
-import { InvokeModelInternalResult } from './types';
+import type { InvokeModelInternalResult } from './types';
 
 export async function invokeModelAgainstThread(connectionRef: ReferencedModelConnectionRecord, thread: ReferencedMessageThreadRecord) {
     const modelResponse = await invokeLLM(connectionRef, thread);

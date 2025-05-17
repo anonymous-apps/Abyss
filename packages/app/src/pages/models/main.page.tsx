@@ -1,6 +1,5 @@
 import { Button, IconSection, PageCrumbed, Tile, TileGrid } from '@abyss/ui-components';
 import { Box, Plus } from 'lucide-react';
-import React from 'react';
 import { Logo } from '../../library/logos';
 import { useModelProfileMain } from './main.hook';
 

@@ -13,9 +13,9 @@ import { ReferencedModelConnectionTable } from '../records/model-connection/mode
 import { ReferencedSettingsTable } from '../records/settings/settings';
 import { ReferencedToolDefinitionTable } from '../records/tool-definition/tool-definition';
 import { DatabaseSubscriptionLayer } from './database-subscription-layer';
-import { ReferencedSqliteTable } from './reference-table';
+import type { ReferencedSqliteTable } from './reference-table';
 import { migrations } from './schemas/migrations';
-import { DBSidecarType, DefaultSidecar, SqliteTables } from './sqlite.type';
+import { type DBSidecarType, DefaultSidecar, type SqliteTables } from './sqlite.type';
 
 export class SQliteClient {
     // Disk locations

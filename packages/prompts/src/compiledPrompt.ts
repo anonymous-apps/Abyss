@@ -1,5 +1,5 @@
 import { dedent } from './dedent';
-import { Cell, CellHeader, CellHeader2, CellHeader3, CellSubPrompt, CellText, CellXMLElement } from './promptTemplate.types';
+import type { Cell, CellHeader, CellHeader2, CellHeader3, CellSubPrompt, CellText, CellXMLElement } from './promptTemplate.types';
 
 export class CompiledPrompt {
     constructor(public readonly cells: Cell[]) {}
@@ -26,10 +26,10 @@ export class CompiledPrompt {
 
     private renderXMLElement(cell: CellXMLElement): string {
         const handleObject = (obj: any, indent = 0): string[] => {
-            let lines: string[] = [];
-            let keys = Object.keys(obj);
+            const lines: string[] = [];
+            const keys = Object.keys(obj);
             for (const key of keys) {
-                if (obj.hasOwnProperty(key)) {
+                if (Object.hasOwn(obj, key)) {
                     const value = obj[key];
                     if (typeof value === 'object' && value !== null) {
                         lines.push(`${'  '.repeat(indent)}<${key}>`);

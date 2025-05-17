@@ -1,5 +1,4 @@
 import { Input } from '@abyss/ui-components';
-import React from 'react';
 
 interface AnthropicConfigProps {
     selectedModel: string;

@@ -1,6 +1,5 @@
 import { Button, ButtonGroup, IconSection, PageCrumbed, SelectDropdown } from '@abyss/ui-components';
 import { Bot, Box, MessageCircle } from 'lucide-react';
-import React from 'react';
 import { useChatCreate } from './create.hook';
 
 export function ChatCreatePage() {

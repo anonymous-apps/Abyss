@@ -1,5 +1,5 @@
 import { PromptTemplate } from '@abyss/prompts';
-import { SystemErrorPartial } from '@abyss/records';
+import type { SystemErrorPartial } from '@abyss/records';
 
 export const systemErrorPrompt = new PromptTemplate<SystemErrorPartial>()
     .addHeader3(params => `Error: ${params.payloadData.error}`)

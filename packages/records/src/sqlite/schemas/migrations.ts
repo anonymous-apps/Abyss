@@ -1,4 +1,4 @@
-import { Migration } from './type';
+import type { Migration } from './type';
 import * as version1 from './version-1';
 import * as version2 from './version-2';
 import * as version3 from './version-3';

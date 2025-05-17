@@ -1,6 +1,6 @@
 import { Loader2, X } from 'lucide-react';
-import React from 'react';
-import { SidebarButtonProps } from './SidebarTypes';
+import type React from 'react';
+import type { SidebarButtonProps } from './SidebarTypes';
 
 /**
  * SidebarButton component for navigation items in the sidebar

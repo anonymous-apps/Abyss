@@ -1,4 +1,4 @@
-import { ToolHandler, ToolHandlerExecutionInternal } from '../tool-handler';
+import { ToolHandler, type ToolHandlerExecutionInternal } from '../tool-handler';
 
 interface Parameters {
     label: string;

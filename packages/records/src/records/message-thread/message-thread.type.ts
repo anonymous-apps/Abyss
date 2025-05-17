@@ -1,5 +1,5 @@
-import { BaseSqliteRecord } from '../../sqlite/sqlite.type';
-import { MessageType } from '../message/message.type';
+import type { BaseSqliteRecord } from '../../sqlite/sqlite.type';
+import type { MessageType } from '../message/message.type';
 
 export interface MessageThreadType extends BaseSqliteRecord {
     messagesData: {

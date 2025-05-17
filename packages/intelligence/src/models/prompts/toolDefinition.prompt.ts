@@ -1,5 +1,5 @@
 import { PromptTemplate } from '@abyss/prompts';
-import { ToolDefinitionInputProperty, ToolDefinitionOutputProperty, ToolDefinitionType } from '@abyss/records';
+import type { ToolDefinitionInputProperty, ToolDefinitionOutputProperty, ToolDefinitionType } from '@abyss/records';
 
 const buildObjectFromProperties = (properties: ToolDefinitionInputProperty[] | ToolDefinitionOutputProperty[]) => {
     const object: Record<string, string> = {};

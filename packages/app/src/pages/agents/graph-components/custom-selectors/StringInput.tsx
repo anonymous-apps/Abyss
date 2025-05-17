@@ -1,5 +1,3 @@
-import React from 'react';
-
 export interface StringInputProps {
     color: string;
     onSelect: (value: string) => void;

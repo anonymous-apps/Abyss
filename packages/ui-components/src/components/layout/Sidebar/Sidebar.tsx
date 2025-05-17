@@ -1,5 +1,5 @@
-import React from 'react';
-import { SidebarProps } from './SidebarTypes';
+import type React from 'react';
+import type { SidebarProps } from './SidebarTypes';
 
 /**
  * Sidebar component for displaying a vertical navigation menu

@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react';
 import { FileText, Info, Terminal } from 'lucide-react';
 import ChatMessageSystemEvent from './ChatMessageSystemEvent';
 

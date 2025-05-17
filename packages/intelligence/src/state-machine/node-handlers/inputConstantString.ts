@@ -1,6 +1,6 @@
 import { NodeHandler } from '../node-handler';
-import { NodeExecutionResult, ResolveNodeData } from '../type-base.type';
-import { GraphNodeDefinition } from '../type-definition.type';
+import type { NodeExecutionResult, ResolveNodeData } from '../type-base.type';
+import type { GraphNodeDefinition } from '../type-definition.type';
 
 export class InputConstantStringNode extends NodeHandler {
     constructor() {

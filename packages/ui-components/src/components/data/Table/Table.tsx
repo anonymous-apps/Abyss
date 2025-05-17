@@ -1,6 +1,6 @@
 import { SquareArrowOutUpRight } from 'lucide-react';
 import React from 'react';
-import { TableCellProps, TableProps } from './TableTypes';
+import type { TableCellProps, TableProps } from './TableTypes';
 
 export const TableCell: React.FC<TableCellProps> = ({ value, table, column, onRecordClick }) => {
     if (value === null || value === undefined) {

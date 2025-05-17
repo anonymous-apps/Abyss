@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react';
 import { Save } from 'lucide-react';
 import { BrowserRouter } from 'react-router-dom';
 import Button from '../../inputs/Button';

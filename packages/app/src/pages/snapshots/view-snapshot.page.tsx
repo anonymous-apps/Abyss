@@ -1,5 +1,5 @@
 import { Button, ButtonGroup, ChatMessageText, PageCrumbed } from '@abyss/ui-components';
-import { default as React } from 'react';
+import type { default as React } from 'react';
 import ReactMarkdown, { type Components } from 'react-markdown';
 import { SectionHeader } from '../chats/components/ChatSectionHeader';
 import { useSnapshotsPage } from './view-snapshot.hook';
@@ -96,7 +96,7 @@ const components: Components = {
 
 export function ViewSnapshotPage() {
     const { breadcrumbs, record, raw, setRaw } = useSnapshotsPage();
-    let messages: React.ReactNode[] = [];
+    const messages: React.ReactNode[] = [];
 
     for (let i = 0; i < (record?.messagesData ?? []).length; i++) {
         const message = (record?.messagesData ?? [])[i];

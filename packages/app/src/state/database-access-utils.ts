@@ -1,4 +1,4 @@
-import {
+import type {
     AgentGraphType,
     ChatThreadType,
     LogStreamType,
@@ -7,7 +7,7 @@ import {
     SqliteTables,
     ToolDefinitionType,
 } from '@abyss/records';
-import { DocumentType } from '@abyss/records/dist/records/document/document.type';
+import type { DocumentType } from '@abyss/records/dist/records/document/document.type';
 import { useDatabaseQuery, useDatabaseRecord, useDatabaseTableQuery } from './database-connection';
 
 // General access

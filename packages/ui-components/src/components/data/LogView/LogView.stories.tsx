@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import LogView, { LogEntry } from './LogView';
+import LogView, { type LogEntry } from './LogView';
 
 const meta: Meta<typeof LogView> = {
     title: 'Data/LogView',

@@ -1,5 +1,5 @@
 import { dedent } from './dedent';
-import { DocumentType } from './document.type';
+import type { DocumentType } from './document.type';
 
 export function serializeDocument(document: DocumentType) {
     const textSections: string[] = [];

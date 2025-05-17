@@ -1,4 +1,4 @@
-import { NewRecord, ToolDefinitionType } from '@abyss/records';
+import type { NewRecord, ToolDefinitionType } from '@abyss/records';
 
 export const LabelChatTool: NewRecord<ToolDefinitionType> = {
     id: 'toolDefinition::labelchat-tool',

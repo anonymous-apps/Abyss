@@ -1,5 +1,5 @@
-import { InvokeModelInternalResult } from '../../types';
-import { StaticLanguageModelOptions } from './types';
+import type { InvokeModelInternalResult } from '../../types';
+import type { StaticLanguageModelOptions } from './types';
 
 export async function InvokeStatic(props: StaticLanguageModelOptions): Promise<Omit<InvokeModelInternalResult, 'logStream'>> {
     return {

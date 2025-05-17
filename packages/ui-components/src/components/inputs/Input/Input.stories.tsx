@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react';
 import { Lock, Mail, Search } from 'lucide-react';
 import Input from './Input';
 

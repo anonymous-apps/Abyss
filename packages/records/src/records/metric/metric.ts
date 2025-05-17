@@ -1,7 +1,7 @@
 import { ReferencedSqliteRecord } from '../../sqlite/reference-record';
 import { ReferencedSqliteTable } from '../../sqlite/reference-table';
-import { SQliteClient } from '../../sqlite/sqlite-client';
-import { MetricType } from './metric.type';
+import type { SQliteClient } from '../../sqlite/sqlite-client';
+import type { MetricType } from './metric.type';
 
 export class ReferencedMetricTable extends ReferencedSqliteTable<MetricType> {
     constructor(client: SQliteClient) {

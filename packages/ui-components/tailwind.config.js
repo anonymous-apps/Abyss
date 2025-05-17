@@ -49,7 +49,7 @@ module.exports = {
         },
     },
     plugins: [
-        function ({ addBase, theme }) {
+        ({ addBase, theme }) => {
             addBase({
                 'input[type="checkbox"]': {
                     accentColor: theme('colors.primary.500'),

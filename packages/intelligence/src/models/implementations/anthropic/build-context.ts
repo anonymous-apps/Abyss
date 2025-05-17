@@ -1,6 +1,6 @@
-import { ReferencedMessageThreadRecord } from '@abyss/records';
+import type { ReferencedMessageThreadRecord } from '@abyss/records';
 import { buildConversationPrompt } from '../../prompts/buildConversationPrompt';
-import { AnthropicMessage } from './types';
+import type { AnthropicMessage } from './types';
 
 export async function buildAnthropicMessages(thread: ReferencedMessageThreadRecord): Promise<AnthropicMessage[]> {
     const conversationTurns = await buildConversationPrompt(thread, thread.client);

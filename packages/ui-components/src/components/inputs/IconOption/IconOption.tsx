@@ -1,5 +1,6 @@
-import { LucideIcon } from 'lucide-react';
-import React, { ReactNode } from 'react';
+import type { LucideIcon } from 'lucide-react';
+import type React from 'react';
+import type { ReactNode } from 'react';
 
 export interface IconOptionProps {
     /**

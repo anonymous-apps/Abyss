@@ -1,4 +1,4 @@
-import {
+import type {
     MessageThreadTurn,
     NewToolDefinitionPartial,
     ReadonlyDocumentPartial,
@@ -8,9 +8,9 @@ import {
     ToolCallRequestPartial,
     ToolCallResponsePartial,
 } from '@abyss/records';
-import { ActionItem, ChatMessageSystemError, ChatMessageSystemText, ChatMessageText, ChatToolCall } from '@abyss/ui-components';
+import { type ActionItem, ChatMessageSystemError, ChatMessageSystemText, ChatMessageText, ChatToolCall } from '@abyss/ui-components';
 import { AlignLeft, Globe } from 'lucide-react';
-import React from 'react';
+import type React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SectionHeader } from './ChatSectionHeader';
 

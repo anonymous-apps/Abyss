@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { IconSection, PageCrumbed, Tile, TileGrid } from '@abyss/ui-components';
 import { Box, Hammer } from 'lucide-react';
 import { useToolsPage } from './tools.hook';

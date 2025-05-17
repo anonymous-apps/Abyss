@@ -185,7 +185,7 @@ export function useMetricsChart() {
             const date = timeBucketOption.parseBucketKey(key);
 
             // Calculate aggregated value based on selected method
-            let aggregatedValue: number = 0;
+            let aggregatedValue = 0;
 
             if (datapoints.length > 0) {
                 switch (aggregationMethod) {

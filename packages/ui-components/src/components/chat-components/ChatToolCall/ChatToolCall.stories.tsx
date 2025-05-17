@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react';
 import { Copy, FileJson, RefreshCw, Undo2 } from 'lucide-react';
 import ChatToolCall from './ChatToolCall';
 

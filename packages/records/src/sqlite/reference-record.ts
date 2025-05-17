@@ -1,6 +1,6 @@
 import { ReferencedSqliteTable } from './reference-table';
-import { SQliteClient } from './sqlite-client';
-import { BaseSqliteRecord, SqliteTables } from './sqlite.type';
+import type { SQliteClient } from './sqlite-client';
+import type { BaseSqliteRecord, SqliteTables } from './sqlite.type';
 
 export class ReferencedSqliteRecord<IRecordType extends BaseSqliteRecord = BaseSqliteRecord> {
     public readonly tableId: keyof SqliteTables;

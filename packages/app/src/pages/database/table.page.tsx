@@ -1,6 +1,5 @@
 import { Button, IconSection, PageCrumbed, Table } from '@abyss/ui-components';
 import { TableIcon, Trash } from 'lucide-react';
-import React from 'react';
 import { useTable } from './table.hook';
 
 export function ViewTablePage() {

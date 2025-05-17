@@ -1,5 +1,4 @@
 import { Bot, CircleHelp, File } from 'lucide-react';
-import React from 'react';
 import { Logo } from './logos';
 
 export function ToolIcon({ type }: { type: string }) {

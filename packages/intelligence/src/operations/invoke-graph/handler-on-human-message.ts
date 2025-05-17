@@ -1,4 +1,4 @@
-import { ReferencedMessageRecord, SQliteClient } from '@abyss/records';
+import { ReferencedMessageRecord, type SQliteClient } from '@abyss/records';
 import { invokeGraphHandler } from './handler';
 
 export interface HandlerOnHumanMessageParams {

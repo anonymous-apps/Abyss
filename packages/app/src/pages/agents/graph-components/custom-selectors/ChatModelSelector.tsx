@@ -1,5 +1,4 @@
 import { ChevronDown } from 'lucide-react';
-import React from 'react';
 import { useScanTableModelConnections } from '../../../../state/database-access-utils';
 
 export interface ChatModelSelectorProps {

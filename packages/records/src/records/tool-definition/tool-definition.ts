@@ -1,7 +1,7 @@
 import { ReferencedSqliteRecord } from '../../sqlite/reference-record';
 import { ReferencedSqliteTable } from '../../sqlite/reference-table';
-import { SQliteClient } from '../../sqlite/sqlite-client';
-import { ToolDefinitionType } from './tool-definition.type';
+import type { SQliteClient } from '../../sqlite/sqlite-client';
+import type { ToolDefinitionType } from './tool-definition.type';
 
 export class ReferencedToolDefinitionTable extends ReferencedSqliteTable<ToolDefinitionType> {
     constructor(client: SQliteClient) {

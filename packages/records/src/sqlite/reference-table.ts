@@ -1,6 +1,6 @@
 import { generateId } from '../utils/ids';
-import { SQliteClient } from './sqlite-client';
-import { BaseSqliteRecord, NewRecord, SqliteTables } from './sqlite.type';
+import type { SQliteClient } from './sqlite-client';
+import type { BaseSqliteRecord, NewRecord, SqliteTables } from './sqlite.type';
 
 export class ReferencedSqliteTable<IRecordType extends BaseSqliteRecord = BaseSqliteRecord> {
     public readonly tableId: keyof SqliteTables;
@@ -33,7 +33,7 @@ export class ReferencedSqliteTable<IRecordType extends BaseSqliteRecord = BaseSq
         return deserialized as T;
     }
 
-    async list(limit: number = 9999) {
+    async list(limit = 9999) {
         const raw = await this.client.execute(`SELECT * FROM ${this.tableId} ORDER BY createdAt DESC LIMIT ?`, [limit]);
         const results = raw as Record<string, any>[];
         const deserialized = results.map(r => ReferencedSqliteTable.deserialize(r));

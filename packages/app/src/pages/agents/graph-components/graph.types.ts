@@ -1,5 +1,5 @@
-import { GraphNodeDefinition } from '@abyss/intelligence/dist/state-machine/type-definition.type';
-import { AgentGraphNode } from '@abyss/records';
+import type { GraphNodeDefinition } from '@abyss/intelligence/dist/state-machine/type-definition.type';
+import type { AgentGraphNode } from '@abyss/records';
 
 export interface RenderedGraphNode {
     id: string;

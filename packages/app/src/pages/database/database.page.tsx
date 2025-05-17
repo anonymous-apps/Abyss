@@ -1,6 +1,5 @@
 import { Button, IconSection, PageCrumbed, Tile, TileGrid } from '@abyss/ui-components';
 import { Folder, Table, TableIcon } from 'lucide-react';
-import React from 'react';
 import { useDatabasePage } from './database.hook';
 
 export function ListTablesPage() {

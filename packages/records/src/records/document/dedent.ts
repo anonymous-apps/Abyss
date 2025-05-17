@@ -21,9 +21,9 @@ export function dedent(text: string): string {
     const minIndent = nonEmptyLines.reduce((min, line) => {
         const indent = line.match(/^[ \t]*/)?.[0].length || 0;
         return indent < min ? indent : min;
-    }, Infinity);
+    }, Number.POSITIVE_INFINITY);
 
-    if (minIndent === 0 || minIndent === Infinity) {
+    if (minIndent === 0 || minIndent === Number.POSITIVE_INFINITY) {
         return text;
     }
 

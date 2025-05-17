@@ -1,4 +1,4 @@
-import { CompiledPrompt } from './compiledPrompt';
+import type { CompiledPrompt } from './compiledPrompt';
 
 export type UncompiledCell<T> =
     | Cell

@@ -1,5 +1,5 @@
-import { Meta, StoryObj } from '@storybook/react';
-import { Bot, Clock, Copy, Eraser, FileIcon, LucideIcon, Terminal, ThumbsUp, User } from 'lucide-react';
+import type { Meta, StoryObj } from '@storybook/react';
+import { Bot, Clock, Copy, Eraser, FileIcon, type LucideIcon, Terminal, ThumbsUp, User } from 'lucide-react';
 
 // Import components
 import ChatMessageSystemError from './chat-components/ChatMessageSystemError/ChatMessageSystemError';

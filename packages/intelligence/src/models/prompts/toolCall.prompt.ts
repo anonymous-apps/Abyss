@@ -1,5 +1,5 @@
 import { PromptTemplate } from '@abyss/prompts';
-import { ToolCallRequestPartial, ToolCallResponsePartial } from '@abyss/records';
+import type { ToolCallRequestPartial, ToolCallResponsePartial } from '@abyss/records';
 
 export const toolCallRequestPrompt = new PromptTemplate<ToolCallRequestPartial>().addXMLElement((params: ToolCallRequestPartial) => ({
     [params.payloadData.shortName]: params.payloadData.parameters,

@@ -1,9 +1,9 @@
 import { ReferencedSqliteRecord } from '../../sqlite/reference-record';
 import { ReferencedSqliteTable } from '../../sqlite/reference-table';
-import { SQliteClient } from '../../sqlite/sqlite-client';
+import type { SQliteClient } from '../../sqlite/sqlite-client';
 import { ReferencedMessageThreadRecord } from '../message-thread/message-thread';
-import { ReferencedMessageRecord } from '../message/message';
-import { ChatThreadType } from './chat-thread.type';
+import type { ReferencedMessageRecord } from '../message/message';
+import type { ChatThreadType } from './chat-thread.type';
 
 export class ReferencedChatThreadTable extends ReferencedSqliteTable<ChatThreadType> {
     constructor(client: SQliteClient) {

@@ -1,4 +1,4 @@
-import { BaseSqliteRecord } from '../../sqlite/sqlite.type';
+import type { BaseSqliteRecord } from '../../sqlite/sqlite.type';
 
 export type ToolDefinitionHandlerType = 'abyss';
 export type ToolDefinitionPropertyType = 'string' | 'number' | 'boolean' | 'raw-json';

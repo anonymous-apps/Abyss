@@ -1,4 +1,4 @@
-import { ChatThreadType, MessageThreadTurn, ReferencedMessageThreadRecord } from '@abyss/records';
+import type { ChatThreadType, MessageThreadTurn, ReferencedMessageThreadRecord } from '@abyss/records';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDatabaseRecord, useDatabaseRecordReferenceQuery } from '../../state/database-connection';

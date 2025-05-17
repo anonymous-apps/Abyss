@@ -1,5 +1,6 @@
 import { ChevronDown } from 'lucide-react';
-import React, { useRef } from 'react';
+import type React from 'react';
+import { useRef } from 'react';
 
 export interface SelectOption {
     id: string;

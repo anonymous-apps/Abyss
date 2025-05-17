@@ -1,5 +1,5 @@
 import { Check, Circle, Loader2, MessageCircleQuestion, X } from 'lucide-react';
-import React from 'react';
+import type React from 'react';
 
 export type StatusType = 'notStarted' | 'inProgress' | 'success' | 'failed';
 

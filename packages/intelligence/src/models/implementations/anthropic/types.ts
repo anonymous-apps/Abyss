@@ -1,4 +1,4 @@
-import { ReferencedLogStreamRecord, ReferencedMessageThreadRecord } from '@abyss/records';
+import type { ReferencedLogStreamRecord, ReferencedMessageThreadRecord } from '@abyss/records';
 
 export interface InvokeAnthropicProps {
     thread: ReferencedMessageThreadRecord;

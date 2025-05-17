@@ -1,5 +1,5 @@
 import { Status } from '@abyss/ui-components';
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { useScanLogs } from '../../state/database-access-utils';
 import { formatDuration } from '../../utils/time';

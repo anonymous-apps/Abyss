@@ -1,6 +1,6 @@
-import { Nodes, PortTriggerData, StateMachineExecution } from '../../state-machine';
+import { Nodes, type PortTriggerData, StateMachineExecution } from '../../state-machine';
 import { randomId } from '../../utils/ids';
-import { InvokeGraphParams } from './types';
+import type { InvokeGraphParams } from './types';
 
 export async function invokeGraphHandler(options: InvokeGraphParams) {
     const { database, graphId, input } = options;

@@ -1,6 +1,5 @@
 import { Button, IconSection, PageCrumbed, SelectDropdown } from '@abyss/ui-components';
 import { Download, PaintBucket } from 'lucide-react';
-import React from 'react';
 import { AppUpdaterStatus } from '../../state/app-updater';
 import { useSettingsPage } from './settings.hook';
 

@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import { ReferencedSqliteTable } from './reference-table';
 import { buildCleanDB } from './sqlite-client.test';
-import { SqliteTables } from './sqlite.type';
+import type { SqliteTables } from './sqlite.type';
 
 type DebugRecord = {
     id: string;

@@ -1,5 +1,5 @@
-import React from 'react';
-import { SidebarSectionProps } from './SidebarTypes';
+import type React from 'react';
+import type { SidebarSectionProps } from './SidebarTypes';
 
 /**
  * SidebarSection component for grouping sidebar content with a title

@@ -1,4 +1,4 @@
-import { BaseSqliteRecord } from '../../sqlite/sqlite.type';
+import type { BaseSqliteRecord } from '../../sqlite/sqlite.type';
 
 export type ModelConnectionAccessFormat = 'gemini' | 'openai' | 'anthropic' | 'static';
 

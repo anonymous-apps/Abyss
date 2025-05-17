@@ -1,10 +1,10 @@
-import { ReferencedChatThreadRecord, ReferencedMessageRecord, ReferencedModelConnectionRecord } from '@abyss/records';
+import { type ReferencedChatThreadRecord, ReferencedMessageRecord, type ReferencedModelConnectionRecord } from '@abyss/records';
 import { invokeModelAgainstThread } from '../../models/handler';
 import { runUnproccessedToolCalls } from '../../tool-handlers/tool-router';
 import { randomId } from '../../utils/ids';
 import { NodeHandler } from '../node-handler';
-import { NodeExecutionResult, ResolveNodeData } from '../type-base.type';
-import { GraphNodeDefinition } from '../type-definition.type';
+import type { NodeExecutionResult, ResolveNodeData } from '../type-base.type';
+import type { GraphNodeDefinition } from '../type-definition.type';
 
 export class InvokeLanguageModelNode extends NodeHandler {
     constructor() {
@@ -111,7 +111,7 @@ export class InvokeLanguageModelNode extends NodeHandler {
         }
 
         // Add references to chat
-        let referencedData: any = {};
+        const referencedData: any = {};
         if (modelResponse.logStream) {
             referencedData['logStreamId'] = modelResponse.logStream.id;
         }

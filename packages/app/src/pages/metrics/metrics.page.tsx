@@ -1,6 +1,5 @@
 import { Button, IconSection, Input, PageCrumbed, Table } from '@abyss/ui-components';
 import { Binary, ChartLine } from 'lucide-react';
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { useMetrics } from './metrics.hook';
 

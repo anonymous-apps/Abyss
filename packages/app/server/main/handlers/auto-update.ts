@@ -1,5 +1,5 @@
 import { autoUpdater } from 'electron-updater';
-import { AppController } from '../app-controller';
+import type { AppController } from '../app-controller';
 
 export function setupAutoUpdater(controller: AppController) {
     autoUpdater.setFeedURL({

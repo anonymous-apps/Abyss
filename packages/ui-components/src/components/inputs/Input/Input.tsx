@@ -1,5 +1,6 @@
-import { LucideIcon } from 'lucide-react';
-import React, { InputHTMLAttributes, useState } from 'react';
+import type { LucideIcon } from 'lucide-react';
+import type React from 'react';
+import { type InputHTMLAttributes, useState } from 'react';
 
 export interface InputOption {
     /**

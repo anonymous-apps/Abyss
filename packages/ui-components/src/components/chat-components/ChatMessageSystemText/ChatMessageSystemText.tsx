@@ -1,7 +1,7 @@
 import { Settings } from 'lucide-react';
-import React from 'react';
+import type React from 'react';
 import Button from '../../inputs/Button/Button';
-import { ActionItem } from '../ChatMessageText/ChatMessageText';
+import type { ActionItem } from '../ChatMessageText/ChatMessageText';
 
 export interface ChatMessageSystemTextProps {
     /**

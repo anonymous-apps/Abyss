@@ -1,4 +1,4 @@
-import { AgentGraphEdge, AgentGraphNode, SQliteClient } from '@abyss/records';
+import { type AgentGraphEdge, type AgentGraphNode, SQliteClient } from '@abyss/records';
 import { describe, expect, it } from 'vitest';
 import { Nodes, StateMachineExecution } from '../../state-machine';
 

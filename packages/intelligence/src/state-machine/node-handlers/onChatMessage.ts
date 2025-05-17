@@ -1,5 +1,5 @@
 import { NodeHandler } from '../node-handler';
-import { GraphNodeDefinition } from '../type-definition.type';
+import type { GraphNodeDefinition } from '../type-definition.type';
 
 export class OnChatMessageNode extends NodeHandler {
     constructor() {

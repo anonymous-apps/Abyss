@@ -1,7 +1,7 @@
 import { ReferencedSqliteRecord } from '../../sqlite/reference-record';
 import { ReferencedSqliteTable } from '../../sqlite/reference-table';
-import { SQliteClient } from '../../sqlite/sqlite-client';
-import { SettingsType } from './settings.type';
+import type { SQliteClient } from '../../sqlite/sqlite-client';
+import type { SettingsType } from './settings.type';
 
 export class ReferencedSettingsTable extends ReferencedSqliteTable<SettingsType> {
     private static DEFAULT_ID = 'settings::default';

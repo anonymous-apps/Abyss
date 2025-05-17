@@ -1,6 +1,5 @@
 import { ChatTurnHeader } from '@abyss/ui-components';
 import { formatDistanceToNow } from 'date-fns';
-import React from 'react';
 import { useNavigate } from 'react-router';
 import { useRecordReference } from '../../../library/references';
 

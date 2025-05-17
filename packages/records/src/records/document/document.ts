@@ -1,9 +1,9 @@
 import { ReferencedSqliteRecord } from '../../sqlite/reference-record';
 import { ReferencedSqliteTable } from '../../sqlite/reference-table';
-import { SQliteClient } from '../../sqlite/sqlite-client';
+import type { SQliteClient } from '../../sqlite/sqlite-client';
 import { randomId } from '../../utils/ids';
 import { serializeDocument } from './document.serialize';
-import { DocumentType, NewCellType } from './document.type';
+import type { DocumentType, NewCellType } from './document.type';
 
 export class ReferencedDocumentTable extends ReferencedSqliteTable<DocumentType> {
     constructor(client: SQliteClient) {

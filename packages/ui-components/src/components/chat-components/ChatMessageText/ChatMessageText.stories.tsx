@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react';
 import { Copy, ThumbsDown, ThumbsUp } from 'lucide-react';
 import ChatMessageText from './ChatMessageText';
 

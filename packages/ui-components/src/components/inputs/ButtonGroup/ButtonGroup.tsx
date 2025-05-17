@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { type ReactNode } from 'react';
 
 export interface ButtonGroupProps {
     /**
@@ -22,7 +22,7 @@ export const ButtonGroup: React.FC<ButtonGroupProps> = ({ children, className = 
                 // Clone button element to modify its className
                 const child = React.Children.only(button) as React.ReactElement;
                 let additionalClass = '';
-                let additionalProps: Record<string, any> = {};
+                const additionalProps: Record<string, any> = {};
 
                 // First button should only round left corners
                 if (index === 0) {

@@ -1,7 +1,7 @@
 import { ReferencedSqliteRecord } from '../../sqlite/reference-record';
 import { ReferencedSqliteTable } from '../../sqlite/reference-table';
-import { SQliteClient } from '../../sqlite/sqlite-client';
-import { ChatSnapshot } from './chat-snapshot.type';
+import type { SQliteClient } from '../../sqlite/sqlite-client';
+import type { ChatSnapshot } from './chat-snapshot.type';
 
 export class ReferencedChatSnapshotTable extends ReferencedSqliteTable<ChatSnapshot> {
     constructor(client: SQliteClient) {

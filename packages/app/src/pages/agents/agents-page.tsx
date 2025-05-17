@@ -1,6 +1,5 @@
 import { Button, IconSection, PageCrumbed, Table, Tile, TileGrid } from '@abyss/ui-components';
 import { Bot, List, Plus } from 'lucide-react';
-import React from 'react';
 import { useAgentsPage } from './agents-page.hook';
 
 export function AgentsPage() {
@@ -29,7 +28,7 @@ export function AgentsPage() {
                                 onClick={() => navigate(`/agents/id/${agent.id}`)}
                                 icon={<Bot className="w-4 h-4" />}
                                 footer={`${agent.nodesData.length} nodes`}
-                            ></Tile>
+                            />
                         ))}
                     </TileGrid>
                 ) : (

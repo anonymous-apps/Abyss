@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from 'react-router';
-import { Database } from '../../main';
+import type { Database } from '../../main';
 import { useDatabaseRecord } from '../../state/database-connection';
 
 export function useRecordPage() {

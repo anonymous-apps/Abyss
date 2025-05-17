@@ -1,6 +1,6 @@
 import { ReferencedMessageRecord } from '@abyss/records';
 import { invokeModelAgainstThread } from '../../models/handler';
-import { InvokeModelDirectlyParams } from './types';
+import type { InvokeModelDirectlyParams } from './types';
 
 export async function invokeModelDirectlyHandler(options: InvokeModelDirectlyParams) {
     const { database, modelConnectionId, chatId, humanMessage } = options;

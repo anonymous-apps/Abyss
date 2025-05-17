@@ -1,6 +1,5 @@
 import { Button, ButtonGroup, IconSection, PageCrumbed } from '@abyss/ui-components';
 import { ChartLine } from 'lucide-react';
-import React from 'react';
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { useMetricsChart } from './metrics-chart.hook';
 

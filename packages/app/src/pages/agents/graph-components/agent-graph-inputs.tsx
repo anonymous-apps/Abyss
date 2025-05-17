@@ -1,5 +1,4 @@
-import { GraphPortDefinition } from '@abyss/intelligence/dist/state-machine/type-definition.type';
-import React from 'react';
+import type { GraphPortDefinition } from '@abyss/intelligence/dist/state-machine/type-definition.type';
 import { ChatModelSelector } from './custom-selectors/ChatModelSelector';
 import { StringInput } from './custom-selectors/StringInput';
 import { ToolSetSelector } from './custom-selectors/ToolSetSelector';

@@ -16,8 +16,8 @@ exports.default = async function notarizing(context) {
     // in your electron builder configuration
     const appId = 'com.abyssal.abyss';
 
-    let appPath = `${appOutDir}/${appName}.app`;
-    let { APPLE_ID, APPLE_ID_PASSWORD, APPLE_TEAM_ID } = process.env;
+    const appPath = `${appOutDir}/${appName}.app`;
+    const { APPLE_ID, APPLE_ID_PASSWORD, APPLE_TEAM_ID } = process.env;
     console.log(`  • Notarizing ${appPath}`);
 
     return await notarize({

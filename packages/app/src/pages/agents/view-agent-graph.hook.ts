@@ -1,11 +1,11 @@
-import { GraphNodeDefinition, NodeHandler } from '@abyss/intelligence';
-import { AgentGraphEdge, AgentGraphNode, AgentGraphType } from '@abyss/records';
-import { Connection, Edge, addEdge, useEdgesState, useNodesState } from '@xyflow/react';
+import { type GraphNodeDefinition, NodeHandler } from '@abyss/intelligence';
+import type { AgentGraphEdge, AgentGraphNode, AgentGraphType } from '@abyss/records';
+import { type Connection, type Edge, addEdge, useEdgesState, useNodesState } from '@xyflow/react';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Database } from '../../main';
 import { useDatabaseRecord } from '../../state/database-connection';
-import { RenderedGraphNode } from './graph-components/graph.types';
+import type { RenderedGraphNode } from './graph-components/graph.types';
 
 export function useViewAgent() {
     const { id } = useParams();

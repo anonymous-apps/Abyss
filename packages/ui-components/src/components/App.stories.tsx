@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react';
 import { FileText, Home, List, Settings, Users } from 'lucide-react';
 
 // Import components

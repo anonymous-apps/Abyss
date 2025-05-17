@@ -1,9 +1,9 @@
-import { AgentGraphType, ReferencedLogStreamRecord, SQliteClient } from '@abyss/records';
+import type { AgentGraphType, ReferencedLogStreamRecord, SQliteClient } from '@abyss/records';
 import { Log } from '../utils/logs';
 import { NodeHandler } from './node-handler';
 import './node-handlers';
-import { PortTriggerData } from './type-base.type';
-import { GraphInputEvent } from './type-input.type';
+import type { PortTriggerData } from './type-base.type';
+import type { GraphInputEvent } from './type-input.type';
 
 export class StateMachineExecution {
     private static maxInvokeCount = 100;
@@ -75,10 +75,13 @@ export class StateMachineExecution {
     }
 
     private _getPortMap(portData: PortTriggerData<any>[]) {
-        return portData.reduce((acc, p) => {
-            acc[p.portId] = p.inputValue;
-            return acc;
-        }, {} as Record<string, any>);
+        return portData.reduce(
+            (acc, p) => {
+                acc[p.portId] = p.inputValue;
+                return acc;
+            },
+            {} as Record<string, any>
+        );
     }
 
     private _getConnectionsOutofPort(nodeId: string, portId: string) {

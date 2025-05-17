@@ -1,6 +1,5 @@
 import { Button, Sidebar, SidebarButton } from '@abyss/ui-components';
 import { Plus } from 'lucide-react';
-import React from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useChatMain } from './main.hook';
 

@@ -1,4 +1,4 @@
-export function safeSerialize(obj: any, depth: number = 100, seen: Set<any> = new Set()): any {
+export function safeSerialize(obj: any, depth = 100, seen: Set<any> = new Set()): any {
     if (depth <= 0) {
         return 'MAX_DEPTH_REACHED';
     }

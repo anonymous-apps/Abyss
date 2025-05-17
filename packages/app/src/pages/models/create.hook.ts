@@ -1,4 +1,4 @@
-import { ModelConnectionAccessFormat } from '@abyss/records';
+import type { ModelConnectionAccessFormat } from '@abyss/records';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Database } from '../../main';

@@ -1,5 +1,5 @@
-import { MessageType, ReferencedLogStreamRecord, ReferencedMessageThreadRecord } from '@abyss/records';
-import { ReferencedChatSnapshotRecord } from '@abyss/records/dist/records/chat-snapshot/chat-snapshot';
+import type { MessageType, ReferencedLogStreamRecord, ReferencedMessageThreadRecord } from '@abyss/records';
+import type { ReferencedChatSnapshotRecord } from '@abyss/records/dist/records/chat-snapshot/chat-snapshot';
 
 export interface InvokeModelInternalResult {
     inputRaw: any;

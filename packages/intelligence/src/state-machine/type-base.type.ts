@@ -1,6 +1,6 @@
-import { SQliteClient } from '@abyss/records';
-import { StateMachineExecution } from './state-machine-execution';
-import { GraphDataType, GraphNodeDefinition } from './type-definition.type';
+import type { SQliteClient } from '@abyss/records';
+import type { StateMachineExecution } from './state-machine-execution';
+import type { GraphDataType, GraphNodeDefinition } from './type-definition.type';
 
 export interface PortTriggerData<T> {
     portId: string;

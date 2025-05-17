@@ -1,4 +1,4 @@
-@import './themes.css';
+@import "./themes.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -91,11 +91,11 @@
 }
 
 /* Dark mode specific inversion */
-[data-theme='abyss'] .invert {
+[data-theme="abyss"] .invert {
     filter: invert(1);
 }
 
 /* Light mode specific inversion */
-[data-theme='ethereal'] .invert {
+[data-theme="ethereal"] .invert {
     filter: invert(0);
 }

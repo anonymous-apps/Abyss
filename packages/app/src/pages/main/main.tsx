@@ -1,6 +1,6 @@
 import { IconOption } from '@abyss/ui-components';
 import { Box, DatabaseIcon, MessageCircle, Play, Settings } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { AbyssAnimation } from '../../library/abyss-animation';
 import { useSidebarFadeStore } from '../../state/sidebar-fade';

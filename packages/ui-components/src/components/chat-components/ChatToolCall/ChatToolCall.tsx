@@ -1,10 +1,11 @@
 import { Check, ChevronDown, ChevronRight, Loader2, PlayIcon, TerminalIcon, X } from 'lucide-react';
-import React, { useState } from 'react';
+import type React from 'react';
+import { useState } from 'react';
 import JsonView from 'react18-json-view';
 import 'react18-json-view/src/style.css';
 import { MonospaceText } from '../../content/MonospaceText/MonospaceText';
 import Button from '../../inputs/Button';
-import { ActionItem } from '../ChatMessageText';
+import type { ActionItem } from '../ChatMessageText';
 
 export type ToolCallStatus = 'notStarted' | 'inProgress' | 'success' | 'failed';
 

@@ -1,4 +1,4 @@
-import { ModelConnectionType } from '@abyss/records';
+import type { ModelConnectionType } from '@abyss/records';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Database } from '../../main';
 import { useDatabaseRecord } from '../../state/database-connection';

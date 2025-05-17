@@ -1,4 +1,4 @@
-import { ActionItem } from '@abyss/ui-components';
+import type { ActionItem } from '@abyss/ui-components';
 import {
     Bell,
     BinaryIcon,
@@ -8,7 +8,7 @@ import {
     Cog,
     Globe,
     Hammer,
-    LucideIcon,
+    type LucideIcon,
     MessageCircleQuestion,
     NotepadText,
     User,

@@ -1,9 +1,9 @@
 import { ReferencedSqliteRecord } from '../../sqlite/reference-record';
 import { ReferencedSqliteTable } from '../../sqlite/reference-table';
-import { SQliteClient } from '../../sqlite/sqlite-client';
+import type { SQliteClient } from '../../sqlite/sqlite-client';
 import { generateId } from '../../utils/ids';
 import { safeSerialize } from '../../utils/serialization';
-import { LogMessage, LogStreamType } from './logstream.type';
+import type { LogMessage, LogStreamType } from './logstream.type';
 
 export class ReferencedLogStreamTable extends ReferencedSqliteTable<LogStreamType> {
     constructor(client: SQliteClient) {

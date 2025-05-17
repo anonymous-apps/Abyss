@@ -1,6 +1,5 @@
 import { Button, IconSection, LabelValue, PageCrumbed } from '@abyss/ui-components';
 import { Box, Settings, Trash } from 'lucide-react';
-import React from 'react';
 import { useModelProfileView } from './view.hook';
 
 export function ModelProfileViewPage() {

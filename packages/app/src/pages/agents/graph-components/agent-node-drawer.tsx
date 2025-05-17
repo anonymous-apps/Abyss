@@ -1,8 +1,7 @@
 import { Nodes } from '@abyss/intelligence';
-import { GraphNodeDefinition } from '@abyss/intelligence/dist/state-machine/type-definition.type';
+import type { GraphNodeDefinition } from '@abyss/intelligence/dist/state-machine/type-definition.type';
 import { Sidebar, SidebarButton, SidebarSection } from '@abyss/ui-components';
 import { ArrowRight, MessageCircle, Sparkles } from 'lucide-react';
-import React from 'react';
 
 interface AgentNodeDrawerProps {
     onAddNode: (node: GraphNodeDefinition) => void;

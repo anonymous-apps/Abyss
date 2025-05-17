@@ -1,5 +1,5 @@
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 export const HeaderBar = () => {
@@ -36,8 +36,8 @@ export const HeaderBar = () => {
             className="fixed z-10 top-0 left-0 w-full text-center border-background-100"
             style={{ height: '55px', fontSize: '30px', lineHeight: '55px' }}
         >
-            <div className="fixed top-0 left-0 w-[100vw] h-[15px] flex items-center justify-center menuDragSection"></div>
-            <div className="absolute bottom-0 left-0 w-full h-full flex items-center justify-center menuDragSection"></div>
+            <div className="fixed top-0 left-0 w-[100vw] h-[15px] flex items-center justify-center menuDragSection" />
+            <div className="absolute bottom-0 left-0 w-full h-full flex items-center justify-center menuDragSection" />
 
             <div className={`absolute text-text-sidebar h-[45%] w-[40%] right-0 flex gap-1 mt-1 px-2 z-10 hidden`}>
                 <ChevronLeftIcon className={`h-full w-full rounded-sm opacity-100 hover:bg-primary-100`} />

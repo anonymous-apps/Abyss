@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export function AbyssAnimation({ starCount = 200, spawnRate = 10 }: { starCount?: number; spawnRate?: number }) {
     const FRICTION = 0.999;

@@ -1,7 +1,6 @@
 import { Background, BackgroundVariant, ReactFlow, ReactFlowProvider } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { Bot } from 'lucide-react';
-import React from 'react';
 import { AgentNodeDrawer } from './graph-components/agent-node-drawer';
 import CustomEdge from './graph-components/custom-edge';
 import { CustomAgentGraphNode } from './graph-components/custom-node';
