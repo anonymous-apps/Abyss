@@ -2,9 +2,7 @@ import { beforeEach, describe, expect, test } from 'vitest';
 import type { NewRecord } from '../../sqlite/sqlite.type';
 import type { SQliteClient } from '../../sqlite/sqlite-client';
 import { buildCleanDB } from '../../sqlite/sqlite-client.mock';
-import { ReferencedMessageRecord } from '../message/message';
 import type { MessageType } from '../message/message.type';
-import { ReferencedToolDefinitionRecord } from '../tool-definition/tool-definition';
 
 let client: SQliteClient;
 

@@ -24,6 +24,7 @@ export class ReferencedLogStreamTable extends ReferencedSqliteTable<LogStreamTyp
     public ref(id: string) {
         return new ReferencedLogStreamRecord(id, this.client);
     }
+
     public async scanOfType(type: string): Promise<LogStreamType[]> {
         const data = await this.client.execute('SELECT * FROM logStream WHERE type = ? ORDER BY createdAt DESC', [type]);
         return (data as unknown[]).map(row => ReferencedSqliteTable.deserialize<LogStreamType>(row as Record<string, unknown>));

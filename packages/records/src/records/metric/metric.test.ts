@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { setupEmptyMetricTable, setupMetricTableWithASingleMetric, setupMetricTableWithDiverseMetrics } from './metric.mocking';
+import { setupEmptyMetricTable, setupMetricTableWithDiverseMetrics } from './metric.mocking';
 
 describe('Metric Table Reference', () => {
     describe('when we create a new metric object', () => {
