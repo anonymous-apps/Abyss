@@ -1,4 +1,4 @@
-import { getBezierPath, useReactFlow, type EdgeProps } from '@xyflow/react';
+import { type EdgeProps, getBezierPath, useReactFlow } from '@xyflow/react';
 import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 

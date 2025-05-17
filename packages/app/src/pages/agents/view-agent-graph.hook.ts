@@ -1,6 +1,6 @@
 import { type GraphNodeDefinition, NodeHandler } from '@abyss/intelligence';
 import type { AgentGraphEdge, AgentGraphNode, AgentGraphType } from '@abyss/records';
-import { type Connection, type Edge, addEdge, useEdgesState, useNodesState } from '@xyflow/react';
+import { addEdge, type Connection, type Edge, useEdgesState, useNodesState } from '@xyflow/react';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Database } from '../../main';

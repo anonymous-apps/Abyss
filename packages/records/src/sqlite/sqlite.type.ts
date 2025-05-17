@@ -3,8 +3,8 @@ import type { ReferencedChatSnapshotTable } from '../records/chat-snapshot/chat-
 import type { ReferencedChatThreadTable } from '../records/chat-thread/chat-thread';
 import type { ReferencedDocumentTable } from '../records/document/document';
 import type { ReferencedLogStreamTable } from '../records/logstream/logstream';
-import type { ReferencedMessageThreadTable } from '../records/message-thread/message-thread';
 import type { ReferencedMessageTable } from '../records/message/message';
+import type { ReferencedMessageThreadTable } from '../records/message-thread/message-thread';
 import type { ReferencedMetricTable } from '../records/metric/metric';
 import type { ReferencedModelConnectionTable } from '../records/model-connection/model-connection';
 import type { ReferencedSettingsTable } from '../records/settings/settings';

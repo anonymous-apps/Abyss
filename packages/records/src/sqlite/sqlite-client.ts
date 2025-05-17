@@ -6,8 +6,8 @@ import { ReferencedChatSnapshotTable } from '../records/chat-snapshot/chat-snaps
 import { ReferencedChatThreadTable } from '../records/chat-thread/chat-thread';
 import { ReferencedDocumentTable } from '../records/document/document';
 import { ReferencedLogStreamTable } from '../records/logstream/logstream';
-import { ReferencedMessageThreadTable } from '../records/message-thread/message-thread';
 import { ReferencedMessageTable } from '../records/message/message';
+import { ReferencedMessageThreadTable } from '../records/message-thread/message-thread';
 import { ReferencedMetricTable } from '../records/metric/metric';
 import { ReferencedModelConnectionTable } from '../records/model-connection/model-connection';
 import { ReferencedSettingsTable } from '../records/settings/settings';
@@ -15,7 +15,7 @@ import { ReferencedToolDefinitionTable } from '../records/tool-definition/tool-d
 import { DatabaseSubscriptionLayer } from './database-subscription-layer';
 import type { ReferencedSqliteTable } from './reference-table';
 import { migrations } from './schemas/migrations';
-import { type DBSidecarType, DefaultSidecar, type SqliteTables, type BaseSqliteRecord } from './sqlite.type';
+import { type BaseSqliteRecord, type DBSidecarType, DefaultSidecar, type SqliteTables } from './sqlite.type';
 
 export class SQliteClient {
     // Disk locations

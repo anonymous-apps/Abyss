@@ -1,7 +1,7 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
 import fs from 'node:fs';
 import path, { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import { AppController } from './app-controller';
 
 // Setup __filename and __dirname for ES modules
